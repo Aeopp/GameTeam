@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{b62cf6b7-87b7-4ee8-b49b-eda833da62b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{5925ddad-af6a-442a-9c7b-04b197b36b18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{429149a3-cac2-4a01-816b-40523353717d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene">
+      <UniqueIdentifier>{45b7e179-d037-45a0-90e5-9a68e9b52ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\00.Logo">
+      <UniqueIdentifier>{34aa17b9-bf45-4164-88b6-6a15454defb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\01.Stage">
+      <UniqueIdentifier>{c234953c-5253-40ea-b6ef-3e666a6a61d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{34f3cfec-851c-4272-87c9-1a0524375aea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\00.Player">
+      <UniqueIdentifier>{812401ac-0272-46fc-9039-a86d58c3b660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\99.Loading">
+      <UniqueIdentifier>{877afc48-eb1c-401b-a0c7-05b132d2944f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Terrain">
+      <UniqueIdentifier>{cae464e5-613c-4b5a-a3a4-bde8ff8cf440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Camera">
+      <UniqueIdentifier>{77f12502-f092-49ce-838b-71ef47849a05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Define.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Extern.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Enum.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Logo.h">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player.h">
+      <Filter>02.GameObject\00.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Loading.h">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Terrain.h">
+      <Filter>02.GameObject\01.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Camera.h">
+      <Filter>02.GameObject\02.Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Logo.cpp">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player.cpp">
+      <Filter>02.GameObject\00.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Loading.cpp">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Terrain.cpp">
+      <Filter>02.GameObject\01.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Camera.cpp">
+      <Filter>02.GameObject\02.Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>98.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
