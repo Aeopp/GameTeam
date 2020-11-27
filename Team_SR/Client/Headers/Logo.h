@@ -19,9 +19,6 @@ public:
 	static CLogo* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
 
-private:
-	class CLoading* m_pLoading = nullptr;
-
 };
 
 #define __LOGO_H__

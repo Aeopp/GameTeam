@@ -5,15 +5,8 @@ USING(Engine)
 CTransform::CTransform(LPDIRECT3DDEVICE9 pDevice)
 	: CComponent(pDevice)
 {
-	ZeroMemory(&m_TransformDesc, sizeof(TRANSFORM_DESC));
-	D3DXMatrixIdentity(&m_TransformDesc.matWorld);
 }
 
-CTransform::CTransform(const CTransform & other)
-	: CComponent(other)
-	, m_TransformDesc(other.m_TransformDesc)
-{
-}
 
 const TRANSFORM_DESC & CTransform::GetTransformDesc() const
 {
@@ -104,7 +97,7 @@ CComponent * CTransform::Clone(void * pArg/* = nullptr*/)
 		PRINT_LOG(L"Warning", L"Failed To Clone Transform");
 		SafeRelease(pClone);
 	}
-
+	SafeAddRef(m_pDevice);
 	return pClone;
 }
 

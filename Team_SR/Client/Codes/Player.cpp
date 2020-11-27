@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Player.h"
-#include "Camera.h"
 
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)

@@ -3,9 +3,6 @@
 
 #include "Base.h"
 #include "Transform.h"
-#include "VIBuffer_TriColor.h"
-#include "VIBuffer_RectColor.h"
-#include "VIBuffer_TerrainColor.h"
 #include "VIBuffer_RectTexture.h"
 #include "VIBuffer_TerrainTexture.h"
 #include "Texture.h"

@@ -11,7 +11,6 @@ protected:
 		_uint iVertexCountX,
 		_uint iVertexCountZ,
 		float fVertexInterval = 1.f);
-	explicit CVIBuffer_TerrainTexture(const CVIBuffer_TerrainTexture& other);
 	virtual ~CVIBuffer_TerrainTexture() = default;
 
 public:

@@ -10,18 +10,6 @@ CTexture::CTexture(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePa
 {
 }
 
-CTexture::CTexture(const CTexture & other)
-	: CComponent(other)
-	, m_iCount(other.m_iCount)
-	, m_eType(m_eType)
-	, m_Textures(other.m_Textures)
-{
-	for (auto& pTexture : m_Textures)
-	{
-		SafeAddRef(pTexture);
-	}
-}
-
 HRESULT CTexture::ReadyComponentPrototype()
 {		
 	if (FAILED(CComponent::ReadyComponentPrototype()))
@@ -113,7 +101,11 @@ CComponent * CTexture::Clone(void * pArg/* = nullptr*/)
 		PRINT_LOG(L"Warning", L"Failed To Clone Texture");
 		SafeRelease(pInstance);
 	}
-
+	SafeAddRef(m_pDevice);
+	for (auto& pTexture : m_Textures)
+	{
+		SafeAddRef(pTexture);
+	}
 	return pInstance;
 }
 

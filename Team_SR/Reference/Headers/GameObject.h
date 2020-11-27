@@ -8,7 +8,6 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 protected:
 	explicit CGameObject(LPDIRECT3DDEVICE9 pDevice);
-	explicit CGameObject(const CGameObject& other);
 	virtual ~CGameObject() = default;	
 
 public:

@@ -8,7 +8,6 @@ class ENGINE_DLL CVIBuffer_RectTexture final : public CVIBuffer
 {
 protected:
 	explicit CVIBuffer_RectTexture(LPDIRECT3DDEVICE9 pDevice);
-	explicit CVIBuffer_RectTexture(const CVIBuffer_RectTexture& other);
 	virtual ~CVIBuffer_RectTexture() = default;
 
 public:

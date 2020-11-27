@@ -177,11 +177,8 @@
     <ClInclude Include="..\Headers\Time_Manager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
-    <ClInclude Include="..\Headers\VIBuffer_RectColor.h" />
     <ClInclude Include="..\Headers\VIBuffer_RectTexture.h" />
-    <ClInclude Include="..\Headers\VIBuffer_TerrainColor.h" />
     <ClInclude Include="..\Headers\VIBuffer_TerrainTexture.h" />
-    <ClInclude Include="..\Headers\VIBuffer_TriColor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
@@ -199,11 +196,8 @@
     <ClCompile Include="..\Codes\Time_Manager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_RectColor.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_RectTexture.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_TerrainColor.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_TerrainTexture.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_TriColor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

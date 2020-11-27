@@ -8,7 +8,6 @@ class ENGINE_DLL CTexture : public CComponent
 {
 private:	
 	explicit CTexture(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePath, _uint iCount = 1);
-	explicit CTexture(const CTexture& other);
 	virtual ~CTexture() = default;
 
 public:

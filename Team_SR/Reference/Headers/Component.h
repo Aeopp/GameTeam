@@ -8,7 +8,6 @@ class ENGINE_DLL CComponent : public CBase
 {
 public:
 	explicit CComponent(LPDIRECT3DDEVICE9 pDevice);
-	explicit CComponent(const CComponent& other);
 	virtual ~CComponent() = default;
 
 public:

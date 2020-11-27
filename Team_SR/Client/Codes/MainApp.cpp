@@ -52,44 +52,21 @@ HRESULT CMainApp::ReadyStaticResources()
 {
 	/* For.GameObject */
 #pragma region GameObject_Player
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		L"GameObject_Player",
-		CPlayer::Create(m_pDevice))))
-		return E_FAIL;
+
 #pragma endregion
 
 	/* For.Component */
-#pragma region Component_VIBuffer_RectColor
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_VIBuffer_RectColor",
-		CVIBuffer_RectColor::Create(m_pDevice))))
-		return E_FAIL;
-#pragma endregion
 
 #pragma region Component_VIBuffer_RectTexture
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_VIBuffer_RectTexture",
-		CVIBuffer_RectTexture::Create(m_pDevice))))
-		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Component_Texture_Player
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_Texture_Player",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/ÅÂÈÄ´Ï%d.png"))))
-		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Component_Transform
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_Transform",
-		CTransform::Create(m_pDevice))))
-		return E_FAIL;
+
 #pragma endregion
 
 	return S_OK;

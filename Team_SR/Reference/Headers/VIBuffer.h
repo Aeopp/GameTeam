@@ -8,7 +8,6 @@ class ENGINE_DLL CVIBuffer abstract : public CComponent
 {
 protected:
 	explicit CVIBuffer(LPDIRECT3DDEVICE9 pDevice);
-	explicit CVIBuffer(const CVIBuffer& other);
 	virtual ~CVIBuffer() = default;
 
 public:

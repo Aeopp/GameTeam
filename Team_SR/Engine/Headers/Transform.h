@@ -8,7 +8,6 @@ class ENGINE_DLL CTransform final : public CComponent
 {
 private:
 	explicit CTransform(LPDIRECT3DDEVICE9 pDevice);
-	explicit CTransform(const CTransform& other);
 	virtual ~CTransform() = default;
 
 public:

@@ -32,6 +32,11 @@ typedef struct tagIndex32
 
 typedef struct tagTransformDesc
 {
+	tagTransformDesc()
+	{
+		ZeroMemory(this, sizeof(tagTransformDesc));
+		D3DXMatrixIdentity(&matWorld);
+	}
 	_vector	vPosition;
 	_vector	vScale;
 	_vector	vRotation; // For.Degree

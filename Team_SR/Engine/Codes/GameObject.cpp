@@ -9,12 +9,6 @@ CGameObject::CGameObject(LPDIRECT3DDEVICE9 pDevice)
 	SafeAddRef(m_pDevice);
 }
 
-CGameObject::CGameObject(const CGameObject & other)
-	: m_pDevice(other.m_pDevice)
-{
-	SafeAddRef(m_pDevice);
-}
-
 CComponent* CGameObject::GetComponent(const wstring & ComponentTag)
 {
 	auto iter_find = m_Components.find(ComponentTag);
