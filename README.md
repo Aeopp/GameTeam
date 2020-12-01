@@ -4,6 +4,7 @@
 Client와 Engine 설정 컴파일 속도 /mp 사용
 
 Resource -> https://drive.google.com/drive/folders/1OrckZcW49mwoDA3r8OxzBtLUd4vg6WIt
+
 **#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 터미널 열어서 디버깅 편하게 하자.** 
 
 
