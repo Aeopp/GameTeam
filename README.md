@@ -1,6 +1,11 @@
 # GameTeam
 팀프로젝트 DirectX 3D
 
+Client와 Engine 설정 컴파일 속도 /mp 사용
+
+**#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 터미널 열어서 디버깅 편하게 하자.** 
+
+
 ## Pull 한 이후에 해야 하는것
 1. Client 프로젝트 -> 참조 -> Engine 프로젝트 참조에 추가
 2. Client 와 Engine 빌드옵션 32Bit 맞는지 확인
