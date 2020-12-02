@@ -11,6 +11,9 @@ private:
 	virtual ~CLayer() = default;
 
 public:
+	class CGameObject* GetGameObject(_uint iIndex = 0);
+
+public:
 	HRESULT AddGameObjectInLayer(class CGameObject* pGameObject);
 	_uint UpdateGameObject(float fDeltaTime);
 	_uint LateUpdateGameObject(float fDeltaTime);

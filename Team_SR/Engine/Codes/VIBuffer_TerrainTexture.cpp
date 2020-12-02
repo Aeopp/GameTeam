@@ -100,6 +100,29 @@ HRESULT CVIBuffer_TerrainTexture::Render_VIBuffer()
 	return m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iVertexCount, 0, m_iTriCount);
 }
 
+_uint * CVIBuffer_TerrainTexture::LoadHeightMap(TCHAR * pFilePath)
+{
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0,
+		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return nullptr;
+
+	DWORD dwBytes = 0;
+	BITMAPFILEHEADER BmpFileHeader;
+	ReadFile(hFile, &BmpFileHeader, sizeof(BITMAPFILEHEADER), &dwBytes, 0);
+
+	BITMAPINFOHEADER BmpInfoHeader;
+	ReadFile(hFile, &BmpInfoHeader, sizeof(BITMAPINFOHEADER), &dwBytes, 0);
+
+	_uint iMaxCount = BmpInfoHeader.biWidth * BmpInfoHeader.biHeight; // 이미지 크기
+	_uint* pPixels = new _uint[iMaxCount];							  // 이미지마다 크기가 다르니까 동적 배열로
+	ReadFile(hFile, pPixels, sizeof(_uint) * iMaxCount, &dwBytes, 0);
+
+	CloseHandle(hFile);
+
+	return pPixels;
+}
+
 CVIBuffer_TerrainTexture* CVIBuffer_TerrainTexture::Create(
 	LPDIRECT3DDEVICE9 pDevice, 
 	_uint iVertexCountX, 

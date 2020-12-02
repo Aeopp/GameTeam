@@ -161,6 +161,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h" />
+    <ClInclude Include="..\Headers\Camera.h" />
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\ComponentManager.h" />
     <ClInclude Include="..\Headers\Engine_Define.h" />
@@ -186,6 +187,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
+    <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\ComponentManager.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />

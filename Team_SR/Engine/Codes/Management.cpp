@@ -106,6 +106,14 @@ HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	return m_pSceneManager->SetUpCurrentScene(iSceneID, pCurrentScene);
 }
 
+CGameObject * CManagement::GetGameObject(_int iSceneIndex, const wstring & LayerTag, _uint iIndex)
+{
+	if (nullptr == m_pGameObjectManager)
+		return nullptr;
+
+	return m_pGameObjectManager->GetGameObject(iSceneIndex, LayerTag, iIndex);
+}
+
 HRESULT CManagement::AddGameObjectPrototype(
 	_int iSceneIndex, 
 	const wstring & GameObjectTag, 

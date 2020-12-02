@@ -5,7 +5,6 @@
 
 BEGIN(Engine)
 
-/* 렌더링 행위를 그룹화로 나누는 역할을 수행 */
 class CRenderer final : public CBase
 {
 private:

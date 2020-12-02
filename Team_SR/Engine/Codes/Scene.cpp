@@ -29,23 +29,3 @@ void CScene::Free()
 }
 
 
-
-
-//class CBase
-//{
-//public:
-//	CBase(int i)
-//	{
-//
-//	}
-//};
-//
-//void Func(int i);
-//void Func(CBase obj);
-//
-//void main()
-//{
-//	Func(100); CBase obj = 100;
-//	Func(CBase(100)); CBase obj = CBase(100);
-//}
-

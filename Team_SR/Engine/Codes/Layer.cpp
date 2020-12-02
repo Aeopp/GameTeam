@@ -7,6 +7,17 @@ CLayer::CLayer()
 {
 }
 
+CGameObject * CLayer::GetGameObject(_uint iIndex)
+{
+	if (m_GameObjects.size() <= iIndex)
+		return nullptr;
+
+	auto iter_begin = m_GameObjects.begin();
+	for (_uint i = 0; i < iIndex; ++i, ++iter_begin);
+
+	return *iter_begin;
+}
+
 HRESULT CLayer::AddGameObjectInLayer(CGameObject * pGameObject)
 {
 	if (nullptr == pGameObject)

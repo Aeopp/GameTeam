@@ -46,6 +46,26 @@ typedef struct tagTransformDesc
 	float fRotatePerSec = 0.f;
 }TRANSFORM_DESC;
 
+typedef struct tagCameraDesc
+{
+	tagCameraDesc()
+	{
+		ZeroMemory(this, sizeof(tagCameraDesc));
+		D3DXMatrixIdentity(&matView);
+		D3DXMatrixIdentity(&matProj);
+	}
+	_matrix	matView;
+	_vector vEye;
+	_vector vAt;
+	_vector vUp;
+
+	_matrix matProj;
+	float	fFovY;	// Degree
+	float	fAspect;
+	float	fNear;
+	float	fFar;
+}CAMERA_DESC;
+
 END
 
 #define __ENGINE_STRUCT_H__

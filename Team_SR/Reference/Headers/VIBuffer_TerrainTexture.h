@@ -17,6 +17,9 @@ public:
 	virtual HRESULT ReadyComponentPrototype() override;
 	virtual HRESULT ReadyComponent(void* pArg = nullptr) override;
 	virtual HRESULT Render_VIBuffer() override;
+	
+private:
+	_uint* LoadHeightMap(TCHAR* pFilePath);
 
 public:
 	static CVIBuffer_TerrainTexture* Create(LPDIRECT3DDEVICE9 pDevice, _uint iVertexCountX, _uint iVertexCountZ, float fVertexInterval = 1.f);

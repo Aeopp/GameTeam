@@ -14,6 +14,9 @@ private:
 	virtual ~CGameObjectManager() = default;
 
 public:
+	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
+
+public:
 	HRESULT ReserveSizeContainer(_int iSceneCount);
 	HRESULT AddGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, CGameObject* pPrototype);
 	HRESULT AddGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, _int iToSceneIndex, const wstring& LayerTag, void* pArg = nullptr);
