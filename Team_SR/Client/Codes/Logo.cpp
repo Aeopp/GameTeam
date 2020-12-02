@@ -19,7 +19,6 @@ HRESULT CLogo::ReadyScene()
 _uint CLogo::UpdateScene()
 {
 	CScene::UpdateScene();
-
 	return _uint();
 }
 

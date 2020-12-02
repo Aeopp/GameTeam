@@ -10,7 +10,7 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일:
 #include <windows.h>
-
+#include <iostream>
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>
 #include <malloc.h>
@@ -18,9 +18,12 @@
 #include <tchar.h>
 #include <process.h>
 
-
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include "Client_Define.h"
 #include "Client_Extern.h"
 #include "Client_Enum.h"
 #include "Management.h"
+
+#ifdef _DEBUG
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 
+#endif
