@@ -7,11 +7,10 @@ Resource -> https://drive.google.com/drive/folders/1OrckZcW49mwoDA3r8OxzBtLUd4vg
 
 **#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 터미널 열어서 디버깅 편하게 하자.** 
 
-
-## Pull 한 이후에 해야 하는것
-1. Client 프로젝트 -> 참조 -> Engine 프로젝트 참조에 추가
-2. Client 와 Engine 빌드옵션 32Bit 맞는지 확인
-3. Engine 한번 빌드해서 Bin 파일들 Client으로 옮기기
+## Git 규칙
+기능 구현시에 Master 브랜치에서 새로운 기능 브랜치를 만든 이후에
+디버깅 테스트 끝나고 기능 구현이 완료되면 해당 브랜치와 마스터를 병합하고 
+병합이후에 테스트가 끝나면 Master 로 커밋
 
 ## ReadMe
 1. 클라는 엔진 참조 걸어서 **엔진 내용이 바뀌면** 자동으로 엔진빌드
