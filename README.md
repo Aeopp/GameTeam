@@ -34,3 +34,13 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"
 ### Clone 추가
 * 포인터 공유시 AddRef Release 까먹지 말기
 * 포인터 공유할때 프로토타입이 지워야 하는지 확실히 구분
+
+* 프레임워크 (회의때 나온 의견 반영 , Time)
+* 리소스 정리
+* 맵을 프레임 워크에 추가 (조명 , 노말 맵안쪽으로 잘 나오는지 , 구체랑 충돌 , 맵 하나와 씬 하나 매핑해서 씬 넘어가는것 까지)
+* 빌보드 
+* AI AStar
+* 카메라 연출
+* 충돌
+* 
+* 
