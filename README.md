@@ -2,6 +2,7 @@
 팀프로젝트 DirectX 3D
 
 ## IMGUI 적용하자 !
+***ImGuiHelper.h Example 네임스페이스에 사용법 코드+주석 올리니 사용할 사람 참고.***
 
 Resource -> https://drive.google.com/drive/folders/1OrckZcW49mwoDA3r8OxzBtLUd4vg6WIt
 

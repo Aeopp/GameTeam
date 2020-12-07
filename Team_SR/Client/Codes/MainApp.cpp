@@ -47,8 +47,9 @@ int CMainApp::UpdateMainApp()
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
 
-	Example::Text();
-
+	ImGuiHelper::Text();
+	ImGuiHelper::Slider();
+	
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render();

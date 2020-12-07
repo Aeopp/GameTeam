@@ -24,13 +24,12 @@ public:
 	
 	static bool bInitialize;
 	static bool bEditOn;
-private:
+	static bool bDemo;
+public:
+	/*Example Code Here*/
+	static void Text();
+	static void Slider();
+	static void CheckBox();
+	static void Button();
 };
-
-/*Example Code Here*/
-namespace Example
-{
-	void Text();
-	void Slider();
-}
 
