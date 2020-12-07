@@ -52,6 +52,7 @@ HRESULT CPlayer::RenderGameObject()
 	return S_OK;
 }
 
+
 HRESULT CPlayer::AddComponent()
 {
 

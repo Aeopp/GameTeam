@@ -31,6 +31,9 @@
     <Filter Include="02.GameObject\01.Terrain">
       <UniqueIdentifier>{cae464e5-613c-4b5a-a3a4-bde8ff8cf440}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster">
+      <UniqueIdentifier>{b1f600d0-d399-4e6a-98e2-e798848c8056}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -72,6 +75,7 @@
     <ClInclude Include="..\Headers\Terrain.h">
       <Filter>02.GameObject\01.Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -98,6 +102,7 @@
     <ClCompile Include="..\Codes\Terrain.cpp">
       <Filter>02.GameObject\01.Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

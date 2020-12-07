@@ -45,18 +45,11 @@ HRESULT CStage::AddPlayerLayer(const wstring & LayerTag)
 {
 	// EXAMPLE
 
-
-	//if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-	//	L"GameObject_Player",
-	//	(_int)ESceneID::Stage,
-	//	LayerTag,
-	//	(CGameObject**)&m_pPlayer)))
-	//	return E_FAIL;
-
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
 		L"GameObject_Player",
 		(_int)ESceneID::Stage,
-		LayerTag)))
+		LayerTag,
+		(CGameObject**)&m_pPlayer)))
 		return E_FAIL;
 
 	return S_OK;
