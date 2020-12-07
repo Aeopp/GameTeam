@@ -44,11 +44,7 @@ _uint CTerrain::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	auto pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return 0;
-
-	if (FAILED(pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
 
 	return _uint();

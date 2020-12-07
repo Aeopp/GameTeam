@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Loading.h"
-#include "Terrain.h"
+//#include "Terrain.h"
 
 CLoading::CLoading(LPDIRECT3DDEVICE9 pDevice, ESceneID eNextSceneID)
 	: m_pDevice(pDevice)

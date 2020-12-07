@@ -2,6 +2,7 @@
 #ifndef __LOADING_H__
 
 #include "Base.h"
+USING(Engine)
 class CLoading final : public CBase
 {
 private:
