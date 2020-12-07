@@ -147,12 +147,13 @@ HRESULT CManagement::AddGameObjectInLayer(
 	const wstring& GameObjectTag, 
 	_int iToSceneIndex, 
 	const wstring& LayerTag, 
+	CGameObject** ppGameObject,
 	void* pArg)
 {
 	if (nullptr == m_pGameObjectManager)
 		return E_FAIL;
 
-	return m_pGameObjectManager->AddGameObjectInLayer(iFromSceneIndex, GameObjectTag, iToSceneIndex, LayerTag, pArg);
+	return m_pGameObjectManager->AddGameObjectInLayer(iFromSceneIndex, GameObjectTag, iToSceneIndex, LayerTag, ppGameObject, pArg);
 }
 
 HRESULT CManagement::AddComponentPrototype(_int iSceneIndex, const wstring & ComponentTag, CComponent * pPrototype)

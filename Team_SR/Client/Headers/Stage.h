@@ -20,12 +20,13 @@ protected:
 
 private:
 	HRESULT AddPlayerLayer(const wstring& LayerTag);
-	HRESULT AddTerrainLayer(const wstring& LayerTag);
 
 public:
 	static CStage* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
 
+private:
+	class CPlayer* m_pPlayer = nullptr;
 };
 
 #define __STAGE_H__

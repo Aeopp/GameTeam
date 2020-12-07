@@ -67,6 +67,9 @@
     <Filter Include="01.Utilities\06.KeyMgr">
       <UniqueIdentifier>{bb59b829-6fc2-4564-b787-470febd9c620}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utilities\05.Component\01.VIBuffer\03.V">
+      <UniqueIdentifier>{d7b602a3-d201-467b-bfbb-f80769fa5b8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -125,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\KeyMgr.cpp">
       <Filter>01.Utilities\06.KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\VIBuffer_CubeTexture.cpp">
+      <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\KeyMgr.h">
       <Filter>01.Utilities\06.KeyMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\VIBuffer_CubeTexture.h">
+      <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

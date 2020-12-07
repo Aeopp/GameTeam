@@ -70,6 +70,7 @@ HRESULT CGameObjectManager::AddGameObjectInLayer(
 	const wstring& GameObjectTag, 
 	_int iToSceneIndex, 
 	const wstring& LayerTag, 
+	CGameObject** ppGameObject,
 	void* pArg)
 {
 	if (0 > iFromSceneIndex ||
@@ -104,6 +105,11 @@ HRESULT CGameObjectManager::AddGameObjectInLayer(
 
 		PRINT_LOG(L"Warning", szBuffer);
 		return E_FAIL;
+	}
+	if (ppGameObject)
+	{
+		*ppGameObject = pClone;
+		SafeAddRef(pClone);
 	}
 
 	auto iter_find_Layer = m_pLayers[iToSceneIndex].find(LayerTag);

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Stage.h"
-
+#include "Player.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -10,9 +10,6 @@ CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 HRESULT CStage::ReadyScene()
 {
 	CScene::ReadyScene();	
-
-	if (FAILED(AddTerrainLayer(L"Layer_Terrain")))
-		return E_FAIL;
 
 	if (FAILED(AddPlayerLayer(L"Layer_Player")))
 		return E_FAIL;
@@ -46,11 +43,16 @@ _uint CStage::KeyProcess(float fDeltaTime)
 
 HRESULT CStage::AddPlayerLayer(const wstring & LayerTag)
 {
-	return S_OK;
-}
+	// EXAMPLE
 
-HRESULT CStage::AddTerrainLayer(const wstring & LayerTag)
-{
+
+	//if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+	//	L"GameObject_Player",
+	//	(_int)ESceneID::Stage,
+	//	LayerTag,
+	//	(CGameObject**)&m_pPlayer)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 
@@ -73,5 +75,6 @@ CStage * CStage::Create(LPDIRECT3DDEVICE9 pDevice)
 
 void CStage::Free()
 {
+	SafeRelease(m_pPlayer);
 	CScene::Free();
 }

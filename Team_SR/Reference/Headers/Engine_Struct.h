@@ -20,6 +20,14 @@ typedef struct tagVertexTexture
 
 const _uint FVF_VTX_TEXTURE = D3DFVF_XYZ | D3DFVF_TEX1 /*| D3DFVF_TEXCOORDSIZE2(0)*/;
 
+typedef struct tagVertexCubeTexture
+{
+	D3DXVECTOR3 vPosition;
+	D3DXVECTOR3 vUV;
+}VTXCUBE_TEXTURE;
+
+const _uint FVF_VTXCUBE_TEXTURE = D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
+
 typedef struct tagIndex16
 {
 	WORD _1, _2, _3;
