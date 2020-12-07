@@ -58,6 +58,13 @@ void CVIBuffer::Free()
 	SafeRelease(m_pVB);
 	SafeRelease(m_pIB);
 
+	//if (false == m_IsClone)
+	//{
+	//	SafeDeleteArray(m_pVertices);
+	//	SafeRelease(m_pVB);
+	//	SafeRelease(m_pIB);
+	//}
+
 	/* ºÎ¸ðÀÇ free */
 	CComponent::Free();
 }

@@ -8,12 +8,6 @@ CTransform::CTransform(LPDIRECT3DDEVICE9 pDevice)
 }
 
 
-const TRANSFORM_DESC & CTransform::GetTransformDesc() const
-{
-	// TODO: 여기에 반환 구문을 삽입합니다.
-	return m_TransformDesc;
-}
-
 HRESULT CTransform::ReadyComponentPrototype()
 {
 	return S_OK;
@@ -92,12 +86,12 @@ CTransform * CTransform::Create(LPDIRECT3DDEVICE9 pDevice)
 CComponent * CTransform::Clone(void * pArg/* = nullptr*/)
 {
 	CTransform* pClone = new CTransform(*this);
+	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyComponent(pArg)))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Clone Transform");
 		SafeRelease(pClone);
 	}
-	SafeAddRef(m_pDevice);
 	return pClone;
 }
 

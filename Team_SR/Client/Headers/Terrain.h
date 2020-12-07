@@ -27,10 +27,7 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-private:
-	class CVIBuffer* m_pVIBufferCom = nullptr;	
-	class CTransform* m_pTransformCom = nullptr;
-	class CTexture*	m_pTextureCom = nullptr;
+
 };
 
 #define __TERRAIN_H__

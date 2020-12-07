@@ -11,9 +11,6 @@ private:
 	virtual ~CTransform() = default;
 
 public:
-	const TRANSFORM_DESC& GetTransformDesc() const;
-
-public:
 	// CComponent을(를) 통해 상속됨
 	virtual HRESULT ReadyComponentPrototype() override;
 	virtual HRESULT ReadyComponent(void * pArg = nullptr) override;
@@ -31,7 +28,7 @@ public:
 	virtual CComponent * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-private:
+public:
 	TRANSFORM_DESC	m_TransformDesc;	
 };
 END

@@ -15,7 +15,7 @@ private:
 
 public:
 	HRESULT SetUpCurrentScene(_int iSceneID, CScene* pCurrentScene);
-	_uint UpdateScene();
+	_uint UpdateScene(float fDeltaTime);
 	_uint LateUpdateScene();
 
 public:

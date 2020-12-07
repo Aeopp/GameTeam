@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CTexture : public CComponent
 {
 private:	
-	explicit CTexture(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePath, _uint iCount = 1);
+	explicit CTexture(LPDIRECT3DDEVICE9 pDevice, TCHAR* pFilePath, _uint iCount = 1);
 	virtual ~CTexture() = default;
 
 public:
@@ -19,7 +19,7 @@ public:
 	HRESULT Set_Texture(_uint iIndex);
 
 public:
-	static CTexture* Create(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePath, _uint iCount = 1);
+	static CTexture* Create(LPDIRECT3DDEVICE9 pDevice,TCHAR* pFilePath, _uint iCount = 1);
 	virtual CComponent * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
@@ -29,7 +29,6 @@ private:
 
 	TCHAR*	m_pFilePath = nullptr;
 	_uint	m_iCount = 0;
-	ETextureType	m_eType;
 };
 END
 

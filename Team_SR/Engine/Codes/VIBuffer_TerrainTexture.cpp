@@ -142,12 +142,12 @@ CVIBuffer_TerrainTexture* CVIBuffer_TerrainTexture::Create(
 CComponent * CVIBuffer_TerrainTexture::Clone(void * pArg)
 {
 	CVIBuffer_TerrainTexture* pClone = new CVIBuffer_TerrainTexture(*this);
+	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyComponent(pArg)))
 	{
 		PRINT_LOG(L"Error", L"Failed To Clone CVIBuffer_TerrainTexture");
 		SafeRelease(pClone);
 	}
-	SafeAddRef(m_pDevice);
 
 	return pClone;
 }

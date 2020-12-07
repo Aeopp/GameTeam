@@ -173,6 +173,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClInclude Include="..\Headers\GameObject.h" />
     <ClInclude Include="..\Headers\GameObjectManager.h" />
     <ClInclude Include="..\Headers\Graphic_Device.h" />
+    <ClInclude Include="..\Headers\KeyMgr.h" />
     <ClInclude Include="..\Headers\Layer.h" />
     <ClInclude Include="..\Headers\Management.h" />
     <ClInclude Include="..\Headers\Renderer.h" />
@@ -183,7 +184,9 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
     <ClInclude Include="..\Headers\VIBuffer_RectTexture.h" />
-    <ClInclude Include="..\Headers\VIBuffer_TerrainTexture.h" />
+    <ClInclude Include="..\Headers\VIBuffer_TerrainTexture.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
@@ -193,6 +196,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\GameObjectManager.cpp" />
     <ClCompile Include="..\Codes\Graphic_Device.cpp" />
+    <ClCompile Include="..\Codes\KeyMgr.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
@@ -203,7 +207,9 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_RectTexture.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_TerrainTexture.cpp" />
+    <ClCompile Include="..\Codes\VIBuffer_TerrainTexture.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

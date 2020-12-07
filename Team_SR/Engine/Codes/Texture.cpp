@@ -2,11 +2,10 @@
 
 USING(Engine)
 
-CTexture::CTexture(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePath, _uint iCount/* = 1*/)
+CTexture::CTexture(LPDIRECT3DDEVICE9 pDevice, TCHAR* pFilePath, _uint iCount/* = 1*/)
 	: CComponent(pDevice)
 	, m_pFilePath(pFilePath)
 	, m_iCount(iCount)
-	, m_eType(eType)
 {
 }
 
@@ -25,21 +24,10 @@ HRESULT CTexture::ReadyComponentPrototype()
 	{
 		//m_pFilePath = L"../Texture/ÅÂÈÄ´Ï%d.png";
 		swprintf_s(szRealPath, m_pFilePath, i);
-
-		switch (m_eType)
-		{
-		case ETextureType::Normal:
-			hr = D3DXCreateTextureFromFile(
-				m_pDevice,
-				szRealPath,
-				(LPDIRECT3DTEXTURE9*)&pTexture);
-			break;
-		case ETextureType::Cube:
-			hr = D3DXCreateCubeTextureFromFile(m_pDevice,
-				szRealPath,
-				(LPDIRECT3DCUBETEXTURE9*)&pTexture);
-			break;		
-		}
+		hr = D3DXCreateTextureFromFile(
+		m_pDevice,
+		szRealPath,
+		(LPDIRECT3DTEXTURE9*)&pTexture);
 
 		if (FAILED(hr))
 		{
@@ -79,11 +67,10 @@ HRESULT CTexture::Set_Texture(_uint iIndex)
 
 CTexture * CTexture::Create(
 	LPDIRECT3DDEVICE9 pDevice, 
-	ETextureType eType, 
 	TCHAR * pFilePath, 
 	_uint iCount)
 {
-	CTexture* pInstance = new CTexture(pDevice, eType, pFilePath, iCount);
+	CTexture* pInstance = new CTexture(pDevice, pFilePath, iCount);
 	if (FAILED(pInstance->ReadyComponentPrototype()))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Create Texture");
@@ -96,15 +83,15 @@ CTexture * CTexture::Create(
 CComponent * CTexture::Clone(void * pArg/* = nullptr*/)
 {
 	CTexture* pInstance = new CTexture(*this);
-	if (FAILED(pInstance->ReadyComponent(pArg)))
-	{
-		PRINT_LOG(L"Warning", L"Failed To Clone Texture");
-		SafeRelease(pInstance);
-	}
 	SafeAddRef(m_pDevice);
 	for (auto& pTexture : m_Textures)
 	{
 		SafeAddRef(pTexture);
+	}
+	if (FAILED(pInstance->ReadyComponent(pArg)))
+	{
+		PRINT_LOG(L"Warning", L"Failed To Clone Texture");
+		SafeRelease(pInstance);
 	}
 	return pInstance;
 }

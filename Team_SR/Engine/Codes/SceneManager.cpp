@@ -23,12 +23,12 @@ HRESULT CSceneManager::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	return S_OK;
 }
 
-_uint CSceneManager::UpdateScene()
+_uint CSceneManager::UpdateScene(float fDeltaTime)
 {
 	if (nullptr == m_pCurrentScene)
 		return 0;
 
-	return m_pCurrentScene->UpdateScene();
+	return m_pCurrentScene->UpdateScene(fDeltaTime);
 }
 
 _uint CSceneManager::LateUpdateScene()

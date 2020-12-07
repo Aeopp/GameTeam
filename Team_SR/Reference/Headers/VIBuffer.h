@@ -37,7 +37,8 @@ protected:
 	_uint		m_iIndexSize = 0;
 	D3DFORMAT	m_IndexFormat;
 
-
+	//void*	m_pVertices = nullptr;
+	//_bool	m_IsClone = false;
 };
 END
 

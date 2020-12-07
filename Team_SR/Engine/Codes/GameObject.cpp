@@ -1,10 +1,12 @@
 #include "..\Headers\GameObject.h"
 #include "Management.h"
 
+
+
 USING(Engine)
 
 CGameObject::CGameObject(LPDIRECT3DDEVICE9 pDevice)
-	: m_pDevice(pDevice)
+	: m_pDevice(pDevice),m_pManagement(CManagement::Get_Instance())
 {
 	SafeAddRef(m_pDevice);
 }
@@ -25,6 +27,16 @@ HRESULT CGameObject::ReadyGameObjectPrototype()
 
 HRESULT CGameObject::ReadyGameObject(void * pArg)
 {
+	AddStaticComponents();
+
+	if (pArg)
+	{
+		_vector vPosition;
+		memcpy(&vPosition, pArg, sizeof(_vector));
+
+		m_pTransformCom->m_TransformDesc.vPosition = vPosition;
+	}
+
 	return S_OK;
 }
 
@@ -62,11 +74,8 @@ HRESULT CGameObject::AddComponent(
 	CComponent** ppComponent, 
 	void * pArg)
 {
-	auto pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	CComponent* pClone = pManagement->CloneComponentPrototype(iSceneIndex, PrototypeTag, pArg);
+	CComponent* pClone = m_pManagement->CloneComponentPrototype(iSceneIndex, PrototypeTag, pArg);
 	if (nullptr == pClone)
 		return E_FAIL;
 
@@ -77,6 +86,28 @@ HRESULT CGameObject::AddComponent(
 		*ppComponent = pClone;
 		SafeAddRef(pClone);
 	}
+
+	return S_OK;
+}
+
+HRESULT CGameObject::AddStaticComponents()
+{	
+	/* For.Com_VIBuffer */
+	if (FAILED(CGameObject::AddComponent(
+		STATIC,
+		L"Component_VIBuffer_RectTexture",
+		L"Com_VIBuffer",
+		(CComponent**)&m_pVIBufferCom)))
+		return E_FAIL;
+
+	/* For.Com_Transform */
+
+	if (FAILED(CGameObject::AddComponent(
+		STATIC,
+		L"Component_Transform",
+		L"Com_Transform",
+		(CComponent**)&m_pTransformCom)))
+		return E_FAIL;
 
 	return S_OK;
 }

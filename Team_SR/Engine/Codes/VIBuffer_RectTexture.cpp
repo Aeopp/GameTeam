@@ -91,12 +91,12 @@ CVIBuffer_RectTexture* CVIBuffer_RectTexture::Create(LPDIRECT3DDEVICE9 pDevice)
 CComponent * CVIBuffer_RectTexture::Clone(void * pArg)
 {
 	CVIBuffer_RectTexture* pClone = new CVIBuffer_RectTexture(*this);
+	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyComponent(pArg)))
 	{
 		PRINT_LOG(L"Error", L"Failed To Clone CVIBuffer_RectTexture");
 		SafeRelease(pClone);
 	}
-	SafeAddRef(m_pDevice);
 
 	return pClone;
 }

@@ -32,11 +32,20 @@ protected:
 		class CComponent** ppComponent, 
 		void* pArg = nullptr);
 
+	HRESULT AddStaticComponents();
+
 protected:
 	LPDIRECT3DDEVICE9	m_pDevice;
 
 	typedef unordered_map<wstring, class CComponent*> COMPONENTS;
 	COMPONENTS	m_Components;
+
+	//공통적으로 필요한 컴포넌트들
+protected:
+	class CVIBuffer* m_pVIBufferCom = nullptr;
+	class CTransform* m_pTransformCom = nullptr;
+	class CTexture*	m_pTextureCom = nullptr;
+	class CManagement* m_pManagement = nullptr;
 };
 END
 

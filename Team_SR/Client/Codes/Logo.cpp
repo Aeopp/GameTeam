@@ -12,19 +12,41 @@ CLogo::CLogo(LPDIRECT3DDEVICE9 pDevice)
 HRESULT CLogo::ReadyScene()
 {
 	CScene::ReadyScene();
-
+	
 	return S_OK;
 }
 
-_uint CLogo::UpdateScene()
+_uint CLogo::UpdateScene(float fDeltaTime)
 {
-	CScene::UpdateScene();
+	CScene::UpdateScene(fDeltaTime);
+	KeyProcess(fDeltaTime);
 	return _uint();
-}
+} 
 
 _uint CLogo::LateUpdateScene()
 {
 	CScene::LateUpdateScene();
+
+	return _uint();
+}
+
+_uint CLogo::KeyProcess(float fDeltaTime)
+{
+	if (m_pKeyMgr->Key_Down(VK_RETURN))
+	{
+		CManagement* pManagement = CManagement::Get_Instance();
+		if (nullptr == pManagement)
+			return 0;
+
+		if (FAILED(pManagement->SetUpCurrentScene((_int)ESceneID::Stage,
+			CStage::Create(m_pDevice))))
+		{
+			PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
+			return 0;
+		}
+
+		return CHANGE_SCNENE;
+	}
 
 	return _uint();
 }

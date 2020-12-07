@@ -19,12 +19,6 @@ enum class ERenderID
 	MaxCount
 };
 
-enum class ETextureType
-{
-	Normal,
-	Cube
-};
-
 END
 
 #define __ENGINE_ENUM_H__

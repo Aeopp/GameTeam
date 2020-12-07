@@ -80,12 +80,12 @@ CPlayer * CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 CGameObject* CPlayer::Clone(void * pArg)
 {
 	CPlayer* pClone = new CPlayer(*this); /* 복사생성자 */
+	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Clone Player");
 		SafeRelease(pClone);
 	}
-	SafeAddRef(m_pDevice);
 
 	return pClone;
 }

@@ -64,6 +64,9 @@
     <Filter Include="01.Utilities\04.Gameobject\02.Camera">
       <UniqueIdentifier>{045c35c0-177c-4c6b-b10c-191aede83cfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utilities\06.KeyMgr">
+      <UniqueIdentifier>{bb59b829-6fc2-4564-b787-470febd9c620}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -119,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Camera.cpp">
       <Filter>01.Utilities\04.Gameobject\02.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\KeyMgr.cpp">
+      <Filter>01.Utilities\06.KeyMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Camera.h">
       <Filter>01.Utilities\04.Gameobject\02.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\KeyMgr.h">
+      <Filter>01.Utilities\06.KeyMgr</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -17,6 +17,7 @@
 
 #define NO_EVENT		0
 #define CHANGE_SCNENE	1
+#define STATIC 0
 
 
 #define NO_COPY(ClassName)						\

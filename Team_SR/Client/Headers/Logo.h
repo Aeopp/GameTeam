@@ -12,8 +12,11 @@ private:
 
 public:
 	virtual HRESULT ReadyScene() override;
-	virtual _uint UpdateScene() override;
+	virtual _uint UpdateScene(float fDeltaTime) override;
 	virtual _uint LateUpdateScene() override;
+
+protected:
+	virtual _uint KeyProcess(float fDeltaTime) override;
 
 public:
 	static CLogo* Create(LPDIRECT3DDEVICE9 pDevice);

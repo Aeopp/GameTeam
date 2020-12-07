@@ -52,7 +52,7 @@ _uint CManagement::UpdateEngine()
 	float fDeltaTime = m_pTimeManager->Update_Time_Manager();
 
 	/* For.Update */
-	m_iUpdateEvent = m_pSceneManager->UpdateScene();
+	m_iUpdateEvent = m_pSceneManager->UpdateScene(fDeltaTime);
 	if (CHANGE_SCNENE == m_iUpdateEvent)
 		return m_iUpdateEvent;
 

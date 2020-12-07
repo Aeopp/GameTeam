@@ -21,9 +21,11 @@ HRESULT CStage::ReadyScene()
 	return S_OK;
 }
 
-_uint CStage::UpdateScene()
+_uint CStage::UpdateScene(float fDeltaTime)
 {
-	CScene::UpdateScene();
+	CScene::UpdateScene(fDeltaTime);
+
+	KeyProcess(fDeltaTime);
 
 	return _uint();
 }
@@ -32,6 +34,13 @@ _uint CStage::LateUpdateScene()
 {
 	CScene::LateUpdateScene();
 
+	
+
+	return _uint();
+}
+
+_uint CStage::KeyProcess(float fDeltaTime)
+{
 	return _uint();
 }
 
@@ -56,6 +65,8 @@ CStage * CStage::Create(LPDIRECT3DDEVICE9 pDevice)
 		PRINT_LOG(L"Error", L"Failed To Create CStage");
 		SafeRelease(pInstance);
 	}
+
+	PRINT_LOG(L"Test", L"스테이지 생성");
 
 	return pInstance;
 }

@@ -4,7 +4,7 @@
 #include "Base.h"
 #include "Transform.h"
 #include "VIBuffer_RectTexture.h"
-#include "VIBuffer_TerrainTexture.h"
+//#include "VIBuffer_TerrainTexture.h"
 #include "Texture.h"
 
 BEGIN(Engine)

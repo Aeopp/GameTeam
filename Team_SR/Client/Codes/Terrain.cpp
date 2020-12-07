@@ -56,7 +56,7 @@ _uint CTerrain::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CTerrain::RenderGameObject()
 {
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->GetTransformDesc().matWorld)))
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
 	if (FAILED(CGameObject::RenderGameObject()))
@@ -118,6 +118,7 @@ CTerrain * CTerrain::Create(LPDIRECT3DDEVICE9 pDevice)
 CGameObject* CTerrain::Clone(void * pArg)
 {
 	CTerrain* pClone = new CTerrain(*this); /* 복사생성자 */
+	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Clone CTerrain");

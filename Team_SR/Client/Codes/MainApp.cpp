@@ -74,46 +74,10 @@ HRESULT CMainApp::ReadyStaticResources()
 
 HRESULT CMainApp::ReadyDefaultSetting()
 {
-	/* 조명 off */
 	if (FAILED(m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE)))
 		return E_FAIL;
 
-	/* 
-	D3DCULL_CW(ClockWise): 시계방향인 정점들을 추려낸다.
-	D3DCULL_CCW(Counter ClockWise): 반시계방향인 정점들을 추려낸다. 디폴트.
-	D3DCULL_NONE: 후면 추려내기 off
-	*/
 	if (FAILED(m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
-		return E_FAIL;
-
-	/*
-	D3DFILL_WIREFRAME: 와이어 프레임으로 폴리곤을 표현
-	D3DFILL_SOLID: 디폴트
-	*/
-	/*if (FAILED(m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME)))
-		return E_FAIL;*/
-
-	D3DXMATRIX matView, matProj;
-
-	/* 뷰행렬 만드는 함수 */
-	D3DXMatrixLookAtLH(
-		&matView, /* 반환 값 */
-		&D3DXVECTOR3(0.f, 5.f, -5.f), /* 월드상 카메라 위치 Eye */
-		&D3DXVECTOR3(0.f, 0.f, 0.f), /* 카메라가 바라보는 지점 At */
-		&D3DXVECTOR3(0.f, 1.f, 0.f) /* Up벡터 */);
-
-	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &matView)))
-		return E_FAIL;
-
-	/* 원근 투영 행렬을 만드는 함수 */
-	D3DXMatrixPerspectiveFovLH(
-		&matProj, /* 반환 값 */
-		D3DXToRadian(90.f), /* 시야각 FovY */
-		float(WINCX) / WINCY, /* 종횡비 Aspect */
-		1.f, /* 카메라와 근편명과의 Z거리 Near */
-		1000.f /* 카메라와 원평면과의 Z거리 Far */);
-
-	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &matProj)))
 		return E_FAIL;
 
 	return S_OK;
@@ -135,5 +99,6 @@ void CMainApp::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);
+	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
 }
