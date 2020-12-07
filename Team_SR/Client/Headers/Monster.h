@@ -11,15 +11,15 @@ protected:
 
 public:
 	// CGameObject을(를) 통해 상속됨
-	virtual HRESULT ReadyGameObjectPrototype() override;
-	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
-	virtual _uint UpdateGameObject(float fDeltaTime) override;
-	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
-	virtual HRESULT RenderGameObject() override;
+	virtual HRESULT ReadyGameObjectPrototype() = 0;
+	virtual HRESULT ReadyGameObject(void * pArg = nullptr) = 0;
+	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
+	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
+	virtual HRESULT RenderGameObject() = 0;
 protected:
-	virtual HRESULT AddComponents();
+	virtual HRESULT AddComponents() = 0;
 public:
-	virtual CGameObject * Clone(void * pArg = nullptr) override;
+	virtual CGameObject * Clone(void * pArg = nullptr) = 0;
 	virtual void Free() override;
 };
 

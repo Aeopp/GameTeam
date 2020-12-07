@@ -37,6 +37,12 @@
     <Filter Include=".ImGui\Lib">
       <UniqueIdentifier>{3c7bf642-636b-411c-9bdf-b4e2e7c287d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster">
+      <UniqueIdentifier>{09326d54-d2ad-4891-b275-cf9adb436651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\01.Glacier">
+      <UniqueIdentifier>{5f36b600-2d25-411f-890d-4740d02b5de0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -105,6 +111,12 @@
     <ClInclude Include="ImGuiHelper.h">
       <Filter>.ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\02.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Glacier.h">
+      <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -151,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="ImGuiHelper.cpp">
       <Filter>.ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp">
+      <Filter>02.GameObject\02.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Glacier.cpp">
+      <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

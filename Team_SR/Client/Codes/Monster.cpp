@@ -8,12 +8,12 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CMonster::ReadyGameObjectPrototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CMonster::ReadyGameObject(void * pArg /*= nullptr*/)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 _uint CMonster::UpdateGameObject(float fDeltaTime)
@@ -28,17 +28,7 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMonster::RenderGameObject()
 {
-	return E_NOTIMPL;
-}
-
-HRESULT CMonster::AddComponents()
-{
-	return E_NOTIMPL;
-}
-
-CGameObject * CMonster::Clone(void * pArg /*= nullptr*/)
-{
-	return nullptr;
+	return S_OK;
 }
 
 void CMonster::Free()
