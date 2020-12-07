@@ -2,10 +2,11 @@
 
 USING(Engine)
 
-CTexture::CTexture(LPDIRECT3DDEVICE9 pDevice, TCHAR* pFilePath, _uint iCount/* = 1*/)
+CTexture::CTexture(LPDIRECT3DDEVICE9 pDevice, ETextureType eType, TCHAR* pFilePath, _uint iCount/* = 1*/)
 	: CComponent(pDevice)
 	, m_pFilePath(pFilePath)
 	, m_iCount(iCount)
+	, m_eType(eType)
 {
 }
 
@@ -66,11 +67,12 @@ HRESULT CTexture::Set_Texture(_uint iIndex)
 }
 
 CTexture * CTexture::Create(
-	LPDIRECT3DDEVICE9 pDevice, 
+	LPDIRECT3DDEVICE9 pDevice,
+	ETextureType eType,
 	TCHAR * pFilePath, 
 	_uint iCount)
 {
-	CTexture* pInstance = new CTexture(pDevice, pFilePath, iCount);
+	CTexture* pInstance = new CTexture(pDevice, eType, pFilePath, iCount);
 	if (FAILED(pInstance->ReadyComponentPrototype()))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Create Texture");

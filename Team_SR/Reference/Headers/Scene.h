@@ -21,8 +21,9 @@ public:
 	virtual void Free() override;
 
 protected:
-	LPDIRECT3DDEVICE9	m_pDevice;
-	CKeyMgr*			m_pKeyMgr;
+	LPDIRECT3DDEVICE9		m_pDevice;
+	CKeyMgr*				m_pKeyMgr;
+	class CManagement*		m_pManagement;
 };
 END
 

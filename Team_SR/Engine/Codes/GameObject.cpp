@@ -58,6 +58,8 @@ HRESULT CGameObject::RenderGameObject()
 void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
+	SafeRelease(m_pTransformCom);
+	SafeRelease(m_pVIBufferCom);
 
 	for (auto& Pair : m_Components)
 	{

@@ -188,6 +188,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClInclude Include="..\Headers\Time_Manager.h" />
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
+    <ClInclude Include="..\Headers\VIBuffer_CubeTexture.h" />
     <ClInclude Include="..\Headers\VIBuffer_RectTexture.h" />
     <ClInclude Include="..\Headers\VIBuffer_TerrainTexture.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -211,6 +212,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClCompile Include="..\Codes\Time_Manager.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
+    <ClCompile Include="..\Codes\VIBuffer_CubeTexture.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_RectTexture.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_TerrainTexture.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
