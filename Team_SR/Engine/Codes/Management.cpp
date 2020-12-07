@@ -114,6 +114,23 @@ CGameObject * CManagement::GetGameObject(_int iSceneIndex, const wstring & Layer
 	return m_pGameObjectManager->GetGameObject(iSceneIndex, LayerTag, iIndex);
 }
 
+CComponent * CManagement::GetComponent(
+	_int iSceneIndex, 
+	const wstring& LayerTag, 
+	const wstring& ComponentTag, 
+	_uint iIndex)
+{
+	if (nullptr == m_pGameObjectManager)
+		return nullptr;
+
+	auto pGameObject = m_pGameObjectManager->GetGameObject(
+		iSceneIndex, LayerTag, iIndex);
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	return pGameObject->GetComponent(ComponentTag);
+}
+
 HRESULT CManagement::AddGameObjectPrototype(
 	_int iSceneIndex, 
 	const wstring & GameObjectTag, 
