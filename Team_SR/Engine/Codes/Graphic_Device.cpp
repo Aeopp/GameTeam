@@ -9,7 +9,7 @@ CGraphic_Device::CGraphic_Device()
 {
 }
 
-HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWinCY, EDisplayMode eDisplayMode)
+HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWinCY, EDisplayMode eDisplayMode )
 {
 	D3DCAPS9 DeviceCaps; 
 	ZeroMemory(&DeviceCaps, sizeof(D3DCAPS9)); 
@@ -58,6 +58,10 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 	{
 		PRINT_LOG(L"Error", L"GraphicDevice Creating Failed");
 		return E_FAIL;
+	}
+	else
+	{
+		this->D3Dpp = d3dpp;
 	}
 
 	return S_OK;

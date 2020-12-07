@@ -3,7 +3,12 @@
 
 #include "stdafx.h"
 #include "Client.h"
+
+#include "imgui.h"
+#include "imgui_impl_dx9.h"
+#include "imgui_impl_win32.h"
 #include "MainApp.h"
+#include "ImGuiHelper.h"
 
 #define MAX_LOADSTRING 100
 
@@ -59,7 +64,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		pMainApp->UpdateMainApp();
 	}
-
+	
+    ImGuiHelper::ShutDown();
 	SafeRelease(pMainApp);
 
     return (int) msg.wParam;
@@ -118,6 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
+	
    g_hWnd = hWnd;
 
    ShowWindow(hWnd, nCmdShow);
@@ -134,12 +141,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_COMMAND  - 응용 프로그램 메뉴를 처리합니다.
 //  WM_PAINT    - 주 창을 그립니다.
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
-//
-//
+
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
+	
     switch (message)
-    {   
+    {
+    case WM_SIZE:
+        ImGuiHelper::ResetDevice(CManagement::Get_Instance()->GetDevice() ,CManagement::Get_Instance()->GetD3Dpp(),wParam, lParam);
+        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

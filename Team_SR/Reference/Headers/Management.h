@@ -28,7 +28,8 @@ public:
 public:
 	/* For.GraphicDev */
 	LPDIRECT3DDEVICE9 GetDevice();
-
+	LPDIRECT3D9 GetSDK();
+	D3DPRESENT_PARAMETERS& GetD3Dpp();
 public:
 	/* For.SceneManager */
 	HRESULT SetUpCurrentScene(_int iSceneID, CScene* pCurrentScene);

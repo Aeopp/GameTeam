@@ -46,9 +46,6 @@ HRESULT CRenderer::Render(HWND hWnd)
 	if (FAILED(RenderUI()))
 		return E_FAIL;
 
-	m_pDevice->EndScene();
-	m_pDevice->Present(nullptr, nullptr, hWnd, nullptr);
-
 	return S_OK;
 }
 

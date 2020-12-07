@@ -98,6 +98,20 @@ LPDIRECT3DDEVICE9 CManagement::GetDevice()
 	return m_pGraphic_Dev->Get_Device();
 }
 
+LPDIRECT3D9 CManagement::GetSDK()
+{
+	if (nullptr == m_pGraphic_Dev)
+		return nullptr;
+
+	return m_pGraphic_Dev->Get_SDK();
+}
+
+D3DPRESENT_PARAMETERS& CManagement::GetD3Dpp()
+{
+	return m_pGraphic_Dev->GetD3Dpp();
+}
+
+
 HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 {
 	if (nullptr == m_pSceneManager)

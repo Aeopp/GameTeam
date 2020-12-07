@@ -13,15 +13,14 @@ private:
 	virtual ~CGraphic_Device() =default;
 public:
 	LPDIRECT3DDEVICE9 Get_Device() { return m_pDevice; }
-	
+	LPDIRECT3D9 Get_SDK() { return m_pSDK; };
+	D3DPRESENT_PARAMETERS& GetD3Dpp() { return D3Dpp; };
 public:
 	HRESULT Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWinCY, EDisplayMode eDisplayMode);
-
-
 public:
 	virtual void Free() override;
-
-private:	
+private:
+	D3DPRESENT_PARAMETERS D3Dpp;
 	LPDIRECT3D9 m_pSDK; // 그래픽카드의 수준을 조사하고 생성하는 객체. 
 	LPDIRECT3DDEVICE9 m_pDevice; // 애가 실질적으로 그래픽 장치를 제어하는 객체. 
 	// 장치를 생성하는 과정. 

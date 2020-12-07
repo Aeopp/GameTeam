@@ -2,6 +2,7 @@
 #include "MainApp.h"
 #include "Logo.h"
 #include "Player.h"
+#include "ImGuiHelper.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -11,16 +12,17 @@ CMainApp::CMainApp()
 
 HRESULT CMainApp::ReadyMainApp()
 {
-	if (FAILED(m_pManagement->ReadyEngine(g_hWnd, WINCX, WINCY, 
+	if (FAILED(m_pManagement->ReadyEngine(g_hWnd, WINCX, WINCY,
 		EDisplayMode::Window, (_uint)ESceneID::MaxCount)))
 	{
 		PRINT_LOG(L"Error", L"Failed To ReadyEngine");
 		return E_FAIL;
 	}
-
 	m_pDevice = m_pManagement->GetDevice();
 	if (nullptr == m_pDevice)
 		return E_FAIL;
+
+	ImGuiHelper::Init(g_hWnd, m_pDevice);
 
 	SafeAddRef(m_pDevice);
 
@@ -42,8 +44,16 @@ HRESULT CMainApp::ReadyMainApp()
 
 int CMainApp::UpdateMainApp()
 {
+	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
+
+	Example::Text();
+
+	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
+	ImGuiHelper::Render();
+	m_pDevice->EndScene();
+	m_pDevice->Present(nullptr, nullptr, g_hWnd, nullptr);
 
 	return 0;
 }
@@ -55,6 +65,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
+	
 	/* For.Component */
 
 #pragma region Component_VIBuffer_RectTexture
@@ -101,4 +112,5 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
+	
 }
