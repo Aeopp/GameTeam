@@ -25,8 +25,8 @@ public:
 	static bool bInitialize;
 	static bool bEditOn;
 private:
-
 };
+
 /*Example Code Here*/
 namespace Example
 {

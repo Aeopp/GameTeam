@@ -73,7 +73,7 @@ void Example::Text()
 {
 	ImGui::Begin(__FUNCTION__, &ImGuiHelper::bEditOn);
 	{
-		// printf 처럼 가변인자 함수여서 printf 과 똑같은 포맷팅으로 텍스트 출력 가능
+		// ImGui의 텍스트 함수들은 C의 Printf처럼 가변인자 함수여서 printf 과 똑같은 포맷팅으로 텍스트 출력 가능
 		
 		ImGui::CollapsingHeader("ImGui::CollapsingHeader");
 		ImGui::Text("BlaBlaBlaBla%d", 7777);
