@@ -19,7 +19,6 @@ public:
 	bool Key_Down(int _key);
 	bool Key_Up(int _key);
 	void Key_Update();
-
 public:
 	virtual void Free() override;
 
