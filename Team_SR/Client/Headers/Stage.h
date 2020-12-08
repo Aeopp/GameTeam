@@ -22,6 +22,7 @@ public:
 	virtual void Free() override;
 
 private:
+
 	class CPlayer* m_pPlayer = nullptr;
 	class CMainCamera* _Camera{ nullptr };
 	class CMapBase* _CurrentMap{ nullptr };

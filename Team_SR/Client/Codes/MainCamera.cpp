@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MainCamera.h"
 #include "MyMath.h"
+#include "ImGuiHelper.h"
 
 CMainCamera::CMainCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CCamera(pDevice)
@@ -33,6 +34,20 @@ _uint CMainCamera::UpdateGameObject(float fDeltaTime)
 {
 	m_pTransformCom->UpdateTransform();
 
+	ImGui::Begin("CameraEdit",&ImGuiHelper::bEditOn);
+	ImGui::Text("Rotation");
+	ImGui::SliderFloat("Pitch", &m_pTransformCom->m_TransformDesc.vRotation.x, -360, 360,  "Deg : %f");
+	ImGui::SliderFloat("Yaw", &m_pTransformCom->m_TransformDesc.vRotation.y, -360, 360,  "Deg : %f");
+	ImGui::SliderFloat("Roll", &m_pTransformCom->m_TransformDesc.vRotation.z, -360, 360, "Deg : %f");
+
+	ImGui::Separator();
+	ImGui::SliderFloat("FOV", &m_CameraDesc.fFovY, 0.f, 180.f,"Deg : %f");
+	ImGui::Separator();
+	ImGui::SliderFloat3("Location",
+		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
+		-100.f,+100.f,"Location %f,%f,%f");
+	ImGui::End();
+	
 	return _uint();
 }
 
@@ -46,6 +61,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 	Look = MATH::RotationVec(Look, MATH::AxisX, _TransformDesc.vRotation.x);
 	Look = MATH::RotationVec(Look, MATH::AxisY, _TransformDesc.vRotation.y);
+	Look = MATH::RotationVec(Look, MATH::AxisZ, _TransformDesc.vRotation.z);
 
 	// 올바른 외적을 위해 Up과 Look 가 같을 경우 살짝 보정
 	if (Look == WorldUp) 

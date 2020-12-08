@@ -104,7 +104,6 @@ void ImGuiHelper::Slider()
 		static constexpr int IntMax = +100;
 		
 		ImGui::SliderInt("IntEdit", &IntValue, IntMin, IntMax);
-		
 	}
 	ImGui::End();
 }
