@@ -29,14 +29,6 @@ HRESULT CGameObject::ReadyGameObject(void * pArg)
 {
 	AddStaticComponents();
 
-	if (pArg)
-	{
-		_vector vPosition;
-		memcpy(&vPosition, pArg, sizeof(_vector));
-
-		m_pTransformCom->m_TransformDesc.vPosition = vPosition;
-	}
-
 	return S_OK;
 }
 
