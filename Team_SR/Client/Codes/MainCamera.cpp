@@ -5,7 +5,7 @@
 CMainCamera::CMainCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CCamera(pDevice)
 {
-	m_CameraDesc.fFovY = D3DX_PI / 4.f;
+	m_CameraDesc.fFovY = 45.f;
 	m_CameraDesc.fFar= 1000.f;
 	m_CameraDesc.fNear=1.f;
 	m_CameraDesc.fAspect= static_cast<float>(WINCX) / WINCY;
@@ -24,6 +24,7 @@ HRESULT CMainCamera::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+	m_pTransformCom->m_TransformDesc.vPosition = { 0,0,-10 };
 
 	return S_OK;
 }
@@ -56,7 +57,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 	D3DXVec3Cross(&Right, &WorldUp, &Look);
 	D3DXVec3Cross(&m_CameraDesc.vUp, &Look, &Right);
 
-	m_CameraDesc.vAt = m_CameraDesc.vEye + (Look * 1.f);
+	m_CameraDesc.vAt = m_CameraDesc.vEye + (Look * 100);
 
 	Super::LateUpdateGameObject(fDeltaTime);
 

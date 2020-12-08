@@ -8,6 +8,9 @@ CRenderer::CRenderer(LPDIRECT3DDEVICE9 pDevice)
 	: m_pDevice(pDevice)
 {
 	SafeAddRef(m_pDevice);
+
+	// 장치를 미리 조사.
+	m_pDevice->GetDeviceCaps(&_Caps9);
 }
 
 /* 매 프레임마다 렌더 리스트에 오브젝트를 추가한다. */
@@ -33,6 +36,23 @@ HRESULT CRenderer::Render(HWND hWnd)
 {
 	m_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 0);
 	m_pDevice->BeginScene();
+
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
+	// 렌더링 파이프 라인 법선 항상 정규화
+	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
+	// 조명 스페큘러 켜기
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
+
+	for (size_t i = 0; i < MaxTexState; ++i)
+	{
+		// 텍스처 필터링 이등방성 (최대 품질)
+		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
+		// 밉맵 필터 선형적		 
+		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	}
+	
 
 	if (FAILED(RenderPriority()))
 		return E_FAIL;

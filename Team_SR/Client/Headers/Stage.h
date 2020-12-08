@@ -17,10 +17,6 @@ public:
 
 protected:
 	virtual _uint KeyProcess(float fDeltaTime) override;
-
-private:
-	HRESULT AddPlayerLayer(const wstring& LayerTag);
-
 public:
 	static CStage* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
@@ -28,6 +24,7 @@ public:
 private:
 	class CPlayer* m_pPlayer = nullptr;
 	class CMainCamera* _Camera{ nullptr };
+	class CMapBase* _CurrentMap{ nullptr };
 };
 
 #define __STAGE_H__

@@ -24,7 +24,9 @@ private:
 public:
 	static CRenderer* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
-
+public:
+	D3DCAPS9 _Caps9;
+	size_t MaxTexState = 8;
 private:
 	LPDIRECT3DDEVICE9	m_pDevice;
 

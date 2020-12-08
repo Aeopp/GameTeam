@@ -167,7 +167,9 @@
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\MainCamera.h" />
+    <ClInclude Include="..\Headers\Map1st.h" />
     <ClInclude Include="..\Headers\MapBase.h" />
+    <ClInclude Include="..\Headers\MapVertex.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\Stage.h" />
@@ -194,7 +196,9 @@
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\MainCamera.cpp" />
+    <ClCompile Include="..\Codes\Map1st.cpp" />
     <ClCompile Include="..\Codes\MapBase.cpp" />
+    <ClCompile Include="..\Codes\MapVertex.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />

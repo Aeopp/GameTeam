@@ -67,20 +67,16 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		L"GameObject_Player",
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
-	{	
-		const wstring Tag = CGameObject::Tag + TYPE_NAME<CMainCamera>();
-
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
-			Tag,
+			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
 			CMainCamera::Create(m_pDevice))))
 			return E_FAIL;
-	}
 	/* For.Component */
 
 #pragma region Component_VIBuffer_RectTexture
@@ -90,7 +86,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		CVIBuffer_RectTexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
-
 
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -112,9 +107,6 @@ HRESULT CMainApp::ReadyStaticResources()
 
 HRESULT CMainApp::ReadyDefaultSetting()
 {
-	if (FAILED(m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE)))
-		return E_FAIL;
-
 	if (FAILED(m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
 		return E_FAIL;
 

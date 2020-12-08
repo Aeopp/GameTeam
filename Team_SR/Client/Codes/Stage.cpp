@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "MainCamera.h"
 #include "Layer.h"
+#include "Map1st.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -13,8 +14,34 @@ HRESULT CStage::ReadyScene()
 {
 	CScene::ReadyScene();
 
-	if (FAILED(AddPlayerLayer(L"Layer_Player")))
-		return E_FAIL;
+	{
+		const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<CMap1st>();
+
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Stage,
+			GameObjTag,
+			CMap1st::Create(m_pDevice))))
+			return E_FAIL;
+
+		const std::wstring LayerTag = CLayer::Tag + TYPE_NAME<CMap1st>();
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Stage,
+			GameObjTag,
+			(_int)ESceneID::Stage,
+			LayerTag,
+			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+			return E_FAIL;
+	}
+
+	{
+		if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CPlayer>(),
+			(_int)ESceneID::Stage,
+			CLayer::Tag + TYPE_NAME<CPlayer>(),
+			(CGameObject**)&m_pPlayer)))
+			return E_FAIL;
+	}
 
 	{
 		const std::wstring Type = TYPE_NAME<CMainCamera>();
@@ -30,6 +57,21 @@ HRESULT CStage::ReadyScene()
 			return E_FAIL;
 		}
 	}
+
+	//{
+	//	const std::wstring Type = TYPE_NAME<CMap1st>();
+	//	const std::wstring GameObjTag = CGameObject::Tag + Type;
+	//	const std::wstring LayerTag = CLayer::Tag + Type;
+
+	//	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Stage,
+	//		GameObjTag,
+	//		(_int)ESceneID::Stage,
+	//		LayerTag,
+	//		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+	//	{
+	//		return E_FAIL;
+	//	}
+	//}
 
 	return S_OK;
 }
@@ -55,19 +97,6 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CStage::AddPlayerLayer(const wstring& LayerTag)
-{
-	// EXAMPLE
-	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		L"GameObject_Player",
-		(_int)ESceneID::Stage,
-		LayerTag,
-		(CGameObject**)&m_pPlayer)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 CStage* CStage::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
@@ -88,5 +117,8 @@ CStage* CStage::Create(LPDIRECT3DDEVICE9 pDevice)
 void CStage::Free()
 {
 	SafeRelease(m_pPlayer);
+	SafeRelease(_Camera);
+	SafeRelease(_CurrentMap);
+
 	CScene::Free();
 }

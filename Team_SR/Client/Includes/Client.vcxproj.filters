@@ -49,6 +49,9 @@
     <Filter Include="02.GameObject\04.Camera">
       <UniqueIdentifier>{b14ae1df-b4c8-4bfa-917f-65377b362a52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Component">
+      <UniqueIdentifier>{3e0b9659-a1f5-4910-a552-cd896d8fea18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -129,6 +132,12 @@
     <ClInclude Include="..\Headers\MapBase.h">
       <Filter>02.GameObject\03.Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MapVertex.h">
+      <Filter>03.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map1st.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -186,6 +195,12 @@
       <Filter>02.GameObject\04.Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MapBase.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapVertex.cpp">
+      <Filter>03.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map1st.cpp">
       <Filter>02.GameObject\03.Map</Filter>
     </ClCompile>
   </ItemGroup>

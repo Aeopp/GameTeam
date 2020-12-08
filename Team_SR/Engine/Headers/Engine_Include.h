@@ -17,6 +17,11 @@ Standard
 #include <type_traits>
 #include <algorithm>
 #include <limits>
+#include <fstream>
+#include <ostream>
+#include <sstream>
+#include <memory>
+
 using namespace std;
 
 /*

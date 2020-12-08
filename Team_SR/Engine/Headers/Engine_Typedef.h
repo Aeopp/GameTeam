@@ -12,6 +12,10 @@ typedef unsigned int _uint;
 typedef D3DXVECTOR3 _vector;
 typedef D3DXMATRIX _matrix;
 
+using vec4 = D3DXVECTOR4; 
+using vec3 = D3DXVECTOR3;
+using vec2 = D3DXVECTOR2;
+using mat  = D3DXMATRIX;
 
 #define __ENGINE_TYPEDEF_H__
 #endif
