@@ -3,10 +3,7 @@
 USING(Engine)
 
 CCamera::CCamera(LPDIRECT3DDEVICE9 pDevice)
-	: CGameObject(pDevice)
-{
-
-}
+	: CGameObject(pDevice) {}
 
 HRESULT CCamera::ReadyGameObjectPrototype()
 {
@@ -16,7 +13,7 @@ HRESULT CCamera::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CCamera::ReadyGameObject(void * pArg/* = nullptr*/)
+HRESULT CCamera::ReadyGameObject(void* pArg/* = nullptr*/)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -27,8 +24,6 @@ HRESULT CCamera::ReadyGameObject(void * pArg/* = nullptr*/)
 _uint CCamera::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
-
-
 
 	return _uint();
 }

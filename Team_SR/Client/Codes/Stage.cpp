@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Stage.h"
 #include "Player.h"
+#include "MainCamera.h"
+#include "Layer.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -9,11 +11,25 @@ CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CStage::ReadyScene()
 {
-	CScene::ReadyScene();	
+	CScene::ReadyScene();
 
 	if (FAILED(AddPlayerLayer(L"Layer_Player")))
 		return E_FAIL;
 
+	{
+		const std::wstring Type = TYPE_NAME<CMainCamera>();
+		const std::wstring GameObjTag = CGameObject::Tag + Type ;
+		const std::wstring LayerTag = CLayer::Tag + Type;
+
+		if (FAILED ( m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+			GameObjTag,
+			(_int)ESceneID::Stage,
+			LayerTag,
+			reinterpret_cast<CGameObject**>(&_Camera), nullptr)))
+		{
+			return E_FAIL;
+		}
+	}
 
 	return S_OK;
 }
@@ -31,8 +47,6 @@ _uint CStage::LateUpdateScene()
 {
 	CScene::LateUpdateScene();
 
-	
-
 	return _uint();
 }
 
@@ -41,10 +55,9 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CStage::AddPlayerLayer(const wstring & LayerTag)
+HRESULT CStage::AddPlayerLayer(const wstring& LayerTag)
 {
 	// EXAMPLE
-
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
 		L"GameObject_Player",
 		(_int)ESceneID::Stage,
@@ -55,7 +68,7 @@ HRESULT CStage::AddPlayerLayer(const wstring & LayerTag)
 	return S_OK;
 }
 
-CStage * CStage::Create(LPDIRECT3DDEVICE9 pDevice)
+CStage* CStage::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;

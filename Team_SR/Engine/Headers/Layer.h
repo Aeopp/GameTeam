@@ -4,7 +4,7 @@
 #include "Base.h"
 
 BEGIN(Engine)
-class CLayer final : public CBase
+class ENGINE_DLL CLayer final : public CBase
 {
 private:
 	CLayer();
@@ -22,6 +22,7 @@ public:
 	static CLayer* Create();
 	virtual void Free() override;
 
+	static const std::wstring Tag;
 private:
 	typedef list<class CGameObject*>	GAMEOBJECTS;
 	GAMEOBJECTS	m_GameObjects;	/* 게임 오브젝트의 클론들을 보관 */

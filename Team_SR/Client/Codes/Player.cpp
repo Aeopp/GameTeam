@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "..\Headers\Player.h"
 
-
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {
-	
+
 }
 
 HRESULT CPlayer::ReadyGameObjectPrototype()
@@ -16,7 +15,7 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CPlayer::ReadyGameObject(void * pArg)
+HRESULT CPlayer::ReadyGameObject(void* pArg)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -29,7 +28,7 @@ HRESULT CPlayer::ReadyGameObject(void * pArg)
 
 _uint CPlayer::UpdateGameObject(float fDeltaTime)
 {
-	CGameObject::UpdateGameObject(fDeltaTime);	
+	CGameObject::UpdateGameObject(fDeltaTime);
 
 	return _uint();
 }
@@ -37,7 +36,6 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
-
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
@@ -61,7 +59,7 @@ HRESULT CPlayer::AddComponent()
 }
 
 
-CPlayer * CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
+CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
@@ -76,7 +74,7 @@ CPlayer * CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CGameObject* CPlayer::Clone(void * pArg)
+CGameObject* CPlayer::Clone(void* pArg)
 {
 	CPlayer* pClone = new CPlayer(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);

@@ -212,5 +212,8 @@
     <ClInclude Include="..\Headers\VIBuffer_CubeTexture.h">
       <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MyMath.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

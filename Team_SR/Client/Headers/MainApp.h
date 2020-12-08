@@ -14,7 +14,6 @@ public:
 	HRESULT ReadyMainApp();
 public:
 	int UpdateMainApp();
-
 private:
 	HRESULT ReadyStaticResources();
 	HRESULT ReadyDefaultSetting();
@@ -24,6 +23,7 @@ public:
 private:
 	CManagement* m_pManagement = nullptr;
 	LPDIRECT3DDEVICE9 m_pDevice = nullptr;
+	const std::wstring GameObjTag = L"GameObject_";
 };
 
 #define __MAINAPP_H__

@@ -7,7 +7,7 @@ class CLoading final : public CBase
 {
 private:
 	explicit CLoading(LPDIRECT3DDEVICE9 pDevice, ESceneID eNextSceneID);
-	virtual ~CLoading() = default;	
+	virtual ~CLoading() = default;
 
 public:
 	_bool IsFinished() const;
@@ -33,7 +33,6 @@ private:
 	CRITICAL_SECTION m_CriticalSec;
 
 	_bool	m_IsFinished = false;
-
 };
 
 #define __LOADING_H__

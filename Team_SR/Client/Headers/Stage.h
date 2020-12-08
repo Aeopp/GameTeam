@@ -27,6 +27,7 @@ public:
 
 private:
 	class CPlayer* m_pPlayer = nullptr;
+	class CMainCamera* _Camera{ nullptr };
 };
 
 #define __STAGE_H__

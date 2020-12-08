@@ -3,6 +3,8 @@
 
 USING(Engine)
 
+const std::wstring CLayer::Tag{L"Layer_"};
+
 CLayer::CLayer()
 {
 }

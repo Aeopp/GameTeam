@@ -5,16 +5,18 @@
 
 USING(Engine)
 
+const std::wstring CGameObject::Tag = L"GameObject_";
+
 CGameObject::CGameObject(LPDIRECT3DDEVICE9 pDevice)
-	: m_pDevice(pDevice),m_pManagement(CManagement::Get_Instance())
+	: m_pDevice(pDevice), m_pManagement(CManagement::Get_Instance())
 {
 	SafeAddRef(m_pDevice);
 }
 
-CComponent* CGameObject::GetComponent(const wstring & ComponentTag)
+CComponent* CGameObject::GetComponent(const wstring& ComponentTag)
 {
 	auto iter_find = m_Components.find(ComponentTag);
-	if(m_Components.end() == iter_find)
+	if (m_Components.end() == iter_find)
 		return nullptr;
 
 	return iter_find->second;
@@ -25,7 +27,7 @@ HRESULT CGameObject::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CGameObject::ReadyGameObject(void * pArg)
+HRESULT CGameObject::ReadyGameObject(void* pArg)
 {
 	AddStaticComponents();
 
@@ -51,7 +53,6 @@ void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
-	SafeRelease(m_pVIBufferCom);
 
 	for (auto& Pair : m_Components)
 	{
@@ -62,13 +63,12 @@ void CGameObject::Free()
 }
 
 HRESULT CGameObject::AddComponent(
-	_int iSceneIndex, 
+	_int iSceneIndex,
 	const wstring& PrototypeTag,
-	const wstring& ComponentTag, 
-	CComponent** ppComponent, 
-	void * pArg)
+	const wstring& ComponentTag,
+	CComponent** ppComponent,
+	void* pArg)
 {
-
 	CComponent* pClone = m_pManagement->CloneComponentPrototype(iSceneIndex, PrototypeTag, pArg);
 	if (nullptr == pClone)
 		return E_FAIL;
@@ -85,17 +85,8 @@ HRESULT CGameObject::AddComponent(
 }
 
 HRESULT CGameObject::AddStaticComponents()
-{	
-	/* For.Com_VIBuffer */
-	if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
-		(CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
-
+{
 	/* For.Com_Transform */
-
 	if (FAILED(CGameObject::AddComponent(
 		STATIC,
 		L"Component_Transform",

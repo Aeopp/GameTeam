@@ -23,6 +23,7 @@
 #include "Client_Extern.h"
 #include "Client_Enum.h"
 #include "Management.h"
+#include "Engine_Include.h"
 
 #ifdef _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 

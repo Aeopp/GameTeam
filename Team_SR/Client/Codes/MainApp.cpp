@@ -3,6 +3,7 @@
 #include "Logo.h"
 #include "Player.h"
 #include "ImGuiHelper.h"
+#include "MainCamera.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -18,6 +19,7 @@ HRESULT CMainApp::ReadyMainApp()
 		PRINT_LOG(L"Error", L"Failed To ReadyEngine");
 		return E_FAIL;
 	}
+
 	m_pDevice = m_pManagement->GetDevice();
 	if (nullptr == m_pDevice)
 		return E_FAIL;
@@ -37,7 +39,7 @@ HRESULT CMainApp::ReadyMainApp()
 	{
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 		return E_FAIL;
-	}	
+	}
 
 	return S_OK;
 }
@@ -49,7 +51,7 @@ int CMainApp::UpdateMainApp()
 
 	ImGuiHelper::Text();
 	ImGuiHelper::Slider();
-	
+
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render();
@@ -70,7 +72,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	
+	{	
+		const wstring Tag = CGameObject::Tag + TYPE_NAME<CMainCamera>();
+
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			Tag,
+			CMainCamera::Create(m_pDevice))))
+			return E_FAIL;
+	}
 	/* For.Component */
 
 #pragma region Component_VIBuffer_RectTexture
@@ -90,6 +100,10 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 #pragma region Component_Texture_Player
+
+#pragma endregion
+
+#pragma region Component_Camera
 
 #pragma endregion
 
@@ -125,5 +139,5 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
-	
+
 }

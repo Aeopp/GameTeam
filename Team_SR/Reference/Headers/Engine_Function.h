@@ -1,6 +1,7 @@
 #pragma once
 
 #ifndef __ENGINE_FUNCTION_H__
+#include <string>
 
 template <typename T>
 void SafeDelete(T& ptr)
@@ -47,6 +48,32 @@ _uint SafeRelease(T& ptr)
 	}
 
 	return iReferenceCount;
+}
+
+static std::wstring ToWstring(const std::string& Lhs)
+{
+	std::wstring Rhs;
+	Rhs.assign(std::begin(Lhs), std::end(Lhs));
+	return Rhs;
+}
+
+static std::string ToString(const std::wstring& Lhs)
+{
+	std::string Rhs;
+	Rhs.assign(std::begin(Lhs), std::end(Lhs));
+	return Rhs;
+}
+
+template<typename _Type>
+static std::wstring TYPE_NAME()
+{
+	std::string _TypeS = typeid(_Type).name();
+	std::wstring _TypeW;
+
+	_TypeW.assign(std::make_move_iterator(std::begin(_TypeS)),
+				std::make_move_iterator(std::end(_TypeS)));
+
+	return _TypeW;
 }
 
 #define __ENGINE_FUNCTION_H__

@@ -43,6 +43,12 @@
     <Filter Include="02.GameObject\02.Monster\01.Glacier">
       <UniqueIdentifier>{5f36b600-2d25-411f-890d-4740d02b5de0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\03.Map">
+      <UniqueIdentifier>{cb533816-8d62-46e5-86d0-228f63a062f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Camera">
+      <UniqueIdentifier>{b14ae1df-b4c8-4bfa-917f-65377b362a52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -117,6 +123,12 @@
     <ClInclude Include="..\Headers\Glacier.h">
       <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MainCamera.h">
+      <Filter>02.GameObject\04.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapBase.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -169,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Glacier.cpp">
       <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MainCamera.cpp">
+      <Filter>02.GameObject\04.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapBase.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,7 @@ HRESULT CGlacier::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CGlacier::ReadyGameObject(void * pArg /*= nullptr*/)
+HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -38,7 +38,6 @@ _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
 
@@ -49,6 +48,8 @@ HRESULT CGlacier::RenderGameObject()
 {
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CGlacier::AddComponents()
@@ -56,7 +57,7 @@ HRESULT CGlacier::AddComponents()
 	return S_OK;
 }
 
-CGlacier * CGlacier::Create(LPDIRECT3DDEVICE9 pDevice)
+CGlacier* CGlacier::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
@@ -71,7 +72,7 @@ CGlacier * CGlacier::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CGameObject * CGlacier::Clone(void * pArg/* = nullptr*/)
+CGameObject* CGlacier::Clone(void* pArg/* = nullptr*/)
 {
 	CGlacier* pClone = new CGlacier(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
