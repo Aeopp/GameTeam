@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine_Include.h"
+#include <random>
 
 #ifndef __MYMATH_H__
 
@@ -14,6 +15,7 @@ public:
 		return std::fabs(x - y) <= std::numeric_limits<T>::epsilon() * std::fabs(x + y)
 			|| std::fabs(x - y) < (std::numeric_limits<T>::min)();
 	}
+
 	
 	static constexpr float PI = 3.14159265359f;
 	static float ToRadian(float Degree){return Degree * ( PI / 180.0f);};
@@ -33,7 +35,62 @@ public:
 		D3DXVec3TransformCoord(&RotationVec, &Lhs, &Rotation);
 		return RotationVec;
 	}
+
+	/* a + t(b-a)*/
+	// a=50 b=100 t=0.3 -> Lerp(x) = 65
+	template<typename _Ty>
+	static _Ty Lerp(_Ty Lhs, _Ty Rhs, float t)
+	{
+		return Lhs + t * (Rhs - Lhs);
+	}
+
+	FORCEINLINE static vec3 Normalize(const vec3& Lhs)
+	{
+		vec3 NormVec;
+		D3DXVec3Normalize(&NormVec ,&Lhs );
+		return NormVec;
+	}
+	FORCEINLINE static float Length(const vec3& Lhs)
+	{
+		return D3DXVec3Length(&Lhs);
+	}
+	FORCEINLINE static float LengthSq(const vec3& Lhs)
+	{
+		return D3DXVec3LengthSq(&Lhs);
+	}
+#pragma region RANDOM
+	static std::random_device Rd;
+	static std::mt19937 gen;
+
+	static void RandomInit()
+	{
+		gen.seed(Rd());
+	};
+
+	static int32_t RandInt(const std::pair<int32_t, int32_t>& Range)
+	{
+		std::uniform_int_distribution<int32_t> Dis(Range.first, Range.second);
+		return Dis(gen);
+	}
+
+	static float RandReal(const std::pair<float, float>& Range)
+	{
+		std::uniform_real_distribution<float> Dis(Range.first, Range.second);
+		return Dis(gen);
+	}
+
+	static vec3 RandVec()
+	{
+		return MATH::Normalize(vec3{
+			RandReal({ -1,1 }),
+			RandReal({ -1,1 }),
+			RandReal({ -1,1 })
+			});
+	}
+#pragma endregion RANDOM
 };
+std::random_device MATH::Rd{};
+std::mt19937 MATH::gen{};
 const _vector MATH::AxisX{ 1,0,0 };
 const _vector MATH::AxisY{ 0,1,0 };
 const _vector MATH::AxisZ{ 0,0,1 };

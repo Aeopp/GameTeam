@@ -4,25 +4,20 @@
 #include "Scene.h"
 
 USING(Engine)
-class CStage : public CScene
+class CStage abstract : public CScene
 {
-private:
+protected:
 	explicit CStage(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CStage() = default;
-
 public:
 	virtual HRESULT ReadyScene() override;
 	virtual _uint UpdateScene(float fDeltaTime) override;
 	virtual _uint LateUpdateScene() override;
-
 protected:
 	virtual _uint KeyProcess(float fDeltaTime) override;
 public:
-	static CStage* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
-
-private:
-
+public:
 	class CPlayer* m_pPlayer = nullptr;
 	class CMainCamera* _Camera{ nullptr };
 	class CMapBase* _CurrentMap{ nullptr };

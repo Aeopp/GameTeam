@@ -1,4 +1,5 @@
 #include "..\Headers\Management.h"
+#include "MyMath.h"
 
 USING(Engine)
 IMPLEMENT_SINGLETON(CManagement)
@@ -24,6 +25,8 @@ HRESULT CManagement::ReadyEngine(
 	EDisplayMode eDisplaymode,
 	_uint iSceneCount)
 {
+	MATH::RandomInit();
+
 	if (FAILED(m_pGraphic_Dev->Ready_Graphic_Device(hWnd, iWinCX, iWinCY, eDisplaymode)))
 		return E_FAIL;
 
@@ -117,6 +120,8 @@ HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	if (nullptr == m_pSceneManager)
 		return E_FAIL;
 
+	CurrentSceneIdx = iSceneID;
+
 	return m_pSceneManager->SetUpCurrentScene(iSceneID, pCurrentScene);
 }
 
@@ -124,6 +129,11 @@ CGameObject * CManagement::GetGameObject(_int iSceneIndex, const wstring & Layer
 {
 	if (nullptr == m_pGameObjectManager)
 		return nullptr;
+
+	if (iSceneIndex == -1)
+	{
+		iSceneIndex = CurrentSceneIdx;
+	}
 
 	return m_pGameObjectManager->GetGameObject(iSceneIndex, LayerTag, iIndex);
 }
@@ -136,6 +146,11 @@ CComponent * CManagement::GetComponent(
 {
 	if (nullptr == m_pGameObjectManager)
 		return nullptr;
+
+	if (iSceneIndex == -1)
+	{
+		iSceneIndex = CurrentSceneIdx;
+	}
 
 	auto pGameObject = m_pGameObjectManager->GetGameObject(
 		iSceneIndex, LayerTag, iIndex);

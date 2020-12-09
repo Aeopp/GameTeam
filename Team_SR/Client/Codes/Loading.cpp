@@ -70,7 +70,7 @@ unsigned CLoading::ThreadMain(void * pParam)
 	case ESceneID::Menu:
 		//hr = pLoading->ReadyStageResources();
 		break;
-	case ESceneID::Stage:
+	case ESceneID::Stage1st:
 		//hr = pLoading->ReadyStageResources();
 		break;
 	}

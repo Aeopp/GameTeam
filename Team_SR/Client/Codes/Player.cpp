@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Player.h"
+#include "ImGuiHelper.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -29,7 +30,17 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 _uint CPlayer::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
+	ImGui::Begin("PlayerEdit");
+	ImGui::Text("Rotation");
+	ImGui::SliderFloat("Pitch", &m_pTransformCom->m_TransformDesc.vRotation.x, -360, 360, "Deg : %f");
+	ImGui::SliderFloat("Yaw", &m_pTransformCom->m_TransformDesc.vRotation.y, -360, 360, "Deg : %f");
+	ImGui::SliderFloat("Roll", &m_pTransformCom->m_TransformDesc.vRotation.z, -360, 360, "Deg : %f");
 
+	ImGui::Separator();
+	ImGui::SliderFloat3("Location",
+		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
+		-100.f, +100.f, "%f");
+	ImGui::End();
 	return _uint();
 }
 

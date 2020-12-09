@@ -1,7 +1,7 @@
 #include "..\Headers\Component.h"
 
 USING(Engine)
-
+const std::wstring CComponent::Tag = L"Component_";
 CComponent::CComponent(LPDIRECT3DDEVICE9 pDevice)
 	: m_pDevice(pDevice)
 {

@@ -33,7 +33,7 @@ public:
 public:
 	/* For.SceneManager */
 	HRESULT SetUpCurrentScene(_int iSceneID, CScene* pCurrentScene);
-
+	CScene* GetCurrentScene() { return m_pSceneManager->GetCurrentScene(); };
 public: /* For.GameObjectManager */
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
 	CComponent* GetComponent(_int iSceneIndex, const wstring& LayerTag, const wstring& ComponentTag, _uint iIndex = 0);
@@ -50,7 +50,7 @@ public: /* For.Renderer */
 public:
 	virtual void Free() override;
 	static void ReleaseEngine();
-
+	int32_t CurrentSceneIdx;
 private:
 	CGraphic_Device*	m_pGraphic_Dev = nullptr;
 	CTime_Manager*		m_pTimeManager = nullptr;

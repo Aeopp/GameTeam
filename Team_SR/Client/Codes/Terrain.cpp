@@ -71,7 +71,7 @@ HRESULT CTerrain::AddComponent()
 {
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::AddComponent(
-		(_int)ESceneID::Stage,
+		(_int)ESceneID::Stage1st,
 		L"Component_Texture_Terrain",
 		L"Com_Texture",
 		(CComponent**)&m_pTextureCom)))
@@ -79,7 +79,7 @@ HRESULT CTerrain::AddComponent()
 
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
-		(_int)ESceneID::Stage,
+		(_int)ESceneID::Stage1st,
 		L"Component_VIBuffer_TerrainTexture",
 		L"Com_VIBuffer",
 		(CComponent**)&m_pVIBufferCom)))

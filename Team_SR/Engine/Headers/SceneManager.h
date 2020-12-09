@@ -17,7 +17,7 @@ public:
 	HRESULT SetUpCurrentScene(_int iSceneID, CScene* pCurrentScene);
 	_uint UpdateScene(float fDeltaTime);
 	_uint LateUpdateScene();
-
+	FORCEINLINE CScene* GetCurrentScene() { return m_pCurrentScene; };
 public:
 	virtual void Free() override;
 

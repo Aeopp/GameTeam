@@ -21,8 +21,24 @@ public:
 	static CMainCamera* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+public:
+	void Shake(const float Duration,
+				const float Force,
+				/*Èçµå´Â ÃàÀÇ °­µµ*/vec3 AxisScale,
+					/*Èçµé¸² Áøµ¿ Æø*/
+					const float Vibration);
 private:
-
+	struct ShakeInfo
+	{
+		float Duration{ 0.f };
+		float Force{ 1.f };
+		float Vibration{ 1.f };
+		vec3 AxisScale{ 1,1,1 };
+		vec3 Goal{ 0,0,0 };
+	};
+private:
+	void Shaking(const float DeltaTime);
+	ShakeInfo _CurrentShake;
 };
 
 #define __MAINCAMERA_H__

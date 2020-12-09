@@ -70,6 +70,15 @@ static std::wstring TYPE_NAME()
 	std::string _TypeS = typeid(_Type).name();
 	std::wstring _TypeW;
 
+	if (_TypeS.find("class C") != std::string::npos)
+	{
+		_TypeS =		_TypeS.substr(_TypeS.find_first_of('C'));
+	}
+	else if (_TypeS.find("class ") != std::string::npos)
+	{
+		_TypeS = _TypeS.substr(_TypeS.find_first_of(' ')+1);
+	}
+
 	_TypeW.assign(std::make_move_iterator(std::begin(_TypeS)),
 				std::make_move_iterator(std::end(_TypeS)));
 

@@ -89,8 +89,8 @@ HRESULT CGameObject::AddStaticComponents()
 	/* For.Com_Transform */
 	if (FAILED(CGameObject::AddComponent(
 		STATIC,
-		L"Component_Transform",
-		L"Com_Transform",
+		CComponent::Tag + TYPE_NAME<CTransform>(),
+		CComponent::Tag + TYPE_NAME<CTransform>(),
 		(CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 

@@ -7,7 +7,7 @@ enum class ESceneID
 	Static,
 	Logo,
 	Menu,
-	Stage,
+	Stage1st,
 	MaxCount
 };
 

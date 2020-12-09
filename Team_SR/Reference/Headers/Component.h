@@ -18,6 +18,7 @@ public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
+	static const std::wstring Tag;
 protected:
 	LPDIRECT3DDEVICE9	m_pDevice;
 };

@@ -86,11 +86,11 @@ HRESULT CMainApp::ReadyStaticResources()
 		CVIBuffer_RectTexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
-
+	
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		L"Component_Transform",
+		CComponent::Tag + TYPE_NAME<CTransform>(),
 		CTransform::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
