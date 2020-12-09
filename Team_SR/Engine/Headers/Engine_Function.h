@@ -72,7 +72,7 @@ static std::wstring TYPE_NAME()
 
 	if (_TypeS.find("class C") != std::string::npos)
 	{
-		_TypeS =		_TypeS.substr(_TypeS.find_first_of('C'));
+		_TypeS =		_TypeS.substr(_TypeS.find_first_of('C')+1);
 	}
 	else if (_TypeS.find("class ") != std::string::npos)
 	{
