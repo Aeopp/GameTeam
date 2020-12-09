@@ -131,5 +131,4 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
-
 }

@@ -2,6 +2,7 @@
 #include "Engine_Include.h"
 #include <random>
 
+
 #ifndef __MYMATH_H__
 
 class MATH
@@ -57,7 +58,11 @@ public:
 	FORCEINLINE static float LengthSq(const vec3& Lhs)
 	{
 		return D3DXVec3LengthSq(&Lhs);
-	}
+	};
+	
+
+
+	
 #pragma region RANDOM
 	static std::random_device Rd;
 	static std::mt19937 gen;
@@ -94,5 +99,54 @@ std::mt19937 MATH::gen{};
 const _vector MATH::AxisX{ 1,0,0 };
 const _vector MATH::AxisY{ 0,1,0 };
 const _vector MATH::AxisZ{ 0,0,1 };
+
+
+class Collision
+{
+public:
+	struct Info
+	{
+	private:
+		Info() {};
+	public:
+		static Info Make(const vec3& Dir, const float CrossValue)
+		{
+			Info _Info;
+			_Info.Dir = Dir;
+			_Info.CrossValue;
+			return _Info;
+		};
+		// Lhs -> Rhs
+		vec3 Dir;
+		// 많이 교차 할 수록 값이 큼
+		float CrossValue;
+	};
+
+	/* boost::optional<typename Collision::Info> IsSphereToSphere(const Sphere& Lhs, const Sphere& Rhs)
+	{
+		const vec3 ToRhs = Rhs.Center - Lhs.Center;
+		const float Distance = MATH::Length(ToRhs);
+		const float RadiusSum = Lhs.Radius + Rhs.Radius;
+		boost::optional<Info> OInfo{};
+
+		if (Distance < RadiusSum)
+		{
+			OInfo = Info::Make(MATH::Normalize(ToRhs), RadiusSum - Distance);
+			return OInfo;
+		}
+		else
+		{
+			return OInfo;
+		}
+	}
+
+	 boost::optional<typename Collision::Info> IsPlaneToSphere(const PlaneInfo& Lhs,
+		const Sphere& Rhs)
+	{
+
+	}*/
+};
+
+
 #define __MYMATH_H__
 #endif

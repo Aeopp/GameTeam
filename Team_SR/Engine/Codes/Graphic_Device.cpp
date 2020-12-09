@@ -69,6 +69,7 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 
 void CGraphic_Device::Free()
 {
+
 	if (SafeRelease(m_pDevice))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Releasing m_pDevice");

@@ -70,6 +70,9 @@
     <Filter Include="01.Utilities\05.Component\01.VIBuffer\03.V">
       <UniqueIdentifier>{d7b602a3-d201-467b-bfbb-f80769fa5b8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utilities\07.Collision">
+      <UniqueIdentifier>{76ea71d8-f440-4b54-b838-cb8fdf642d8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -131,6 +134,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\VIBuffer_CubeTexture.cpp">
       <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CollisionManager.cpp">
+      <Filter>01.Utilities\07.Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CollisionComponent.cpp">
+      <Filter>01.Utilities\07.Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\MyMath.h">
       <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CollisionManager.h">
+      <Filter>01.Utilities\07.Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CollisionComponent.h">
+      <Filter>01.Utilities\07.Collision</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

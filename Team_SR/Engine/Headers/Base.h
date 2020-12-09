@@ -14,7 +14,6 @@ public:
 
 protected:
 	virtual void Free() = 0;
-
 protected:
 	_uint m_iReferenceCount = 0;
 };

@@ -64,6 +64,7 @@ HRESULT CMapBase::RenderGameObject()
 void CMapBase::LoadMap(std::wstring FilePath)
 {
 	_InfosPtr = std::make_shared<std::vector<Info>>();
+	_PolygonPlane = std::make_shared<std::vector<PlaneInfo>>();
 
 	const std::wstring _MtlFileName = FilePath + L"MAP.mtl";
 	std::wfstream _MtlStream(_MtlFileName);
@@ -268,6 +269,26 @@ void CMapBase::LoadMap(std::wstring FilePath)
 
 			memcpy(_VtxBuffer, _Vtxs.data(), sizeof(Vertex) * _Vtxs.size());
 			_Info.TriangleCount = _Vtxs.size() / 3;
+			// 충돌 정보 생성....
+			
+			for (auto iter = _Vtxs.begin(); iter != _Vtxs.end();)
+			{
+				PlaneInfo _PlaneInfo;
+				const vec3 a = iter->Location;
+				const vec3 b = (++iter)->Location; 
+				const vec3 c = (++iter)->Location;
+
+				D3DXPlaneFromPoints(&_PlaneInfo._Plane,
+					&a,&b, &c);
+
+				_PlaneInfo.Center = (a + b + c)/3.f;
+
+				++iter;
+
+				_PolygonPlane->push_back(std::move(_PlaneInfo));
+			}
+			// 이제 같은 평면을 추려내자 .......
+			//
 			_Vtxs.clear();
 			_Info.VtxBuf->Unlock();
 

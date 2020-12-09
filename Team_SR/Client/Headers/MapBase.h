@@ -67,6 +67,7 @@ public:
 	};
 protected:
 	std::shared_ptr<std::vector<Info>> _InfosPtr;
+	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
 	/*  Ex) ..\\Resources\\Map\\0\\ */
 };
 

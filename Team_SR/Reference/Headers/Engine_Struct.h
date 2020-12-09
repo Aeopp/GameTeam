@@ -4,6 +4,18 @@
 
 BEGIN(Engine)
 
+struct PlaneInfo
+{
+	D3DXPLANE _Plane;
+	vec3 Center;
+};
+
+struct Sphere
+{
+	float Radius;
+	vec3 Center;
+};
+
 typedef struct tagVertexColor
 {
 	D3DXVECTOR3 vPosition;

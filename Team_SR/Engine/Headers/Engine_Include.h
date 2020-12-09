@@ -21,7 +21,6 @@ Standard
 #include <ostream>
 #include <sstream>
 #include <memory>
-
 using namespace std;
 
 /*
