@@ -10,7 +10,7 @@ CGlacier::CGlacier(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CGlacier::ReadyGameObjectPrototype()
 {
-	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
+	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
 	return S_OK;
@@ -18,25 +18,27 @@ HRESULT CGlacier::ReadyGameObjectPrototype()
 
 HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 {
-	if (FAILED(CGameObject::ReadyGameObject(pArg)))
+	if (FAILED(CMonster::ReadyGameObject(pArg)))
 		return E_FAIL;
 
 	if (FAILED(AddComponents()))
 		return E_FAIL;
+
+	m_pTransformCom->m_TransformDesc.vPosition = _vector{ -20.f,1.f,30.f };
 
 	return S_OK;
 }
 
 _uint CGlacier::UpdateGameObject(float fDeltaTime)
 {
-	CGameObject::UpdateGameObject(fDeltaTime);
+	CMonster::UpdateGameObject(fDeltaTime);
 
 	return _uint();
 }
 
 _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 {
-	CGameObject::LateUpdateGameObject(fDeltaTime);
+	CMonster::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
@@ -46,7 +48,18 @@ _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CGlacier::RenderGameObject()
 {
-	if (FAILED(CGameObject::RenderGameObject()))
+
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+		return E_FAIL;
+	if (FAILED(CMonster::RenderGameObject()))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Set_Texture(0)))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
 
 	return S_OK;
@@ -54,6 +67,12 @@ HRESULT CGlacier::RenderGameObject()
 
 HRESULT CGlacier::AddComponents()
 {
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>(),
+		CComponent::Tag + TYPE_NAME<CTexture>(),
+		(CComponent**)&m_pTextureCom)))
+		return E_FAIL;
 	return S_OK;
 }
 

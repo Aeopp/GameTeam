@@ -4,6 +4,7 @@
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
+#include "Glacier.h"
 
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -31,6 +32,23 @@ HRESULT CStage1st::ReadyScene()
 			(_int)ESceneID::Stage1st,
 			LayerTag,
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+			return E_FAIL;
+
+		const std::wstring GaicierTag = CGameObject::Tag + TYPE_NAME<CGlacier>();
+
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Stage1st,
+			GaicierTag,
+			CGlacier::Create(m_pDevice))))
+			return E_FAIL;
+
+		const std::wstring GaicierLayerTag = CLayer::Tag + TYPE_NAME<CGlacier>();
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Stage1st,
+			GaicierTag,
+			(_int)ESceneID::Stage1st,
+			GaicierLayerTag)))
 			return E_FAIL;
 	}
 

@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
+#include "Glacier.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -82,7 +83,7 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		L"Component_VIBuffer_RectTexture",
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		CVIBuffer_RectTexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
@@ -100,6 +101,14 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma region Component_Camera
 
+#pragma endregion
+
+#pragma region Component_Texture_Monster
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>(),
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png",16))))
+		return E_FAIL;
 #pragma endregion
 
 	return S_OK;

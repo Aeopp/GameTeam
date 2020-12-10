@@ -20,7 +20,7 @@ protected:
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
-private:
+protected:
 	class CTexture* m_pTextureCom = nullptr;
 	class CVIBuffer* m_pVIBufferCom = nullptr;
 };

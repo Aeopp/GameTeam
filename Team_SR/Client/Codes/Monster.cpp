@@ -19,6 +19,9 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	if (FAILED(CMonster::AddComponents()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -44,13 +47,13 @@ HRESULT CMonster::RenderGameObject()
 	return S_OK;
 }
 
-long CMonster::AddComponents()
+HRESULT CMonster::AddComponents()
 {
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
