@@ -167,6 +167,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h" />
     <ClInclude Include="..\Headers\Camera.h" />
+    <ClInclude Include="..\Headers\Collision.h" />
     <ClInclude Include="..\Headers\CollisionComponent.h" />
     <ClInclude Include="..\Headers\CollisionManager.h" />
     <ClInclude Include="..\Headers\Component.h" />
@@ -200,6 +201,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
+    <ClCompile Include="..\Codes\Collision.cpp" />
     <ClCompile Include="..\Codes\CollisionComponent.cpp" />
     <ClCompile Include="..\Codes\CollisionManager.cpp" />
     <ClCompile Include="..\Codes\Component.cpp" />
@@ -210,6 +212,7 @@ copy /Y "$(SolutionDir)\Engine\Headers\" "$(SolutionDir)\Reference\Headers\"</Co
     <ClCompile Include="..\Codes\KeyMgr.cpp" />
     <ClCompile Include="..\Codes\Layer.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
+    <ClCompile Include="..\Codes\MyMath.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
     <ClCompile Include="..\Codes\Scene.cpp" />
     <ClCompile Include="..\Codes\SceneManager.cpp" />

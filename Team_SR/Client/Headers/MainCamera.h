@@ -36,6 +36,9 @@ private:
 		vec3 AxisScale{ 1,1,1 };
 		vec3 Goal{ 0,0,0 };
 	};
+	vec3 Offset{ 0,0,-20};
+	vec3 OffsetRotation{ 0,0,0 };
+	bool bThirdPerson = true;
 private:
 	void Shaking(const float DeltaTime);
 	ShakeInfo _CurrentShake;

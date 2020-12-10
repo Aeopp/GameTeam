@@ -11,8 +11,10 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 {
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
-	
-	LoadMap(L"..\\Resources\\Map\\1\\");
+
+	mat MapWorld  = MATH::WorldMatrix({ 4,4,4 }, { 0,0,0}, { 0,0,0});
+
+	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
 
 	return S_OK;
 }

@@ -4,10 +4,26 @@
 
 BEGIN(Engine)
 
+struct Ray
+{
+	vec3 Start;
+	vec3 Direction;
+};
+
+struct Segment
+{
+	Ray _Ray;
+
+	// 시작점에서 끝점 까지의 거리
+	// ex) startpoint + dir * t = endpoint
+	float t;
+};
+
 struct PlaneInfo
 {
 	D3DXPLANE _Plane;
 	vec3 Center;
+	std::array<vec3, 3ul> Face;
 };
 
 struct Sphere

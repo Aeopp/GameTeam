@@ -12,7 +12,6 @@ BEGIN(Engine)
 class CComponentManager : public CBase
 {
 	DECLARE_SINGLETON(CComponentManager)
-
 private:
 	CComponentManager();
 	virtual ~CComponentManager() = default;

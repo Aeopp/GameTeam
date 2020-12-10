@@ -56,7 +56,15 @@ _uint CStage1st::KeyProcess(float fDeltaTime)
 {
 	Super::KeyProcess(fDeltaTime);
 
+	
+
 	return _uint();
+}
+
+void CStage1st::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
+{
+	Super::PlayerKeyProcess(_CurrentPlayer, fDeltaTime);
+
 }
 
 CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)

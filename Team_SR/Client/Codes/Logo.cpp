@@ -2,6 +2,7 @@
 #include "..\Headers\Logo.h"
 #include "Stage1st.h"
 #include "Loading.h"
+#include "ImGuiHelper.h"
 
 
 CLogo::CLogo(LPDIRECT3DDEVICE9 pDevice)
@@ -46,6 +47,11 @@ _uint CLogo::KeyProcess(float fDeltaTime)
 		}
 
 		return CHANGE_SCNENE;
+	}
+
+	if (m_pKeyMgr->Key_Down('P'))
+	{
+		ImGuiHelper::bEditOn = !ImGuiHelper::bEditOn;
 	}
 
 	return _uint();

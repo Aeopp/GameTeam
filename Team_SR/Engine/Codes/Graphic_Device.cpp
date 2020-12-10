@@ -64,6 +64,12 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 		this->D3Dpp = d3dpp;
 	}
 
+	D3DXCreateLine(m_pDevice, &_Line);
+	/*_Line->SetAntialias(true);
+	_Line->SetGLLines(false);
+	_Line->SetWidth(10.f);
+	_Line->SetPattern(1);*/
+	
 	return S_OK;
 }
 

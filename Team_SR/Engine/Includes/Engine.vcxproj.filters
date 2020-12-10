@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="00.Systems">
-      <UniqueIdentifier>{1e534572-97c1-499b-ba12-a1cf3525855b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utilities">
       <UniqueIdentifier>{8223797f-66f7-4dfa-9a28-b8b660a5d290}</UniqueIdentifier>
     </Filter>
@@ -12,9 +9,6 @@
     </Filter>
     <Filter Include="01.Utilities\00.Superclass">
       <UniqueIdentifier>{24913390-6d23-4d58-b8a2-f6fa889611c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.Systems\00.Graphic_Device">
-      <UniqueIdentifier>{1e587b62-eadb-4183-bcf4-f3b7b1749059}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utilities\01.Management">
       <UniqueIdentifier>{9ba7a306-4906-43b5-8e95-114951b9bf3a}</UniqueIdentifier>
@@ -33,9 +27,6 @@
     </Filter>
     <Filter Include="01.Utilities\05.Component\00.Manager">
       <UniqueIdentifier>{ec1ab109-1077-4a49-a6a3-601e211df950}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.Systems\01.Time_Manager">
-      <UniqueIdentifier>{7f871dbb-803b-4214-9656-f58514dddad5}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utilities\04.Gameobject">
       <UniqueIdentifier>{22247b7e-d39c-486f-8fd4-89801136d485}</UniqueIdentifier>
@@ -73,13 +64,22 @@
     <Filter Include="01.Utilities\07.Collision">
       <UniqueIdentifier>{76ea71d8-f440-4b54-b838-cb8fdf642d8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utilities\08.MATH">
+      <UniqueIdentifier>{a52e0429-f286-4542-80a0-eb8272069670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Systems">
+      <UniqueIdentifier>{1cde094c-9de8-4021-a767-60adb5beb78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Systems\00.Graphic_Device">
+      <UniqueIdentifier>{42339073-d6ce-4b0f-9249-685afdb9e34e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Systems\01.Time_Manager">
+      <UniqueIdentifier>{87f82618-dbd2-493c-849b-02528b7a5296}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
       <Filter>01.Utilities\00.Superclass</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Graphic_Device.cpp">
-      <Filter>00.Systems\00.Graphic_Device</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Management.cpp">
       <Filter>01.Utilities\01.Management</Filter>
@@ -95,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Component.cpp">
       <Filter>01.Utilities\05.Component</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Time_Manager.cpp">
-      <Filter>00.Systems\01.Time_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ComponentManager.cpp">
       <Filter>01.Utilities\05.Component\00.Manager</Filter>
@@ -141,6 +138,18 @@
     <ClCompile Include="..\Codes\CollisionComponent.cpp">
       <Filter>01.Utilities\07.Collision</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\MyMath.cpp">
+      <Filter>01.Utilities\08.MATH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Graphic_Device.cpp">
+      <Filter>00.Systems\00.Graphic_Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Time_Manager.cpp">
+      <Filter>00.Systems\01.Time_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Collision.cpp">
+      <Filter>01.Utilities\07.Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -164,9 +173,6 @@
     <ClInclude Include="..\Headers\Engine_Typedef.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Graphic_Device.h">
-      <Filter>00.Systems\00.Graphic_Device</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Management.h">
       <Filter>01.Utilities\01.Management</Filter>
     </ClInclude>
@@ -181,9 +187,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Component.h">
       <Filter>01.Utilities\05.Component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Time_Manager.h">
-      <Filter>00.Systems\01.Time_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ComponentManager.h">
       <Filter>01.Utilities\05.Component\00.Manager</Filter>
@@ -221,14 +224,23 @@
     <ClInclude Include="..\Headers\VIBuffer_CubeTexture.h">
       <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\MyMath.h">
-      <Filter>99.Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\CollisionManager.h">
       <Filter>01.Utilities\07.Collision</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\CollisionComponent.h">
       <Filter>01.Utilities\07.Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyMath.h">
+      <Filter>01.Utilities\08.MATH</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Collision.h">
+      <Filter>01.Utilities\07.Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Graphic_Device.h">
+      <Filter>00.Systems\00.Graphic_Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Time_Manager.h">
+      <Filter>00.Systems\01.Time_Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

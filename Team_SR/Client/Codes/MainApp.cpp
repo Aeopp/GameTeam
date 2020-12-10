@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
+#include "CollisionComponent.h"
+
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -51,7 +53,8 @@ int CMainApp::UpdateMainApp()
 
 	ImGuiHelper::Text();
 	ImGuiHelper::Slider();
-
+	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
+	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render();
@@ -79,6 +82,8 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 	/* For.Component */
 
+		
+
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -94,6 +99,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTransform::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CCollisionComponent::Create(m_pDevice))))
+	{
+		return E_FAIL;
+	}
+
 #pragma region Component_Texture_Player
 
 #pragma endregion

@@ -1,4 +1,5 @@
 #include "..\Headers\SceneManager.h"
+#include "CollisionManager.h"
 
 USING(Engine)
 IMPLEMENT_SINGLETON(CSceneManager)
@@ -18,6 +19,8 @@ HRESULT CSceneManager::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 		m_pCurrentScene = pCurrentScene;
 
 		m_iSceneID = iSceneID;
+
+		CCollisionManager::Get_Instance()->ClearComponent();
 	}
 
 	return S_OK;

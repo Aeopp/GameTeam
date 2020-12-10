@@ -15,6 +15,7 @@ public:
 	virtual _uint LateUpdateScene() override;
 protected:
 	virtual _uint KeyProcess(float fDeltaTime) override;
+	virtual void PlayerKeyProcess(class CPlayer*const _CurrentPlayer,float fDeltaTime);
 public:
 	virtual void Free() override;
 public:
