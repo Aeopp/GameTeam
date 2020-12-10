@@ -6,6 +6,7 @@
 #include "MainCamera.h"
 #include "CollisionComponent.h"
 
+#include "BatGrey.h"	// ���� ����
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -75,6 +76,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// ���� ������Ʈ
+#pragma region GameObject_BatGrey
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+		CBatGrey::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
@@ -114,6 +124,15 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma region Component_Camera
 
+#pragma endregion
+
+	// ���� �ö��� �ؽ�ó
+#pragma region Component_Texture_BatGreyFly
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyFly",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
+		return E_FAIL;
 #pragma endregion
 
 	return S_OK;

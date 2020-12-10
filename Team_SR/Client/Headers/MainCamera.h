@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef __MAINCAMERA_H__
 
 #include "Camera.h"
@@ -11,7 +11,7 @@ private:
 	virtual ~CMainCamera() = default;
 public:
 	using Super = CCamera;
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -24,8 +24,8 @@ public:
 public:
 	void Shake(const float Duration,
 				const float Force,
-				/*Èçµå´Â ÃàÀÇ °­µµ*/vec3 AxisScale,
-					/*Èçµé¸² Áøµ¿ Æø*/
+				/*í”ë“œëŠ” ì¶•ì˜ ê°•ë„*/vec3 AxisScale,
+					/*í”ë“¤ë¦¼ ì§„ë™ í­*/
 					const float Vibration);
 private:
 	struct ShakeInfo

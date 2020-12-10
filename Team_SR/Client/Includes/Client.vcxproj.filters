@@ -141,6 +141,9 @@
     <ClInclude Include="..\Headers\Client_Enum.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BatGrey.h">
+      <Filter>02.GameObject\02.Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Stage1st.cpp">
       <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatGrey.cpp">
+      <Filter>02.GameObject\02.Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
