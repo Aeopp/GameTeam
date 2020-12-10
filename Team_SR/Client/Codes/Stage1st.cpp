@@ -4,6 +4,7 @@
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
+#include "BatGrey.h"
 
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -30,6 +31,15 @@ HRESULT CStage1st::ReadyScene()
 			GameObjTag,
 			(_int)ESceneID::Stage1st,
 			LayerTag,
+			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+			return E_FAIL;
+
+		// ¹ÚÁã
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CBatGrey>(),
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
 	}

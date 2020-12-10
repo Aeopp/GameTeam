@@ -52,6 +52,9 @@
     <Filter Include="03.Component">
       <UniqueIdentifier>{3e0b9659-a1f5-4910-a552-cd896d8fea18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\02.BatGrey">
+      <UniqueIdentifier>{1faec25d-76e4-4f51-94cc-e7065de3d7e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -141,6 +144,9 @@
     <ClInclude Include="..\Headers\Stage1st.h">
       <Filter>01.Scene\01.Stage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BatGrey.h">
+      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -208,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Stage1st.cpp">
       <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatGrey.cpp">
+      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
