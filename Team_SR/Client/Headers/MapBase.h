@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef __MapBase_H__
 
 #include "GameObject.h"
@@ -11,7 +11,7 @@ protected:
 	virtual ~CMapBase () = default;
 public:
 	using Super = CGameObject;
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -40,7 +40,7 @@ public:
 		D3DXCOLOR Ambient{ 0,0,0,1 };
 		D3DXCOLOR Diffuse = { 0,0,0,1 };
 		D3DXCOLOR Specular{ 0,0,0,1 };
-		// ±¤ÅÃ 
+		// ê´‘íƒ 
 		float Shine{ 0 };
 		std::wstring TextureName{};
 		std::wstring MtrlName{};
@@ -69,6 +69,7 @@ protected:
 	std::shared_ptr<std::vector<Info>> _InfosPtr;
 	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
 	mat MapWorld;
+	DWORD MapAmbient = 0x00202020;
 	/*  Ex) ..\\Resources\\Map\\0\\ */
 };
 

@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #ifndef __MAP1ST_H__
 
 #include "MapBase.h"
@@ -11,7 +11,7 @@ private:
 	virtual ~CMap1st() = default;
 public:
 	using Super = CMapBase;
-	// CGameObject¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CGameObjectÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -22,6 +22,8 @@ public:
 	static CMap1st* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+private:
+	std::vector<D3DLIGHT9> MapLight;
 };
 
 #define __MAP1ST_H__

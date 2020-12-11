@@ -39,6 +39,8 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
 
+	m_pManagement->SetAmbient(MapAmbient);
+
 	return _uint();
 }
 
@@ -47,18 +49,18 @@ HRESULT CMapBase::RenderGameObject()
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
-	//for (auto& RefInfo : *_InfosPtr)
-	//{
-	//	m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
-	//	m_pDevice->SetTexture(0, RefInfo.Texture);
-	//	auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
+	for (auto& RefInfo : *_InfosPtr)
+	{
+		m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
+		m_pDevice->SetTexture(0, RefInfo.Texture);
+		auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
 	//	m_pDevice->SetMaterial(&_Mtrl);
-	//	m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
-	//		sizeof(Vertex));
-	//	m_pDevice->SetFVF(Vertex::FVF);
-	//	m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
-	//		RefInfo.TriangleCount);
-	//}
+		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
+			sizeof(Vertex));
+		m_pDevice->SetFVF(Vertex::FVF);
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
+			RefInfo.TriangleCount);
+	}
 
 	return S_OK;
 }
@@ -127,6 +129,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 					CurLine >> _Info.Diffuse.r;
 					CurLine >> _Info.Diffuse.g;
 					CurLine >> _Info.Diffuse.b;
+					_Info.Diffuse.a = 1.f;
 				}
 				else if (ToKen == L"map_Kd")
 				{
@@ -137,6 +140,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 					CurLine >> _Info.Specular.r;
 					CurLine >> _Info.Specular.g;
 					CurLine >> _Info.Specular.b;
+					_Info.Specular.a = 1.f;
 				}
 				else if (ToKen == L"Ns")
 				{

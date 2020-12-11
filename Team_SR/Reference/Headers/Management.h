@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef __MANAGEMENT_H__
 
 #include "Base.h"
@@ -47,9 +47,12 @@ public: /* For.ComponentManager */
 
 public: /* For.Renderer */
 	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject);
+	void RegistLight(const D3DLIGHT9& Light);
+	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
 public:
 	CCollisionManager* GetCollisionManager() { return _CollisionManager; }
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
+
 public:
 	virtual void Free() override;
 	static void ReleaseEngine();

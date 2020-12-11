@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifndef __ENGINE_STRUCT_H__
 
@@ -14,15 +14,24 @@ struct Segment
 {
 	Ray _Ray;
 
-	// ½ÃÀÛÁ¡¿¡¼­ ³¡Á¡ ±îÁöÀÇ °Å¸®
+	// ì‹œì‘ì ì—ì„œ ëì  ê¹Œì§€ì˜ ê±°ë¦¬
 	// ex) startpoint + dir * t = endpoint
 	float t;
 };
 
 struct PlaneInfo
 {
+	static PlaneInfo Make(std::array<vec3, 3ul> Face)
+	{
+		PlaneInfo _Info;
+		_Info.Face = std::move(Face);
+		_Info.Center = (Face[0] + Face[1] + Face[2]) / Face.size();
+		D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
+		return _Info;
+	};
 	D3DXPLANE _Plane;
 	vec3 Center;
+	// ë¡œì»¬ì´ ì•„ë‹Œ ì›”ë“œ ê¸°ì¤€
 	std::array<vec3, 3ul> Face;
 };
 
@@ -43,7 +52,7 @@ const _uint FVF_VTX_COLOR = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX0;
 typedef struct tagVertexTexture
 {
 	D3DXVECTOR3 vPosition;
-	D3DXVECTOR2 vUV; /* ÅØ½ºÃ³ ÇÑÀåÀÇ UVÁÂÇ¥ ¹üÀ§´Â 0,0 ~ 1,1 */
+	D3DXVECTOR2 vUV; /* í…ìŠ¤ì²˜ í•œì¥ì˜ UVì¢Œí‘œ ë²”ìœ„ëŠ” 0,0 ~ 1,1 */
 }VTX_TEXTURE;
 
 const _uint FVF_VTX_TEXTURE = D3DFVF_XYZ | D3DFVF_TEX1 /*| D3DFVF_TEXCOORDSIZE2(0)*/;

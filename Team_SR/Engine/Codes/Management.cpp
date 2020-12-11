@@ -1,4 +1,4 @@
-#include "..\Headers\Management.h"
+﻿#include "..\Headers\Management.h"
 
 
 USING(Engine)
@@ -221,6 +221,11 @@ HRESULT CManagement::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameO
 		return E_FAIL;
 
 	return m_pRenderer->AddGameObjectInRenderer(eID, pGameObject);
+}
+
+void CManagement::RegistLight(const D3DLIGHT9& Light)
+{
+	m_pRenderer->RegistLight(Light);
 }
 
 void CManagement::Free()

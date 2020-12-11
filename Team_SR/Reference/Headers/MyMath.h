@@ -16,6 +16,14 @@ public:
 			|| std::fabs(x - y) < (std::numeric_limits<T>::min)();
 	}
 
+	static vec3 GetNormalFromFace(const vec3& p0,
+		const vec3& p1, const vec3& p2)
+	{
+		const vec3 u = p1 - p0;
+		const vec3 v = p2 - p0;
+		return MATH::Normalize(MATH::Cross(u, v));
+	}
+
 	static vec3 Mul(const vec3& Lhs, const mat& Rhs)
 	{
 		vec3 Return;

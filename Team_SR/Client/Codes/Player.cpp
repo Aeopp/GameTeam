@@ -2,6 +2,8 @@
 #include "..\Headers\Player.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
+#include "DXWrapper.h"
+
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -25,6 +27,10 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
+
+	_SpotLight = Light::GetSpot(m_pTransformCom->GetLocation(),
+		m_pTransformCom->GetLook(), Color::WHITE);
+
 
 	return S_OK;
 }
@@ -75,6 +81,11 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
+
+	_SpotLight = Light::GetSpot(m_pTransformCom->GetLocation(),
+		m_pTransformCom->GetLook(), Color::WHITE);
+
+	m_pManagement->RegistLight(_SpotLight);
 
 	return _uint();
 }

@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Map1st.h"
+#include "DXWrapper.h"
 
 
 CMap1st::CMap1st(LPDIRECT3DDEVICE9 pDevice)
@@ -15,6 +16,8 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 	mat MapWorld  = MATH::WorldMatrix({ 4,4,4 }, { 0,0,0}, { 0,0,0});
 
 	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
+	MapAmbient = 0x00202020;
+	/*D3DLIGHT9 Dir = Light::GetDirectional()*/
 
 	return S_OK;
 }

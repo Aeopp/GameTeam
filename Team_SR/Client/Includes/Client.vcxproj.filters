@@ -52,6 +52,9 @@
     <Filter Include="99.Headers">
       <UniqueIdentifier>{0e85ea08-869f-4f5f-bdd6-f5c283757f5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.DXWrapper">
+      <UniqueIdentifier>{2d344ecb-b889-436a-9a2d-ab5042462c33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -144,6 +147,7 @@
     <ClInclude Include="..\Headers\BatGrey.h">
       <Filter>02.GameObject\02.Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DXWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -215,6 +219,7 @@
     <ClCompile Include="..\Codes\BatGrey.cpp">
       <Filter>02.GameObject\02.Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -163,6 +163,7 @@
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
+    <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Glacier.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
@@ -194,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
