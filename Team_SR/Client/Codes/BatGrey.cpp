@@ -24,10 +24,20 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
+	// 기본 텍스처 프레임
 	m_wstrTextureKey = L"Component_Texture_BatGreyFly";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 8;
+
+	// 기본 대기 행동
+	m_fpAction = &CBatGrey::Action_Idle;
+	// 플레이어를 인식하지 못함
+	m_fpMonsterAI[(int)PERCEPTION::No][(int)PHASE::HP_Full] = &CBatGrey::AI_NoPerception;
+	m_fpMonsterAI[(int)PERCEPTION::No][(int)PHASE::HP_Half] = &CBatGrey::AI_NoPerception;
+
+	m_fpMonsterAI[(int)PERCEPTION::Yes][(int)PHASE::HP_Full] = &CBatGrey::AI_ActiveOffense;		// 적극적으로 공격
+	m_fpMonsterAI[(int)PERCEPTION::Yes][(int)PHASE::HP_Half] = &CBatGrey::AI_PassiveOffense;	// 소극적으로 공격
 
 	return S_OK;
 }
@@ -35,6 +45,8 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
+
+	Update_AI(fDeltaTime);	// 업데이트 AI
 
 	return _uint();
 }
@@ -92,6 +104,18 @@ HRESULT CBatGrey::AddComponents()
 	return S_OK;
 }
 
+void CBatGrey::Update_AI(float fDeltaTime)
+{
+	if (m_fpAction) {
+		// 인지
+
+		// 체력
+
+		// AI 처리
+		m_fpMonsterAI[(int)PERCEPTION::End][(int)PHASE::End];
+	}
+}
+
 void CBatGrey::Frame_Move(float fDeltaTime)
 {
 	m_fFrameCnt += m_fEndFrame * fDeltaTime;
@@ -113,6 +137,23 @@ HRESULT CBatGrey::Set_Texture()
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
+}
+
+void CBatGrey::AI_NoPerception()
+{
+}
+
+void CBatGrey::AI_ActiveOffense()
+{
+}
+
+void CBatGrey::AI_PassiveOffense()
+{
+}
+
+BOOL CBatGrey::Action_Idle(float fDeltaTime)
+{
+	return FALSE;
 }
 
 CBatGrey* CBatGrey::Create(LPDIRECT3DDEVICE9 pDevice)
