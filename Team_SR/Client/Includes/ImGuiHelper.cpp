@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ImGuiHelper.h"
 
 bool ImGuiHelper::bInitialize = false;
@@ -74,6 +74,23 @@ void ImGuiHelper::ResetDevice(IDirect3DDevice9* Device, D3DPRESENT_PARAMETERS& D
 };
 
 
+void ImGuiHelper::DebugInfo(HWND _Hwnd)
+{
+	if (ImGuiHelper::bEditOn)
+	{
+		ImGui::Begin("Debug Info", &ImGuiHelper::bEditOn);
+		{
+			POINT _MousePt;
+			GetCursorPos(&_MousePt);
+			ScreenToClient(_Hwnd, &_MousePt);
+			ImGui::Text("Mouse Pos");
+			ImGui::Separator();
+			ImGui::Text("X : %d Y : %d", _MousePt.x, _MousePt.y);
+		}
+		ImGui::End();
+	}
+}
+
 void ImGuiHelper::Text()
 {
 	if (ImGuiHelper::bEditOn)
@@ -81,14 +98,14 @@ void ImGuiHelper::Text()
 		ImGui::Begin("How To Use ImGui", &ImGuiHelper::bEditOn);
 		{
 			ImGui::CollapsingHeader("How To Use ImGui");
-			// ImGuiÀÇ ÅØ½ºÆ® ÇÔ¼öµéÀº CÀÇ PrintfÃ³·³ °¡º¯ÀÎÀÚ ÇÔ¼ö¿©¼­ printf °ú ¶È°°Àº Æ÷¸ËÆÃÀ¸·Î ÅØ½ºÆ® Ãâ·Â °¡´É
+			// ImGuiì˜ í…ìŠ¤íŠ¸ í•¨ìˆ˜ë“¤ì€ Cì˜ Printfì²˜ëŸ¼ ê°€ë³€ì¸ì í•¨ìˆ˜ì—¬ì„œ printf ê³¼ ë˜‘ê°™ì€ í¬ë§·íŒ…ìœ¼ë¡œ í…ìŠ¤íŠ¸ ì¶œë ¥ ê°€ëŠ¥
 			ImGui::Text("Example Code => %s ", "ImGuiHelper.h");
 			ImGui::Spacing();
 			ImGui::BulletText("BulletText%s", "TextTextTextText");
-			// ±¸ºĞÀÚÀÌÈÄ¿¡ ÇÑÁÙ °Ç³Ê¶Ü
+			// êµ¬ë¶„ìì´í›„ì— í•œì¤„ ê±´ë„ˆëœ€
 			ImGui::Separator();
 			ImGui::Text("TextTextText");
-			// ÅØ½ºÆ®¸¦ ¶Ç ÀÔ·ÂÇÏ´õ¶óµµ °°Àº¶óÀÎ¿¡ ÀÔ·Â
+			// í…ìŠ¤íŠ¸ë¥¼ ë˜ ì…ë ¥í•˜ë”ë¼ë„ ê°™ì€ë¼ì¸ì— ì…ë ¥
 			ImGui::SameLine();
 			ImGui::Text("TextTextText2222222");
 		}
@@ -105,7 +122,7 @@ void ImGuiHelper::Slider()
 			static float FloatValue = 0;
 			static constexpr float FloatMin = -100.f;
 			static constexpr float FloatMax = +100.f;
-			// º¯¼ö Æ÷ÀÎÅÍ¿Í Min Max ÀÔ·Â
+			// ë³€ìˆ˜ í¬ì¸í„°ì™€ Min Max ì…ë ¥
 			ImGui::SliderFloat("FloatEdit", &FloatValue, FloatMin, FloatMax);
 
 			static int IntValue = 0;
@@ -129,7 +146,7 @@ void ImGuiHelper::Button()
 		ImGui::Begin("Button", &ImGuiHelper::bEditOn);
 		{
 			static int ClickCount = 0;
-			// ¹öÆ° Ã¼Å©´Â ¹İÈ¯°ªÀ¸·Î Ã¼Å©ÇÏ¸ç true ÀÏ¶§ ½ÇÇàµÉ ÇÔ¼ö¸¦ Á¤ÇØÁÖ¸é µÊ.
+			// ë²„íŠ¼ ì²´í¬ëŠ” ë°˜í™˜ê°’ìœ¼ë¡œ ì²´í¬í•˜ë©° true ì¼ë•Œ ì‹¤í–‰ë  í•¨ìˆ˜ë¥¼ ì •í•´ì£¼ë©´ ë¨.
 			if (ImGui::Button("Click Here"))
 			{
 				// Function Call

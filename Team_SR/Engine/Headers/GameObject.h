@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef __GAMEOBJECT_H__
 
 #include "Base.h"
@@ -15,12 +15,12 @@ public:
 	class CComponent* GetComponent(const wstring & ComponentTag);
 
 public:
-	virtual HRESULT ReadyGameObjectPrototype() = 0;	/* ÇÁ·ÎÅäÅ¸ÀÔ ÃÊ±âÈ­ */
-	virtual HRESULT ReadyGameObject(void* pArg = nullptr) = 0; /* Å¬·Ğ ÃÊ±âÈ­ */
+	virtual HRESULT ReadyGameObjectPrototype() = 0;	/* í”„ë¡œí† íƒ€ì… ì´ˆê¸°í™” */
+	virtual HRESULT ReadyGameObject(void* pArg = nullptr) = 0; /* í´ë¡  ì´ˆê¸°í™” */
 	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
 	virtual HRESULT RenderGameObject() = 0;
-	//            ¾÷µ¥ÀÌÆ®¿Í ´ÊÀº ¾÷µ¥ÀÌÆ® ÀÌÈÄ Ãæµ¹ µÇ¸é È£Ãâ. 
+	//            ì—…ë°ì´íŠ¸ì™€ ëŠ¦ì€ ì—…ë°ì´íŠ¸ ì´í›„ ì¶©ëŒ ë˜ë©´ í˜¸ì¶œ. 
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo);
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 	static const std::wstring Tag;
@@ -44,7 +44,7 @@ protected:
 	typedef unordered_map<wstring, class CComponent*> COMPONENTS;
 	COMPONENTS	m_Components;
 
-	//°øÅëÀûÀ¸·Î ÇÊ¿äÇÑ ÄÄÆ÷³ÍÆ®µé
+	//ê³µí†µì ìœ¼ë¡œ í•„ìš”í•œ ì»´í¬ë„ŒíŠ¸ë“¤
 protected:
 	class CTransform* m_pTransformCom = nullptr;
 	class CManagement* m_pManagement = nullptr;

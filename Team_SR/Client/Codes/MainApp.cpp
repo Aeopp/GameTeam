@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "MainApp.h"
 #include "Logo.h"
 #include "Player.h"
@@ -52,8 +52,7 @@ int CMainApp::UpdateMainApp()
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
 
-	ImGuiHelper::Text();
-	ImGuiHelper::Slider();
+	ImGuiHelper::DebugInfo(g_hWnd);
 	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
 	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
 	ImGuiHelper::UpdateEnd();

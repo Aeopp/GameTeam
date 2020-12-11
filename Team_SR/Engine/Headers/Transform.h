@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #ifndef __TRANSFORM_H__
 
 #include "Component.h"
@@ -11,7 +11,7 @@ private:
 	virtual ~CTransform() = default;
 
 public:
-	// CComponent¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CComponentÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyComponentPrototype() override;
 	virtual HRESULT ReadyComponent(void * pArg = nullptr) override;
 
@@ -23,6 +23,10 @@ public:
 	void AddRotationY(float fDelaTime);
 	void AddRotationZ(float fDelaTime);
 
+	FORCEINLINE vec3 GetLocation() { return m_TransformDesc.vPosition; }
+	vec3 GetLook()const&;
+	vec3 GetRight()const&;
+	vec3 GetUp()const&;
 public:
 	static CTransform* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CComponent * Clone(void * pArg = nullptr) override;

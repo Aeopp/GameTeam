@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\Headers\Player.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
@@ -163,7 +163,7 @@ CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject* CPlayer::Clone(void* pArg)
 {
-	CPlayer* pClone = new CPlayer(*this); /* º¹»ç»ý¼ºÀÚ */
+	CPlayer* pClone = new CPlayer(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

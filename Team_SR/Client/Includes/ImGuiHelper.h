@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -12,8 +12,8 @@ public:
 	static void Init(HWND _Hwnd , IDirect3DDevice9* _Device)noexcept;
 	static void UpdateStart();
 	static void UpdateEnd();
-	/*Render ÇÔ¼ö´Â ¹İµå½Ã ¹é¹öÆÛ,±íÀÌ,½ºÅÙ½Ç¹öÆÛ Clear ÀÌÈÄ¿¡
-	 Device::BeginScene ¿Í Device::EndScene »çÀÌ¿¡ È£Ãâ ÇØ¾ßÇÔ !!*/
+	/*Render í•¨ìˆ˜ëŠ” ë°˜ë“œì‹œ ë°±ë²„í¼,ê¹Šì´,ìŠ¤í…ì‹¤ë²„í¼ Clear ì´í›„ì—
+	 Device::BeginScene ì™€ Device::EndScene ì‚¬ì´ì— í˜¸ì¶œ í•´ì•¼í•¨ !!*/
 	static void Render();
 	static void ShutDown()noexcept;
     static void ResetDevice
@@ -29,6 +29,7 @@ public:
 	
 public:
 	/*Example Code Here*/
+	static void DebugInfo(HWND _Hwnd);
 	static void Text();
 	static void Slider();
 	static void CheckBox();

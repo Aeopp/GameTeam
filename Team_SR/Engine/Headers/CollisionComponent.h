@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef __COLLISIONCOMPONENT_H__
 
 #include "Component.h"
@@ -13,7 +13,7 @@ protected:
 public:
 	using Super = CComponent;
 	virtual HRESULT ReadyComponentPrototype() override;     
-	virtual HRESULT ReadyComponent(void* pArg = nullptr/*InitInfo ±¸Á¶Ã¼·Î ¹İµå½Ã ¼¼ÆÃ*/) override;
+	virtual HRESULT ReadyComponent(void* pArg = nullptr/*InitInfo êµ¬ì¡°ì²´ë¡œ ë°˜ë“œì‹œ ì„¸íŒ…*/) override;
 public:
 	static CCollisionComponent* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CComponent* Clone(void* pArg = nullptr) override;
@@ -22,7 +22,7 @@ public:
 	void DebugDraw();
 	void Regist();
 	void CancelRegist();
-	// ¿ùµå °ø°£À¸·Î º¯È¯ÇÑ ÀÌÈÄÀÇ Á¤º¸¸¦ ³Ñ°ÜÁÖ±â.
+	// ì›”ë“œ ê³µê°„ìœ¼ë¡œ ë³€í™˜í•œ ì´í›„ì˜ ì •ë³´ë¥¼ ë„˜ê²¨ì£¼ê¸°.
 	static void SetUpMapPlaneInfo(const std::vector<PlaneInfo> & _MapPlaneInfo)noexcept { CCollisionComponent::_MapPlaneInfo = _MapPlaneInfo; };
 	void MapHitProcess(const Collision::Info& CollisionInfo, const PlaneInfo& _CurPlane);
 public:
@@ -47,7 +47,7 @@ public:
 		bool bMapBlock = true;
 		ETag Tag = ETag::None;
 		class CGameObject* Owner = nullptr;
-		// ¹öÅØ½º Á¤º¸·Î °è»êÇÏ°í ½Í´Ù¸é ¼¼ÆÃ
+		// ë²„í…ìŠ¤ ì •ë³´ë¡œ ê³„ì‚°í•˜ê³  ì‹¶ë‹¤ë©´ ì„¸íŒ…
 		vec3* Vertex=nullptr;
 		DWORD FVF;
 		DWORD VertexNumber;
@@ -61,9 +61,13 @@ public:
 	Sphere _Sphere;
 	ETag _Tag = ETag::None;
 	int32_t MyID= 0;
+
+	// REMOVE 
+	Ray _Ray;
+	//
 private:
 	static std::vector<CCollisionComponent*> _Comps;
-	static std::vector<PlaneInfo> _MapPlaneInfo; // ¿ùµå·Î º¯È¯ÇÑ ÀÌÈÄÀÇ Á¤º¸
+	static std::vector<PlaneInfo> _MapPlaneInfo; // ì›”ë“œë¡œ ë³€í™˜í•œ ì´í›„ì˜ ì •ë³´
 	static int32_t CurrentID;
 	static std::map<ETag, std::set<ETag>> _TagBind;
 	static float MapCollisionCheckDistanceMin;

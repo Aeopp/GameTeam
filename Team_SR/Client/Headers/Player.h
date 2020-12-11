@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef __PLAYER_H__
 
 #include "GameObject.h"
@@ -11,7 +11,7 @@ private:
 	virtual ~CPlayer() = default;
 public:
 	using Super = CGameObject;
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;

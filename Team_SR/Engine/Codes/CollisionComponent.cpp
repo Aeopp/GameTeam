@@ -1,4 +1,4 @@
-#include "CollisionComponent.h"
+ï»¿#include "CollisionComponent.h"
 #include "Management.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -17,20 +17,6 @@ std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollis
 	{ MonsterAttack, { Player } },
 	{ PlayerAttack, {  Monster} }
 };
-
-// TOOD:: REMOVE 
-//mat DebugMat;
-//std::array<vec3,4ul> VertexList
-//{
-//	vec3{-1,1, 0},
-//	vec3{1,-1,0},
-//	vec3{-1,-1,0},
-//	vec3{-1,1, 0}
-//};
-//vec3 location{ 0,0,0 };
-//vec3 scale{ 5,5,5 };
-//vec3 rotation{ 0,0,0};
-// 
 
 CCollisionComponent::CCollisionComponent(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -119,6 +105,12 @@ void CCollisionComponent::Free()
 	CancelRegist();
 	Super::Free();
 }
+// TODO ::REMOVE PLZ
+vec3 scale{ 5,5,5 };
+vec3 rotation{ 0,0,0 };
+vec3 location{ 33,22,11 };
+vec3 debuglocation{ 0,0,0 };
+//
 
 void CCollisionComponent::Update(class CTransform* const _Transform)&
 {
@@ -127,34 +119,7 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 
 	const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
-	// TODO:: REMOVE
-	//{
-	//	DebugMat=MATH::WorldMatrix(scale, rotation, location);
-
-	//	vec3 Center{ 0,0,0 };
-	//	size_t i = 0;
-	//	PlaneInfo _Info;
-	//	for (const auto& Vertex : VertexList)
-	//	{
-	//		vec3 world_location;
-	//		world_location = MATH::Mul(Vertex, DebugMat);
-	//		Center += world_location;
-	//		_Info.Face[i++] = world_location;
-	//		if (i == 3)break;
-	//	}
-	//	_Info.Center = Center / 3.f;
-	//	D3DXPlaneFromPoints(&_Info._Plane,
-	//		&_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
-
-	//	_MapPlaneInfo.clear();
-	//	_MapPlaneInfo.push_back(_Info);
-	//	D3DXPlaneFromPoints(&_Info._Plane,
-	//		&_Info.Face[2], &_Info.Face[1], &_Info.Face[0]);
-	//	_MapPlaneInfo.push_back(_Info);
-	//}
-	//
-
-	// ¸Ê Æò¸é°úÀÇ Ãæµ¹
+	// ë§µ í‰ë©´ê³¼ì˜ ì¶©ëŒ
 	if (bMapCollision)
 	{
 		for (const auto& _CurPlane : _CurMap)
@@ -167,24 +132,25 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 			const bool bCurCollision = CheckInfo.first;
 			const auto& CollisionInfo=CheckInfo.second;
 
-			// Æò¸é°ú´Â ÀÏ´Ü Ãæµ¹ÇÑ´Ù.
+			// í‰ë©´ê³¼ëŠ” ì¼ë‹¨ ì¶©ëŒí•œë‹¤.
 			if (bCurCollision)
 			{
-
 				const vec3 ProjPt= MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
-				// Æò¸é°ú ÀÏ´Ü Ãæµ¹ÇÑ »óÅÂ¿¡¼­
-				// ±¸Ã¼ÀÇ Áß½ÉÀ» Æò¸é¿¡ Åõ¿µÇÑ ÀÌÈÄÀÇ Á¡ÀÌ Æò¸éÀÇ ³»ºÎ¿¡ ÀÖ´Ù¸é Ãæµ¹.
+				// í‰ë©´ê³¼ ì¼ë‹¨ ì¶©ëŒí•œ ìƒíƒœì—ì„œ
+				// êµ¬ì²´ì˜ ì¤‘ì‹¬ì„ í‰ë©´ì— íˆ¬ì˜í•œ ì´í›„ì˜ ì ì´ í‰ë©´ì˜ ë‚´ë¶€ì— ìˆë‹¤ë©´ ì¶©ëŒ.
 				if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
 				{
 					MapHitProcess(CollisionInfo, _CurPlane);
 					continue;
 				}
-				// »ï°¢ÇüÀ¸·Î ¼±ºĞ 3°³¸¦ Á¤ÀÇÇÑ ÀÌÈÄ¿¡ ¼±ºĞ°ú ±¸ÀÇ Ãæµ¹À» °Ë»çÇÑ´Ù.
+				// ì‚¼ê°í˜•ìœ¼ë¡œ ì„ ë¶„ 3ê°œë¥¼ ì •ì˜í•œ ì´í›„ì— ì„ ë¶„ê³¼ êµ¬ì˜ ì¶©ëŒì„ ê²€ì‚¬í•œë‹¤.
 				std::array<Segment,3ul> _Segments= MATH::MakeSegmentFromFace(_CurPlane.Face);
 				for (const auto& _CurSegment : _Segments)
 				{
-					float t = 0;
-					auto IsCollision=Collision::IsSegmentToSphere(_CurSegment, _Sphere, t);
+					float t0 = 0;
+					float t1 = 0;
+
+					auto IsCollision=Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0,t1);
 					if (IsCollision.first)
 					{
 						MapHitProcess(CollisionInfo,_CurPlane);
@@ -195,7 +161,7 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		}
 	}
 
-	// Ãæµ¹Ã¼ ³¢¸®ÀÇ Ãæµ¹
+	// ì¶©ëŒì²´ ë¼ë¦¬ì˜ ì¶©ëŒ
 	for (auto& _Comp : _Comps)
 	{
 #pragma region MatchingCheck
@@ -205,20 +171,59 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
 		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
 #pragma endregion
-		// °Å¸®°Ë»ç
+		// ê±°ë¦¬ê²€ì‚¬
 		if (MATH::Length(ToRhs) > MapCollisionCheckDistanceMin)continue;
 		// ....
 		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
-		// Ãæµ¹ÇÔ.
+		// ì¶©ëŒí•¨.
 		if (IsCollision.first)
 		{
-			PRINT_LOG(L"Ãæµ¹Ã¼³¢¸® Ãæµ¹!!", L"Ãæµ¹Ã¼³¢¸® Ãæµ¹!!");
+			PRINT_LOG(L"ì¶©ëŒì²´ë¼ë¦¬ ì¶©ëŒ!!", L"ì¶©ëŒì²´ë¼ë¦¬ ì¶©ëŒ!!");
 		}
 		else
 		{
 			
 		}
 	}
+	// TODO ::REMOVE
+	rotation.x += 0.01f;
+	rotation.y+= 0.02f;
+	rotation.z += 0.03f;
+
+	/*static float adder = 0.1f;
+	scale.x += adder;
+	scale.y += adder ;
+	scale.z += adder ;
+	if (std::fabs(adder) >= 3.f)
+	{
+		adder = -adder;
+	}*/
+
+	PlaneInfo _Info;
+	mat world =MATH::WorldMatrix(scale, rotation, location);
+	_Info.Face = { MATH::Mul(vec3{-1,-1,0},world),
+					MATH::Mul(vec3{1,1,0},world),MATH::Mul(vec3{1,-1,0},world) };
+	_Info.Center = (MATH::Mul(vec3{ -1,-1,0 }, world)+
+		MATH::Mul(vec3{ 1,1,0 }, world)+ MATH::Mul(vec3{ 1,-1,0 }, world)) / 3;
+	D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
+
+	for (auto& _Comp : _Comps)
+	{
+		{
+			float t = 0;
+			vec3 IntersectPoint{};
+	
+			if (Collision::IsTriangleToRay(_Info, _Ray, t, IntersectPoint))
+			{
+				debuglocation = IntersectPoint;
+			}
+			else
+			{
+				//debuglocation = { 9999,9999,9999 };
+			}
+		}
+	}
+	//
 }
 
 
@@ -227,32 +232,39 @@ void CCollisionComponent::DebugDraw()
 	if (!CManagement::Get_Instance()->bDebug)return;
 
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	/*m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	// TODO :: REMOVE
-	//auto& _DXLine = CManagement::Get_Instance()->GetDXLine();
-	//mat view, proj;
-	//m_pDevice->GetTransform(D3DTS_VIEW, &view);
-	//DebugMat *= view;
-	//m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-	//DebugMat *= proj;
-	//_DXLine.DrawTransform(VertexList.data(), 4, &DebugMat, D3DCOLOR_XRGB(255, 255, 255));
-	//
+	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);*/
 
 	D3DMATERIAL9 _Mtrl;
 
-	_Mtrl.Ambient = D3DCOLORVALUE{ 1,1,1,1 };
-	_Mtrl.Diffuse = D3DCOLORVALUE{ 1,1,1,1 };
+	_Mtrl.Ambient = D3DCOLORVALUE{  1,1,1,1 };
+	_Mtrl.Diffuse = D3DCOLORVALUE{  1,1,1,1 };
 	_Mtrl.Emissive = D3DCOLORVALUE{ 1,1,1,1 };
 	_Mtrl.Power = 10.f;
 	_Mtrl.Specular = D3DCOLORVALUE{ 1,1,1,1 };
 	m_pDevice->SetMaterial(&_Mtrl);
 	_SphereMesh->DrawSubset(0);
+	
+	// TODO :: REMOVEPLZ
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	mat debugworld = MATH::WorldMatrix({ 0.2,0.2,0.2 }, { 0,0,0 }, debuglocation);
+	
+	m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
+	m_pDevice->SetMaterial(&_Mtrl);
+	_SphereMesh->DrawSubset(0);
 
+	std::array<vec3, 4ul> vertexlist{ vec3{-1,-1,0},vec3{1,1,0},vec3{1,-1,0},vec3{-1,-1,0} };
+	mat world = MATH::WorldMatrix(scale, rotation, location);
+	mat view,proj; 
+	m_pDevice->GetTransform(D3DTS_VIEW, &view);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
+	world = world * view* proj;
+	CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
+	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
+	// 
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 };
 
 void CCollisionComponent::Regist()

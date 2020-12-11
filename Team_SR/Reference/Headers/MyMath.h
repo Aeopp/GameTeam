@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifndef __MYMATH_H__
 #include "Engine_Include.h"
@@ -6,7 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL MATH
 {
 public:
-	// Float ( == ) ¿¬»ê½Ã »ç¿ë.
+	// Float ( == ) ì—°ì‚°ì‹œ ì‚¬ìš©.
 	template<class T>
 	typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
 	static	almost_equal(T x, T y)
@@ -29,6 +29,28 @@ public:
 		return Return;
 	}
 
+	static Ray GetRayScreenProjection(const vec3& ScreenPos,
+		IDirect3DDevice9* const _Device,const float Width,const float Height)
+	{
+		vec3 Dir{ (ScreenPos.x),(ScreenPos.y),1.f };
+		const float xfactor = (2.f / Width);
+		const float yfactor = -(2.f / Height);
+		Dir.x = Dir.x * xfactor - 1.f;
+		Dir.y = Dir.y * yfactor + 1.f;
+		mat Proj, InvView;
+		_Device->GetTransform(D3DTS_PROJECTION, &Proj);
+		Dir.x /= Proj(0, 0);
+		Dir.y /= Proj(1, 1);
+		Dir = MATH::Normalize(Dir);
+		_Device->GetTransform(D3DTS_VIEW, &InvView);
+		InvView = MATH::InvMatrix(InvView);
+		Dir = MATH::MulNormal(Dir, InvView);
+		vec3 Origin = { InvView(3,0),InvView(3,1),InvView(3,2) };
+		Ray _Ray;
+		_Ray.Start = std::move(Origin);
+		_Ray.Direction = std::move(Dir);
+		return _Ray;
+	}
 	static bool InnerPointFromFace(const vec3 & Point,const std::array<vec3, 3ul>& Face)
 	{
 		std::array <vec3, 3ul> ToVertexs;
@@ -46,7 +68,7 @@ public:
 		return almost_equal(Radian, MATH::PI * 2.f);
 	}
 
-	// ÀÓÀÇÀÇ À§Ä¡ º¤ÅÍ¸¦ Æò¸é¿¡ Åõ¿µ½ÃÅ² À§Ä¡ º¤ÅÍ¸¦ ¹İÈ¯.
+	// ì„ì˜ì˜ ìœ„ì¹˜ ë²¡í„°ë¥¼ í‰ë©´ì— íˆ¬ì˜ì‹œí‚¨ ìœ„ì¹˜ ë²¡í„°ë¥¼ ë°˜í™˜.
 	static vec3 ProjectionPointFromFace(D3DXPLANE _Plane, const vec3& Point)
 	{
 		vec3 Normal = { _Plane.a,_Plane.b,_Plane.c };
@@ -55,7 +77,7 @@ public:
 		Normal = -Normal;
 		return Point  + ( Normal* distance);
 	}
-								// »ï°¢ÇüÀ» µÑ·¯Ä¡´Â ¼±ºĞ 3°³.
+								// ì‚¼ê°í˜•ì„ ë‘˜ëŸ¬ì¹˜ëŠ” ì„ ë¶„ 3ê°œ.
 	static std::array<Segment, 3ul> MakeSegmentFromFace(const std::array<vec3, 3ul>& Face)
 	{
 		std::array<Segment, 3ul> Segments;
@@ -91,8 +113,8 @@ public:
 	static const  _vector AxisY;
 	static const _vector AxisZ;
 
-	// ÇØ´ç ÃàÀ¸·Î Lhs À» È¸Àü½ÃÄÑ¼­ ¸®ÅÏ
-	// D3DXVec3TransformCoord ÇÔ¼ö¸¦ »ç¿ëÇÔÀ» À¯ÀÇ.
+	// í•´ë‹¹ ì¶•ìœ¼ë¡œ Lhs ì„ íšŒì „ì‹œì¼œì„œ ë¦¬í„´
+	// D3DXVec3TransformCoord í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•¨ì„ ìœ ì˜.
 	static _vector RotationVec(const _vector& Lhs,
 		const _vector& Axis, const float Degree)
 	{
@@ -134,6 +156,13 @@ public:
 		vec3 ReturnValue;
 		D3DXVec3Cross(&ReturnValue, &Lhs, &Rhs);
 		return ReturnValue;
+	}
+
+	static mat InvMatrix(const mat& _mat)
+	{
+		mat _inv;
+		D3DXMatrixInverse(&_inv, nullptr, &_mat);
+		return _inv;
 	}
 
 	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,

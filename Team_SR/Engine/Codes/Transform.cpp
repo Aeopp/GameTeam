@@ -1,4 +1,4 @@
-#include "..\Headers\Transform.h"
+﻿#include "..\Headers\Transform.h"
 
 USING(Engine)
 
@@ -69,6 +69,28 @@ void CTransform::AddRotationY(float fDelaTime)
 void CTransform::AddRotationZ(float fDelaTime)
 {
 	m_TransformDesc.vRotation.z += m_TransformDesc.fRotatePerSec * fDelaTime;
+}
+
+vec3 CTransform::GetLook() const& 
+{
+	_vector vLook;
+	memcpy(&vLook, &m_TransformDesc.matWorld.m[2][0], sizeof(_vector));
+	D3DXVec3Normalize(&vLook, &vLook);
+	return vLook;
+}
+vec3 CTransform::GetRight()const& 
+{
+	_vector vRight;
+	memcpy(&vRight, &m_TransformDesc.matWorld.m[0][0], sizeof(_vector));
+	D3DXVec3Normalize(&vRight, &vRight);
+	return vRight;
+}
+vec3 CTransform::GetUp()   const& 
+{
+	_vector vUp;
+	memcpy(&vUp, &m_TransformDesc.matWorld.m[1][0], sizeof(_vector));
+	D3DXVec3Normalize(&vUp, &vUp);
+	return vUp;
 }
 
 CTransform * CTransform::Create(LPDIRECT3DDEVICE9 pDevice)

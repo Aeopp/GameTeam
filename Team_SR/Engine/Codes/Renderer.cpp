@@ -1,4 +1,4 @@
-#include "..\Headers\Renderer.h"
+ï»¿#include "..\Headers\Renderer.h"
 #include "GameObject.h"
 
 USING(Engine)
@@ -9,11 +9,11 @@ CRenderer::CRenderer(LPDIRECT3DDEVICE9 pDevice)
 {
 	SafeAddRef(m_pDevice);
 
-	// ÀåÄ¡¸¦ ¹Ì¸® Á¶»ç.
+	// ìž¥ì¹˜ë¥¼ ë¯¸ë¦¬ ì¡°ì‚¬.
 	m_pDevice->GetDeviceCaps(&_Caps9);
 }
 
-/* ¸Å ÇÁ·¹ÀÓ¸¶´Ù ·»´õ ¸®½ºÆ®¿¡ ¿ÀºêÁ§Æ®¸¦ Ãß°¡ÇÑ´Ù. */
+/* ë§¤ í”„ë ˆìž„ë§ˆë‹¤ ë Œë” ë¦¬ìŠ¤íŠ¸ì— ì˜¤ë¸Œì íŠ¸ë¥¼ ì¶”ê°€í•œë‹¤. */
 HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObject)
 {
 	if (0 > (_int)eID ||
@@ -38,18 +38,18 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->BeginScene();
 
 	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
-	// ·»´õ¸µ ÆÄÀÌÇÁ ¶óÀÎ ¹ý¼± Ç×»ó Á¤±ÔÈ­
+	// ë Œë”ë§ íŒŒì´í”„ ë¼ì¸ ë²•ì„  í•­ìƒ ì •ê·œí™”
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-	// Á¶¸í ½ºÆäÅ§·¯ ÄÑ±â
+	// ì¡°ëª… ìŠ¤íŽ˜í˜ëŸ¬ ì¼œê¸°
 	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
 
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
-		// ÅØ½ºÃ³ ÇÊÅÍ¸µ ÀÌµî¹æ¼º (ÃÖ´ë Ç°Áú)
+		// í…ìŠ¤ì²˜ í•„í„°ë§ ì´ë“±ë°©ì„± (ìµœëŒ€ í’ˆì§ˆ)
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
-		// ¹Ó¸Ê ÇÊÅÍ ¼±ÇüÀû		 
+		// ë°‰ë§µ í•„í„° ì„ í˜•ì 		 
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	}
 	
@@ -102,10 +102,10 @@ HRESULT CRenderer::RenderNoAlpha()
 HRESULT CRenderer::RenderAlpha()
 {
 	/*
-	¾ËÆÄ Å×½ºÆÃ ==================================================================
+	ì•ŒíŒŒ í…ŒìŠ¤íŒ… ==================================================================
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*¾ËÆÄ±âÁØ°ª*/
+	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*ì•ŒíŒŒê¸°ì¤€ê°’*/
 	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
@@ -121,17 +121,17 @@ HRESULT CRenderer::RenderAlpha()
 	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	/*
-	¾ËÆÄ ºí·»µù ==================================================================
+	ì•ŒíŒŒ ë¸”ë Œë”© ==================================================================
 	*/
 	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 
 	///*
-	//D3DRS_SRCBLEND: ÀÌÁ¦ ±×·ÁÁ®¾ßµÉ ÇÈ¼¿ÀÇ ARGB
-	//D3DRS_DESTBLEND: ÀÌ¹Ì ±×·ÁÁ®ÀÖ´Â ÇÈ¼¿	 ARGB
-	//D3DBLEND_SRCALPHA: È¥ÇÕºñÀ² °ªÀº 0~1 ¹üÀ§. (As, As, As, As)
-	//D3DBLEND_INVSRCALPHA: È¥ÇÕºñÀ² °ªÀº 0~1 ¹üÀ§. (1-As, 1-As, 1-As, 1-As)
-	//ÃÖÁ¾ÇÈ¼¿ = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
+	//D3DRS_SRCBLEND: ì´ì œ ê·¸ë ¤ì ¸ì•¼ë  í”½ì…€ì˜ ARGB
+	//D3DRS_DESTBLEND: ì´ë¯¸ ê·¸ë ¤ì ¸ìžˆëŠ” í”½ì…€	 ARGB
+	//D3DBLEND_SRCALPHA: í˜¼í•©ë¹„ìœ¨ ê°’ì€ 0~1 ë²”ìœ„. (As, As, As, As)
+	//D3DBLEND_INVSRCALPHA: í˜¼í•©ë¹„ìœ¨ ê°’ì€ 0~1 ë²”ìœ„. (1-As, 1-As, 1-As, 1-As)
+	//ìµœì¢…í”½ì…€ = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
 	//*/
 	//m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	//m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);

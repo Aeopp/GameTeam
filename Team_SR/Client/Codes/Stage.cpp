@@ -1,10 +1,12 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "..\Headers\Stage.h"
 #include "Player.h"
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
 #include "ImGuiHelper.h"
+#include "CollisionComponent.h"
+
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -131,7 +133,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
-	// �׽�Ʈ �ڵ�...
+	// 테스트 코드...
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
@@ -150,6 +152,18 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		const float Speed = Desc.fSpeedPerSec;
 		Desc.vPosition += Down * Speed * fDeltaTime;
 	}
+	
+	if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
+	{
+		POINT _MousePt;
+		GetCursorPos(&_MousePt);
+		ScreenToClient(g_hWnd, &_MousePt);
+		vec3 _MouseVec { static_cast<float>(_MousePt.x),static_cast<float>(_MousePt.y),0.f };
+		Ray _Ray =MATH::GetRayScreenProjection(_MouseVec, m_pDevice,
+			static_cast<float>(WINCX),static_cast<float>( WINCY));
+		m_pPlayer->_CollisionComp->_Ray = std::move(_Ray);
+	}
+	//
 }
 
 

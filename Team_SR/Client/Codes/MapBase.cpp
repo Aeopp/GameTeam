@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "MapBase.h"
 #include "CollisionComponent.h"
 
@@ -47,18 +47,18 @@ HRESULT CMapBase::RenderGameObject()
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
-	for (auto& RefInfo : *_InfosPtr)
-	{
-		m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
-		m_pDevice->SetTexture(0, RefInfo.Texture);
-		auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
-		m_pDevice->SetMaterial(&_Mtrl);
-		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
-			sizeof(Vertex));
-		m_pDevice->SetFVF(Vertex::FVF);
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
-			RefInfo.TriangleCount);
-	}
+	//for (auto& RefInfo : *_InfosPtr)
+	//{
+	//	m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
+	//	m_pDevice->SetTexture(0, RefInfo.Texture);
+	//	auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
+	//	m_pDevice->SetMaterial(&_Mtrl);
+	//	m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
+	//		sizeof(Vertex));
+	//	m_pDevice->SetFVF(Vertex::FVF);
+	//	m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
+	//		RefInfo.TriangleCount);
+	//}
 
 	return S_OK;
 }
@@ -89,13 +89,13 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	{
 		Line.clear();
 		ToKen.clear();
-		// ÇÑÁÙ ¸®µù
+		// í•œì¤„ ë¦¬ë”©
 		std::getline(_MtlStream, Line);
 		wss.str(Line);
 		wss.clear();
 		wss >> ToKen;
 
-		// ¸ÓÅ×¸®¾ó ÆÄ½Ì ½ÃÀÛ
+		// ë¨¸í…Œë¦¬ì–¼ íŒŒì‹± ì‹œìž‘
 		if (ToKen == L"newmtl")
 		{
 			MtrlInfo _Info;
@@ -114,7 +114,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			while (!_FileLines.empty())
 			{
-				// ÇÑÁÙ¾¿ ÀÐÀ¸¸ç ÆÄ½Ì
+				// í•œì¤„ì”© ì½ìœ¼ë©° íŒŒì‹±
 				ToKen.clear();
 				std::wstringstream CurLine;
 				CurLine.str(std::move(_FileLines.back()));
@@ -273,7 +273,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			memcpy(_VtxBuffer, _Vtxs.data(), sizeof(Vertex) * _Vtxs.size());
 			_Info.TriangleCount = _Vtxs.size() / 3;
-			// Ãæµ¹ Á¤º¸ »ý¼º....
+			// ì¶©ëŒ ì •ë³´ ìƒì„±....
 			
 			for (auto iter = _Vtxs.begin(); iter != _Vtxs.end();)
 			{
@@ -283,7 +283,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				_PlaneInfo.Face[1] = (++iter)->Location;
 				_PlaneInfo.Face[2] = (++iter)->Location;
 
-				// ·ÎÄÃ¿¡¼­ Á¤ÀÇµÈ Á¤Á¡µéÀ» ¿ùµå·Î ¹Ù²ã¼­ ÀúÀå
+				// ë¡œì»¬ì—ì„œ ì •ì˜ëœ ì •ì ë“¤ì„ ì›”ë“œë¡œ ë°”ê¿”ì„œ ì €ìž¥
 				_PlaneInfo.Center = { 0,0,0 };
 
 				std::transform(std::make_move_iterator(std::begin(_PlaneInfo.Face)), 
@@ -305,7 +305,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 				_PolygonPlane->push_back(std::move(_PlaneInfo));
 			}
-			// ÀÌÁ¦ °°Àº Æò¸éÀ» Ãß·Á³»ÀÚ .......
+			// ì´ì œ ê°™ì€ í‰ë©´ì„ ì¶”ë ¤ë‚´ìž .......
 			//
 			_Vtxs.clear();
 			_Info.VtxBuf->Unlock();
@@ -342,7 +342,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 	CCollisionComponent::SetUpMapPlaneInfo(*_PolygonPlane);
 }
-
 
 void CMapBase::Free()
 {
