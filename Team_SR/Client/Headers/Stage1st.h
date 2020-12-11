@@ -15,9 +15,11 @@ public:
 	virtual _uint LateUpdateScene() override;
 protected:
 	virtual _uint KeyProcess(float fDeltaTime) override;
+	virtual void PlayerKeyProcess(class CPlayer* const _CurrentPlayer, float fDeltaTime)override;
 public:
 	static CStage1st* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
+public:
 };
 
 #define __STAGE1ST_H__

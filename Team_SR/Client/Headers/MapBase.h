@@ -18,7 +18,7 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 protected:
-	void LoadMap(std::wstring FilePath);
+	void LoadMap(std::wstring FilePath,const mat& MapWorld);
 public:
 	/*static CMapBase * Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;*/
@@ -67,6 +67,8 @@ public:
 	};
 protected:
 	std::shared_ptr<std::vector<Info>> _InfosPtr;
+	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
+	mat MapWorld;
 	/*  Ex) ..\\Resources\\Map\\0\\ */
 };
 

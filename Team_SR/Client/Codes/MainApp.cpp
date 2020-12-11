@@ -4,7 +4,9 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
-#include "BatGrey.h"	// ¹ÚÁã ¸ó½ºÅÍ
+#include "CollisionComponent.h"
+
+#include "BatGrey.h"	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -52,7 +54,8 @@ int CMainApp::UpdateMainApp()
 
 	ImGuiHelper::Text();
 	ImGuiHelper::Slider();
-
+	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
+	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render();
@@ -73,7 +76,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	// ¹ÚÁã ¿ÀºêÁ§Æ®
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 #pragma region GameObject_BatGrey
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -88,6 +91,8 @@ HRESULT CMainApp::ReadyStaticResources()
 			CMainCamera::Create(m_pDevice))))
 			return E_FAIL;
 	/* For.Component */
+
+		
 
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -104,6 +109,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTransform::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CCollisionComponent::Create(m_pDevice))))
+	{
+		return E_FAIL;
+	}
+
 #pragma region Component_Texture_Player
 
 #pragma endregion
@@ -112,7 +126,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
-	// ¹ÚÁã ÇÃ¶óÀÌ ÅØ½ºÃ³
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¶ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³
 #pragma region Component_Texture_BatGreyFly
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -150,5 +164,4 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
-
 }

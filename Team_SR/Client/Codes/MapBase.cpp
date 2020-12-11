@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MapBase.h"
+#include "CollisionComponent.h"
 
 const DWORD CMapBase::Vertex::FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;;
 
@@ -48,6 +49,7 @@ HRESULT CMapBase::RenderGameObject()
 
 	for (auto& RefInfo : *_InfosPtr)
 	{
+		m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
 		m_pDevice->SetTexture(0, RefInfo.Texture);
 		auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
 		m_pDevice->SetMaterial(&_Mtrl);
@@ -61,9 +63,13 @@ HRESULT CMapBase::RenderGameObject()
 	return S_OK;
 }
 
-void CMapBase::LoadMap(std::wstring FilePath)
+void CMapBase::LoadMap(std::wstring FilePath,
+	const mat& MapWorld)
 {
+	this->MapWorld = MapWorld;
+
 	_InfosPtr = std::make_shared<std::vector<Info>>();
+	_PolygonPlane = std::make_shared<std::vector<PlaneInfo>>();
 
 	const std::wstring _MtlFileName = FilePath + L"MAP.mtl";
 	std::wfstream _MtlStream(_MtlFileName);
@@ -260,7 +266,6 @@ void CMapBase::LoadMap(std::wstring FilePath)
 				&_Info.VtxBuf, 0)))
 			{
 				MessageBox(nullptr, __FUNCTIONW__, nullptr, 0);
-				
 			}
 
 			Vertex* _VtxBuffer;
@@ -268,6 +273,40 @@ void CMapBase::LoadMap(std::wstring FilePath)
 
 			memcpy(_VtxBuffer, _Vtxs.data(), sizeof(Vertex) * _Vtxs.size());
 			_Info.TriangleCount = _Vtxs.size() / 3;
+			// 충돌 정보 생성....
+			
+			for (auto iter = _Vtxs.begin(); iter != _Vtxs.end();)
+			{
+				PlaneInfo _PlaneInfo;
+
+				_PlaneInfo.Face[0] = iter->Location;
+				_PlaneInfo.Face[1] = (++iter)->Location;
+				_PlaneInfo.Face[2] = (++iter)->Location;
+
+				// 로컬에서 정의된 정점들을 월드로 바꿔서 저장
+				_PlaneInfo.Center = { 0,0,0 };
+
+				std::transform(std::make_move_iterator(std::begin(_PlaneInfo.Face)), 
+					std::make_move_iterator(std::end(_PlaneInfo.Face)), 
+					std::begin(_PlaneInfo.Face), [ &MapWorld,&_PlaneInfo]
+					(auto _VertexPoint)
+					{
+						D3DXVec3TransformCoord(&_VertexPoint,&_VertexPoint, &MapWorld);
+						_PlaneInfo.Center += _VertexPoint;
+						return _VertexPoint;
+					});
+
+				D3DXPlaneFromPoints(&_PlaneInfo._Plane,
+					&_PlaneInfo.Face[0],&_PlaneInfo.Face[1], &_PlaneInfo.Face[2]);
+
+				_PlaneInfo.Center/= 3.f;
+
+				++iter;
+
+				_PolygonPlane->push_back(std::move(_PlaneInfo));
+			}
+			// 이제 같은 평면을 추려내자 .......
+			//
 			_Vtxs.clear();
 			_Info.VtxBuf->Unlock();
 
@@ -276,7 +315,6 @@ void CMapBase::LoadMap(std::wstring FilePath)
 			if (iter == std::end(_MtrlInfo))
 			{
 				MessageBox(nullptr, L"	if (iter == std::end ( _MtrlInfo)  ) ", nullptr, 0);
-				
 			}
 
 			_Info.MaterialInfo = iter->second;
@@ -288,7 +326,8 @@ void CMapBase::LoadMap(std::wstring FilePath)
 			if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 				TexName.c_str(), &_Info.Texture)))
 			{
-				
+				MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+
 			}
 
 			_InfosPtr->push_back(_Info);
@@ -297,8 +336,9 @@ void CMapBase::LoadMap(std::wstring FilePath)
 		wss.str(std::wstring{});
 		Line.clear();
 		wss.clear();
-	}
+	};
 
+	CCollisionComponent::SetUpMapPlaneInfo(*_PolygonPlane);
 }
 
 //CMapBase* CMapBase::Create(LPDIRECT3DDEVICE9 pDevice)

@@ -1,6 +1,7 @@
 #include "..\Headers\GameObject.h"
 #include "Management.h"
 
+#include "Scene.h"
 
 
 USING(Engine)
@@ -36,17 +37,33 @@ HRESULT CGameObject::ReadyGameObject(void* pArg)
 
 _uint CGameObject::UpdateGameObject(float fDeltaTime)
 {
+	m_pTransformCom->UpdateTransform();
+
 	return _uint();
 }
 
 _uint CGameObject::LateUpdateGameObject(float fDeltaTime)
 {
+	
 	return _uint();
 }
 
 HRESULT CGameObject::RenderGameObject()
 {
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+		return E_FAIL;
+
 	return S_OK;
+}
+
+void CGameObject::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
+{
+
+}
+
+void CGameObject::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
+{
+
 }
 
 void CGameObject::Free()

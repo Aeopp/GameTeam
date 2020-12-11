@@ -4,9 +4,6 @@
     <Filter Include="00.MainApp">
       <UniqueIdentifier>{b62cf6b7-87b7-4ee8-b49b-eda833da62b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Headers">
-      <UniqueIdentifier>{5925ddad-af6a-442a-9c7b-04b197b36b18}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98.Default">
       <UniqueIdentifier>{429149a3-cac2-4a01-816b-40523353717d}</UniqueIdentifier>
     </Filter>
@@ -52,8 +49,8 @@
     <Filter Include="03.Component">
       <UniqueIdentifier>{3e0b9659-a1f5-4910-a552-cd896d8fea18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\02.Monster\02.BatGrey">
-      <UniqueIdentifier>{1faec25d-76e4-4f51-94cc-e7065de3d7e2}</UniqueIdentifier>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{0e85ea08-869f-4f5f-bdd6-f5c283757f5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -71,15 +68,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\MainApp.h">
       <Filter>00.MainApp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Client_Define.h">
-      <Filter>99.Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Client_Extern.h">
-      <Filter>99.Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Client_Enum.h">
-      <Filter>99.Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Logo.h">
       <Filter>01.Scene\00.Logo</Filter>
@@ -144,8 +132,17 @@
     <ClInclude Include="..\Headers\Stage1st.h">
       <Filter>01.Scene\01.Stage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Client_Extern.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Define.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Enum.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\BatGrey.h">
-      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+      <Filter>02.GameObject\02.Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -216,7 +213,7 @@
       <Filter>01.Scene\01.Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BatGrey.cpp">
-      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+      <Filter>02.GameObject\02.Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
