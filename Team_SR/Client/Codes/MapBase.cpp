@@ -316,18 +316,20 @@ void CMapBase::LoadMap(std::wstring FilePath,
 			{
 				MessageBox(nullptr, L"	if (iter == std::end ( _MtrlInfo)  ) ", nullptr, 0);
 			}
-
-			_Info.MaterialInfo = iter->second;
-
-			std::wstring TexName = FilePath;
-			TexName += _Info.MaterialInfo.TextureName;
-
-
-			if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
-				TexName.c_str(), &_Info.Texture)))
+			else
 			{
-				MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+				_Info.MaterialInfo = iter->second;
 
+				std::wstring TexName = FilePath;
+				TexName += _Info.MaterialInfo.TextureName;
+
+
+				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
+					TexName.c_str(), &_Info.Texture)))
+				{
+					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+
+				}
 			}
 
 			_InfosPtr->push_back(_Info);
@@ -341,33 +343,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	CCollisionComponent::SetUpMapPlaneInfo(*_PolygonPlane);
 }
 
-//CMapBase* CMapBase::Create(LPDIRECT3DDEVICE9 pDevice)
-//{
-//	if (nullptr == pDevice)
-//		return nullptr;
-//
-//	CMapBase* pInstance = new CMapBase(pDevice);
-//	if (FAILED(pInstance->ReadyGameObjectPrototype()))
-//	{
-//		PRINT_LOG(L"Warning", L"Failed To Create CMapBase");
-//		SafeRelease(pInstance);
-//	}
-//
-//	return pInstance;
-//}
-//
-//CGameObject* CMapBase::Clone(void * pArg)
-//{
-//	CMapBase* pClone = new CMapBase(*this); /* 복사생성자 */
-//	SafeAddRef(m_pDevice);
-//	if (FAILED(pClone->ReadyGameObject(pArg)))
-//	{
-//		PRINT_LOG(L"Warning", L"Failed To Clone CTerrain");
-//		SafeRelease(pClone);
-//	}
-//
-//	return pClone;
-//}
 
 void CMapBase::Free()
 {

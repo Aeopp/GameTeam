@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Map1st.h"
 
 
@@ -14,7 +14,7 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 
 	mat MapWorld  = MATH::WorldMatrix({ 4,4,4 }, { 0,0,0}, { 0,0,0});
 
-	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
+	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
 
 	return S_OK;
 }
@@ -68,7 +68,7 @@ CMap1st* CMap1st::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject* CMap1st::Clone(void * pArg)
 {
-	CMap1st* pClone = new CMap1st(*this); /* º¹»ç»ý¼ºÀÚ */
+	CMap1st* pClone = new CMap1st(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
