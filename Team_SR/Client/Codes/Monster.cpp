@@ -19,6 +19,17 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+	{
+		// êµ¬ì¡°ì²´ í¬ê¸° ê²€ì‚¬
+		if (sizeof(MonsterBasicArgument) == *static_cast<_uint*>(pArg))
+		{
+			MonsterBasicArgument* pArgument = static_cast<MonsterBasicArgument*>(pArg);
+			m_pPlayer = (CGameObject*)(pArgument->pPlayer);
+			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
+		}
+	}
+
 	return S_OK;
 }
 
@@ -44,7 +55,7 @@ HRESULT CMonster::RenderGameObject()
 	return S_OK;
 }
 
-long CMonster::AddComponents()
+HRESULT CMonster::AddComponents()
 {
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
@@ -54,23 +65,21 @@ long CMonster::AddComponents()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	// TODO :: Static ÅØ½ºÃÄ ÄÄÆ÷³ÍÆ® Ãß°¡ÇÏ´Â ·ÎÁ÷ À¸·Î º¯°æÇÏ±â.
-
-	/*if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;*/
-
-		//////////////////////////////////////////////////////
 	return S_OK;
+}
+
+// í”Œë ˆì´ì–´ ì¸ì‹ - ì¸ì‹í•˜ë©´ TRUE, ì¸ì‹í•˜ì§€ ëª»í•˜ë©´ FALSE
+BOOL CMonster::PlayerAwareness()
+{
+	// m_pPlayer->
+
+	return FALSE;
 }
 
 void CMonster::Free()
 {
 	SafeRelease(m_pVIBufferCom);
-	// TODO :: ÅØ½ºÃÄ ÄÄÆ÷³ÍÆ® Ãß°¡ ÀÌÈÄ ÁÖ¼® Ç®±â
+	// TODO :: í…ìŠ¤ì³ ì»´í¬ë„ŒíŠ¸ ì¶”ê°€ ì´í›„ ì£¼ì„ í’€ê¸°
 	//SafeRelease(m_pTextureCom);
 
 	CGameObject::Free();

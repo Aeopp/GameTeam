@@ -76,7 +76,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	// ���� ������Ʈ
+	// 박쥐
 #pragma region GameObject_BatGrey
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -126,7 +126,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
-	// ���� �ö��� �ؽ�ó
+	// 박쥐 텍스처 플라이
 #pragma region Component_Texture_BatGreyFly
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,

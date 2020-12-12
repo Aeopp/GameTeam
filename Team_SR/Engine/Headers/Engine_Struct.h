@@ -72,6 +72,7 @@ typedef struct tagTransformDesc
 	{
 		ZeroMemory(this, sizeof(tagTransformDesc));
 		D3DXMatrixIdentity(&matWorld);
+		vScale = { 1.f, 1.f, 1.f };
 	}
 	_vector	vPosition;
 	_vector	vScale;

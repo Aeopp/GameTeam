@@ -34,13 +34,17 @@ HRESULT CStage1st::ReadyScene()
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
 
-		// ¹ÚÁã
+		// ë°•ì¥
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 10.f, 30.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
 			(_int)ESceneID::Stage1st,
 			CLayer::Tag + TYPE_NAME<CBatGrey>(),
-			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 	}
 
@@ -89,7 +93,7 @@ CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
 		SafeRelease(pInstance);
 	}
 
-	PRINT_LOG(L"Test", L"½ºÅ×ÀÌÁö 1 »ı¼º");
+	PRINT_LOG(L"Test", L"ìŠ¤í…Œì´ì§€ 1 ìƒì„±");
 
 	return pInstance;
 }
