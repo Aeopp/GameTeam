@@ -16,6 +16,12 @@ public:
 			|| std::fabs(x - y) < (std::numeric_limits<T>::min)();
 	}
 
+	// 벡터 4로 반환되며 기본값 사용시 방향 벡터로 간주
+	FORCEINLINE static vec4 ConvertVec4(const vec3& Lhs, const float w = 0)
+	{
+		return vec4{ Lhs.x, Lhs.y, Lhs.z, w };
+	};
+
 	static vec3 GetNormalFromFace(const vec3& p0,
 		const vec3& p1, const vec3& p2)
 	{
@@ -212,9 +218,9 @@ public:
 	static vec3 RandVec()
 	{
 		return MATH::Normalize(vec3{
-			RandReal({ -1,1 }),
-			RandReal({ -1,1 }),
-			RandReal({ -1,1 })
+			RandReal({ -1.f,1.f }),
+			RandReal({ -1.f,1.f }),
+			RandReal({ -1.f,1.f })
 			});
 	}
 #pragma endregion RANDOM

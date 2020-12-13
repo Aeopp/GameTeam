@@ -25,7 +25,7 @@ struct PlaneInfo
 	{
 		PlaneInfo _Info;
 		_Info.Face = std::move(Face);
-		_Info.Center = (Face[0] + Face[1] + Face[2]) / Face.size();
+		_Info.Center = (Face[0] + Face[1] + Face[2]) / (float)Face.size();
 		D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
 		return _Info;
 	};

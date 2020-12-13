@@ -15,10 +15,30 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 
 	mat MapWorld  = MATH::WorldMatrix({ 7,7,7 }, { 0,0,0}, { 0,0,0});
 
-	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
-	MapShader = LoadShader(m_pDevice, L"..\\Resources\\Map\\1\\NormalMapping.fx");
+	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
+	_ShaderInfo = Shader::CompileAndCreate(m_pDevice, L"..\\Shader\\NormalMapping");
+
+	_ShaderInfo.VsHandleMap = Shader::ConstantHandleInitialize(
+		_ShaderInfo.VsTable,
+		std::vector<std::string>{
+		"WorldMatrix",
+		"WorldViewProjectionMatrix",
+		"WorldLightLocation",
+		"WorldCameraLocation",
+		});
+
+	_ShaderInfo.PsHandleMap= Shader::ConstantHandleInitialize(
+		_ShaderInfo.PsTable,
+		std::vector<std::string>{
+		"LightColor"
+	});
+
+	_ShaderInfo.TextureDescMap = Shader::ConstantHandleDescInitialize(_ShaderInfo.PsTable,
+		{ "DiffuseSampler",
+		"SpecularSampler",
+		"NormalSampler" });
+
 	MapAmbient = 0x00202020;
-	//D3DLIGHT9 Dir = Light::GetDirectional();
 
 	return S_OK;
 }
@@ -74,7 +94,7 @@ CGameObject* CMap1st::Clone(void * pArg)
 {
 	CMap1st* pClone = new CMap1st(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
-	SafeAddRef(MapShader);
+	_ShaderInfo.AddRef();
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Clone CTerrain");
@@ -86,6 +106,6 @@ CGameObject* CMap1st::Clone(void * pArg)
 
 void CMap1st::Free()
 {
-	SafeRelease(MapShader);
+	_ShaderInfo.Release();
 	Super::Free();
 }

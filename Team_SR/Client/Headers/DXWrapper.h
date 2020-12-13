@@ -5,8 +5,69 @@
 
 USING(Engine)
 
-LPD3DXEFFECT LoadShader(IDirect3DDevice9* _Device, const std::wstring& FileName);
-LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+namespace Shader
+{
+	struct Info
+	{
+		IDirect3DPixelShader9* PsShader{ nullptr };
+		ID3DXConstantTable* PsTable{ nullptr };
+		IDirect3DVertexShader9* VsShader{ nullptr };
+		ID3DXConstantTable* VsTable{ nullptr };
+		/*ConstantHandleInitialize 로 세팅하면 편함.*/
+		std::map<std::string, D3DXHANDLE> VsHandleMap;
+		std::map<std::string, D3DXHANDLE> PsHandleMap;
+		std::map<std::string, D3DXCONSTANT_DESC> TextureDescMap;
+
+		void Release()
+		{
+			SafeRelease(PsShader);
+			SafeRelease(VsShader);
+		}
+		void AddRef()
+		{
+			SafeAddRef(PsShader);
+			SafeAddRef(VsShader);
+		}
+	};
+
+	std::map<std::string, D3DXHANDLE> ConstantHandleInitialize(
+		ID3DXConstantTable* _ConstantTable,
+		const std::vector<std::string>& _ConstantDataNames);
+
+	std::map<std::string, D3DXCONSTANT_DESC > ConstantHandleDescInitialize(
+		ID3DXConstantTable* _ConstantTable,
+		const std::vector<std::string>& _ConstantTextureNames
+	);
+
+
+	// 파일명 hlsl 확장자 없이 파일명만 입력
+	// 쉐이더는 파일명+VS or PS 형식으로 제한
+	Info CompileAndCreate(IDirect3DDevice9* _Device,
+		const std::wstring& FileName);
+}
+
+
+namespace Effect
+{
+	LPD3DXEFFECT LoadShader(IDirect3DDevice9* _Device, const std::wstring& FileName);
+	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+}
+
+struct TempVertexType
+{
+	vec3 location;
+	vec3 TexCoord;
+};
+
+namespace Model
+{
+	// 삼각형 3 버텍스 로부터 탄젠트 바이노멀 벡터를 계산.
+	std::pair<vec3,vec3/* 1st Tangent, 2nd BiNormal*/> 
+		CalculateTangentBinormal(TempVertexType vertex1,
+		TempVertexType vertex2, TempVertexType vertex3);
+	// 탄젠트와 바이노멀로 새로운 노멀을 계산.
+	vec3 CalculateNormal(const vec3 Tangent, const vec3 BiNormal);
+}
 
 namespace Color
 {

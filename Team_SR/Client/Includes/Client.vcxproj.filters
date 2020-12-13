@@ -55,6 +55,9 @@
     <Filter Include="04.DXWrapper">
       <UniqueIdentifier>{2d344ecb-b889-436a-9a2d-ab5042462c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{2e36d260-bc08-4cbb-b2b6-58357be7f29a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -147,7 +150,9 @@
     <ClInclude Include="..\Headers\BatGrey.h">
       <Filter>02.GameObject\02.Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\DXWrapper.h">
+      <Filter>04.DXWrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -219,7 +224,9 @@
     <ClCompile Include="..\Codes\BatGrey.cpp">
       <Filter>02.GameObject\02.Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\DXWrapper.cpp">
+      <Filter>04.DXWrapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -233,5 +240,13 @@
     <ResourceCompile Include="Client.rc">
       <Filter>98.Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\NormalMappingPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\NormalMappingVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

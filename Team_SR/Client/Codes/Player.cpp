@@ -53,7 +53,6 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		ImGui::SliderFloat("y", &m_pTransformCom->m_TransformDesc.vScale.y, 0.1, 100.f);
 		ImGui::SliderFloat("z", &m_pTransformCom->m_TransformDesc.vScale.z, 0.1, 100.f);
 
-
 		ImGui::Separator();
 		ImGui::Text("Information");
 		ImGui::Separator();

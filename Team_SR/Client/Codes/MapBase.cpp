@@ -3,8 +3,11 @@
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
 #include "ImGuiHelper.h"
+#include "Stage.h"
+#include "MainCamera.h"
+#include "Player.h"
 
-const DWORD CMapBase::Vertex::FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;;
+
 
 
 CMapBase::CMapBase(LPDIRECT3DDEVICE9 pDevice)
@@ -50,32 +53,103 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMapBase::RenderGameObject()
 {
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	mat CurrentWorld = m_pTransformCom->m_TransformDesc.matWorld;
+
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &CurrentWorld)))
 		return E_FAIL;
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
+	m_pDevice->SetRenderState(D3DRS_AMBIENT,NULL);
+
+	const vec4 CameraLocation =
+		MATH::ConvertVec4(dynamic_cast<CStage*>
+			(m_pManagement->GetCurrentScene())->_Camera->GetTransform()->GetLocation(), 1.f);
+
+	const vec4 LightLocation = { 0,50,0,1 };
+	/*	MATH::ConvertVec4(dynamic_cast<CStage*>
+			(m_pManagement->GetCurrentScene())->m_pPlayer->GetTransform()->GetLocation(), 1.f);*/
+
+	mat View;
+	mat Projection;
+
+	m_pDevice->GetTransform(D3DTS_VIEW, &View);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &Projection);
+
+	mat WorldViewProjection = CurrentWorld * View * Projection;
+
+	// 버텍스 
+	{
+		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["WorldMatrix"],
+			&CurrentWorld);
+		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["WorldViewProjectionMatrix"],
+			&WorldViewProjection);
+		_ShaderInfo.VsTable->SetVector(m_pDevice, _ShaderInfo.VsHandleMap["WorldLightLocation"],
+			&LightLocation);
+		_ShaderInfo.VsTable->SetVector(m_pDevice, _ShaderInfo.VsHandleMap["WorldCameraLocation"],
+			&CameraLocation);
+
+		// _ShaderInfo.VsTable->SetDefaults(m_pDevice);
+		m_pDevice->SetVertexShader(_ShaderInfo.VsShader);
+	}
+
+	{
+		uint32_t count = 0;
+		D3DXCONSTANT_DESC _Desc;
+
+		vec4 LightColor = { 1.f,1.f,1.0f,1.f };
+
+		_ShaderInfo.PsTable->SetVector(m_pDevice,_ShaderInfo.PsHandleMap["LightColor"],
+			&LightColor);
+
+		m_pDevice->SetPixelShader(_ShaderInfo.PsShader);
+	}
+
+	
 
 	for (auto& RefInfo : *_InfosPtr)
 	{
-		m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
+	
+		{
+			const uint32_t TexIdx = 
+				_ShaderInfo.TextureDescMap["DiffuseSampler"].RegisterIndex;
+			m_pDevice->SetTexture(TexIdx, RefInfo.Texture);
 
-		if(RefInfo.Texture)
-			m_pDevice->SetTexture(0, RefInfo.Texture);
-		if (RefInfo.TextureNormal)
-			m_pDevice->SetTexture(1, RefInfo.TextureNormal);
-		if (RefInfo.TextureSpecular)
-			m_pDevice->SetTexture(2, RefInfo.TextureSpecular);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		}
 
-		auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
-		m_pDevice->SetMaterial(&_Mtrl);
+		{
+			const uint32_t TexIdx =
+				_ShaderInfo.TextureDescMap["SpecularSampler"].RegisterIndex;
+			m_pDevice->SetTexture(TexIdx, RefInfo.TextureSpecular);
+
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		}
+
+		{
+			const uint32_t TexIdx =
+				_ShaderInfo.TextureDescMap["NormalSampler"].RegisterIndex;
+			m_pDevice->SetTexture(TexIdx, RefInfo.TextureNormal);
+
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		}
+
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
 			sizeof(Vertex));
-		m_pDevice->SetFVF(Vertex::FVF);
+		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
 			RefInfo.TriangleCount);
 	}
+
 	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
+
 	return S_OK;
 }
 
@@ -94,6 +168,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				SafeRelease(element.Texture);
 				SafeRelease(element.TextureNormal);
 				SafeRelease(element.TextureSpecular);
+				SafeRelease(element.Decl);
 			}
 			delete ptr;
 		});
@@ -183,7 +258,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 					_MtrlInfo.insert
 					({
 						_Info.MtrlName  , _Info
-						});
+					});
 				}
 			}
 		}
@@ -197,7 +272,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
 	const wchar_t FDelim = L'\/';
-	using _VtxType = Vertex;
 	size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -206,7 +280,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 		::MessageBox(nullptr, __FUNCTIONW__,
 			L"File Open Fail", 0);
 
-	std::vector<_VtxType> _Vtxs;
+	std::vector<Vertex> _Vtxs;
 	std::vector<_vector> _Locations;
 	std::vector<_vector> _Normals;
 	std::vector<D3DXVECTOR2> _TextureCoords;
@@ -267,23 +341,41 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				std::begin(ReplaceLine), FDelim, L' ');
 			wss.str(ReplaceLine);
 			wss.clear();
+
+			std::array<Vertex,3ul> _FaceVertexs;
+
 			for (size_t i = 0; i < 3; ++i)
 			{
 				_int LocationIdx, NormalIdx, TexCoordIdx;
 				wss >> LocationIdx;
 				wss >> TexCoordIdx;
 				wss >> NormalIdx;
+				Vertex _Vtx;
+				_Vtx.Location = _Locations[LocationIdx - 1];
+				_Vtx.Normal = _Normals[NormalIdx - 1];
+				_Vtx.TexCoord = _TextureCoords[TexCoordIdx - 1];
 
-				_Vtxs.emplace_back
-				(
-					_VtxType
-					{
-						_Locations[LocationIdx - 1],
-						_Normals[NormalIdx - 1],
-						_TextureCoords[TexCoordIdx - 1]
-					}
-				);
+				_FaceVertexs[i] = (std::move(_Vtx));
+			};
+
+			const auto Tangent_BiNormal = Model::CalculateTangentBinormal(
+				TempVertexType{ _FaceVertexs[0].Location,_FaceVertexs[0].TexCoord }
+				, TempVertexType{ _FaceVertexs[1].Location, _FaceVertexs[1] .TexCoord} ,
+				TempVertexType{ _FaceVertexs[2] .Location,_FaceVertexs[2] .TexCoord} );
+
+			const vec3 NewNormal =Model::CalculateNormal(Tangent_BiNormal.first, Tangent_BiNormal.second);
+
+			for (size_t i = 0; i <3; ++i)
+			{
+				_FaceVertexs[i].Normal = NewNormal;
+				_FaceVertexs[i].Tanget = Tangent_BiNormal.first;
+				_FaceVertexs[i].BiNormal = Tangent_BiNormal.second;
 			}
+
+			_Vtxs.insert(std::end(_Vtxs),
+				std::make_move_iterator(std::begin(_FaceVertexs)),
+				std::make_move_iterator(std::end(_FaceVertexs)));
+
 			ReplaceLine.clear();
 		}
 
@@ -293,7 +385,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			if (FAILED(m_pDevice->CreateVertexBuffer(sizeof(Vertex) *
 				_Vtxs.size(),
-				0, Vertex::FVF, D3DPOOL_MANAGED,
+				D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT,
 				&_Info.VtxBuf, 0)))
 			{
 				MessageBox(nullptr, __FUNCTIONW__, nullptr, 0);
@@ -359,10 +451,9 @@ void CMapBase::LoadMap(std::wstring FilePath,
 					TexName.c_str(), &_Info.Texture)))
 				{
 					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
-
 				}
 			}
-
+			_Info.Decl = Vertex::GetVertexDecl(m_pDevice);
 			_InfosPtr->push_back(_Info);
 		}
 
@@ -370,6 +461,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 		Line.clear();
 		wss.clear();
 	};
+
 	CCollisionComponent::SetUpMapPlaneInfo(*_PolygonPlane);
 }
 

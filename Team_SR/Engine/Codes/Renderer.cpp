@@ -37,17 +37,18 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 0);
 	m_pDevice->BeginScene();
 
-	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
 	// 렌더링 파이프 라인 법선 항상 정규화
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
 	// 조명 스페큘러 켜기
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
 	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
+
 	m_pDevice->SetRenderState(D3DRS_AMBIENT, Ambient);
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
 		// 텍스쳐 재질 알파 블렌딩 ??
-		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
 		//
 
 		// 텍스처 필터링 이등방성 (최대 품질)
@@ -58,11 +59,11 @@ HRESULT CRenderer::Render(HWND hWnd)
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	};
 
-	for (size_t i = 0; i < _Lights.size(); ++i)
-	{
-		m_pDevice->SetLight(i, &_Lights[i]);
-		m_pDevice->LightEnable(i, true);
-	}
+	//for (size_t i = 0; i < _Lights.size(); ++i)
+	//{
+	//	m_pDevice->SetLight(i, &_Lights[i]);
+	//	m_pDevice->LightEnable(i, true);
+	//}
 
 	if (FAILED(RenderPriority()))
 		return E_FAIL;

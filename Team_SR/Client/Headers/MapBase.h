@@ -2,6 +2,7 @@
 #ifndef __MapBase_H__
 
 #include "GameObject.h"
+#include "DXWrapper.h"
 
 USING(Engine)
 class CMapBase  abstract : public CGameObject
@@ -28,8 +29,27 @@ public:
 	{
 		vec3 Location;
 		vec3 Normal;
+		vec3 Tanget;
+		vec3 BiNormal;
 		vec2 TexCoord;
-		static const DWORD FVF;
+
+		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl( IDirect3DDevice9* _Device)
+		{
+			LPDIRECT3DVERTEXDECLARATION9 VertexDeclaration;
+			int count = 0;
+			D3DVERTEXELEMENT9 decl[] =
+			{
+			  {0,  count,             D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+			  {0, (12), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+			  {0, (24), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+			  {0, (36), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },
+			  {0, (48), D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+			  D3DDECL_END()
+			};
+			_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
+			return VertexDeclaration;
+			//_Device->SetVertexDeclaration(VertexDeclaration);
+		}
 	};
 
 	struct MtrlInfo
@@ -64,13 +84,14 @@ public:
 		uint32_t TriangleCount = 0;
 		MtrlInfo MaterialInfo{};
 
+		LPDIRECT3DVERTEXDECLARATION9 Decl{ nullptr };
 		IDirect3DVertexBuffer9* VtxBuf{ nullptr };
 		IDirect3DTexture9* Texture{ nullptr };
 		IDirect3DTexture9* TextureNormal{ nullptr };
 		IDirect3DTexture9* TextureSpecular{ nullptr };
 	};
 protected:
-	LPD3DXEFFECT MapShader = nullptr;
+	Shader::Info _ShaderInfo;
 	std::shared_ptr<std::vector<Info>> _InfosPtr;
 	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
 	mat MapWorld;
