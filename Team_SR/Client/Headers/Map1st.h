@@ -23,6 +23,7 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 private:
+	
 	std::vector<D3DLIGHT9> MapLight;
 };
 

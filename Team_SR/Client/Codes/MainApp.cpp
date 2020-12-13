@@ -57,7 +57,7 @@ int CMainApp::UpdateMainApp()
 	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
-	ImGuiHelper::Render();
+	ImGuiHelper::Render(m_pDevice);
 	m_pDevice->EndScene();
 	m_pDevice->Present(nullptr, nullptr, g_hWnd, nullptr);
 

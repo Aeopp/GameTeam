@@ -5,6 +5,9 @@
 
 USING(Engine)
 
+LPD3DXEFFECT LoadShader(IDirect3DDevice9* _Device, const std::wstring& FileName);
+LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+
 namespace Color
 {
 	const D3DXCOLOR      WHITE(D3DCOLOR_XRGB(255, 255, 255));

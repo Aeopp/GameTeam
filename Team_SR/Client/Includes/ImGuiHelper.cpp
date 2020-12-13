@@ -45,8 +45,61 @@ void ImGuiHelper::UpdateEnd()
 	ImGui::EndFrame();
 }
 
-void ImGuiHelper::Render()
+void ImGuiHelper::Render(IDirect3DDevice9* _Device)
 {
+	//// Setup viewport
+	//D3DVIEWPORT9 vp;
+	//vp.X = vp.Y = 0;
+	//vp.Width = WINCX;
+	//vp.Height = WINCY;
+	//vp.MinZ = 0.0f;
+	//vp.MaxZ = 1.0f;
+	//_Device->SetViewport(&vp);
+
+	//// Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient)
+	//_Device->SetPixelShader(NULL);
+	//_Device->SetVertexShader(NULL);
+	//_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
+	//_Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	//_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	//_Device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	//_Device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	//_Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//_Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+	//_Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+	//_Device->SetRenderState(D3DRS_FOGENABLE, FALSE);
+	//_Device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	//_Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	//_Device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+	//_Device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	//_Device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	//_Device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+	//_Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//_Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+
+	//// Setup orthographic projection matrix
+	//// Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
+	//// Being agnostic of whether <d3dx9.h> or <DirectXMath.h> can be used, we aren't relying on D3DXMatrixIdentity()/D3DXMatrixOrthoOffCenterLH() or DirectX::XMMatrixIdentity()/DirectX::XMMatrixOrthographicOffCenterLH()
+	//{
+	//	float L =0+ 0.5f;
+	//	float R = 0+ WINCX+ 0.5f;
+	//	float T = 0+ 0.5f;
+	//	float B = 0+ WINCY+ 0.5f;
+	//	D3DMATRIX mat_identity = { { { 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 1.0f } } };
+	//	D3DMATRIX mat_projection =
+	//	{ { {
+	//		2.0f / (R - L),   0.0f,         0.0f,  0.0f,
+	//		0.0f,         2.0f / (T - B),   0.0f,  0.0f,
+	//		0.0f,         0.0f,         0.5f,  0.0f,
+	//		(L + R) / (L - R),  (T + B) / (B - T),  0.5f,  1.0f
+	//	} } };
+	//	_Device->SetTransform(D3DTS_WORLD, &mat_identity);
+	//	_Device->SetTransform(D3DTS_VIEW, &mat_identity);
+	//	_Device->SetTransform(D3DTS_PROJECTION, &mat_projection);
+	//}
+
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 }

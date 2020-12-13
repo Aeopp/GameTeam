@@ -261,7 +261,7 @@ void CCollisionComponent::DebugDraw()
 	m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
 	world = world * view* proj;
 	CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
-	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	// 
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);

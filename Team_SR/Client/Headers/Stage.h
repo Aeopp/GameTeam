@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef __STAGE_H__
 
 #include "Scene.h"

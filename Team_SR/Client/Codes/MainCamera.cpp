@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "MainCamera.h"
 #include "MyMath.h"
 #include "ImGuiHelper.h"
@@ -48,16 +48,16 @@ _uint CMainCamera::UpdateGameObject(float fDeltaTime)
 		static float Force = 1.f;
 		static float Vibration = 1.f;
 		static vec3 AxisScale{ 1,1,1 };
+
 		if (ImGui::Button("Shake!"))
 		{
 			Shake(Duration, Force, AxisScale, Vibration);
 		}
+
 		ImGui::SliderFloat("Duration", &Duration, 0.1f, 10.f);
 		ImGui::SliderFloat("Force", &Force, 1.f, 10000.f);
 		ImGui::SliderFloat("Vibration", &Vibration, 1.f, 10000.f);
-
-		ImGui::SliderFloat3("AxisScale", reinterpret_cast<float*>(&AxisScale), 0.f, 1,
-			"%f", 1.f);
+		ImGui::SliderFloat3("AxisScale", reinterpret_cast<float*>(&AxisScale), 0.f, 1,"%f", 1.f);
 
 		if (bThirdPerson)
 		{
@@ -102,7 +102,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		Look = MATH::RotationVec(Look, MATH::AxisY, m_pTransformCom->m_TransformDesc.vRotation.y);
 		Look = MATH::RotationVec(Look, MATH::AxisZ, m_pTransformCom->m_TransformDesc.vRotation.z);
 
-		// ¿Ã¹Ù¸¥ ¿ÜÀûÀ» À§ÇØ Up°ú Look °¡ °°À» °æ¿ì »ìÂ¦ º¸Á¤
+		// ì˜¬ë°”ë¥¸ ì™¸ì ì„ ìœ„í•´ Upê³¼ Look ê°€ ê°™ì„ ê²½ìš° ì‚´ì§ ë³´ì •
 		if (Look == WorldUp)
 		{
 			Look.y -= (std::numeric_limits<float>::min)();
@@ -170,7 +170,7 @@ CMainCamera* CMainCamera::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject* CMainCamera::Clone(void * pArg)
 {
-	CMainCamera* pClone = new CMainCamera(*this); /* º¹»ç»ı¼ºÀÚ */
+	CMainCamera* pClone = new CMainCamera(*this); /* ë³µì‚¬ìƒì„±ì */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

@@ -22,7 +22,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 50;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 10;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };

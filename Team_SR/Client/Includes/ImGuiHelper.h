@@ -14,7 +14,7 @@ public:
 	static void UpdateEnd();
 	/*Render 함수는 반드시 백버퍼,깊이,스텐실버퍼 Clear 이후에
 	 Device::BeginScene 와 Device::EndScene 사이에 호출 해야함 !!*/
-	static void Render();
+	static void Render(IDirect3DDevice9* _Device);
 	static void ShutDown()noexcept;
     static void ResetDevice
 		(IDirect3DDevice9* Device, 

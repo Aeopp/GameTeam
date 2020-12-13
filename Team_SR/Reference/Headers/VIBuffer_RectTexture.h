@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef __VIBUFFER_RECTTEXTURE_H__
 
 #include "VIBuffer.h"

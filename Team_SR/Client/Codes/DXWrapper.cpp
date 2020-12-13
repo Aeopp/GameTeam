@@ -68,3 +68,46 @@ D3DLIGHT9 Light::GetSpot(const vec3& Location, const vec3& Direction, const D3DX
 
 	return light;
 };
+
+LPD3DXEFFECT LoadShader(IDirect3DDevice9* _Device, const std::wstring& FileName)
+{
+	LPD3DXEFFECT ret = nullptr;
+	LPD3DXBUFFER Error = nullptr;
+	uint32_t ShaderFlags = 0;
+
+#if _DEBUG
+	ShaderFlags |= D3DXSHADER_DEBUG;
+#endif
+
+	D3DXCreateEffectFromFile(_Device, FileName.c_str(),
+		nullptr, nullptr, ShaderFlags, nullptr, &ret, &Error);
+
+	if (!ret && Error)
+	{
+		int Size = Error->GetBufferSize();
+		void* ack = Error->GetBufferPointer();
+
+		if (ack)
+		{
+			wchar_t* str = new wchar_t[Size];
+			wsprintf(str, (const wchar_t*)ack, Size);
+			OutputDebugString(str);
+			delete[] str;
+		}
+	}
+
+	return ret;
+}
+
+LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName)
+{
+	LPDIRECT3DTEXTURE9 ret = nullptr;
+	if (FAILED(D3DXCreateTextureFromFile(_Device, FileName.c_str(), &ret)))
+	{
+		OutputDebugString(L"텍스쳐 로딩 실패!!");
+		OutputDebugString(FileName.c_str());
+		OutputDebugString(L"\n");
+	};
+
+	return ret;
+}

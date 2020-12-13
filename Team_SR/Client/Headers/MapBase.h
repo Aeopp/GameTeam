@@ -23,6 +23,7 @@ public:
 	/*static CMapBase * Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;*/
 	virtual void Free() override;
+
 	struct Vertex
 	{
 		vec3 Location;
@@ -37,8 +38,8 @@ public:
 		{
 
 		};
-		D3DXCOLOR Ambient{ 0,0,0,1 };
-		D3DXCOLOR Diffuse = { 0,0,0,1 };
+		D3DXCOLOR Ambient{ 0,0,0,0.f };
+		D3DXCOLOR Diffuse = { 0,0,0,1.f };
 		D3DXCOLOR Specular{ 0,0,0,1 };
 		// 광택 
 		float Shine{ 0 };
@@ -61,16 +62,19 @@ public:
 	struct Info
 	{
 		uint32_t TriangleCount = 0;
-		IDirect3DVertexBuffer9* VtxBuf;
-		MtrlInfo MaterialInfo;
-		IDirect3DTexture9* Texture;
+		MtrlInfo MaterialInfo{};
+
+		IDirect3DVertexBuffer9* VtxBuf{ nullptr };
+		IDirect3DTexture9* Texture{ nullptr };
+		IDirect3DTexture9* TextureNormal{ nullptr };
+		IDirect3DTexture9* TextureSpecular{ nullptr };
 	};
 protected:
+	LPD3DXEFFECT MapShader = nullptr;
 	std::shared_ptr<std::vector<Info>> _InfosPtr;
 	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
 	mat MapWorld;
 	DWORD MapAmbient = 0x00202020;
-	/*  Ex) ..\\Resources\\Map\\0\\ */
 };
 
 #define __MapBase_H__

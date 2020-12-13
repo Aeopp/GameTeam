@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "MapBase.h"
 #include "CollisionComponent.h"
+#include "DXWrapper.h"
+#include "ImGuiHelper.h"
 
 const DWORD CMapBase::Vertex::FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;;
 
@@ -29,6 +31,7 @@ _uint CMapBase::UpdateGameObject(float fDeltaTime)
 {
 	Super::UpdateGameObject(fDeltaTime);
 	m_pTransformCom->UpdateTransform();
+
 	return _uint();
 }
 
@@ -41,6 +44,7 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 
 	m_pManagement->SetAmbient(MapAmbient);
 
+
 	return _uint();
 }
 
@@ -49,28 +53,51 @@ HRESULT CMapBase::RenderGameObject()
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
+
 	for (auto& RefInfo : *_InfosPtr)
 	{
 		m_pDevice->SetTransform(D3DTS_WORLD, &MapWorld);
-		m_pDevice->SetTexture(0, RefInfo.Texture);
+
+		if(RefInfo.Texture)
+			m_pDevice->SetTexture(0, RefInfo.Texture);
+		if (RefInfo.TextureNormal)
+			m_pDevice->SetTexture(1, RefInfo.TextureNormal);
+		if (RefInfo.TextureSpecular)
+			m_pDevice->SetTexture(2, RefInfo.TextureSpecular);
+
 		auto _Mtrl = RefInfo.MaterialInfo.ConvertMtrl();
-	//	m_pDevice->SetMaterial(&_Mtrl);
+		m_pDevice->SetMaterial(&_Mtrl);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
 			sizeof(Vertex));
 		m_pDevice->SetFVF(Vertex::FVF);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
 			RefInfo.TriangleCount);
 	}
-
+	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
 	return S_OK;
 }
 
 void CMapBase::LoadMap(std::wstring FilePath,
 	const mat& MapWorld)
 {
+
 	this->MapWorld = MapWorld;
 
-	_InfosPtr = std::make_shared<std::vector<Info>>();
+	_InfosPtr = std::shared_ptr<std::vector<Info>>(new std::vector<Info>,
+		[](auto ptr) 
+		{
+			for (auto& element : (*ptr) )
+			{
+				SafeRelease(element.VtxBuf);
+				SafeRelease(element.Texture);
+				SafeRelease(element.TextureNormal);
+				SafeRelease(element.TextureSpecular);
+			}
+			delete ptr;
+		});
+
 	_PolygonPlane = std::make_shared<std::vector<PlaneInfo>>();
 
 	const std::wstring _MtlFileName = FilePath + L"MAP.mtl";
@@ -343,7 +370,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 		Line.clear();
 		wss.clear();
 	};
-
 	CCollisionComponent::SetUpMapPlaneInfo(*_PolygonPlane);
 }
 
