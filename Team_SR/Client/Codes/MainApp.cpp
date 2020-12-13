@@ -6,7 +6,7 @@
 #include "MainCamera.h"
 #include "CollisionComponent.h"
 
-#include "BatGrey.h"	// ���� ����
+#include "BatGrey.h"	// 박쥐
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -126,7 +126,9 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
-	// 박쥐 텍스처 플라이
+	// 박쥐 텍스처들
+#pragma region Component_Texture_BatGrey
+	// 플라이
 #pragma region Component_Texture_BatGreyFly
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -134,6 +136,48 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
+	// 원거리 공격
+#pragma region Component_Texture_BatGreyShoot
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyShoot",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Shoot/batGreyShoot%d.png", 5))))
+		return E_FAIL;
+#pragma endregion
+	// 근접 공격
+#pragma region Component_Texture_BatGreyAttack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Attack/batGreyattack%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 뒤돌아봄
+#pragma region Component_Texture_BatGreyBack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyBack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Back/batGreyFly_back%d.png", 7))))
+		return E_FAIL;
+#pragma endregion
+	// 피격
+#pragma region Component_Texture_BatGreyHit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Hit/batGreyHit_%d.png", 2))))
+		return E_FAIL;
+#pragma endregion
+	// 죽음
+#pragma region Component_Texture_BatGreyDeath
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyDeath",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Death/batGreydeath%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma endregion	// Component_Texture_BatGrey
 
 	return S_OK;
 }

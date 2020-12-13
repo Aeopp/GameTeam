@@ -3,6 +3,9 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_bFrameLoopCheck(false)
 {
 }
 
@@ -25,7 +28,7 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 		if (sizeof(MonsterBasicArgument) == *static_cast<_uint*>(pArg))
 		{
 			MonsterBasicArgument* pArgument = static_cast<MonsterBasicArgument*>(pArg);
-			m_pPlayer = (CGameObject*)(pArgument->pPlayer);
+			m_pPlayer = reinterpret_cast<CGameObject*>(pArgument->pPlayer);
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
 		}
 	}
@@ -68,12 +71,28 @@ HRESULT CMonster::AddComponents()
 	return S_OK;
 }
 
-// 플레이어 인식 - 인식하면 TRUE, 인식하지 못하면 FALSE
-BOOL CMonster::PlayerAwareness()
+// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
+bool CMonster::Frame_Move(float fDeltaTime)
 {
-	// m_pPlayer->
+	m_fFrameCnt += 10.f * fDeltaTime;
+	if (m_fFrameCnt >= m_fEndFrame)
+	{
+		m_fFrameCnt = m_fStartFrame;
+		return true;
+	}
+	return false;
+}
 
-	return FALSE;
+// 플레이어 인식 - 인식하면 TRUE, 인식하지 못하면 FALSE
+bool CMonster::PlayerAwareness()
+{
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	float fDis = D3DXVec3Length(&vDir);
+	// 플레이어가 범위 안에 있으면
+	if (fDis <= m_stStatus.fDetectionDistance) {
+		return true;
+	}
+	return false;
 }
 
 void CMonster::Free()

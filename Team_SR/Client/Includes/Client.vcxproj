@@ -179,6 +179,7 @@
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\Terrain.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="..\Codes\Stage1st.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />

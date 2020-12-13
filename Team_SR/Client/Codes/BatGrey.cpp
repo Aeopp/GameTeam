@@ -4,6 +4,9 @@
 
 CBatGrey::CBatGrey(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
+	, m_fCountdown(0.f), m_fpAction(nullptr)
+	, m_eAwareness(AWARENESS::End), m_ePhase(PHASE::End)
+	, m_fpMonsterAI{}
 {
 }
 
@@ -67,7 +70,7 @@ _uint CBatGrey::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
+	m_bFrameLoopCheck = Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
 
 	return _uint();
 }
@@ -91,19 +94,66 @@ HRESULT CBatGrey::RenderGameObject()
 
 HRESULT CBatGrey::AddComponents()
 {
-	if (FAILED(CMonster::AddComponents()))
+	if (FAILED(CMonster::AddComponents()))	// Monster.cpp에서 RectTexture 호출
 		return E_FAIL;
 
+#pragma region Add_Component_Texture
+	// 텍스처
 	CTexture* pTexture;
-	// 텍스처 플라이
+	// 플라이
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyFly",
 		L"Com_Texture",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-
 	m_mapTexture.emplace(L"Component_Texture_BatGreyFly", pTexture);
+
+	// 원거리 공격
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyShoot",
+		L"Com_Texture",
+		(CComponent**)&pTexture)))
+		return E_FAIL;
+	m_mapTexture.emplace(L"Component_Texture_BatGreyShoot", pTexture);
+
+	// 근접 공격
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyAttack",
+		L"Com_Texture",
+		(CComponent**)&pTexture)))
+		return E_FAIL;
+	m_mapTexture.emplace(L"Component_Texture_BatGreyAttack", pTexture);
+
+	// 뒤돌아봄
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyBack",
+		L"Com_Texture",
+		(CComponent**)&pTexture)))
+		return E_FAIL;
+	m_mapTexture.emplace(L"Component_Texture_BatGreyBack", pTexture);
+
+	// 피격
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyHit",
+		L"Com_Texture",
+		(CComponent**)&pTexture)))
+		return E_FAIL;
+	m_mapTexture.emplace(L"Component_Texture_BatGreyHit", pTexture);
+
+	// 죽음
+	if (FAILED(CGameObject::AddComponent(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyDeath",
+		L"Com_Texture",
+		(CComponent**)&pTexture)))
+		return E_FAIL;
+	m_mapTexture.emplace(L"Component_Texture_BatGreyDeath", pTexture);
+#pragma endregion
 
 	return S_OK;
 }
@@ -113,7 +163,7 @@ void CBatGrey::Update_AI(float fDeltaTime)
 {
 	// 몬스터 행동
 	if ((this->*m_fpAction)(fDeltaTime)) {
-		// 플레이어 인식
+		// 플레이어를 인식했는가?
 		if (PlayerAwareness()) {
 			m_eAwareness = AWARENESS::Yes;	// 플레이어 발견
 		}
@@ -134,16 +184,6 @@ void CBatGrey::Update_AI(float fDeltaTime)
 	}
 }
 
-// 텍스처 프레임 이동
-void CBatGrey::Frame_Move(float fDeltaTime)
-{
-	m_fFrameCnt += 10.f * fDeltaTime;
-	if (m_fFrameCnt >= m_fEndFrame)
-	{
-		m_fFrameCnt = m_fStartFrame;
-	}
-}
-
 HRESULT CBatGrey::Set_Texture()
 {
 	// 텍스처 찾기
@@ -158,21 +198,55 @@ HRESULT CBatGrey::Set_Texture()
 	return S_OK;
 }
 
+// 플레이어를 인식하지 못함
 void CBatGrey::AI_NoAwareness()
 {
+	m_fpAction = &CBatGrey::Action_Idle;	// 대기
+	m_fCountdown = 1.f;		// 1초
+	// 텍스처 키, 프레임
+	m_wstrTextureKey = L"Component_Texture_BatGreyFly";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 8;
 }
 
+// 적극적으로 공격
 void CBatGrey::AI_ActiveOffense()
 {
+	// 랜덤으로 몇가지 패턴 행동을...
+
+	{
+		m_fpAction = &CBatGrey::Action_Shoot;
+		m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 5;
+	}
 }
 
+// 소극적으로 공격
 void CBatGrey::AI_PassiveOffense()
 {
 }
 
-BOOL CBatGrey::Action_Idle(float fDeltaTime)
+// 행동 대기
+bool CBatGrey::Action_Idle(float fDeltaTime)
 {
-	return FALSE;
+	m_fCountdown -= fDeltaTime;
+	if (m_fCountdown <= 0) {
+		return true;
+	}
+	return false;
+}
+
+// 원거리 공격
+bool CBatGrey::Action_Shoot(float fDeltaTime)
+{
+	if (m_bFrameLoopCheck) {
+		return true;
+	}
+
+	return false;
 }
 
 CBatGrey* CBatGrey::Create(LPDIRECT3DDEVICE9 pDevice)
