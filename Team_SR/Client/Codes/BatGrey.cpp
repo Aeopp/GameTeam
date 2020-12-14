@@ -104,7 +104,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyFly",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyFly",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyFly", pTexture);
@@ -113,7 +113,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyShoot",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyShoot",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyShoot", pTexture);
@@ -122,7 +122,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyAttack",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyAttack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyAttack", pTexture);
@@ -131,7 +131,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyBack",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyBack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyBack", pTexture);
@@ -140,7 +140,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyHit",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyHit",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyHit", pTexture);
@@ -149,7 +149,7 @@ HRESULT CBatGrey::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyDeath",
-		L"Com_Texture",
+		L"Com_Texture_BatGreyDeath",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(L"Component_Texture_BatGreyDeath", pTexture);
@@ -279,11 +279,5 @@ CGameObject* CBatGrey::Clone(void* pArg/* = nullptr*/)
 
 void CBatGrey::Free()
 {
-	for (auto& rPair : m_mapTexture)
-		SafeRelease(rPair.second);
-	m_mapTexture.clear();
-
-	SafeRelease(m_pVIBufferCom);
-
 	CMonster::Free();
 }

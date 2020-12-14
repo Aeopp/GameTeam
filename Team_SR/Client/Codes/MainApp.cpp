@@ -29,7 +29,7 @@ HRESULT CMainApp::ReadyMainApp()
 
 	ImGuiHelper::Init(g_hWnd, m_pDevice);
 
-	SafeAddRef(m_pDevice);
+	//SafeAddRef(m_pDevice);	// ImGui Init함수 안에서 이미 증가시키고 있음
 
 	if (FAILED(ReadyStaticResources()))
 		return E_FAIL;
@@ -43,6 +43,8 @@ HRESULT CMainApp::ReadyMainApp()
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 		return E_FAIL;
 	}
+
+	srand(0);	// 랜덤 시드값
 
 	return S_OK;
 }
@@ -85,15 +87,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-			CMainCamera::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
+
 	/* For.Component */
-
-		
-
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -125,7 +125,7 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region Component_Camera
 
 #pragma endregion
-
+	
 	// 박쥐 텍스처들
 #pragma region Component_Texture_BatGrey
 	// 플라이

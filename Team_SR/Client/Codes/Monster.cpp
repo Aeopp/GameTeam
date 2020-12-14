@@ -97,9 +97,10 @@ bool CMonster::PlayerAwareness()
 
 void CMonster::Free()
 {
-	SafeRelease(m_pVIBufferCom);
-	// TODO :: 텍스쳐 컴포넌트 추가 이후 주석 풀기
-	//SafeRelease(m_pTextureCom);
+	SafeRelease(m_pVIBufferCom);		// 버텍스 버퍼
+	for (auto& rPair : m_mapTexture)	// map 텍스처 릴리즈
+		SafeRelease(rPair.second);
+	m_mapTexture.clear();
 
 	CGameObject::Free();
 }

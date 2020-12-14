@@ -89,13 +89,13 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	{
 		Line.clear();
 		ToKen.clear();
-		// ÇÑÁÙ ¸®µù
+		// í•œì¤„ ë¦¬ë”©
 		std::getline(_MtlStream, Line);
 		wss.str(Line);
 		wss.clear();
 		wss >> ToKen;
 
-		// ¸ÓÅ×¸®¾ó ÆÄ½Ì ½ÃÀÛ
+		// ë¨¸í…Œë¦¬ì–¼ íŒŒì‹± ì‹œìž‘
 		if (ToKen == L"newmtl")
 		{
 			MtrlInfo _Info;
@@ -114,7 +114,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			while (!_FileLines.empty())
 			{
-				// ÇÑÁÙ¾¿ ÀÐÀ¸¸ç ÆÄ½Ì
+				// í•œì¤„ì”© ì½ìœ¼ë©° íŒŒì‹±
 				ToKen.clear();
 				std::wstringstream CurLine;
 				CurLine.str(std::move(_FileLines.back()));
@@ -273,7 +273,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			memcpy(_VtxBuffer, _Vtxs.data(), sizeof(Vertex) * _Vtxs.size());
 			_Info.TriangleCount = _Vtxs.size() / 3;
-			// Ãæµ¹ Á¤º¸ »ý¼º....
+			// ì¶©ëŒ ì •ë³´ ìƒì„±....
 			
 			for (auto iter = _Vtxs.begin(); iter != _Vtxs.end();)
 			{
@@ -283,7 +283,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				_PlaneInfo.Face[1] = (++iter)->Location;
 				_PlaneInfo.Face[2] = (++iter)->Location;
 
-				// ·ÎÄÃ¿¡¼­ Á¤ÀÇµÈ Á¤Á¡µéÀ» ¿ùµå·Î ¹Ù²ã¼­ ÀúÀå
+				// ë¡œì»¬ì—ì„œ ì •ì˜ëœ ì •ì ë“¤ì„ ì›”ë“œë¡œ ë°”ê¿”ì„œ ì €ìž¥
 				_PlaneInfo.Center = { 0,0,0 };
 
 				std::transform(std::make_move_iterator(std::begin(_PlaneInfo.Face)), 
@@ -305,7 +305,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 				_PolygonPlane->push_back(std::move(_PlaneInfo));
 			}
-			// ÀÌÁ¦ °°Àº Æò¸éÀ» Ãß·Á³»ÀÚ .......
+			// ì´ì œ ê°™ì€ í‰ë©´ì„ ì¶”ë ¤ë‚´ìž .......
 			//
 			_Vtxs.clear();
 			_Info.VtxBuf->Unlock();
@@ -358,7 +358,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 //
 //CGameObject* CMapBase::Clone(void * pArg)
 //{
-//	CMapBase* pClone = new CMapBase(*this); /* º¹»ç»ý¼ºÀÚ */
+//	CMapBase* pClone = new CMapBase(*this); /* ë³µì‚¬ìƒì„±ìž */
 //	SafeAddRef(m_pDevice);
 //	if (FAILED(pClone->ReadyGameObject(pArg)))
 //	{
@@ -371,5 +371,13 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 void CMapBase::Free()
 {
+	// 2020.12.14 5:46 KMJ
+	// ë²„í…ìŠ¤ ë²„í¼, í…ìŠ¤ì²˜ í•´ì œ
+	for (auto& pInfo : *_InfosPtr) {
+		SafeRelease(pInfo.Texture);
+		SafeRelease(pInfo.VtxBuf);
+	}
+	_InfosPtr->clear();
+
 	Super::Free();
 }
