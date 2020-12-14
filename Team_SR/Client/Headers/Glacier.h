@@ -18,10 +18,16 @@ public:
 
 private:
 	virtual HRESULT AddComponents() override;
+	HRESULT Set_Texture();
+	HRESULT Movement(float fDeltaTime);
+
 public:
 	static CGlacier* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+
+private:
+	bool m_bHit = false;
 };
 
 #define __GLACIER_H__

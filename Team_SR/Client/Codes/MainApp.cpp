@@ -4,13 +4,10 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
-<<<<<<< HEAD
 #include "Glacier.h"
-=======
 #include "CollisionComponent.h"
 
 #include "BatGrey.h"	// 박쥐
->>>>>>> MyeongJun
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -96,6 +93,15 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 	/* For.Component */
 
+#pragma  region GameObject_Glacier
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			CGlacier::Create(m_pDevice))))
+			return E_FAIL;
+
+#pragma endregion
+
 		
 
 #pragma region Component_VIBuffer_RectTexture
@@ -130,15 +136,13 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
-<<<<<<< HEAD
-#pragma region Component_Texture_Monster
+#pragma region Component_Texture_Glacier
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>(),
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png",16))))
+		L"Component_Texture_GlacierMove",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png", 16))))
 		return E_FAIL;
 #pragma endregion
-=======
 	// 박쥐 텍스처들
 #pragma region Component_Texture_BatGrey
 	// 플라이
@@ -191,7 +195,6 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma endregion	// Component_Texture_BatGrey
->>>>>>> MyeongJun
 
 	return S_OK;
 }

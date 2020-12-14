@@ -22,10 +22,8 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-<<<<<<< HEAD
 	if (FAILED(CMonster::AddComponents()))
 		return E_FAIL;
-=======
 	if (nullptr != pArg)
 	{
 		// 구조체 크기 검사
@@ -36,7 +34,6 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
 		}
 	}
->>>>>>> MyeongJun
 
 	return S_OK;
 }

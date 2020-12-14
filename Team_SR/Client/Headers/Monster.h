@@ -24,10 +24,6 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 protected:
-<<<<<<< HEAD
-	class CTexture* m_pTextureCom = nullptr;
-=======
->>>>>>> MyeongJun
 	class CVIBuffer* m_pVIBufferCom = nullptr;
 
 protected:

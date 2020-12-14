@@ -4,12 +4,8 @@
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
-<<<<<<< HEAD
 #include "Glacier.h"
-=======
 #include "BatGrey.h"
->>>>>>> MyeongJun
-
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {
@@ -37,24 +33,6 @@ HRESULT CStage1st::ReadyScene()
 			LayerTag,
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
-
-<<<<<<< HEAD
-		const std::wstring GaicierTag = CGameObject::Tag + TYPE_NAME<CGlacier>();
-
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Stage1st,
-			GaicierTag,
-			CGlacier::Create(m_pDevice))))
-			return E_FAIL;
-
-		const std::wstring GaicierLayerTag = CLayer::Tag + TYPE_NAME<CGlacier>();
-
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Stage1st,
-			GaicierTag,
-			(_int)ESceneID::Stage1st,
-			GaicierLayerTag)))
-=======
 		// 박쥐
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
@@ -66,7 +44,17 @@ HRESULT CStage1st::ReadyScene()
 			(_int)ESceneID::Stage1st,
 			CLayer::Tag + TYPE_NAME<CBatGrey>(),
 			nullptr, static_cast<void*>(&stArg))))
->>>>>>> MyeongJun
+			return E_FAIL;
+
+		// 글레이서
+		stArg.vPosition = { 5.f, 10.f, 30.f };
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CGlacier>(),
+			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 	}
 
