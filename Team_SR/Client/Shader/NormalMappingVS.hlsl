@@ -1,3 +1,5 @@
+
+
 float4x4 WorldMatrix;
 float4x4 WorldViewProjectionMatrix;
 float4 WorldLightLocation;
@@ -15,15 +17,15 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 Location : POSITION;
-	float2 UV :			TEXCOORD0;
+	float2 UV : TEXCOORD0;
 	float3 LightDir : TEXCOORD1;
-	float3 ViewDir :	TEXCOORD2;
-	float3 T :TEXCOORD3;
+	float3 ViewDir : TEXCOORD2;
+	float3 T : TEXCOORD3;
 	float3 B : TEXCOORD4;
 	float3 N : TEXCOORD5;
 };
 
-VS_OUTPUT main(VS_INPUT Input) 
+VS_OUTPUT main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
 
@@ -37,7 +39,7 @@ VS_OUTPUT main(VS_INPUT Input)
 	float3 ViewDir = normalize(WorldLocation.xyz - WorldCameraLocation.xyz);
 	Output.ViewDir = ViewDir;
 	
-	float3 WorldNormal = mul(Input.Normal,(float3x3)WorldMatrix);
+	float3 WorldNormal = mul(Input.Normal, (float3x3) WorldMatrix);
 	Output.N = normalize(WorldNormal);
 	
 	float3 WorldTangent = mul(Input.Tangent, (float3x3) WorldMatrix);

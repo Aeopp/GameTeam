@@ -53,23 +53,24 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMapBase::RenderGameObject()
 {
-	mat CurrentWorld = m_pTransformCom->m_TransformDesc.matWorld;
+	mat CurrentWorld = this->MapWorld;
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &CurrentWorld)))
 		return E_FAIL;
 
+	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
-	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
-	m_pDevice->SetRenderState(D3DRS_AMBIENT,NULL);
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
+	m_pDevice->SetRenderState(D3DRS_AMBIENT,MapAmbient);
 
 	const vec4 CameraLocation =
 		MATH::ConvertVec4(dynamic_cast<CStage*>
 			(m_pManagement->GetCurrentScene())->_Camera->GetTransform()->GetLocation(), 1.f);
 
-	const vec4 LightLocation = { 0,50,0,1 };
-	/*	MATH::ConvertVec4(dynamic_cast<CStage*>
-			(m_pManagement->GetCurrentScene())->m_pPlayer->GetTransform()->GetLocation(), 1.f);*/
+	const vec4 LightLocation = 
+		MATH::ConvertVec4(dynamic_cast<CStage*>
+			(m_pManagement->GetCurrentScene())->m_pPlayer->GetTransform()->GetLocation(), 1.f);
 
 	mat View;
 	mat Projection;
@@ -98,19 +99,15 @@ HRESULT CMapBase::RenderGameObject()
 		uint32_t count = 0;
 		D3DXCONSTANT_DESC _Desc;
 
-		vec4 LightColor = { 1.f,1.f,1.0f,1.f };
+		vec4 LightColor = { 1.f,1.f,1.f,1.f };
 
-		_ShaderInfo.PsTable->SetVector(m_pDevice,_ShaderInfo.PsHandleMap["LightColor"],
-			&LightColor);
+		_ShaderInfo.PsTable->SetVector(m_pDevice,_ShaderInfo.PsHandleMap["LightColor"],&LightColor);
 
 		m_pDevice->SetPixelShader(_ShaderInfo.PsShader);
 	}
 
-	
-
 	for (auto& RefInfo : *_InfosPtr)
 	{
-	
 		{
 			const uint32_t TexIdx = 
 				_ShaderInfo.TextureDescMap["DiffuseSampler"].RegisterIndex;
@@ -140,12 +137,10 @@ HRESULT CMapBase::RenderGameObject()
 			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 		}
-
-		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,
-			sizeof(Vertex));
+		
+		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex));
 		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,
-			RefInfo.TriangleCount);
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,RefInfo.TriangleCount);
 	}
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
@@ -360,7 +355,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 			const auto Tangent_BiNormal = Model::CalculateTangentBinormal(
 				TempVertexType{ _FaceVertexs[0].Location,_FaceVertexs[0].TexCoord }
-				, TempVertexType{ _FaceVertexs[1].Location, _FaceVertexs[1] .TexCoord} ,
+			  , TempVertexType{ _FaceVertexs[1].Location, _FaceVertexs[1] .TexCoord} ,
 				TempVertexType{ _FaceVertexs[2] .Location,_FaceVertexs[2] .TexCoord} );
 
 			const vec3 NewNormal =Model::CalculateNormal(Tangent_BiNormal.first, Tangent_BiNormal.second);
@@ -411,7 +406,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 				std::transform(std::make_move_iterator(std::begin(_PlaneInfo.Face)), 
 					std::make_move_iterator(std::end(_PlaneInfo.Face)), 
-					std::begin(_PlaneInfo.Face), [ &MapWorld,&_PlaneInfo]
+					std::begin(_PlaneInfo.Face), [&MapWorld,&_PlaneInfo]
 					(auto _VertexPoint)
 					{
 						D3DXVec3TransformCoord(&_VertexPoint,&_VertexPoint, &MapWorld);
@@ -422,7 +417,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				D3DXPlaneFromPoints(&_PlaneInfo._Plane,
 					&_PlaneInfo.Face[0],&_PlaneInfo.Face[1], &_PlaneInfo.Face[2]);
 
-				_PlaneInfo.Center/= 3.f;
+				_PlaneInfo.Center /= 3.f;
 
 				++iter;
 

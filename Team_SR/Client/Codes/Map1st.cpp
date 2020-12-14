@@ -13,7 +13,7 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	mat MapWorld  = MATH::WorldMatrix({ 7,7,7 }, { 0,0,0}, { 0,0,0});
+	mat MapWorld  = MATH::WorldMatrix({ 3,3,3}, { 0,0,0}, { 0,0,0});
 
 	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
 	_ShaderInfo = Shader::CompileAndCreate(m_pDevice, L"..\\Shader\\NormalMapping");

@@ -40,7 +40,7 @@ float4 main(PS_INPUT Input)  :COLOR
 		specular *= specularIntensity.rgb * LightColor.xyz;
 	};
 	
-	float3 ambient = float3(0.01f, 0.01f, 0.01f) * albedo.xyz;
+	float3 ambient = float3(0.05f, 0.05f, 0.05f) * albedo.xyz;
 	
 	return float4(ambient + diffuse + specular, 1);
 }

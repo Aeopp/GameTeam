@@ -4,7 +4,6 @@
 #include "Transform.h"
 #include "Collision.h"
 #include <d3dx9.h>
-
 USING(Engine)
 
 float  CCollisionComponent::MapCollisionCheckDistanceMin= 100.f;
@@ -244,12 +243,18 @@ void CCollisionComponent::DebugDraw()
 	_Mtrl.Power = 10.f;
 	_Mtrl.Specular = D3DCOLORVALUE{ 1,1,1,1 };
 	m_pDevice->SetMaterial(&_Mtrl);
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
+
+	const vec3 LightLocation = _Sphere.Center; 
+	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, LightLocation);
+	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
 	
 	// TODO :: REMOVEPLZ
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	mat debugworld = MATH::WorldMatrix({ 0.2,0.2,0.2 }, { 0,0,0 }, debuglocation);
-	
+
 	m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
 	m_pDevice->SetMaterial(&_Mtrl);
 	_SphereMesh->DrawSubset(0);

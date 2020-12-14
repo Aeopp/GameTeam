@@ -1,4 +1,4 @@
-#include "..\Headers\Camera.h"
+ï»¿#include "..\Headers\Camera.h"
 
 USING(Engine)
 
@@ -32,23 +32,23 @@ _uint CCamera::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	/* ºäÇà·Ä ¸¸µå´Â ÇÔ¼ö */
+	/* ë·°í–‰ë ¬ ë§Œë“œëŠ” í•¨ìˆ˜ */
 	D3DXMatrixLookAtLH(
-		&m_CameraDesc.matView, /* ¹ÝÈ¯ °ª */
-		&m_CameraDesc.vEye, /* ¿ùµå»ó Ä«¸Þ¶ó À§Ä¡ Eye */
-		&m_CameraDesc.vAt, /* Ä«¸Þ¶ó°¡ ¹Ù¶óº¸´Â ÁöÁ¡ At */
-		&m_CameraDesc.vUp /* Upº¤ÅÍ */);
+		&m_CameraDesc.matView, /* ë°˜í™˜ ê°’ */
+		&m_CameraDesc.vEye, /* ì›”ë“œìƒ ì¹´ë©”ë¼ ìœ„ì¹˜ Eye */
+		&m_CameraDesc.vAt, /* ì¹´ë©”ë¼ê°€ ë°”ë¼ë³´ëŠ” ì§€ì  At */
+		&m_CameraDesc.vUp /* Upë²¡í„° */);
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_CameraDesc.matView)))
 		return E_FAIL;
 
-	/* ¿ø±Ù Åõ¿µ Çà·ÄÀ» ¸¸µå´Â ÇÔ¼ö */
+	/* ì›ê·¼ íˆ¬ì˜ í–‰ë ¬ì„ ë§Œë“œëŠ” í•¨ìˆ˜ */
 	D3DXMatrixPerspectiveFovLH(
-		&m_CameraDesc.matProj, /* ¹ÝÈ¯ °ª */
-		D3DXToRadian(m_CameraDesc.fFovY), /* ½Ã¾ß°¢ FovY */
-		m_CameraDesc.fAspect, /* Á¾È¾ºñ Aspect */
-		m_CameraDesc.fNear, /* Ä«¸Þ¶ó¿Í ±ÙÆí¸í°úÀÇ Z°Å¸® Near */
-		m_CameraDesc.fFar /* Ä«¸Þ¶ó¿Í ¿øÆò¸é°úÀÇ Z°Å¸® Far */);
+		&m_CameraDesc.matProj, /* ë°˜í™˜ ê°’ */
+		D3DXToRadian(m_CameraDesc.fFovY), /* ì‹œì•¼ê° FovY */
+		m_CameraDesc.fAspect, /* ì¢…íš¡ë¹„ Aspect */
+		m_CameraDesc.fNear, /* ì¹´ë©”ë¼ì™€ ê·¼íŽ¸ëª…ê³¼ì˜ Zê±°ë¦¬ Near */
+		m_CameraDesc.fFar /* ì¹´ë©”ë¼ì™€ ì›í‰ë©´ê³¼ì˜ Zê±°ë¦¬ Far */);
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_CameraDesc.matProj)))
 		return E_FAIL;

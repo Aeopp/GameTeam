@@ -133,7 +133,8 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		vec3 Right = MATH::Cross(WorldUp,Look);
 		m_CameraDesc.vUp = MATH::Cross(Look, Right);
 	}
-
+	//mat View;
+	//m_pDevice->SetTransform(D3DTS_VIEW, )
 
 	Super::LateUpdateGameObject(fDeltaTime);
 
