@@ -2,9 +2,10 @@
 
 #ifndef __CLIENT_ENUM_H__
 
-enum class ESceneID
+enum class ESceneID :int8_t
 {
-	Static,
+	CurrentScene =-1,
+	Static=0,
 	Logo,
 	Menu,
 	Stage1st,

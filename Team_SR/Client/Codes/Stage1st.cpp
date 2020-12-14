@@ -4,7 +4,11 @@
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
+<<<<<<< HEAD
 #include "Glacier.h"
+=======
+#include "BatGrey.h"
+>>>>>>> MyeongJun
 
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -34,6 +38,7 @@ HRESULT CStage1st::ReadyScene()
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
 
+<<<<<<< HEAD
 		const std::wstring GaicierTag = CGameObject::Tag + TYPE_NAME<CGlacier>();
 
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -49,6 +54,19 @@ HRESULT CStage1st::ReadyScene()
 			GaicierTag,
 			(_int)ESceneID::Stage1st,
 			GaicierLayerTag)))
+=======
+		// Î∞ïÏ•ê
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 10.f, 30.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CBatGrey>(),
+			nullptr, static_cast<void*>(&stArg))))
+>>>>>>> MyeongJun
 			return E_FAIL;
 	}
 
@@ -74,7 +92,15 @@ _uint CStage1st::KeyProcess(float fDeltaTime)
 {
 	Super::KeyProcess(fDeltaTime);
 
+	
+
 	return _uint();
+}
+
+void CStage1st::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
+{
+	Super::PlayerKeyProcess(_CurrentPlayer, fDeltaTime);
+
 }
 
 CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
@@ -89,7 +115,7 @@ CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
 		SafeRelease(pInstance);
 	}
 
-	PRINT_LOG(L"Test", L"Ω∫≈◊¿Ã¡ˆ 1 ª˝º∫");
+	PRINT_LOG(L"Test", L"Ïä§ÌÖåÏù¥ÏßÄ 1 ÏÉùÏÑ±");
 
 	return pInstance;
 }

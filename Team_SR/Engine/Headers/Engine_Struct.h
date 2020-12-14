@@ -4,6 +4,34 @@
 
 BEGIN(Engine)
 
+struct Ray
+{
+	vec3 Start;
+	vec3 Direction;
+};
+
+struct Segment
+{
+	Ray _Ray;
+
+	// 시작점에서 끝점 까지의 거리
+	// ex) startpoint + dir * t = endpoint
+	float t;
+};
+
+struct PlaneInfo
+{
+	D3DXPLANE _Plane;
+	vec3 Center;
+	std::array<vec3, 3ul> Face;
+};
+
+struct Sphere
+{
+	float Radius;
+	vec3 Center;
+};
+
 typedef struct tagVertexColor
 {
 	D3DXVECTOR3 vPosition;
@@ -44,6 +72,7 @@ typedef struct tagTransformDesc
 	{
 		ZeroMemory(this, sizeof(tagTransformDesc));
 		D3DXMatrixIdentity(&matWorld);
+		vScale = { 1.f, 1.f, 1.f };
 	}
 	_vector	vPosition;
 	_vector	vScale;

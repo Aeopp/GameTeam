@@ -4,7 +4,13 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
+<<<<<<< HEAD
 #include "Glacier.h"
+=======
+#include "CollisionComponent.h"
+
+#include "BatGrey.h"	// 박쥐
+>>>>>>> MyeongJun
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -52,7 +58,8 @@ int CMainApp::UpdateMainApp()
 
 	ImGuiHelper::Text();
 	ImGuiHelper::Slider();
-
+	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
+	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render();
@@ -73,12 +80,23 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 박쥐
+#pragma region GameObject_BatGrey
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+		CBatGrey::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
 			CMainCamera::Create(m_pDevice))))
 			return E_FAIL;
 	/* For.Component */
+
+		
 
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -95,6 +113,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTransform::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CCollisionComponent::Create(m_pDevice))))
+	{
+		return E_FAIL;
+	}
+
 #pragma region Component_Texture_Player
 
 #pragma endregion
@@ -103,6 +130,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
+<<<<<<< HEAD
 #pragma region Component_Texture_Monster
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -110,6 +138,60 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png",16))))
 		return E_FAIL;
 #pragma endregion
+=======
+	// 박쥐 텍스처들
+#pragma region Component_Texture_BatGrey
+	// 플라이
+#pragma region Component_Texture_BatGreyFly
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyFly",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+	// 원거리 공격
+#pragma region Component_Texture_BatGreyShoot
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyShoot",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Shoot/batGreyShoot%d.png", 5))))
+		return E_FAIL;
+#pragma endregion
+	// 근접 공격
+#pragma region Component_Texture_BatGreyAttack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Attack/batGreyattack%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 뒤돌아봄
+#pragma region Component_Texture_BatGreyBack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyBack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Back/batGreyFly_back%d.png", 7))))
+		return E_FAIL;
+#pragma endregion
+	// 피격
+#pragma region Component_Texture_BatGreyHit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Hit/batGreyHit_%d.png", 2))))
+		return E_FAIL;
+#pragma endregion
+	// 죽음
+#pragma region Component_Texture_BatGreyDeath
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyDeath",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Death/batGreydeath%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma endregion	// Component_Texture_BatGrey
+>>>>>>> MyeongJun
 
 	return S_OK;
 }
@@ -140,5 +222,4 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
-
 }

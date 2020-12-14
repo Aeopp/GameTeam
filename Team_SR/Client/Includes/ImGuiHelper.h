@@ -25,6 +25,8 @@ public:
 	static bool bInitialize;
 	static bool bEditOn;
 	static bool bDemo;
+
+	
 public:
 	/*Example Code Here*/
 	static void Text();

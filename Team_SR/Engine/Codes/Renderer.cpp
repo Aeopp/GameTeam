@@ -29,7 +29,7 @@ HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObj
 	m_GameObjects[(_int)eID].push_back(pGameObject);
 	SafeAddRef(pGameObject);
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CRenderer::Render(HWND hWnd)
@@ -101,6 +101,13 @@ HRESULT CRenderer::RenderNoAlpha()
 
 HRESULT CRenderer::RenderAlpha()
 {
+	/*
+	알파 테스팅 ==================================================================
+	*/
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*알파기준값*/
+	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -110,6 +117,36 @@ HRESULT CRenderer::RenderAlpha()
 	}
 
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
+
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+	/*
+	알파 블렌딩 ==================================================================
+	*/
+	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+
+	///*
+	//D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
+	//D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
+	//D3DBLEND_SRCALPHA: 혼합비율 값은 0~1 범위. (As, As, As, As)
+	//D3DBLEND_INVSRCALPHA: 혼합비율 값은 0~1 범위. (1-As, 1-As, 1-As, 1-As)
+	//최종픽셀 = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
+	//*/
+	//m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
+	//{
+	//	if (FAILED(pObject->RenderGameObject()))
+	//		return E_FAIL;
+
+	//	SafeRelease(pObject);
+	//}
+
+	//m_GameObjects[(_int)ERenderID::Alpha].clear();
+
+	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
 	return S_OK;
 }

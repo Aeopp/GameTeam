@@ -1,8 +1,6 @@
 #pragma once
 #ifndef __TIME_MANAGER_H__
-
 #include "Base.h"
-
 BEGIN(Engine)
 class CTime_Manager final : public CBase
 {

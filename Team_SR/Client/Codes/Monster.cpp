@@ -3,6 +3,9 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_bFrameLoopCheck(false)
 {
 }
 
@@ -19,8 +22,21 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+<<<<<<< HEAD
 	if (FAILED(CMonster::AddComponents()))
 		return E_FAIL;
+=======
+	if (nullptr != pArg)
+	{
+		// êµ¬ì¡°ì²´ í¬ê¸° ê²€ì‚¬
+		if (sizeof(MonsterBasicArgument) == *static_cast<_uint*>(pArg))
+		{
+			MonsterBasicArgument* pArgument = static_cast<MonsterBasicArgument*>(pArg);
+			m_pPlayer = reinterpret_cast<CGameObject*>(pArgument->pPlayer);
+			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
+		}
+	}
+>>>>>>> MyeongJun
 
 	return S_OK;
 }
@@ -57,23 +73,37 @@ HRESULT CMonster::AddComponents()
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	// TODO :: Static ÅØ½ºÃÄ ÄÄÆ÷³ÍÆ® Ãß°¡ÇÏ´Â ·ÎÁ÷ À¸·Î º¯°æÇÏ±â.
-
-	/*if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;*/
-
-		//////////////////////////////////////////////////////
 	return S_OK;
+}
+
+// í…ìŠ¤ì²˜ í”„ë ˆì„ ì´ë™ - í”„ë ˆì„ ì¹´ìš´íŠ¸ê°€ Endì— ë„ë‹¬í•˜ë©´ true, ì•„ë‹ˆë©´ false
+bool CMonster::Frame_Move(float fDeltaTime)
+{
+	m_fFrameCnt += 10.f * fDeltaTime;
+	if (m_fFrameCnt >= m_fEndFrame)
+	{
+		m_fFrameCnt = m_fStartFrame;
+		return true;
+	}
+	return false;
+}
+
+// í”Œë ˆì´ì–´ ì¸ì‹ - ì¸ì‹í•˜ë©´ TRUE, ì¸ì‹í•˜ì§€ ëª»í•˜ë©´ FALSE
+bool CMonster::PlayerAwareness()
+{
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	float fDis = D3DXVec3Length(&vDir);
+	// í”Œë ˆì´ì–´ê°€ ë²”ìœ„ ì•ˆì— ìˆìœ¼ë©´
+	if (fDis <= m_stStatus.fDetectionDistance) {
+		return true;
+	}
+	return false;
 }
 
 void CMonster::Free()
 {
 	SafeRelease(m_pVIBufferCom);
-	// TODO :: ÅØ½ºÃÄ ÄÄÆ÷³ÍÆ® Ãß°¡ ÀÌÈÄ ÁÖ¼® Ç®±â
+	// TODO :: í…ìŠ¤ì³ ì»´í¬ë„ŒíŠ¸ ì¶”ê°€ ì´í›„ ì£¼ì„ í’€ê¸°
 	//SafeRelease(m_pTextureCom);
 
 	CGameObject::Free();
