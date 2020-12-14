@@ -24,9 +24,10 @@ public:
 	void CancelRegist();
 	// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
 	static void SetUpMapPlaneInfo(const std::vector<PlaneInfo> & _MapPlaneInfo)noexcept { CCollisionComponent::_MapPlaneInfo = _MapPlaneInfo; };
+	static void CollisionUpdate(IDirect3DDevice9* const  _Device);
+	static void CollisionDebugRender(IDirect3DDevice9* const  _Device);
 	void MapHitProcess(const Collision::Info& CollisionInfo, const PlaneInfo& _CurPlane);
 public:
-	
 	enum ETag : uint8_t
 	{
 		None,
@@ -62,7 +63,7 @@ public:
 	ETag _Tag = ETag::None;
 	int32_t MyID= 0;
 
-	// REMOVE 
+	// TODO :: REMOVEPLZ
 	Ray _Ray;
 	//
 private:

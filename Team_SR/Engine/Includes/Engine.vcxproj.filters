@@ -132,9 +132,6 @@
     <ClCompile Include="..\Codes\VIBuffer_CubeTexture.cpp">
       <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\CollisionManager.cpp">
-      <Filter>01.Utilities\07.Collision</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\CollisionComponent.cpp">
       <Filter>01.Utilities\07.Collision</Filter>
     </ClCompile>
@@ -223,9 +220,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\VIBuffer_CubeTexture.h">
       <Filter>01.Utilities\05.Component\01.VIBuffer\03.V</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\CollisionManager.h">
-      <Filter>01.Utilities\07.Collision</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\CollisionComponent.h">
       <Filter>01.Utilities\07.Collision</Filter>

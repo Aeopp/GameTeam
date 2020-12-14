@@ -7,9 +7,6 @@
 #include "MainCamera.h"
 #include "Player.h"
 
-
-
-
 CMapBase::CMapBase(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {}
@@ -35,6 +32,14 @@ _uint CMapBase::UpdateGameObject(float fDeltaTime)
 	Super::UpdateGameObject(fDeltaTime);
 	m_pTransformCom->UpdateTransform();
 
+	if (ImGuiHelper::bEditOn)
+	{
+		ImGui::Begin("LightColor" ,& ImGuiHelper::bEditOn);
+		ImGui::SliderFloat3("DiffuseColor", (float*)&diffusecolor, 0.0f, 1.0f);
+		ImGui::End();
+	}
+	
+	
 	return _uint();
 }
 
@@ -46,7 +51,6 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 		return 0;
 
 	m_pManagement->SetAmbient(MapAmbient);
-
 
 	return _uint();
 }
@@ -60,8 +64,9 @@ HRESULT CMapBase::RenderGameObject()
 
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
-	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
+
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
 	m_pDevice->SetRenderState(D3DRS_AMBIENT,MapAmbient);
 
 	const vec4 CameraLocation =
@@ -78,66 +83,58 @@ HRESULT CMapBase::RenderGameObject()
 	m_pDevice->GetTransform(D3DTS_VIEW, &View);
 	m_pDevice->GetTransform(D3DTS_PROJECTION, &Projection);
 
-	mat WorldViewProjection = CurrentWorld * View * Projection;
-
 	// 버텍스 
 	{
-		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["WorldMatrix"],
+		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["World"],
 			&CurrentWorld);
-		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["WorldViewProjectionMatrix"],
-			&WorldViewProjection);
+		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["View"],
+			&View);
+		_ShaderInfo.VsTable->SetMatrix(m_pDevice, _ShaderInfo.VsHandleMap["Projection"],
+			&Projection);
 		_ShaderInfo.VsTable->SetVector(m_pDevice, _ShaderInfo.VsHandleMap["WorldLightLocation"],
 			&LightLocation);
 		_ShaderInfo.VsTable->SetVector(m_pDevice, _ShaderInfo.VsHandleMap["WorldCameraLocation"],
 			&CameraLocation);
 
-		// _ShaderInfo.VsTable->SetDefaults(m_pDevice);
 		m_pDevice->SetVertexShader(_ShaderInfo.VsShader);
 	}
 
 	{
 		uint32_t count = 0;
 		D3DXCONSTANT_DESC _Desc;
-
-		vec4 LightColor = { 1.f,1.f,1.f,1.f };
-
-		_ShaderInfo.PsTable->SetVector(m_pDevice,_ShaderInfo.PsHandleMap["LightColor"],&LightColor);
-
+		
+		_ShaderInfo.PsTable->SetVector(m_pDevice,_ShaderInfo.PsHandleMap["LightColor"],
+		&diffusecolor);
+		
 		m_pDevice->SetPixelShader(_ShaderInfo.PsShader);
 	}
 
+	D3DCAPS9 _Caps;
+	m_pDevice->GetDeviceCaps(&_Caps);
 	for (auto& RefInfo : *_InfosPtr)
 	{
-		{
-			const uint32_t TexIdx = 
-				_ShaderInfo.TextureDescMap["DiffuseSampler"].RegisterIndex;
-			m_pDevice->SetTexture(TexIdx, RefInfo.Texture);
+	   {
+	   		const uint32_t TexIdx = 
+	   			_ShaderInfo.TextureDescMap["DiffuseSampler"].RegisterIndex;
+	   		m_pDevice->SetTexture(TexIdx, RefInfo.Texture);
+	   
+	   		m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	   		m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	   		m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	   		m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAXANISOTROPY, _Caps.MaxAnisotropy);
+	   }
 
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-		}
-
-		{
+	   {
 			const uint32_t TexIdx =
 				_ShaderInfo.TextureDescMap["SpecularSampler"].RegisterIndex;
 			m_pDevice->SetTexture(TexIdx, RefInfo.TextureSpecular);
 
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAXANISOTROPY, _Caps.MaxAnisotropy);
 		}
 
-		{
-			const uint32_t TexIdx =
-				_ShaderInfo.TextureDescMap["NormalSampler"].RegisterIndex;
-			m_pDevice->SetTexture(TexIdx, RefInfo.TextureNormal);
-
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-			m_pDevice->SetSamplerState(TexIdx, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-		}
-		
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex));
 		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,RefInfo.TriangleCount);
@@ -151,7 +148,6 @@ HRESULT CMapBase::RenderGameObject()
 void CMapBase::LoadMap(std::wstring FilePath,
 	const mat& MapWorld)
 {
-
 	this->MapWorld = MapWorld;
 
 	_InfosPtr = std::shared_ptr<std::vector<Info>>(new std::vector<Info>,
@@ -161,7 +157,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 			{
 				SafeRelease(element.VtxBuf);
 				SafeRelease(element.Texture);
-				SafeRelease(element.TextureNormal);
 				SafeRelease(element.TextureSpecular);
 				SafeRelease(element.Decl);
 			}
@@ -352,20 +347,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 				_FaceVertexs[i] = (std::move(_Vtx));
 			};
-
-			const auto Tangent_BiNormal = Model::CalculateTangentBinormal(
-				TempVertexType{ _FaceVertexs[0].Location,_FaceVertexs[0].TexCoord }
-			  , TempVertexType{ _FaceVertexs[1].Location, _FaceVertexs[1] .TexCoord} ,
-				TempVertexType{ _FaceVertexs[2] .Location,_FaceVertexs[2] .TexCoord} );
-
-			const vec3 NewNormal =Model::CalculateNormal(Tangent_BiNormal.first, Tangent_BiNormal.second);
-
-			for (size_t i = 0; i <3; ++i)
-			{
-				_FaceVertexs[i].Normal = NewNormal;
-				_FaceVertexs[i].Tanget = Tangent_BiNormal.first;
-				_FaceVertexs[i].BiNormal = Tangent_BiNormal.second;
-			}
 
 			_Vtxs.insert(std::end(_Vtxs),
 				std::make_move_iterator(std::begin(_FaceVertexs)),

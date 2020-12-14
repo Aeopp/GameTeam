@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\Headers\Terrain.h"
 
 
@@ -113,7 +113,7 @@ CTerrain * CTerrain::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject* CTerrain::Clone(void * pArg)
 {
-	CTerrain* pClone = new CTerrain(*this); /* º¹»ç»ý¼ºÀÚ */
+	CTerrain* pClone = new CTerrain(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

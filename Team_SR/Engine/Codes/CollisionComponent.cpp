@@ -6,13 +6,15 @@
 #include <d3dx9.h>
 USING(Engine)
 
-float  CCollisionComponent::MapCollisionCheckDistanceMin= 100.f;
-float  CCollisionComponent::CollisionCheckDistanceMin = 100.f;
+float  CCollisionComponent::MapCollisionCheckDistanceMin= 300.f;
+float  CCollisionComponent::CollisionCheckDistanceMin = 300.f;
 std::vector<CCollisionComponent*> CCollisionComponent::_Comps{};
 int32_t CCollisionComponent::CurrentID{ 0 };
 std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
+
 std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollisionComponent::_TagBind
 {
+	// 여기서 매칭되는 타입을 정의.
 	{ MonsterAttack, { Player } },
 	{ PlayerAttack, {  Monster} }
 };
@@ -45,7 +47,6 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	Regist();
 	
 	InitInfo _Info = *reinterpret_cast<InitInfo*>(pArg);
-
 	bCollision = _Info.bCollision;
 	bMapBlock = _Info.bMapBlock;
 	_Sphere.Radius = _Info.Radius;
@@ -63,7 +64,7 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	}
 	else
 	{
-
+		// 버텍스 정보가 없을 경우?? <- 대부분 이경우에 해당.
 	}
 
 	D3DXCreateSphere(m_pDevice, _Sphere.Radius, 25, 25, &_SphereMesh, 0);
@@ -103,9 +104,10 @@ void CCollisionComponent::Free()
 	SafeRelease(_SphereMesh);
 	CancelRegist();
 	Super::Free();
-}
-// TODO ::REMOVE PLZ
-vec3 scale{ 5,5,5 };
+};
+
+// TODO ::REMOVEPLZ
+vec3 scale{ 20,20,20};
 vec3 rotation{ 0,0,0 };
 vec3 location{ 33,22,11 };
 vec3 debuglocation{ 0,0,0 };
@@ -177,48 +179,38 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		// 충돌함.
 		if (IsCollision.first)
 		{
-			PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+//			PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
 		}
 		else
 		{
-			
+		//	PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
 		}
 	}
-	// TODO ::REMOVE
-	rotation.x += 0.01f;
-	rotation.y+= 0.02f;
-	rotation.z += 0.03f;
 
-	/*static float adder = 0.1f;
-	scale.x += adder;
-	scale.y += adder ;
-	scale.z += adder ;
-	if (std::fabs(adder) >= 3.f)
-	{
-		adder = -adder;
-	}*/
-
+	// TODO :: REMOVEPLZ
 	PlaneInfo _Info;
-	mat world =MATH::WorldMatrix(scale, rotation, location);
+	rotation.x += MATH::RandReal({0,0.3f});
+	rotation.y += MATH::RandReal({ 0,0.3f });
+	rotation.z += MATH::RandReal({ 0,0.3f });
+	mat world = MATH::WorldMatrix(scale, rotation, location);
 	_Info.Face = { MATH::Mul(vec3{-1,-1,0},world),
 					MATH::Mul(vec3{1,1,0},world),MATH::Mul(vec3{1,-1,0},world) };
-	_Info.Center = (MATH::Mul(vec3{ -1,-1,0 }, world)+
-		MATH::Mul(vec3{ 1,1,0 }, world)+ MATH::Mul(vec3{ 1,-1,0 }, world)) / 3;
+	_Info.Center = (MATH::Mul(vec3{ -1,-1,0 }, world) +
+		MATH::Mul(vec3{ 1,1,0 }, world) + MATH::Mul(vec3{ 1,-1,0 }, world)) / 3;
 	D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
-
 	for (auto& _Comp : _Comps)
 	{
 		{
 			float t = 0;
 			vec3 IntersectPoint{};
-	
+
 			if (Collision::IsTriangleToRay(_Info, _Ray, t, IntersectPoint))
 			{
 				debuglocation = IntersectPoint;
 			}
 			else
 			{
-				//debuglocation = { 9999,9999,9999 };
+
 			}
 		}
 	}
@@ -226,50 +218,37 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 }
 
 
+
 void CCollisionComponent::DebugDraw()
 {
 	if (!CManagement::Get_Instance()->bDebug)return;
 
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	/*m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);*/
-
-	D3DMATERIAL9 _Mtrl;
-
-	_Mtrl.Ambient = D3DCOLORVALUE{  1,1,1,1 };
-	_Mtrl.Diffuse = D3DCOLORVALUE{  1,1,1,1 };
-	_Mtrl.Emissive = D3DCOLORVALUE{ 1,1,1,1 };
-	_Mtrl.Power = 10.f;
-	_Mtrl.Specular = D3DCOLORVALUE{ 1,1,1,1 };
-	m_pDevice->SetMaterial(&_Mtrl);
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
-
-	const vec3 LightLocation = _Sphere.Center; 
-	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, LightLocation);
+	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
 	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
-	
-	// TODO :: REMOVEPLZ
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	mat debugworld = MATH::WorldMatrix({ 0.2,0.2,0.2 }, { 0,0,0 }, debuglocation);
 
-	m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
-	m_pDevice->SetMaterial(&_Mtrl);
-	_SphereMesh->DrawSubset(0);
+	//TODO ::REMOVEPLZ
+	{
+		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		mat debugworld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, debuglocation);
+		m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
+		_SphereMesh->DrawSubset(0);
+		std::array<vec3, 4ul> vertexlist{ vec3{-1,-1,0},vec3{1,1,0},vec3{1,-1,0},vec3{-1,-1,0} };
+		mat world = MATH::WorldMatrix(scale, rotation, location);
+		mat view, proj;
+		m_pDevice->GetTransform(D3DTS_VIEW, &view);
+		m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
+		world = world * view * proj;
+		CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
+		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	}
+	//
 
-	std::array<vec3, 4ul> vertexlist{ vec3{-1,-1,0},vec3{1,1,0},vec3{1,-1,0},vec3{-1,-1,0} };
-	mat world = MATH::WorldMatrix(scale, rotation, location);
-	mat view,proj; 
-	m_pDevice->GetTransform(D3DTS_VIEW, &view);
-	m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-	world = world * view* proj;
-	CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	// 
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 };
 
 void CCollisionComponent::Regist()
@@ -283,11 +262,20 @@ void CCollisionComponent::CancelRegist()
 	{
 		_Comps.erase(std::find_if(std::begin(_Comps), std::end(_Comps), [this](auto _Target)
 			{
-				return this->MyID == _Target->MyID;			
+				return this->MyID == _Target->MyID;
 			}));
 	}
+};
+
+void CCollisionComponent::CollisionUpdate(IDirect3DDevice9* const  _Device)
+{
+
 }
 
+void CCollisionComponent::CollisionDebugRender(IDirect3DDevice9*const  _Device)
+{
+
+}
 
 void CCollisionComponent::MapHitProcess(const Collision::Info& CollisionInfo,const PlaneInfo& _CurPlane)
 {

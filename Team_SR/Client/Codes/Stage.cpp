@@ -133,7 +133,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
-	// 테스트 코드...
+	// REMOVEPLZ........
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
@@ -163,7 +163,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 			static_cast<float>(WINCX),static_cast<float>( WINCY));
 		m_pPlayer->_CollisionComp->_Ray = std::move(_Ray);
 	}
-	//
+	////////////
 }
 
 

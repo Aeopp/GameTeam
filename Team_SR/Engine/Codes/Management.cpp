@@ -1,4 +1,5 @@
 ﻿#include "..\Headers\Management.h"
+#include "CollisionComponent.h"
 
 
 USING(Engine)
@@ -10,7 +11,6 @@ CManagement::CManagement()
 	, m_pSceneManager(CSceneManager::Get_Instance())
 	, m_pGameObjectManager(CGameObjectManager::Get_Instance())
 	, m_pComponentManager(CComponentManager::Get_Instance())
-	,_CollisionManager(CCollisionManager::Get_Instance())
 {
 
 #ifdef _DEBUG
@@ -22,7 +22,6 @@ CManagement::CManagement()
 	SafeAddRef(m_pSceneManager);
 	SafeAddRef(m_pGameObjectManager);
 	SafeAddRef(m_pComponentManager);
-	SafeAddRef(_CollisionManager);
 }
 
 HRESULT CManagement::ReadyEngine(
@@ -75,10 +74,8 @@ _uint CManagement::UpdateEngine()
 
 	m_iUpdateEvent = m_pGameObjectManager->LateUpdateGameObject(fDeltaTime);
 
-	_CollisionManager->Update(fDeltaTime);
-
-	_CollisionManager->LateUpdate(fDeltaTime);
-
+	CCollisionComponent::CollisionUpdate(m_pGraphic_Dev->Get_Device());
+	
 	return _uint();
 }
 
@@ -236,7 +233,6 @@ void CManagement::Free()
 	SafeRelease(m_pSceneManager);
 	SafeRelease(m_pTimeManager);
 	SafeRelease(m_pGraphic_Dev);
-	SafeRelease(_CollisionManager);
 }
 
 void CManagement::ReleaseEngine()
@@ -249,9 +245,6 @@ void CManagement::ReleaseEngine()
 
 	if (CComponentManager::Destroy_Instance())
 		PRINT_LOG(L"Warning", L"Failed To Release CComponentManager");
-
-	if (CCollisionManager::Destroy_Instance())
-		PRINT_LOG(L"Warning", L"Failed To Release CCollisionManager");
 
 	if (CSceneManager::Destroy_Instance())
 		PRINT_LOG(L"Warning", L"Failed To Release CSceneManager");

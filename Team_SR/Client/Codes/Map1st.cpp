@@ -16,27 +16,27 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 	mat MapWorld  = MATH::WorldMatrix({ 3,3,3}, { 0,0,0}, { 0,0,0});
 
 	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
-	_ShaderInfo = Shader::CompileAndCreate(m_pDevice, L"..\\Shader\\NormalMapping");
+	_ShaderInfo = Shader::CompileAndCreate(m_pDevice, L"..\\Shader\\DiffuseSpecular");
 
 	_ShaderInfo.VsHandleMap = Shader::ConstantHandleInitialize(
 		_ShaderInfo.VsTable,
 		std::vector<std::string>{
-		"WorldMatrix",
-		"WorldViewProjectionMatrix",
+		"World",
+		"View",
+		"Projection",
 		"WorldLightLocation",
-		"WorldCameraLocation",
+		"WorldCameraLocation"
 		});
 
 	_ShaderInfo.PsHandleMap= Shader::ConstantHandleInitialize(
 		_ShaderInfo.PsTable,
 		std::vector<std::string>{
-		"LightColor"
+		"LightColor",
 	});
 
 	_ShaderInfo.TextureDescMap = Shader::ConstantHandleDescInitialize(_ShaderInfo.PsTable,
 		{ "DiffuseSampler",
-		"SpecularSampler",
-		"NormalSampler" });
+		  "SpecularSampler" });
 
 	MapAmbient = 0x00202020;
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\Headers\Stage1st.h"
 #include "Player.h"
 #include "MainCamera.h"
@@ -34,7 +34,7 @@ HRESULT CStage1st::ReadyScene()
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
 
-		// ¹ÚÁã
+		// ë°•ì¥
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
@@ -66,8 +66,6 @@ _uint CStage1st::KeyProcess(float fDeltaTime)
 {
 	Super::KeyProcess(fDeltaTime);
 
-	
-
 	return _uint();
 }
 
@@ -89,7 +87,7 @@ CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
 		SafeRelease(pInstance);
 	}
 
-	PRINT_LOG(L"Test", L"½ºÅ×ÀÌÁö 1 »ı¼º");
+	PRINT_LOG(L"Test", L"ìŠ¤í…Œì´ì§€ 1 ìƒì„±");
 
 	return pInstance;
 }

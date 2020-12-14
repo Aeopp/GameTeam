@@ -124,7 +124,7 @@ public:
 	static float ToRadian(float Degree){return Degree * ( PI / 180.0f);};
 	static float ToDegree(float Radian) { return Radian* (180.0f / PI);   };
 	static const _vector AxisX;
-	static const  _vector AxisY;
+	static const _vector AxisY;
 	static const _vector AxisZ;
 
 	// 해당 축으로 Lhs 을 회전시켜서 리턴

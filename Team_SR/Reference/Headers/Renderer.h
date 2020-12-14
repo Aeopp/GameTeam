@@ -30,7 +30,6 @@ public:
 private:
 	DWORD Ambient = 0x00202020;
 	LPDIRECT3DDEVICE9	m_pDevice;
-	std::vector<D3DLIGHT9> _Lights;
 	typedef list<class CGameObject*> GAMEOBJECTS;
 	GAMEOBJECTS	m_GameObjects[(_uint)ERenderID::MaxCount];
 };

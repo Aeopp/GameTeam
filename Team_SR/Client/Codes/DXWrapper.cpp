@@ -220,7 +220,9 @@ std::map<std::string, D3DXCONSTANT_DESC> Shader::ConstantHandleDescInitialize(
 	return _ConstantDescMap;
 }
 
-typename Shader::Info Shader::CompileAndCreate(IDirect3DDevice9* _Device, const std::wstring& FileName)
+typename Shader::Info Shader::CompileAndCreate(
+	IDirect3DDevice9* _Device,
+	const std::wstring& FileName)
 {
 	Info _ShaderInfo;
 
@@ -246,7 +248,7 @@ typename Shader::Info Shader::CompileAndCreate(IDirect3DDevice9* _Device, const 
 		// output any error messages
 		if (errorBuffer)
 		{
-			::MessageBox(0, (wchar_t*)errorBuffer->GetBufferPointer(), 0, 0);
+			::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
 			SafeRelease(errorBuffer);
 		}
 
@@ -295,7 +297,7 @@ typename Shader::Info Shader::CompileAndCreate(IDirect3DDevice9* _Device, const 
 		// output any error messages
 		if (errorBuffer)
 		{
-			::MessageBox(0, (wchar_t*)errorBuffer->GetBufferPointer(), 0, 0);
+			::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
 			SafeRelease(errorBuffer);
 		}
 

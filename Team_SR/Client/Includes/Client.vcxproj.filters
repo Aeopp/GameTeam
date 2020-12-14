@@ -242,10 +242,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\NormalMappingPS.hlsl">
+    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shader\NormalMappingVS.hlsl">
+    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
