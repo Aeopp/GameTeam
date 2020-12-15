@@ -68,6 +68,8 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 
 	IsBillboarding();
 
+	_CollisionComp->Update(m_pTransformCom);
+
 	return _uint();
 }
 
@@ -112,7 +114,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Move",
-		L"Com_Texture",
+		L"Com_Texture_GlacierMove",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Move", pTexture);
@@ -120,7 +122,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Death",
-		L"Com_Texture",
+		L"Com_Texture_GlacierDeath",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
@@ -128,7 +130,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Attack",
-		L"Com_Texture",
+		L"Com_Texture_GlacierAttack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Attack", pTexture);
@@ -136,10 +138,26 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Hurt",
-		L"Com_Texture",
+		L"Com_Texture_GlacierHurt",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Hurt", pTexture);
+
+	// Collision
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::Monster;
+	_Info.bMapCollision = true;
+	_Info.Owner = this;
+
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
+	
 
 	return S_OK;
 }
@@ -244,12 +262,10 @@ bool CGlacier::Action_Move(float fDeltaTime)
 	const _vector vPlayerPos = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
 	const _vector vGlacierPos = m_pTransformCom->m_TransformDesc.vPosition;
 	_vector vLook = vPlayerPos - vGlacierPos;
-	float fPlayerYDegree = m_pPlayer->GetTransform()->m_TransformDesc.vRotation.y;
 	float fLookLength = D3DXVec3Length(&vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 
-	if ((fLookLength > 5 && (fLookLength < 60 || true == m_bHit)))
-		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
+	m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
 	m_fCountDown -= fDeltaTime;
 	if (m_fCountDown <= 0)
@@ -321,6 +337,7 @@ void CGlacier::Free()
 		SafeRelease(rPair.second);
 	m_mapTexture.clear();
 
+	SafeRelease(_CollisionComp);
 	SafeRelease(m_pVIBufferCom);
 
 	CGameObject::Free();

@@ -2,8 +2,6 @@
 #ifndef __GLACIER_H__
 
 #include "Monster.h"
-#include "CollisionComponent.h"
-
 USING(Engine)
 class CGlacier final : public CMonster
 {
@@ -49,10 +47,10 @@ public:
 	virtual void Free() override;
 
 private:
-	bool m_bHit = false;
 	float m_fCountDown = 0.f;
 	wstring m_wstrBase;
-	CCollisionComponent* _CollisionComp = nullptr;
+	wstring m_ComTexture;
+
 	////////////////////////////////////////////////////
 	AWARENESS	m_eAwareness = AWARENESS::End;
 	PHASE		m_ePhase = PHASE::End;
