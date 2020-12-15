@@ -153,6 +153,7 @@
     <ClInclude Include="..\Headers\Client_Struct.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DXWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -224,6 +225,7 @@
     <ClCompile Include="..\Codes\BatGrey.cpp">
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -237,5 +239,9 @@
     <ResourceCompile Include="Client.rc">
       <Filter>98.Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
+    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
   </ItemGroup>
 </Project>

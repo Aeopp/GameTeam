@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "MapBase.h"
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
@@ -137,6 +137,8 @@ HRESULT CMapBase::RenderGameObject()
 
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex));
 		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
+		/*m_pDevice->SetVertexShader(nullptr);
+		m_pDevice->SetPixelShader(nullptr);*/
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0,RefInfo.TriangleCount);
 	}
 

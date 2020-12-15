@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "..\Headers\Player.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
