@@ -5,10 +5,23 @@ matrix Projection;
 float4 WorldLightLocation;
 float4 WorldCameraLocation;
 
+#define MAX_LIGHTS 8
+
+struct Light
+{
+    float4 Location;
+    float4 Ambient;
+    float4 Diffuse;
+    float4 Specular;
+    float Radius;
+};
+
 struct VS_INPUT
 {
-	float4 Location : POSITION;
-	float3 Normal : NORMAL;
+    float4 Location : POSITION;
+    float3 Normal : NORMAL;
+    float3 Tangent : TANGENT;
+    float3 BiNormal : BINORMAL;
 	float2 UV : TEXCOORD0;
 };
 
@@ -20,6 +33,9 @@ struct VS_OUTPUT
 	float3 ViewDirection: TEXCOORD2;
 	float3 Reflection : TEXCOORD3;
 	float3 Distance : TEXCOORD4;
+    float3 Normal : TEXCOORD5;
+    float3 Tangent : TEXCOORD6;
+    float3 BiNormal : TEXCOORD7;
 };
 
 VS_OUTPUT main(VS_INPUT Input)
@@ -52,6 +68,10 @@ VS_OUTPUT main(VS_INPUT Input)
 	Output.Reflection = reflect(LightDirection, WorldNormal);
 	
 	Output.UV = Input.UV;
+	
+    Output.Normal = Input.Normal;
+    Output.Tangent = Input.Tangent;
+    Output.BiNormal = Input.BiNormal;
 	
 	return Output;
 };

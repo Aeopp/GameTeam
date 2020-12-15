@@ -217,6 +217,14 @@ void CCollisionComponent::CancelRegist()
 	}
 };
 
+
+// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
+
+void CCollisionComponent::AddMapPlaneInfo(const std::vector<PlaneInfo>& _MapPlaneInfo) noexcept 
+{
+	CCollisionComponent::_MapPlaneInfo.insert( std::begin(CCollisionComponent::_MapPlaneInfo ) , std::begin(_MapPlaneInfo), 	std::end(_MapPlaneInfo));
+}
+
 void CCollisionComponent::CollisionUpdate(IDirect3DDevice9* const  _Device)
 {
 

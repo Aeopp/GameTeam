@@ -151,7 +151,10 @@ typename Effect::Info& Effect::GetEffectFromName(const std::wstring& EffectName)
 {
 #if _DEBUG
 	if (EffectName.empty() || _EffectInfoMap.find(EffectName) == std::end(_EffectInfoMap))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 		return _EffectInfoMap[EffectName];
+	}
 #endif
 
 	return _EffectInfoMap[EffectName];
@@ -189,11 +192,15 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 			_EffectInfo.PsTable,
 			std::vector<std::string>{
 			"LightColor",
+				"Shine",
+				"Range",
+				"Ambient"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize(_EffectInfo.PsTable,
 			{ "DiffuseSampler",
-			  "SpecularSampler" });
+			  "SpecularSampler",
+			  "NormalSampler"});
 
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
@@ -352,9 +359,10 @@ void Effect::Update(IDirect3DDevice9* const _Device , const vec4& CameraLocation
 		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
 		// 다중 조명시 수정 해야함...
-		const vec4 diffusecolor = { 1.f,0.0f,1.f,1.f};
+		const vec4 diffusecolor = { 1.0f,1.0f,1.0f,1.0f };
 		CurEffect.SetVSConstantData(_Device, "WorldLightLocation", LightLocation);
 		CurEffect.SetPSConstantData(_Device, "LightColor", diffusecolor);
+		CurEffect.SetPSConstantData(_Device, "Range", 200.f);
 	}
 }
 
@@ -581,13 +589,31 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 				wss >> LocationIdx;
 				wss >> TexCoordIdx;
 				wss >> NormalIdx;
-				typename Vertex::Texture _Vertex;
-				_Vertex.Location = _Locations[LocationIdx - 1];
-				_Vertex.Normal = _Normals[NormalIdx - 1];
-				_Vertex.TexCoord = _TextureCoords[TexCoordIdx - 1];
+				typename Vertex::Texture _Vtx;
+				_Vtx.Location = _Locations[LocationIdx - 1];
+				_Vtx.Normal = _Normals[NormalIdx - 1];
+				_Vtx.TexCoord = _TextureCoords[TexCoordIdx - 1];
 
-				_FaceVertexs[i] = (std::move(_Vertex));
+				_FaceVertexs[i] = (std::move(_Vtx));
 			};
+
+			const auto Tangent_BiNormal = Mesh::CalculateTangentBinormal(
+				TempVertexType{ _FaceVertexs[0].Location,_FaceVertexs[0].TexCoord },
+				TempVertexType{ _FaceVertexs[1].Location,_FaceVertexs[1].TexCoord },
+				TempVertexType{ _FaceVertexs[2].Location,_FaceVertexs[2].TexCoord });
+
+			const vec3 Normal = Mesh::CalculateNormal(Tangent_BiNormal.first, Tangent_BiNormal.second);
+
+			for (auto& _CurVertex : _FaceVertexs)
+			{
+				_CurVertex.Normal = Normal;
+				_CurVertex.Tangent = Tangent_BiNormal.first;
+				_CurVertex.BiNormal = Tangent_BiNormal.second;
+			};
+
+			_Vertexs.insert(std::end(_Vertexs),
+				std::make_move_iterator(std::begin(_FaceVertexs)),
+				std::make_move_iterator(std::end(_FaceVertexs)));
 
 			_Vertexs.insert(std::end(_Vertexs),
 				std::make_move_iterator(std::begin(_FaceVertexs)),
@@ -627,14 +653,21 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 				_Info.MaterialInfo = iter->second;
 				const std::wstring TexName = FilePath + _Info.MaterialInfo.TextureName;
 				if (FAILED(D3DXCreateTextureFromFile(_Device,
-					TexName.c_str(), &_Info.DiffuseTexture)))
+					TexName.c_str(), &_Info.Diffuse)))
 				{
 					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
 
-				const std::wstring SpecularTexName = FilePath + _Info.MaterialInfo.TextureName;
+				const std::wstring SpecularTexName = TexName + L"_SPECULAR";
 				if (FAILED(D3DXCreateTextureFromFile(_Device,
-					SpecularTexName.c_str(), &_Info.TextureSpecular)))
+					SpecularTexName.c_str(), &_Info.Specular)))
+				{
+					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+				}
+
+				const std::wstring NormalTexName = TexName + L"_NORMAL";
+				if (FAILED(D3DXCreateTextureFromFile(_Device,
+					NormalTexName.c_str(), &_Info.Normal)))
 				{
 					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
@@ -665,7 +698,8 @@ void SubSetInfo::Release() & noexcept
 {
 	SafeRelease(Decl);
 	SafeRelease(VtxBuf);
-	SafeRelease(DiffuseTexture);
-	SafeRelease(TextureSpecular);
+	SafeRelease(Diffuse);
+	SafeRelease(Specular);
+	SafeRelease(Normal);
 }
 

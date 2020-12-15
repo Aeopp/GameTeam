@@ -1,5 +1,5 @@
-﻿#include "..\Headers\SceneManager.h"
-#include "CollisionManager.h"
+#include "..\Headers\SceneManager.h"
+#include "CollisionComponent.h"
 
 USING(Engine)
 IMPLEMENT_SINGLETON(CSceneManager)
@@ -17,7 +17,7 @@ HRESULT CSceneManager::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	{
 		SafeRelease(m_pCurrentScene);
 		m_pCurrentScene = pCurrentScene;
-
+		CCollisionComponent::CleanUpMapPlaneInfo();
 		m_iSceneID = iSceneID;
 	}
 

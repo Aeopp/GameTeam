@@ -42,8 +42,9 @@ public:
 
 	LPDIRECT3DVERTEXDECLARATION9 Decl{ nullptr };
 	IDirect3DVertexBuffer9* VtxBuf{ nullptr };
-	IDirect3DTexture9* DiffuseTexture{ nullptr };
-	IDirect3DTexture9* TextureSpecular{ nullptr };
+	IDirect3DTexture9* Diffuse{ nullptr };
+	IDirect3DTexture9* Specular{ nullptr };
+	IDirect3DTexture9* Normal{ nullptr };
 
 	static std::shared_ptr<SubSetInfo> MakeShared()noexcept;
 	// ex ) ..\\Resources\\Tag\\     경로까지만 입력하고 해당 경로에 Obj.obj Obj.mtl 파일과 텍스쳐가 있다고 가정하고 진행
@@ -120,7 +121,10 @@ bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, c
 {
 	const uint32_t DataSize = sizeof(std::decay_t<_Type>);
 #if _DEBUG
-	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	if (!_Device || DataSize == 0 || ConstantHandleMapKey.empty())
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	}
 #endif
 	if (FAILED(PsTable->SetValue(_Device, PsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{

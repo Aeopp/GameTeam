@@ -19,18 +19,18 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-	const std::vector<PlaneInfo>& RefMapPolygonPlane();
 protected:
 	void LoadMap(std::wstring FilePath,const mat& MapWorld);
 public:
 	virtual void Free() override;
 protected:
-	std::shared_ptr<std::vector<SubSetInfo>> _SubsetInfo;
-	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
+	std::shared_ptr<std::vector<SubSetInfo>> _WallSubSetInfo;
+	std::shared_ptr<std::vector<SubSetInfo>> _FloorSubSetInfo;
 	mat MapWorld;
 	// REMOVEPLZ
 	vec4 diffusecolor = { 1.f,0.f,0.f,1.f };
-public:
+private:
+	void LoadFloor(const std::wstring& FilePath);
 };
 
 #define __MapBase_H__
