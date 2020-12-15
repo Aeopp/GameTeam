@@ -28,6 +28,7 @@ private:
 	void AI_PassiveOffense();				// 소극적으로 공격
 
 	bool Action_Idle(float fDeltaTime);		// 행동 대기
+	bool Action_Move(float fDeltaTime);		// 이동
 	bool Action_Shoot(float fDeltaTime);	// 원거리 공격
 
 public:
@@ -44,6 +45,7 @@ private:
 
 private:
 	float m_fCountdown;			// 카운트다운
+	float m_fNextAtkWait;		// 다음 공격 대기
 	ACTFunc m_fpAction;			// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
 	AWARENESS m_eAwareness;		// 인식
 	PHASE m_ePhase;				// 페이즈

@@ -36,20 +36,20 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
-	m_stOriginStatus.fDetectionDistance = 50.f;
-	// ÀÎ°ÔÀÓ¿¡¼­ »ç¿ëÇÒ ½ºÅÝ
+	m_stOriginStatus.fDetectionRange = 50.f;
+	// ì¸ê²Œìž„ì—ì„œ ì‚¬ìš©í•  ìŠ¤í…Ÿ
 	m_stStatus = m_stOriginStatus;
 
 	m_pTransformCom->m_TransformDesc.vScale = {2.5f,2.5f,2.5f };
 
 
 	m_fpAction = &CGlacier::Action_Idle;
-	// ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇÏÁö ¸øÇÔ
+	// í”Œë ˆì´ì–´ë¥¼ ì¸ì‹í•˜ì§€ ëª»í•¨
 	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_Full] = &CGlacier::AI_NoAwareness;
 	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_Half] = &CGlacier::AI_NoAwareness;
 
-	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Full] = &CGlacier::AI_FirstPhase;		// Àû±ØÀûÀ¸·Î °ø°Ý
-	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CGlacier::AI_SecondPhase;		// ¼Ò±ØÀûÀ¸·Î °ø°Ý
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Full] = &CGlacier::AI_FirstPhase;		// ì ê·¹ì ìœ¼ë¡œ ê³µê²©
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CGlacier::AI_SecondPhase;		// ì†Œê·¹ì ìœ¼ë¡œ ê³µê²©
 
 	
 	return S_OK;
@@ -59,11 +59,11 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
-	//Å×½ºÆ®
+	//í…ŒìŠ¤íŠ¸
 	if (GetAsyncKeyState('4'))
 		m_stStatus.fHP -= 5;
 
-	//Å×½ºÆ®
+	//í…ŒìŠ¤íŠ¸
 	Update_AI(fDeltaTime);
 
 	IsBillboarding();
@@ -104,7 +104,7 @@ HRESULT CGlacier::RenderGameObject()
 
 HRESULT CGlacier::AddComponents()
 {
-	if (FAILED(CMonster::AddComponents()))	// Monster.cpp¿¡¼­ RectTexture È£Ãâ
+	if (FAILED(CMonster::AddComponents()))	// Monster.cppì—ì„œ RectTexture í˜¸ì¶œ
 		return E_FAIL;
 
 	CTexture* pTexture;
@@ -151,7 +151,7 @@ HRESULT CGlacier::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆìž„ í…ìŠ¤ì²˜ ìž¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -186,7 +186,7 @@ void CGlacier::Update_AI(float fDeltaTime)
 {
 	if ((this->*m_fpAction)(fDeltaTime)) 
 	{
-		// ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇß´Â°¡?
+		// í”Œë ˆì´ì–´ë¥¼ ì¸ì‹í–ˆëŠ”ê°€?
 		if (PlayerAwareness()) {
 			m_eAwareness = AWARENESS::Yes;	
 		}
@@ -218,7 +218,7 @@ void CGlacier::AI_NoAwareness()
 
 void CGlacier::AI_FirstPhase()
 {
-	//ºôº¸µå·Î ÇÃ·¹ÀÌ¾î ¹Ù¶óº¸±â
+	//ë¹Œë³´ë“œë¡œ í”Œë ˆì´ì–´ ë°”ë¼ë³´ê¸°
 	m_fpAction = &CGlacier::Action_Move;
 	m_fCountDown = 1.f;
 	m_wstrTextureKey = m_wstrBase + L"Move";
@@ -229,7 +229,7 @@ void CGlacier::AI_FirstPhase()
 
 void CGlacier::AI_SecondPhase()
 {
-	//ÃÑ¾Ë ¹ß»ç
+	//ì´ì•Œ ë°œì‚¬
 	m_fpAction = &CGlacier::Action_Hurt;
 	m_fCountDown = 1.f;
 	m_wstrTextureKey = m_wstrBase + L"Hurt";
@@ -304,7 +304,7 @@ CGlacier* CGlacier::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject* CGlacier::Clone(void* pArg/* = nullptr*/)
 {
-	CGlacier* pClone = new CGlacier(*this); /* º¹»ç»ý¼ºÀÚ */
+	CGlacier* pClone = new CGlacier(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

@@ -443,5 +443,13 @@ void CMapBase::LoadMap(std::wstring FilePath,
 
 void CMapBase::Free()
 {
+	// 2020.12.14 5:46 KMJ
+	// 버텍스 버퍼, 텍스처 해제
+	for (auto& pInfo : *_InfosPtr) {
+		SafeRelease(pInfo.Texture);
+		SafeRelease(pInfo.VtxBuf);
+	}
+	_InfosPtr->clear();
+
 	Super::Free();
 }

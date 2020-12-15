@@ -30,7 +30,7 @@ HRESULT CMainApp::ReadyMainApp()
 
 	ImGuiHelper::Init(g_hWnd, m_pDevice);
 
-	SafeAddRef(m_pDevice);
+	//SafeAddRef(m_pDevice);	// ImGui Init함수 안에서 이미 증가시키고 있음
 
 	if (FAILED(ReadyStaticResources()))
 		return E_FAIL;
@@ -44,6 +44,8 @@ HRESULT CMainApp::ReadyMainApp()
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 		return E_FAIL;
 	}
+
+	srand(0);	// 랜덤 시드값
 
 	return S_OK;
 }
@@ -103,6 +105,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 		
 
+	/* For.Component */
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,

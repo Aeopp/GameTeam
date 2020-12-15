@@ -91,7 +91,7 @@ bool CMonster::PlayerAwareness()
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
-	if (fDis <= m_stStatus.fDetectionDistance) {
+	if (fDis <= m_stStatus.fDetectionRange) {
 		return true;
 	}
 	return false;
@@ -99,9 +99,10 @@ bool CMonster::PlayerAwareness()
 
 void CMonster::Free()
 {
-	SafeRelease(m_pVIBufferCom);
-	// TODO :: 텍스쳐 컴포넌트 추가 이후 주석 풀기
-	//SafeRelease(m_pTextureCom);
+	SafeRelease(m_pVIBufferCom);		// 버텍스 버퍼
+	for (auto& rPair : m_mapTexture)	// map 텍스처 릴리즈
+		SafeRelease(rPair.second);
+	m_mapTexture.clear();
 
 	CGameObject::Free();
 }
