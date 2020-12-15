@@ -4,10 +4,11 @@
 #include "Player.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
+#include "Glacier.h"
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 
-#include "BatGrey.h"	// ���� ����
+#include "BatGrey.h"	// 박쥐
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -30,7 +31,7 @@ HRESULT CMainApp::ReadyMainApp()
 
 	ImGuiHelper::Init(g_hWnd, m_pDevice);
 
-	SafeAddRef(m_pDevice);
+	//SafeAddRef(m_pDevice);	// ImGui Init함수 안에서 이미 증가시키고 있음
 
 	if (FAILED(ReadyStaticResources()))
 		return E_FAIL;
@@ -44,6 +45,8 @@ HRESULT CMainApp::ReadyMainApp()
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 		return E_FAIL;
 	}
+
+	srand(0);	// 랜덤 시드값
 
 	return S_OK;
 }
@@ -76,7 +79,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	// ���� ������Ʈ
+	// 박쥐
 #pragma region GameObject_BatGrey
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -85,11 +88,11 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-			CMainCamera::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
 
 #pragma region GameObject_PlayerInfoUI
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -99,11 +102,20 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma  region GameObject_Glacier
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		CGlacier::Create(m_pDevice))))
+		return E_FAIL;
+
+#pragma endregion
+
 	/* For.Component */
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		L"Component_VIBuffer_RectTexture",
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		CVIBuffer_RectTexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
@@ -132,7 +144,43 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion
 
-	// ���� �ö��� �ؽ�ó
+#pragma region Component_Texture_Glacier
+	wstring wstrTextureGlacier = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>();
+#pragma region Move
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Move",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png", 16))))
+		return E_FAIL;
+#pragma endregion
+#pragma region Death
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Death/Death%d.png", 9))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Hurt
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Hurt",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Hurt/Hurt%d.png", 16))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Attack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Attack/Attack%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma endregion
+	// 박쥐 텍스처들
+#pragma region Component_Texture_BatGrey
+	// 플라이
 #pragma region Component_Texture_BatGreyFly
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -140,6 +188,48 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
+	// 원거리 공격
+#pragma region Component_Texture_BatGreyShoot
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyShoot",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Shoot/batGreyShoot%d.png", 5))))
+		return E_FAIL;
+#pragma endregion
+	// 근접 공격
+#pragma region Component_Texture_BatGreyAttack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Attack/batGreyattack%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 뒤돌아봄
+#pragma region Component_Texture_BatGreyBack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyBack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Back/batGreyFly_back%d.png", 7))))
+		return E_FAIL;
+#pragma endregion
+	// 피격
+#pragma region Component_Texture_BatGreyHit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Hit/batGreyHit_%d.png", 2))))
+		return E_FAIL;
+#pragma endregion
+	// 죽음
+#pragma region Component_Texture_BatGreyDeath
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreyDeath",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Death/batGreydeath%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma endregion	// Component_Texture_BatGrey
 
 #pragma region Component_Texture_Monster
 	if (FAILED(m_pManagement->AddComponentPrototype(

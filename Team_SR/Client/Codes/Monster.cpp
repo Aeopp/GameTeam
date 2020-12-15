@@ -3,6 +3,9 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_bFrameLoopCheck(false)
 {
 }
 
@@ -18,6 +21,19 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
+
+	if (FAILED(CMonster::AddComponents()))
+		return E_FAIL;
+	if (nullptr != pArg)
+	{
+		// Íµ¨Ï°∞Ï≤¥ ÌÅ¨Í∏∞ Í≤ÄÏÇ¨
+		if (sizeof(MonsterBasicArgument) == *static_cast<_uint*>(pArg))
+		{
+			MonsterBasicArgument* pArgument = static_cast<MonsterBasicArgument*>(pArg);
+			m_pPlayer = reinterpret_cast<CGameObject*>(pArgument->pPlayer);
+			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
+		}
+	}
 
 	return S_OK;
 }
@@ -44,34 +60,49 @@ HRESULT CMonster::RenderGameObject()
 	return S_OK;
 }
 
-long CMonster::AddComponents()
+HRESULT CMonster::AddComponents()
 {
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
+		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	// TODO :: Static ≈ÿΩ∫√ƒ ƒƒ∆˜≥Õ∆Æ √ﬂ∞°«œ¥¬ ∑Œ¡˜ ¿∏∑Œ ∫Ø∞Ê«œ±‚.
-
-	/*if (FAILED(CGameObject::AddComponent(
-		STATIC,
-		L"Component_VIBuffer_RectTexture",
-		L"Com_VIBuffer",
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;*/
-
-		//////////////////////////////////////////////////////
 	return S_OK;
+}
+
+// ÌÖçÏä§Ï≤ò ÌîÑÎ†àÏûÑ Ïù¥Îèô - ÌîÑÎ†àÏûÑ Ïπ¥Ïö¥Ìä∏Í∞Ä EndÏóê ÎèÑÎã¨ÌïòÎ©¥ true, ÏïÑÎãàÎ©¥ false
+bool CMonster::Frame_Move(float fDeltaTime)
+{
+	m_fFrameCnt += 10.f * fDeltaTime;
+	if (m_fFrameCnt >= m_fEndFrame)
+	{
+		m_fFrameCnt = m_fStartFrame;
+		return true;
+	}
+	return false;
+}
+
+// ÌîåÎ†àÏù¥Ïñ¥ Ïù∏Ïãù - Ïù∏ÏãùÌïòÎ©¥ TRUE, Ïù∏ÏãùÌïòÏßÄ Î™ªÌïòÎ©¥ FALSE
+bool CMonster::PlayerAwareness()
+{
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	float fDis = D3DXVec3Length(&vDir);
+	// ÌîåÎ†àÏù¥Ïñ¥Í∞Ä Î≤îÏúÑ ÏïàÏóê ÏûàÏúºÎ©¥
+	if (fDis <= m_stStatus.fDetectionRange) {
+		return true;
+	}
+	return false;
 }
 
 void CMonster::Free()
 {
-	SafeRelease(m_pVIBufferCom);
-	// TODO :: ≈ÿΩ∫√ƒ ƒƒ∆˜≥Õ∆Æ √ﬂ∞° ¿Ã»ƒ ¡÷ºÆ «Æ±‚
-	//SafeRelease(m_pTextureCom);
+	SafeRelease(m_pVIBufferCom);		// Î≤ÑÌÖçÏä§ Î≤ÑÌçº
+	for (auto& rPair : m_mapTexture)	// map ÌÖçÏä§Ï≤ò Î¶¥Î¶¨Ï¶à
+		SafeRelease(rPair.second);
+	m_mapTexture.clear();
 
 	CGameObject::Free();
 }

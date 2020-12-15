@@ -1,7 +1,8 @@
-﻿#pragma once
+#pragma once
 #ifndef __PLAYER_H__
 
 #include "GameObject.h"
+#include "CollisionComponent.h"
 
 USING(Engine)
 class CPlayer final : public CGameObject
@@ -27,8 +28,6 @@ public:
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
-private:
-	D3DLIGHT9 _SpotLight;
 };
 
 #define __PLAYER_H__

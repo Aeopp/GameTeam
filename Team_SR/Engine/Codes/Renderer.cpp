@@ -1,5 +1,6 @@
-﻿#include "..\Headers\Renderer.h"
+#include "..\Headers\Renderer.h"
 #include "GameObject.h"
+#include "CollisionComponent.h"
 
 USING(Engine)
 
@@ -37,33 +38,21 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 0);
 	m_pDevice->BeginScene();
 
-	// 렌더링 파이프 라인 법선 항상 정규화
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-	// 조명 스페큘러 켜기
-	m_pDevice->SetRenderState(D3DRS_LIGHTING, true);
-	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
-
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
 	m_pDevice->SetRenderState(D3DRS_AMBIENT, Ambient);
+
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
-		// 텍스쳐 재질 알파 블렌딩 ??
-		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-		//
+		/*m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);*/
 
-		// 텍스처 필터링 이등방성 (최대 품질)
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
-		// 밉맵 필터 선형적		 
-		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
 	};
-
-	//for (size_t i = 0; i < _Lights.size(); ++i)
-	//{
-	//	m_pDevice->SetLight(i, &_Lights[i]);
-	//	m_pDevice->LightEnable(i, true);
-	//}
 
 	if (FAILED(RenderPriority()))
 		return E_FAIL;
@@ -74,10 +63,10 @@ HRESULT CRenderer::Render(HWND hWnd)
 	if (FAILED(RenderAlpha()))
 		return E_FAIL;
 
+	CCollisionComponent::CollisionDebugRender(m_pDevice);
+
 	if (FAILED(RenderUI()))
 		return E_FAIL;
-
-	_Lights.clear();
 
 	return S_OK;
 }
@@ -117,37 +106,9 @@ HRESULT CRenderer::RenderAlpha()
 	/*
 	알파 테스팅 ==================================================================
 	*/
-	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*알파기준값*/
-	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-
-	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
-	{
-		if (FAILED(pObject->RenderGameObject()))
-			return E_FAIL;
-
-		SafeRelease(pObject);
-	}
-
-	m_GameObjects[(_int)ERenderID::Alpha].clear();
-
-	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
-	/*
-	알파 블렌딩 ==================================================================
-	*/
-	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-
-	///*
-	//D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
-	//D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
-	//D3DBLEND_SRCALPHA: 혼합비율 값은 0~1 범위. (As, As, As, As)
-	//D3DBLEND_INVSRCALPHA: 혼합비율 값은 0~1 범위. (1-As, 1-As, 1-As, 1-As)
-	//최종픽셀 = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
-	//*/
-	//m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	//m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	//m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*알파기준값*/
+	//m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
 	//for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	//{
@@ -159,7 +120,34 @@ HRESULT CRenderer::RenderAlpha()
 
 	//m_GameObjects[(_int)ERenderID::Alpha].clear();
 
-	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+	/*
+	알파 블렌딩 ==================================================================
+	*/
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	/*
+	D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
+	D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
+	D3DBLEND_SRCALPHA: 혼합비율 값은 0~1 범위. (As, As, As, As)
+	D3DBLEND_INVSRCALPHA: 혼합비율 값은 0~1 범위. (1-As, 1-As, 1-As, 1-As)
+	최종픽셀 = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
+	*/
+	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
+	{
+		if (FAILED(pObject->RenderGameObject()))
+			return E_FAIL;
+
+		SafeRelease(pObject);
+	}
+
+	m_GameObjects[(_int)ERenderID::Alpha].clear();
+
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
 	return S_OK;
 }
@@ -181,7 +169,7 @@ HRESULT CRenderer::RenderUI()
 
 void CRenderer::RegistLight(const D3DLIGHT9& Light)
 {
-	_Lights.push_back(Light);
+
 }
 
 CRenderer * CRenderer::Create(LPDIRECT3DDEVICE9 pDevice)

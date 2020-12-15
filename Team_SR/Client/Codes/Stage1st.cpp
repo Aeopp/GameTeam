@@ -1,11 +1,13 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "..\Headers\Stage1st.h"
 #include "Player.h"
 #include "MainCamera.h"
 #include "Layer.h"
 #include "Map1st.h"
+#include "Glacier.h"
 #include "BatGrey.h"
 #include "PlyerInfoUI.h"
+
 
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -34,14 +36,28 @@ HRESULT CStage1st::ReadyScene()
 			LayerTag,
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
-
-		// π⁄¡„
+		// Î∞ïÏ•ê
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 10.f, 30.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
 			(_int)ESceneID::Stage1st,
 			CLayer::Tag + TYPE_NAME<CBatGrey>(),
-			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
+
+		// Í∏ÄÎ†àÏù¥ÏÑú
+		stArg.vPosition = { 5.f, 10.f, 30.f };
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CGlacier>(),
+			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 
 		////UI
@@ -76,8 +92,6 @@ _uint CStage1st::KeyProcess(float fDeltaTime)
 {
 	Super::KeyProcess(fDeltaTime);
 
-	
-
 	return _uint();
 }
 
@@ -99,7 +113,7 @@ CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
 		SafeRelease(pInstance);
 	}
 
-	PRINT_LOG(L"Test", L"Ω∫≈◊¿Ã¡ˆ 1 ª˝º∫");
+	PRINT_LOG(L"Test", L"Ïä§ÌÖåÏù¥ÏßÄ 1 ÏÉùÏÑ±");
 
 	return pInstance;
 }

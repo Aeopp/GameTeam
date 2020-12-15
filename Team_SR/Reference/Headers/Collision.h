@@ -35,7 +35,6 @@ public:
 								Lhs._Plane.b,
 								Lhs._Plane.c });
 
-
 		const float dot = MATH::Dot(Normal, Rhs.Direction);
 		// 평면과 방향벡터는 평행하다 만날 수 없다.
 		if (MATH::almost_equal(dot, 0.f))return false;

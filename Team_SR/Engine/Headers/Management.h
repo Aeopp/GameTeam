@@ -8,7 +8,6 @@
 #include "ComponentManager.h"
 #include "Time_Manager.h"
 #include "Renderer.h"
-#include "CollisionManager.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CManagement final : public CBase
@@ -50,7 +49,6 @@ public: /* For.Renderer */
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
 public:
-	CCollisionManager* GetCollisionManager() { return _CollisionManager; }
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
 
 public:
@@ -65,7 +63,6 @@ private:
 	CGameObjectManager*	m_pGameObjectManager = nullptr;
 	CComponentManager*	m_pComponentManager = nullptr;
 	CRenderer*			m_pRenderer = nullptr;
-	CCollisionManager* _CollisionManager{ nullptr };
 
 	_uint m_iUpdateEvent = 0;
 };

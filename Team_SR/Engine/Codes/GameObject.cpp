@@ -1,4 +1,4 @@
-﻿#include "..\Headers\GameObject.h"
+#include "..\Headers\GameObject.h"
 #include "Management.h"
 
 #include "Scene.h"
@@ -50,6 +50,8 @@ _uint CGameObject::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CGameObject::RenderGameObject()
 {
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 

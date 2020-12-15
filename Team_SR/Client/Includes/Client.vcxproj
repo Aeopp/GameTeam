@@ -164,7 +164,11 @@
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
     <ClInclude Include="..\Headers\DXWrapper.h" />
-    <ClInclude Include="..\Headers\Glacier.h" />
+    <ClInclude Include="..\Headers\Client_Struct.h" />
+    <ClInclude Include="..\Headers\Client_Typedef.h" />
+    <ClInclude Include="..\Headers\Glacier.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
@@ -179,6 +183,7 @@
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\Terrain.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -197,7 +202,9 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
-    <ClCompile Include="..\Codes\Glacier.cpp" />
+    <ClCompile Include="..\Codes\Glacier.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
@@ -212,6 +219,7 @@
     <ClCompile Include="..\Codes\Stage1st.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
@@ -241,7 +249,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\NormalMappingPS.hlsl">
+    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -251,7 +259,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\Shader\NormalMappingVS.hlsl">
+    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

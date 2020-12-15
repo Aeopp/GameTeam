@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "..\Headers\Player.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
@@ -28,10 +28,6 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
-
-	_SpotLight = Light::GetSpot(m_pTransformCom->GetLocation(),
-		m_pTransformCom->GetLook(), Color::WHITE);
-
 
 	return S_OK;
 }
@@ -68,7 +64,6 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 		ImGui::End();
 	}
-	
 
 	_CollisionComp->Update(m_pTransformCom);
 
@@ -81,11 +76,6 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
-
-	_SpotLight = Light::GetSpot(m_pTransformCom->GetLocation(),
-		m_pTransformCom->GetLook(), Color::WHITE);
-
-	m_pManagement->RegistLight(_SpotLight);
 
 	return _uint();
 }
@@ -100,21 +90,6 @@ HRESULT CPlayer::RenderGameObject()
 	return S_OK;
 }
 
-//_vector vLook;
-//memcpy(&vLook, &m_TransformDesc.matWorld.m[2][0], sizeof(_vector));
-//D3DXVec3Normalize(&vLook, &vLook);
-//
-//m_TransformDesc.vPosition += vLook * m_TransformDesc.fSpeedPerSec * fDeltaTime;
-//}
-//
-//void CTransform::GoSide(float fDeltaTime)
-//{
-//	_vector vRight;
-//	memcpy(&vRight, &m_TransformDesc.matWorld.m[0][0], sizeof(_vector));
-//	D3DXVec3Normalize(&vRight, &vRight);
-//
-//	m_TransformDesc.vPosition += vRight * m_TransformDesc.fSpeedPerSec * fDeltaTime;
-//}
 void CPlayer::MoveForward(const float DeltaTime)&
 {
 	auto& Desc = m_pTransformCom->m_TransformDesc;
