@@ -8,7 +8,8 @@ struct MonsterStatus {
 	float fATK;		// 공격력
 	float fDEF;		// 방어력
 	float fSpeed;	// 이동 속도
-	float fDetectionDistance;	// 감지 거리
+	float fMeleeRange;		// 근접 공격 범위
+	float fDetectionRange;	// 감지 범위
 };
 
 // 몬스터 생성시 기본 전달 인자

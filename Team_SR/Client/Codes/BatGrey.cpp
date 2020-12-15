@@ -4,7 +4,7 @@
 
 CBatGrey::CBatGrey(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
-	, m_fCountdown(0.f), m_fpAction(nullptr)
+	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fpAction(nullptr)
 	, m_eAwareness(AWARENESS::End), m_ePhase(PHASE::End)
 	, m_fpMonsterAI{}
 {
@@ -32,7 +32,8 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
-	m_stOriginStatus.fDetectionDistance = 50.f;
+	m_stOriginStatus.fMeleeRange = 1.f;
+	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
@@ -161,6 +162,9 @@ HRESULT CBatGrey::AddComponents()
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
 void CBatGrey::Update_AI(float fDeltaTime)
 {
+	// 다음 공격 대기 시간 감소
+	m_fNextAtkWait -= fDeltaTime;
+
 	// 몬스터 행동
 	if ((this->*m_fpAction)(fDeltaTime)) {
 		// 플레이어를 인식했는가?
@@ -215,12 +219,39 @@ void CBatGrey::AI_ActiveOffense()
 {
 	// 랜덤으로 몇가지 패턴 행동을...
 
-	{
-		m_fpAction = &CBatGrey::Action_Shoot;
-		m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
+	int iRand = rand() % 100;
+
+	// 30 %
+	// 대기
+	if (0 <= iRand && iRand < 30) {
+		m_fpAction = &CBatGrey::Action_Idle;
+		m_fCountdown = 1.f;		// 1초
+		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
-		m_fEndFrame = 5;
+		m_fEndFrame = 8;
+	}
+	// 40 %
+	// 공격
+	else if (30 <= iRand && iRand < 70) {
+		// 다음 공격 대기 시간까지 기다렸는가
+		if (m_fNextAtkWait <= 0) {
+			// 원거리 공격
+			m_fpAction = &CBatGrey::Action_Shoot;
+			m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 5;
+		}
+	}
+	// 30 %
+	// 이동
+	else if (70 <= iRand && iRand < 100) {
+		m_fpAction = &CBatGrey::Action_Move;
+		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 8;
 	}
 }
 
@@ -239,10 +270,28 @@ bool CBatGrey::Action_Idle(float fDeltaTime)
 	return false;
 }
 
+// 이동
+bool CBatGrey::Action_Move(float fDeltaTime)
+{
+	// 방향
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+	// 포지션 이동
+	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
+
+	if (m_bFrameLoopCheck) {
+		return true;
+	}
+
+	return false;
+}
+
 // 원거리 공격
 bool CBatGrey::Action_Shoot(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_fNextAtkWait = 5.f;
 		return true;
 	}
 
