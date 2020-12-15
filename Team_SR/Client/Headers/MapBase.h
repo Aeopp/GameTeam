@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "DXWrapper.h"
+#include "Vertexs.h"
 
 USING(Engine)
 class CMapBase  abstract : public CGameObject
@@ -18,80 +19,18 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
+	const std::vector<PlaneInfo>& RefMapPolygonPlane();
 protected:
 	void LoadMap(std::wstring FilePath,const mat& MapWorld);
 public:
 	virtual void Free() override;
-
-	struct Vertex
-	{
-		vec3 Location;
-		vec3 Normal;
-		vec2 TexCoord;
-
-		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl( IDirect3DDevice9* _Device)
-		{
-			LPDIRECT3DVERTEXDECLARATION9 VertexDeclaration;
-			int count = 0;
-			D3DVERTEXELEMENT9 decl[] =
-			{
-			  {0,  count,             D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, 
-									   D3DDECLUSAGE_POSITION, 0 },
-			  {0, (12), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-			  {0, (24), D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-			  D3DDECL_END()
-			};
-			_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
-			return VertexDeclaration;
-		}
-	};
-
-	struct MtrlInfo
-	{
-		enum class Illumination :uint8_t
-		{
-
-		};
-		D3DXCOLOR Ambient{ 0,0,0,1.f };
-		D3DXCOLOR Diffuse = { 0,0,0,1.f };
-		D3DXCOLOR Specular{ 0,0,0,1.f };
-		// 광택 
-		float Shine{ 0 };
-		std::wstring TextureName{};
-		std::wstring MtrlName{};
-		Illumination Illu;
-
-		D3DMATERIAL9 ConvertMtrl()
-		{
-			D3DMATERIAL9 _Mtrl;
-			_Mtrl.Ambient = this->Ambient;
-			_Mtrl.Diffuse = this->Diffuse;
-			_Mtrl.Power = this->Shine;
-			_Mtrl.Specular = Specular;
-			_Mtrl.Emissive = D3DXCOLOR{ 0.f,0.f,0.f,0.f };
-			return _Mtrl;
-		}
-	};
-
-	struct Info
-	{
-		uint32_t TriangleCount = 0;
-		MtrlInfo MaterialInfo{};
-
-		LPDIRECT3DVERTEXDECLARATION9 Decl{ nullptr };
-		IDirect3DVertexBuffer9* VtxBuf{ nullptr };
-		IDirect3DTexture9* Texture{ nullptr };
-		IDirect3DTexture9* TextureSpecular{ nullptr };
-	};
 protected:
-	Shader::Info _ShaderInfo;
-	std::shared_ptr<std::vector<Info>> _InfosPtr;
+	std::shared_ptr<std::vector<SubSetInfo>> _SubsetInfo;
 	std::shared_ptr<std::vector<PlaneInfo>> _PolygonPlane;
 	mat MapWorld;
-	DWORD MapAmbient = 0x00202020;
-
 	// REMOVEPLZ
 	vec4 diffusecolor = { 1.f,0.f,0.f,1.f };
+public:
 };
 
 #define __MapBase_H__

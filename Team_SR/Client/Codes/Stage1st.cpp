@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "..\Headers\Stage1st.h"
 #include "Player.h"
 #include "MainCamera.h"
@@ -100,8 +100,6 @@ CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)
 		PRINT_LOG(L"Error", L"Failed To Create CStage");
 		SafeRelease(pInstance);
 	}
-
-	PRINT_LOG(L"Test", L"스테이지 1 생성");
 
 	return pInstance;
 }

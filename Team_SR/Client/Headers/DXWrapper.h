@@ -1,14 +1,65 @@
-﻿#pragma once
+#pragma once
 #ifndef __DXWRAPPER_H__
 
 #include "Engine_Include.h"
 
 USING(Engine)
 
-namespace Shader
+
+struct MtrlInfo
 {
-	struct Info
+	enum class Illumination :uint8_t
 	{
+
+	};
+public:
+	std::wstring TextureName{};
+	std::wstring MtrlName{};
+	D3DXCOLOR Ambient{ 0,0,0,1.f };
+	D3DXCOLOR Diffuse = { 0,0,0,1.f };
+	D3DXCOLOR Specular{ 0,0,0,1.f };
+	D3DXCOLOR Emissive{ 0,0,0,1.f };
+	float Shine{ 0 };
+	Illumination Illu;
+public:
+	D3DMATERIAL9 ConvertMtrl()
+	{
+		D3DMATERIAL9 _Mtrl;
+		_Mtrl.Ambient = this->Ambient;
+		_Mtrl.Diffuse = this->Diffuse;
+		_Mtrl.Power = this->Shine;
+		_Mtrl.Specular = Specular;
+		_Mtrl.Emissive = D3DXCOLOR{ 0.f,0.f,0.f,0.f };
+		return _Mtrl;
+	}
+};
+
+struct SubSetInfo
+{
+public:
+	uint32_t TriangleCount = 0;
+	MtrlInfo MaterialInfo{};
+
+	LPDIRECT3DVERTEXDECLARATION9 Decl{ nullptr };
+	IDirect3DVertexBuffer9* VtxBuf{ nullptr };
+	IDirect3DTexture9* DiffuseTexture{ nullptr };
+	IDirect3DTexture9* TextureSpecular{ nullptr };
+
+	static std::shared_ptr<SubSetInfo> MakeShared()noexcept;
+	// ex ) ..\\Resources\\Tag\\     경로까지만 입력하고 해당 경로에 Obj.obj Obj.mtl 파일과 텍스쳐가 있다고 가정하고 진행
+	static std::shared_ptr<std::vector<SubSetInfo>> GetMeshFromObjFile(IDirect3DDevice9* const _Device, const std::wstring& FilePath)noexcept;
+	void Release() & noexcept;
+};
+
+
+LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+
+class Effect
+{
+public:
+	class Info
+	{
+	public:
 		IDirect3DPixelShader9* PsShader{ nullptr };
 		ID3DXConstantTable* PsTable{ nullptr };
 		IDirect3DVertexShader9* VsShader{ nullptr };
@@ -18,40 +69,73 @@ namespace Shader
 		std::map<std::string, D3DXHANDLE> PsHandleMap;
 		std::map<std::string, D3DXCONSTANT_DESC> TextureDescMap;
 
-		void Release()
-		{
-			SafeRelease(PsShader);
-			SafeRelease(VsShader);
-		}
-		void AddRef()
-		{
-			SafeAddRef(PsShader);
-			SafeAddRef(VsShader);
-		}
-	};
+		void Release();
+		void AddRef();
+		uint8_t GetTexIdx(const std::string& SamplerName);
 
-	std::map<std::string, D3DXHANDLE> ConstantHandleInitialize(
+		template<typename _Type>
+		bool  SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data);
+		template<typename _Type>
+		bool  SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data);
+	};
+public:
+	static std::map<std::wstring, Info> _EffectInfoMap;
+public:
+	static Effect::Info& GetEffectFromName(const std::wstring& EffectName);
+	static void EffectRelease();
+	static void EffectInitialize(IDirect3DDevice9* const _Device);
+	static Effect::Info CompileAndCreate(IDirect3DDevice9* _Device, const std::wstring& FileName);
+	static void Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,const vec4& LightLocation);
+
+	static std::map<std::string, D3DXHANDLE> ConstantHandleInitialize(
 		ID3DXConstantTable* _ConstantTable,
 		const std::vector<std::string>& _ConstantDataNames);
 
-	std::map<std::string, D3DXCONSTANT_DESC > ConstantHandleDescInitialize(
+	static std::map<std::string, D3DXCONSTANT_DESC > ConstantHandleDescInitialize(
 		ID3DXConstantTable* _ConstantTable,
 		const std::vector<std::string>& _ConstantTextureNames
 	);
+};
+// 파일명 hlsl 확장자 없이 파일명만 입력
+	// 파일명+VS or PS 형식으로 제한
 
 
-	// 파일명 hlsl 확장자 없이 파일명만 입력
-	// 쉐이더는 파일명+VS or PS 형식으로 제한
-	Info CompileAndCreate(IDirect3DDevice9* _Device,
-		const std::wstring& FileName);
-}
-
-
-namespace Effect
+template<typename _Type>
+bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data)
 {
-	LPD3DXEFFECT LoadShader(IDirect3DDevice9* _Device, const std::wstring& FileName);
-	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+	const uint32_t DataSize = sizeof(std::decay_t<_Type>);
+#if _DEBUG
+	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+#endif
+	if (FAILED(VsTable->SetValue(_Device, VsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return false;
+	}
+	else
+		return true;
 }
+template<typename _Type>
+bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data)
+{
+	const uint32_t DataSize = sizeof(std::decay_t<_Type>);
+#if _DEBUG
+	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+#endif
+	if (FAILED(PsTable->SetValue(_Device, PsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return false;
+	}
+	else
+		return true;
+}
+
+//namespace Effect
+//{
+//	LPD3DXEFFECT Function(IDirect3DDevice9* _Device, const std::wstring& FileName);
+//	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+//}
 
 struct TempVertexType
 {
@@ -59,7 +143,7 @@ struct TempVertexType
 	vec3 TexCoord;
 };
 
-namespace Model
+namespace Mesh
 {
 	// 삼각형 3 버텍스 로부터 탄젠트 바이노멀 벡터를 계산.
 	std::pair<vec3,vec3/* 1st Tangent, 2nd BiNormal*/> 
@@ -102,5 +186,7 @@ namespace Light
 	D3DLIGHT9 GetPoint(const vec3& Location, const D3DXCOLOR& Color);
 	D3DLIGHT9 GetSpot(const vec3& Location,const vec3& Direction,const D3DXCOLOR & Color);
 };
+
+
 #define __DXWRAPPER_H__
 #endif

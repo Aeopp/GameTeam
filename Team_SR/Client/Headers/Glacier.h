@@ -58,7 +58,6 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpGlacierAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
-
 };
 
 #define __GLACIER_H__

@@ -14,32 +14,7 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 		return E_FAIL;
 
 	mat MapWorld  = MATH::WorldMatrix({ 3,3,3}, { 0,0,0}, { 0,0,0});
-
 	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
-	_ShaderInfo = Shader::CompileAndCreate(m_pDevice, L"..\\Shader\\DiffuseSpecular");
-
-	_ShaderInfo.VsHandleMap = Shader::ConstantHandleInitialize(
-		_ShaderInfo.VsTable,
-		std::vector<std::string>{
-		"World",
-		"View",
-		"Projection",
-		"WorldLightLocation",
-		"WorldCameraLocation"
-		});
-
-	_ShaderInfo.PsHandleMap= Shader::ConstantHandleInitialize(
-		_ShaderInfo.PsTable,
-		std::vector<std::string>{
-		"LightColor",
-	});
-
-	_ShaderInfo.TextureDescMap = Shader::ConstantHandleDescInitialize(_ShaderInfo.PsTable,
-		{ "DiffuseSampler",
-		  "SpecularSampler" });
-
-	MapAmbient = 0x00202020;
-
 	return S_OK;
 }
 
@@ -94,7 +69,6 @@ CGameObject* CMap1st::Clone(void * pArg)
 {
 	CMap1st* pClone = new CMap1st(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
-	_ShaderInfo.AddRef();
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Clone CTerrain");
@@ -106,6 +80,5 @@ CGameObject* CMap1st::Clone(void * pArg)
 
 void CMap1st::Free()
 {
-	_ShaderInfo.Release();
 	Super::Free();
 }

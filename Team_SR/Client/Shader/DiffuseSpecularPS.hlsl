@@ -10,12 +10,12 @@ struct PS_INPUT
 sampler2D DiffuseSampler;
 sampler2D SpecularSampler;
 
-float3 LightColor;
+float4 LightColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
 	float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
-	float3 Diffuse = LightColor * DiffuseTexColor.rgb * saturate(Input.Diffuse);
+	float3 Diffuse = LightColor.xyz * DiffuseTexColor.rgb * saturate(Input.Diffuse);
 	
 	// Renormalize.....
 	float3 Reflection = normalize(Input.Reflection);
@@ -28,10 +28,10 @@ float4 main(PS_INPUT Input) : COLOR
 		Specular = pow(Specular, 20.0f);
 		
 		float4 SpecularIntensity = tex2D(SpecularSampler, Input.UV);
-		Specular *= SpecularIntensity.rgb * LightColor;
-	};
+        Specular *= SpecularIntensity.rgb * LightColor.xyz;
+    };
 	
-	float3 Ambient = float3(0.1f, 0.1f, 0.1f) * DiffuseTexColor.xyz;
+    float3 Ambient = float3(0.1f, 0.1f, 0.1f) * DiffuseTexColor.xyz;
 	
 	float4 OutputColor = float4(Ambient + Diffuse + Specular, DiffuseTexColor.a);
 	float factor = 1.f - (Input.Distance / 30.f);

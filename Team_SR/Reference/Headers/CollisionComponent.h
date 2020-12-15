@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __COLLISIONCOMPONENT_H__
 
 #include "Component.h"
@@ -62,10 +62,6 @@ public:
 	Sphere _Sphere;
 	ETag _Tag = ETag::None;
 	int32_t MyID= 0;
-
-	// TODO :: REMOVEPLZ
-	Ray _Ray;
-	//
 private:
 	static std::vector<CCollisionComponent*> _Comps;
 	static std::vector<PlaneInfo> _MapPlaneInfo; // 월드로 변환한 이후의 정보

@@ -1,4 +1,4 @@
-﻿#include "CollisionComponent.h"
+#include "CollisionComponent.h"
 #include "Management.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -106,12 +106,6 @@ void CCollisionComponent::Free()
 	Super::Free();
 };
 
-// TODO ::REMOVEPLZ
-vec3 scale{ 20,20,20};
-vec3 rotation{ 0,0,0 };
-vec3 location{ 33,22,11 };
-vec3 debuglocation{ 0,0,0 };
-//
 
 void CCollisionComponent::Update(class CTransform* const _Transform)&
 {
@@ -186,35 +180,6 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		//	PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
 		}
 	}
-
-	// TODO :: REMOVEPLZ
-	PlaneInfo _Info;
-	rotation.x += MATH::RandReal({0,0.3f});
-	rotation.y += MATH::RandReal({ 0,0.3f });
-	rotation.z += MATH::RandReal({ 0,0.3f });
-	mat world = MATH::WorldMatrix(scale, rotation, location);
-	_Info.Face = { MATH::Mul(vec3{-1,-1,0},world),
-					MATH::Mul(vec3{1,1,0},world),MATH::Mul(vec3{1,-1,0},world) };
-	_Info.Center = (MATH::Mul(vec3{ -1,-1,0 }, world) +
-		MATH::Mul(vec3{ 1,1,0 }, world) + MATH::Mul(vec3{ 1,-1,0 }, world)) / 3;
-	D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
-	for (auto& _Comp : _Comps)
-	{
-		{
-			float t = 0;
-			vec3 IntersectPoint{};
-
-			if (Collision::IsTriangleToRay(_Info, _Ray, t, IntersectPoint))
-			{
-				debuglocation = IntersectPoint;
-			}
-			else
-			{
-
-			}
-		}
-	}
-	//
 }
 
 
@@ -230,22 +195,7 @@ void CCollisionComponent::DebugDraw()
 	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
 
-	//TODO ::REMOVEPLZ
-	{
-		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-		mat debugworld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, debuglocation);
-		m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
-		_SphereMesh->DrawSubset(0);
-		std::array<vec3, 4ul> vertexlist{ vec3{-1,-1,0},vec3{1,1,0},vec3{1,-1,0},vec3{-1,-1,0} };
-		mat world = MATH::WorldMatrix(scale, rotation, location);
-		mat view, proj;
-		m_pDevice->GetTransform(D3DTS_VIEW, &view);
-		m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-		world = world * view * proj;
-		CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
-		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	}
-	//
+
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);

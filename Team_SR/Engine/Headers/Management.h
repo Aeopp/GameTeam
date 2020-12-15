@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __MANAGEMENT_H__
 
 #include "Base.h"
@@ -48,6 +48,7 @@ public: /* For.Renderer */
 	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject);
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
+	D3DCAPS9 GetCaps() { return m_pRenderer->GetCaps(); };
 public:
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
 

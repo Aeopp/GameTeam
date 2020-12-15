@@ -85,10 +85,8 @@ _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CGlacier::RenderGameObject()
 {
-
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;

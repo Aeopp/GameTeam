@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "MainApp.h"
 #include "Logo.h"
 #include "Player.h"
@@ -6,6 +6,7 @@
 #include "MainCamera.h"
 #include "Glacier.h"
 #include "CollisionComponent.h"
+#include "DXWrapper.h"
 
 #include "BatGrey.h"	// 박쥐
 
@@ -224,6 +225,7 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma endregion	// Component_Texture_BatGrey
+	Effect::EffectInitialize(m_pDevice);
 
 	return S_OK;
 }
@@ -250,6 +252,7 @@ CMainApp* CMainApp::Create()
 
 void CMainApp::Free()
 {
+	Effect::EffectRelease();
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();

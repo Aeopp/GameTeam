@@ -175,15 +175,11 @@
     <ClInclude Include="..\Headers\MainCamera.h" />
     <ClInclude Include="..\Headers\Map1st.h" />
     <ClInclude Include="..\Headers\MapBase.h" />
-    <ClInclude Include="..\Headers\MapVertex.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
-    <ClInclude Include="..\Headers\Terrain.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -210,15 +206,11 @@
     <ClCompile Include="..\Codes\MainCamera.cpp" />
     <ClCompile Include="..\Codes\Map1st.cpp" />
     <ClCompile Include="..\Codes\MapBase.cpp" />
-    <ClCompile Include="..\Codes\MapVertex.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
-    <ClCompile Include="..\Codes\Terrain.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
