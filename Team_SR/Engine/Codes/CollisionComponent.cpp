@@ -45,7 +45,7 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	}
 
 	Regist();
-	
+
 	InitInfo _Info = *reinterpret_cast<InitInfo*>(pArg);
 	bCollision = _Info.bCollision;
 	bMapBlock = _Info.bMapBlock;

@@ -11,6 +11,9 @@ protected:
 	virtual ~CCamera() = default;
 
 public:
+	const CAMERA_DESC& GetCameraDesc() const;
+
+public:
 	// CGameObject을(를) 통해 상속됨
 	virtual HRESULT ReadyGameObjectPrototype() = 0;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) = 0;
