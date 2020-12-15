@@ -27,6 +27,8 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
+	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;

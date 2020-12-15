@@ -55,6 +55,12 @@
     <Filter Include="02.GameObject\02.Monster\02.BatGrey">
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.Bullet">
+      <UniqueIdentifier>{d3526062-0d90-4428-8531-a08e7db6f613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\01.BatSpit">
+      <UniqueIdentifier>{ce6a0bf8-4957-4919-a408-4a57c9ce6153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -154,6 +160,12 @@
       <Filter>99.Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\Bullet.h">
+      <Filter>02.GameObject\05.Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BatSpit.h">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -226,6 +238,12 @@
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\Bullet.cpp">
+      <Filter>02.GameObject\05.Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatSpit.cpp">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
