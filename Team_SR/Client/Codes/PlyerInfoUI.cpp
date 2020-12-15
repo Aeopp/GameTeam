@@ -22,29 +22,20 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	if (FAILED(AddComponent()))
+		return E_FAIL;
 	m_pTransformCom->m_TransformDesc.vScale.x = 1;
 	m_pTransformCom->m_TransformDesc.vScale.y = 1;
 	m_pTransformCom->m_TransformDesc.vScale.z = 1;
 
-	m_pTransformCom->m_TransformDesc.vPosition.x = 20;
-	m_pTransformCom->m_TransformDesc.vPosition.y = 20;
-	m_pTransformCom->m_TransformDesc.vPosition.z = 20;
+	m_pTransformCom->m_TransformDesc.vPosition.x = 1;
+	m_pTransformCom->m_TransformDesc.vPosition.y = 1;
+	m_pTransformCom->m_TransformDesc.vPosition.z = 1;
 	
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = 0.f;
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 0.f;
 	
-	//m_pTransformCom->m_TransformDesc.matWorld;
-
-	//auto pCamera = (CMainCamera*)m_pManagement->GetGameObject((_int)ESceneID::Static, CGameObject::Tag + L"CMainCamera");
-	//if (nullptr == pCamera)
-	//	return E_FAIL;
-	//auto cameraDesc = pCamera->GetCameraDesc();
-	//_matrix matView;
-	//D3DXMatrixLookAtLH(&matView, cameraDesc.);
-
-
-	if (FAILED(AddComponent()))
-		return E_FAIL;
+	
 
 	return S_OK;
 }
@@ -72,6 +63,17 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
+
+
+	auto pCamera = (CMainCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, CGameObject::Tag + L"MainCamera");
+	if (nullptr == pCamera)
+		return E_FAIL;
+	auto cameraDesc = pCamera->GetCameraDesc();
+	_matrix matView, matProj;
+	D3DXMatrixLookAtLH(&matView, &cameraDesc.vEye, &cameraDesc.vAt, &cameraDesc.vUp);
+	D3DXMatrixPerspectiveFovLH(&matProj, cameraDesc.fFovY, cameraDesc.fAspect, cameraDesc.fNear, cameraDesc.fFar);
+
+	m_pTransformCom->m_TransformDesc.matWorld = matView * matProj;
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
@@ -111,7 +113,7 @@ HRESULT CPlyerInfoUI::AddComponent()
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_VIBuffer_RectTexture",
+		L"Component_Engine::CVIBuffer_RectTexture",
 		L"Com_VIBuffer",
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;

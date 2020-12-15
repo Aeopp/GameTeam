@@ -231,7 +231,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion	// Component_Texture_BatGrey
 
-#pragma region Component_Texture_Monster
+#pragma region Component_Texture_PlayerInfoUI
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_PlayerInfoUI",
