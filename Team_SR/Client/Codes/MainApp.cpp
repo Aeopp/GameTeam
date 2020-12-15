@@ -179,7 +179,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyFly",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Fly/batGreyFly%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
 	// 원거리 공격
@@ -187,7 +187,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyShoot",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Shoot/batGreyShoot%d.png", 5))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Shoot/batGreyShoot%d.png", 5))))
 		return E_FAIL;
 #pragma endregion
 	// 근접 공격
@@ -195,7 +195,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyAttack",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Attack/batGreyattack%d.png", 4))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Attack/batGreyattack%d.png", 4))))
 		return E_FAIL;
 #pragma endregion
 	// 뒤돌아봄
@@ -203,7 +203,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyBack",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Back/batGreyFly_back%d.png", 7))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Back/batGreyFly_back%d.png", 7))))
 		return E_FAIL;
 #pragma endregion
 	// 피격
@@ -211,7 +211,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyHit",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Hit/batGreyHit_%d.png", 2))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Hit/batGreyHit_%d.png", 2))))
 		return E_FAIL;
 #pragma endregion
 	// 죽음
@@ -219,7 +219,15 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyDeath",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Death/batGreydeath%d.png", 11))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Death/batGreydeath%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+	// 박쥐 침
+#pragma region Component_Texture_BatGreySpit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BatGreySpit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Spit/bat_spit%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
 

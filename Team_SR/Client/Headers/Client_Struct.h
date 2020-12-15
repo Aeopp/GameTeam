@@ -12,6 +12,15 @@ struct MonsterStatus {
 	float fDetectionRange;	// 감지 범위
 };
 
+// 총알 스텟
+struct BulletStatus {
+	DWORD dwRange;			// 사거리 - 총알이 무한정 앞으로 나갈순 없음
+	DWORD dwPiercing;		// 관통력 - 한발의 총알로 관통되어 맞출 수 있는 정도 ( 0 이면 관통하지않고 사라짐 1 이상이면 충돌마다 1씩 차감 후 사라짐)
+	float fATK;				// 공격력
+	float fSpeed;			// 총알 속도
+	float fImpact;			// 충격력 - 총알에 맞은 적을 뒤로 물러나게 하는 정도
+};
+
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
