@@ -137,11 +137,38 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma region Component_Texture_Glacier
+	wstring wstrTextureGlacier = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>();
+#pragma region Move
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		L"Component_Texture_GlacierMove",
+		wstrTextureGlacier + L"Move",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Move/Move%d.png", 16))))
 		return E_FAIL;
+#pragma endregion
+#pragma region Death
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Death/Death%d.png", 9))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Hurt
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Hurt",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Hurt/Hurt%d.png", 16))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Attack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Attack/Attack%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
 #pragma endregion
 	// 박쥐 텍스처들
 #pragma region Component_Texture_BatGrey

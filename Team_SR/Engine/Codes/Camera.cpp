@@ -5,6 +5,11 @@ USING(Engine)
 CCamera::CCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice) {}
 
+const CAMERA_DESC & CCamera::GetCameraDesc() const
+{
+	return m_CameraDesc;
+}
+
 HRESULT CCamera::ReadyGameObjectPrototype()
 {
 	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
