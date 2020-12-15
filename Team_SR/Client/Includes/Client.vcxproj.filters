@@ -58,6 +58,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{2e36d260-bc08-4cbb-b2b6-58357be7f29a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.GameUI">
+      <UniqueIdentifier>{29f6342d-620c-4a3f-96de-a3fd0b2652c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="..\Headers\DXWrapper.h">
       <Filter>04.DXWrapper</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\PlyerInfoUI.h">
+      <Filter>02.GameObject\05.GameUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -226,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DXWrapper.cpp">
       <Filter>04.DXWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
+      <Filter>02.GameObject\05.GameUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

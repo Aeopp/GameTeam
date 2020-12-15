@@ -5,6 +5,7 @@
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "CollisionComponent.h"
+#include "PlyerInfoUI.h"
 
 #include "BatGrey.h"	// ���� ����
 
@@ -89,10 +90,16 @@ HRESULT CMainApp::ReadyStaticResources()
 			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
 			CMainCamera::Create(m_pDevice))))
 			return E_FAIL;
+
+#pragma region GameObject_PlayerInfoUI
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
 	/* For.Component */
-
-		
-
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -131,6 +138,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_BatGreyFly",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/BatGrey/Fly/batGreyFly%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_Monster
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_PlayerInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 2))))
 		return E_FAIL;
 #pragma endregion
 
