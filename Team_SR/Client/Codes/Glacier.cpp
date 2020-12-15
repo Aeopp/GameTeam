@@ -112,7 +112,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Move",
-		L"Com_Texture",
+		L"Com_Texture_GlacierMove",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Move", pTexture);
@@ -120,7 +120,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Death",
-		L"Com_Texture",
+		L"Com_Texture_GlacierDeath",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
@@ -128,7 +128,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Attack",
-		L"Com_Texture",
+		L"Com_Texture_GlacierAttack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Attack", pTexture);
@@ -136,7 +136,7 @@ HRESULT CGlacier::AddComponents()
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
 		m_wstrBase + L"Hurt",
-		L"Com_Texture",
+		L"Com_Texture_GlacierHurt",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Hurt", pTexture);
