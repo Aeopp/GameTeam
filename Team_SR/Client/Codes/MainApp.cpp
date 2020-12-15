@@ -95,7 +95,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		CMainCamera::Create(m_pDevice))))
+		CPlyerInfoUI::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -145,7 +145,7 @@ HRESULT CMainApp::ReadyStaticResources()
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
 		L"Component_Texture_PlayerInfoUI",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 2))))
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
 		return E_FAIL;
 #pragma endregion
 

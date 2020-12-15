@@ -5,7 +5,7 @@
 #include "Layer.h"
 #include "Map1st.h"
 #include "BatGrey.h"
-
+#include "PlyerInfoUI.h"
 
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
@@ -50,7 +50,7 @@ HRESULT CStage1st::ReadyScene()
 		//	CGameObject::Tag + TYPE_NAME<CBatGrey>(),
 		//	(_int)ESceneID::Stage1st,
 		//	CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		//	reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		//	reinterpret_cast<CGameObject**>(), nullptr)))
 		//	return E_FAIL;
 	}
 

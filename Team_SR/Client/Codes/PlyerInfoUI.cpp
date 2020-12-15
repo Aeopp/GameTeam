@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\PlyerInfoUI.h"
 #include "ImGuiHelper.h"
+#include "MainCamera.h"
 
 CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -20,6 +21,27 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
+
+	m_pTransformCom->m_TransformDesc.vScale.x = 1;
+	m_pTransformCom->m_TransformDesc.vScale.y = 1;
+	m_pTransformCom->m_TransformDesc.vScale.z = 1;
+
+	m_pTransformCom->m_TransformDesc.vPosition.x = 20;
+	m_pTransformCom->m_TransformDesc.vPosition.y = 20;
+	m_pTransformCom->m_TransformDesc.vPosition.z = 20;
+	
+	m_pTransformCom->m_TransformDesc.fRotatePerSec = 0.f;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 0.f;
+	
+	//m_pTransformCom->m_TransformDesc.matWorld;
+
+	//auto pCamera = (CMainCamera*)m_pManagement->GetGameObject((_int)ESceneID::Static, CGameObject::Tag + L"CMainCamera");
+	//if (nullptr == pCamera)
+	//	return E_FAIL;
+	//auto cameraDesc = pCamera->GetCameraDesc();
+	//_matrix matView;
+	//D3DXMatrixLookAtLH(&matView, cameraDesc.);
+
 
 	if (FAILED(AddComponent()))
 		return E_FAIL;
@@ -62,7 +84,15 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
+	
+
 	if (FAILED(CGameObject::RenderGameObject()))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Set_Texture(0)))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
 
 	return S_OK;

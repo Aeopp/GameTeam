@@ -47,7 +47,7 @@ HRESULT CStage::ReadyScene()
 		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
 		(_int)ESceneID::Stage1st,
 		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		nullptr, nullptr)))
 		return E_FAIL;
 
 	return S_OK;

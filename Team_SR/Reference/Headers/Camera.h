@@ -19,6 +19,9 @@ public:
 	virtual HRESULT RenderGameObject() = 0;
 
 public:
+	CAMERA_DESC GetCameraDesc() { return m_CameraDesc; }
+
+public:
 	virtual CGameObject * Clone(void * pArg = nullptr) = 0;
 	virtual void Free() override;
 
