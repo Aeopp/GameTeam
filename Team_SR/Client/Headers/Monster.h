@@ -20,6 +20,7 @@ protected:
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
+	bool PlayerBeNear();					// 플레이어가 가까이 근접해 있으면 true, 아니면 false
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;

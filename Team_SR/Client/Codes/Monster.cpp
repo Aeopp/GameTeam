@@ -85,13 +85,25 @@ bool CMonster::Frame_Move(float fDeltaTime)
 	return false;
 }
 
-// 플레이어 인식 - 인식하면 TRUE, 인식하지 못하면 FALSE
+// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
 bool CMonster::PlayerAwareness()
 {
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
 	if (fDis <= m_stStatus.fDetectionRange) {
+		return true;
+	}
+	return false;
+}
+
+// 플레이어가 가까이 근접해있는가 - 가까우면 true, 아니면 false
+bool CMonster::PlayerBeNear()
+{
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	float fDis = D3DXVec3Length(&vDir);
+	// 플레이어가 범위 안에 있으면
+	if (fDis <= m_stStatus.fMeleeRange) {
 		return true;
 	}
 	return false;
