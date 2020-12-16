@@ -24,11 +24,11 @@ HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	//m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
-	// 몬스터 원본 스텟
-	m_stOriginStatus.dwRange = 100.f;
-	m_stOriginStatus.dwPiercing = 0.f;
+	// 불렛 원본 스텟
+	m_stOriginStatus.dwPiercing = 0;
+	m_stOriginStatus.fRange = 100.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 15.f;
 	m_stOriginStatus.fImpact = 0.f;
@@ -46,6 +46,13 @@ HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
 _uint CBatSpit::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
+
+	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
+	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동
+	m_stStatus.fRange -= D3DXVec3Length(&vMoveDstnc);			// 사거리 차감
+	if (m_stStatus.fRange <= 0) {	// 사거리를 전부 차감했으면
+		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
+	}
 
 	return _uint();
 }

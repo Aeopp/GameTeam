@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "MainApp.h"
 #include "Logo.h"
 #include "Player.h"
@@ -12,6 +12,7 @@
 #include "EyebatBullet.h"
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
+#include "BatSpit.h"	// 박쥐 총알
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -74,6 +75,7 @@ int CMainApp::UpdateMainApp()
 HRESULT CMainApp::ReadyStaticResources()
 {
 	/* For.GameObject */
+	// 플레이어
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -81,6 +83,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	// 카메라
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
 
 	// 박쥐
 #pragma region GameObject_BatGrey
@@ -91,22 +100,33 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	
+	// 글레이서
 #pragma  region GameObject_Glacier
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
-			CGlacier::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		CGlacier::Create(m_pDevice))))
+		return E_FAIL;
 
 
 #pragma endregion
+
+	// 글레이서 총알
 #pragma  region GameObject_GlacierBullet
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
-			CGlacierBullet::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
+		CGlacierBullet::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 박쥐 총알
+#pragma  region GameObject_BatSpit
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CBatSpit>(),
+		CBatSpit::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 #pragma region GameObject_GlacierParticle
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -182,7 +202,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	// 텍스쳐들
+	// 글레이서 텍스처들
 #pragma region Component_Texture_Glacier
 	wstring wstrTextureGlacier = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>();
 #pragma region Move
@@ -224,14 +244,8 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma region Particle
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		wstrTextureGlacier + L"Particle",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Particle/Particle%d.png", 5))))
-		return E_FAIL;
-#pragma endregion
-
+#pragma endregion	// Component_Texture_Glacier
+	// 박쥐 텍스처들
 #pragma endregion
 #pragma region Component_Texture_BatGrey
 	// 플라이

@@ -3,9 +3,9 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f), m_vAim{0.f, 0.f, 0.f}
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
-	, m_bFrameLoopCheck(false)
+	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
 }
 
@@ -76,7 +76,7 @@ HRESULT CMonster::AddComponents()
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)
 {
-	m_fFrameCnt += 10.f * fDeltaTime;
+	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
 	if (m_fFrameCnt >= m_fEndFrame)
 	{
 		m_fFrameCnt = m_fStartFrame;
@@ -85,7 +85,7 @@ bool CMonster::Frame_Move(float fDeltaTime)
 	return false;
 }
 
-// 플레이어 인식 - 인식하면 TRUE, 인식하지 못하면 FALSE
+// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
 bool CMonster::PlayerAwareness()
 {
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
@@ -95,6 +95,24 @@ bool CMonster::PlayerAwareness()
 		return true;
 	}
 	return false;
+}
+
+// 플레이어가 가까이 근접해있는가 - 가까우면 true, 아니면 false
+bool CMonster::PlayerBeNear()
+{
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	float fDis = D3DXVec3Length(&vDir);
+	// 플레이어가 범위 안에 있으면
+	if (fDis <= m_stStatus.fMeleeRange) {
+		return true;
+	}
+	return false;
+}
+
+// 몬스터가 피해를 받음
+void CMonster::Hit(float fDemage)
+{
+	m_stStatus.fHP -= fDemage;
 }
 
 void CMonster::Free()

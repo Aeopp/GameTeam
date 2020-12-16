@@ -29,6 +29,7 @@ protected:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작
 	float m_fEndFrame;		// 프레임 끝
+	_vector m_vLook;		// 방향
 	CTexture* m_pTexture;	// 텍스처
 	BulletStatus m_stOriginStatus;	// 총알 원본 스텟
 	BulletStatus m_stStatus;		// 총알 스텟

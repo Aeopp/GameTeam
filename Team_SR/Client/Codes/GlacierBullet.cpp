@@ -24,24 +24,18 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		m_pTransformCom->m_TransformDesc.vPosition = ((_vector*)pArg)[1];
-		m_vLook = ((_vector*)pArg)[0] - m_pTransformCom->m_TransformDesc.vPosition;
-	}
-
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
-	// ¸ó½ºÅÍ ¿øº» ½ºÅİ
-	m_stOriginStatus.dwRange = 100;
+	// ë¶ˆë › ì›ë³¸ ìŠ¤í…Ÿ
 	m_stOriginStatus.dwPiercing = 0;
+	m_stOriginStatus.fRange = 100.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 15.f;
 	m_stOriginStatus.fImpact = 0.f;
-	// ÀÎ°ÔÀÓ¿¡¼­ »ç¿ëÇÒ ½ºÅİ
+	// ì¸ê²Œì„ì—ì„œ ì‚¬ìš©í•  ìŠ¤í…Ÿ
 	m_stStatus = m_stOriginStatus;
 
-	// ±âº» ÅØ½ºÃ³ ÇÁ·¹ÀÓ
+	// ê¸°ë³¸ í…ìŠ¤ì²˜ í”„ë ˆì„
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 3;
@@ -52,7 +46,13 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
-	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime * m_stStatus.fSpeed;
+	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
+	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// ì´ë™
+	m_stStatus.fRange -= D3DXVec3Length(&vMoveDstnc);			// ì‚¬ê±°ë¦¬ ì°¨ê°
+	if (m_stStatus.fRange <= 0) {	// ì‚¬ê±°ë¦¬ë¥¼ ì „ë¶€ ì°¨ê°í–ˆìœ¼ë©´
+		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// ì˜¤ë¸Œì íŠ¸ ì‚­ì œ í”Œë˜ê·¸ ON
+	}
+
 	return _uint();
 }
 
@@ -63,7 +63,7 @@ _uint CGlacierBullet::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	Frame_Move(fDeltaTime);	// ÅØ½ºÃ³ ÇÁ·¹ÀÓ ÀÌµ¿
+	Frame_Move(fDeltaTime);	// í…ìŠ¤ì²˜ í”„ë ˆì„ ì´ë™
 
 	return _uint();
 }
@@ -90,6 +90,7 @@ HRESULT CGlacierBullet::AddComponents()
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
+	// ê¸€ë ˆì´ì„œ ë¶ˆë › í…ìŠ¤ì²˜
 	wstring wstrTexture = CComponent::Tag + TYPE_NAME<CTexture>();
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
@@ -118,7 +119,7 @@ CGlacierBullet * CGlacierBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CGlacierBullet::Clone(void * pArg /*= nullptr*/)
 {
-	CGlacierBullet* pClone = new CGlacierBullet(*this); /* º¹»ç»ı¼ºÀÚ */
+	CGlacierBullet* pClone = new CGlacierBullet(*this); /* ë³µì‚¬ìƒì„±ì */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

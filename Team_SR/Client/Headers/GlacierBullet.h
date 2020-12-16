@@ -23,7 +23,7 @@ public:
 	virtual void Free() override;
 
 private:
-	_vector m_vLook;
+	
 };
 #define __GLACIERBULLET_H__
 #endif
