@@ -57,6 +57,23 @@ _uint CLayer::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
+// 2020.12.16 11:50 KMJ
+// Remove 플래그가 ON된 게임 오브젝트 삭제
+void CLayer::RemoveGameObject()
+{
+	auto iter = m_GameObjects.begin();
+	auto iter_end = m_GameObjects.end();
+	while (iter != iter_end) {
+		// Remove 플래그 검사
+		if ((*iter)->GetOBjFlag() & static_cast<BYTE>(CGameObject::ObjFlag::Remove)) {
+			SafeRelease(*iter);			// 게임 오브젝트 삭제
+			iter = m_GameObjects.erase(iter);	// 이터레이터 삭제
+			continue;
+		}
+		++iter;
+	}
+}
+
 CLayer * CLayer::Create()
 {
 	return new CLayer;

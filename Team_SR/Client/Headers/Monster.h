@@ -31,17 +31,26 @@ protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
 	CCollisionComponent* _CollisionComp = nullptr;
 protected:
+	// 플래그 값들
+	enum class MonsterFlag {
+		HPLock	= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
+		Dead	= 1 << 1,		// 죽음
+		Shoot	= 1 << 2		// 총쏨
+		// ... 이 밑으로 5개 예약 가능!!
+	};
+protected:
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝
 	float m_fFrameSpeed;					// 프레임 속도
+	vec3 m_vAim;							// 목표
 	CGameObject* m_pPlayer;					// 플레이어 포인터
 	MonsterStatus m_stOriginStatus;			// 몬스터 원본 스텟
 	MonsterStatus m_stStatus;				// 몬스터 스텟
 	wstring m_wstrTextureKey;				// 텍스처 키
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
 	bool m_bFrameLoopCheck;					// 프레임 루프
-	bool m_bDead;							// 죽음
+	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 };
 
 #define  __MONSTER_H__

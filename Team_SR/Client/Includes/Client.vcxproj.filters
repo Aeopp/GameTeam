@@ -169,7 +169,9 @@
     <ClInclude Include="..\Headers\BatSpit.h">
       <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GlacierBullet.h" />
+    <ClInclude Include="..\Headers\GlacierBullet.h">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -248,7 +250,9 @@
     <ClCompile Include="..\Codes\BatSpit.cpp">
       <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GlacierBullet.cpp" />
+    <ClCompile Include="..\Codes\GlacierBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

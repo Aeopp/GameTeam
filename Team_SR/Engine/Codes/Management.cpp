@@ -201,12 +201,12 @@ HRESULT CManagement::AddGameObjectInLayer(
 
 // 2020.12.16 15:31 KMJ
 // 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
-void CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring & GameObjectTag, _int iToSceneIndex, const wstring & LayerTag, CGameObject ** ppGameObject, void * pArg)
+void CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring & GameObjectTag, const wstring & LayerTag, CGameObject ** ppGameObject, void * pArg)
 {
 	ScheduledGameObjectInfo stScheduledObjInfo;
 	stScheduledObjInfo.iFromSceneIndex = iFromSceneIndex;
 	stScheduledObjInfo.wstrGameObjectTag = GameObjectTag;
-	stScheduledObjInfo.iToSceneIndex = iToSceneIndex;
+	stScheduledObjInfo.iToSceneIndex = m_pSceneManager->GetCurrentScene()->GetSceneIndex();	// 현제 씬의 씬 인덱스를 가져옴
 	stScheduledObjInfo.wstrLayerTag = LayerTag;
 	stScheduledObjInfo.ppGameObject = ppGameObject;
 	stScheduledObjInfo.pArg = pArg;
@@ -250,6 +250,11 @@ void CManagement::RegistLight(const D3DLIGHT9& Light)
 HRESULT CManagement::ScheduledProcessing()
 {
 	HRESULT retVa = S_OK;
+
+	// 삭제 예약된 게임 오브젝트 삭제
+	m_pGameObjectManager->RemoveGameObject();
+
+	// 생성 예약된 게임 오브젝트 생성
 	for (auto& schedule : m_listScheduledObjInfo) {
 		// 오브젝트 레이어에 추가
 		if (FAILED(m_pGameObjectManager->AddGameObjectInLayer(

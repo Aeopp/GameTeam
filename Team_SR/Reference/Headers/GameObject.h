@@ -25,6 +25,9 @@ public:
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 	static const std::wstring Tag;
 	class CTransform* GetTransform() { return m_pTransformCom; };
+	// 2020.12.16 11:54 KMJ
+	// 오브젝트 플래그 값을 가져옵니다
+	BYTE GetOBjFlag() { return m_byObjFlag; }
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -48,6 +51,16 @@ protected:
 protected:
 	class CTransform* m_pTransformCom = nullptr;
 	class CManagement* m_pManagement = nullptr;
+
+public:
+	// 2020.12.16 11:29 KMJ
+	// 플래그 값들
+	enum class ObjFlag {
+		Remove = 1			// 삭제
+		// ... 이 밑으로 7개 예약 가능!!
+	};
+protected:
+	BYTE m_byObjFlag;		// 플래그 변수 enum ObjFlag 참조
 };
 END
 

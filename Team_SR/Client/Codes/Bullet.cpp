@@ -25,7 +25,15 @@ HRESULT CBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 
 	if (nullptr != pArg)
 	{
+		// 2020.12.16 17:35 KMJ
+		// 아규먼트 메모리 해제
 		// 구조체 크기 검사
+		if (sizeof(BulletBasicArgument) == *static_cast<_uint*>(pArg)) {
+			BulletBasicArgument* pArgument = static_cast<BulletBasicArgument*>(pArg);
+			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
+			m_vLook = pArgument->vDir;
+			delete pArg;
+		}
 	}
 
 	return S_OK;

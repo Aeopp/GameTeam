@@ -382,15 +382,16 @@ void CGlacier::CreateBullet()
 	// 예약된 생성은 아규먼트가 다음 예약처리 시점까지 메모리에 있어야 함
 	// 동적 생성해서 힙에 데이터를 남김
 	// 메모리 해제는 만들어지는 객체에서 아규먼트 데이터 처리후 해제
-	_vector* pPositionArr = new _vector[2];
-	pPositionArr[0] = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
-	pPositionArr[1] = m_pTransformCom->m_TransformDesc.vPosition;
+	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	BulletBasicArgument* pArg = new BulletBasicArgument;
+	pArg->uiSize = sizeof(BulletBasicArgument);
+	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	pArg->vDir = m_vAim;	// 방향
 	m_pManagement->AddScheduledGameObjectInLayer(
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
-		(_int)ESceneID::Stage1st,
-		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
-		nullptr, (void*)pPositionArr);
+		L"Layer_" + TYPE_NAME<CGlacierBullet>(),
+		nullptr, (void*)pArg);
 }
 
 

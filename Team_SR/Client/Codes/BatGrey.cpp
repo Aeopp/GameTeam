@@ -66,7 +66,8 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 		Hit(1.f);
 	}
 
-	if (!m_bDead) {
+	// 몬스터가 안죽었으면
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 		Update_AI(fDeltaTime);	// 업데이트 AI
 	}
 
@@ -171,17 +172,27 @@ HRESULT CBatGrey::AddComponents()
 // 몬스터가 피해를 받음
 void CBatGrey::Hit(float fDemage)
 {
-	CMonster::Hit(fDemage);
-	
-	if (m_stStatus.fHP <= 0) {
-		m_fpAction = &CBatGrey::Action_Dead;
-		m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 11;
-		m_fFrameSpeed = 10.f;
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
 		return;
 	}
+
+	CMonster::Hit(fDemage);		// CMonster 에서 HP 감소
+	
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락
+			m_fpAction = &CBatGrey::Action_Dead;
+			m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 11;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+	
 
 	// 피해를 받아서 현제 행동 취소
 	// Hit 텍스처를 취함
@@ -255,7 +266,7 @@ void CBatGrey::AI_ActiveOffense()
 {
 	// 랜덤으로 몇가지 패턴 행동을...
 
-	int iRand = rand() % 100;
+	int iRand = rand() % 70;
 
 	// 30 %
 	// 대기
@@ -318,6 +329,9 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 5;
 	m_fFrameSpeed = 10.f;
+	// 목표 = 플레이어 위치 - 몬스터 위치
+	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&m_vAim, &m_vAim);
 	return;
 
 RETURN_MOVE:	// 이동
@@ -385,7 +399,22 @@ bool CBatGrey::Action_Move(float fDeltaTime)
 // 원거리 공격
 bool CBatGrey::Action_Shoot(float fDeltaTime)
 {
+	// 단발 쏴
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 2.f) {	// 3번째 텍스처 때 쏨
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_BatSpit",
+			L"Layer_BatSpit",
+			nullptr, (void*)pArg);
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 5.f;
 		return true;
 	}
@@ -417,9 +446,9 @@ bool CBatGrey::Action_Hit(float fDeltaTime)
 bool CBatGrey::Action_Dead(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
-		m_bDead = true;
 		return false;
 	}
 
