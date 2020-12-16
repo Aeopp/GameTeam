@@ -31,8 +31,8 @@ HRESULT CEyebatBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	m_pTransformCom->m_TransformDesc.vScale = { 1.f, 1.f, 1.f };
 
-	m_stOriginStatus.dwRange = 100;
 	m_stOriginStatus.dwPiercing = 0;
+	m_stOriginStatus.fRange = 100;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 1.f;
 	m_stOriginStatus.fImpact = 0.f;
