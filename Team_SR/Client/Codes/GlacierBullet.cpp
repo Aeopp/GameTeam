@@ -33,8 +33,8 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.dwRange = 100.f;
-	m_stOriginStatus.dwPiercing = 0.f;
+	m_stOriginStatus.dwRange = 100;
+	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 15.f;
 	m_stOriginStatus.fImpact = 0.f;
@@ -90,7 +90,6 @@ HRESULT CGlacierBullet::AddComponents()
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
-	// 박쥐 침 텍스처
 	wstring wstrTexture = CComponent::Tag + TYPE_NAME<CTexture>();
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,

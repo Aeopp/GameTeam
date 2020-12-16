@@ -7,7 +7,9 @@
 #include "Glacier.h"
 #include "GlacierBullet.h"
 #include "CollisionComponent.h"
-
+#include "Eyebat.h"
+#include "EyebatBullet.h"
+#include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 
 CMainApp::CMainApp()
@@ -88,13 +90,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-			CMainCamera::Create(m_pDevice))))
-			return E_FAIL;
-	/* For.Component */
-
+	
 #pragma  region GameObject_Glacier
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
@@ -104,7 +100,6 @@ HRESULT CMainApp::ReadyStaticResources()
 
 
 #pragma endregion
-
 #pragma  region GameObject_GlacierBullet
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
@@ -112,6 +107,31 @@ HRESULT CMainApp::ReadyStaticResources()
 			CGlacierBullet::Create(m_pDevice))))
 			return E_FAIL;
 #pragma endregion
+		
+#pragma region GameObject_Eyebat
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CEyebat>(),
+			CEyebat::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_EyebatBullet
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CEyebatBullet>(),
+			CEyebatBullet::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+		
+#pragma region GameObject_Fire
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CFire>(),
+			CFire::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
 		
 
 	/* For.Component */
@@ -131,6 +151,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region Component_CCollision
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		static_cast<int32_t>(ESceneID::Static),
 		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
@@ -138,15 +159,21 @@ HRESULT CMainApp::ReadyStaticResources()
 	{
 		return E_FAIL;
 	}
+#pragma endregion
 
 #pragma region Component_Texture_Player
 
 #pragma endregion
 
 #pragma region Component_Camera
-
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
+	// 텍스쳐들
 #pragma region Component_Texture_Glacier
 	wstring wstrTextureGlacier = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>();
 #pragma region Move
@@ -189,7 +216,6 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma endregion
-	// 박쥐 텍스처들
 #pragma region Component_Texture_BatGrey
 	// 플라이
 #pragma region Component_Texture_BatGreyFly
@@ -248,7 +274,51 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma endregion	// Component_Texture_BatGrey
+#pragma endregion	
+
+#pragma region Component_Texture_Eyebat
+	wstring wstrTextureEyebat = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CEyebat>();
+#pragma region Fly
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureEyebat + L"Fly",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Fly/Fly%d.png", 7))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Attack
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureEyebat + L"Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Attack/Attack%d.png", 7))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Bullet
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureEyebat + L"Bullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Bullet/Bullet%d.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Death
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureEyebat + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Death/Death%d.png", 12))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
+
+#pragma region Component_Texture_Fire
+	wstring wstrTextureFire = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFire>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureFire,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Fire/Fire%d.png", 22))))
+		return E_FAIL;
+#pragma endregion
 
 	return S_OK;
 }

@@ -6,6 +6,7 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
+#include "Eyebat.h"
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {
@@ -47,15 +48,27 @@ HRESULT CStage1st::ReadyScene()
 		//	return E_FAIL;
 
 		// 글레이서
+		//stArg.vPosition = { 5.f, 10.f, 30.f };
+
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		//	(_int)ESceneID::Stage1st,
+		//	CLayer::Tag + TYPE_NAME<CGlacier>(),
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
+
+		// 눈깔박쥐
 		stArg.vPosition = { 5.f, 10.f, 30.f };
 
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			CGameObject::Tag + TYPE_NAME<CEyebat>(),
 			(_int)ESceneID::Stage1st,
-			CLayer::Tag + TYPE_NAME<CGlacier>(),
+			CLayer::Tag + TYPE_NAME<CEyebat>(),
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
+
 	}
 
 
