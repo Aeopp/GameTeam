@@ -22,8 +22,8 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 		return E_FAIL;
 	}
 	/*
-	¿©±â¿¡¼­ ÇÑ°³¸¦ ´õ Á¶»ç¸¦ ÇØ¾ßÇÏ´Âµ¥ ¹öÅØ½º ÇÁ·Î¼¼½ÌÀÌ¶ó´Â°É ÇÏµå¿þ¾î¿¡¼­ ÇÒ¼ö ÀÖ´ÂÁö¸¦ Á¶»ç¸¦ ÇØ¾ßÇÑ´Ù. 
-	Á¤Á¡º¯È¯ + Á¶¸í¿¬»ê = ¹öÅØ½º ÇÁ·Î¼¼½Ì 
+	ì—¬ê¸°ì—ì„œ í•œê°œë¥¼ ë” ì¡°ì‚¬ë¥¼ í•´ì•¼í•˜ëŠ”ë° ë²„í…ìŠ¤ í”„ë¡œì„¸ì‹±ì´ë¼ëŠ”ê±¸ í•˜ë“œì›¨ì–´ì—ì„œ í• ìˆ˜ ìžˆëŠ”ì§€ë¥¼ ì¡°ì‚¬ë¥¼ í•´ì•¼í•œë‹¤. 
+	ì •ì ë³€í™˜ + ì¡°ëª…ì—°ì‚° = ë²„í…ìŠ¤ í”„ë¡œì„¸ì‹± 
 
 	*/
 	DWORD vp = 0; 
@@ -41,12 +41,16 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dpp.BackBufferCount = 1;
 
-	d3dpp.MultiSampleType= D3DMULTISAMPLE_NONE;
-	d3dpp.MultiSampleQuality= 0;
+	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+	d3dpp.MultiSampleQuality = 0;
+
+	//d3dpp.MultiSampleType= D3DMULTISAMPLE_16_SAMPLES;
+	//d3dpp.MultiSampleQuality = 8;
+
 
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.hDeviceWindow = hWnd;
-	d3dpp.Windowed = (BOOL)eDisplayMode;// TRUEÀÏ °æ¿ì Ã¢¸ðµå, FALSE ÀüÃ¼È­¸é. 
+	d3dpp.Windowed = (BOOL)eDisplayMode;// TRUEì¼ ê²½ìš° ì°½ëª¨ë“œ, FALSE ì „ì²´í™”ë©´. 
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.Flags = 0;
@@ -54,7 +58,16 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, _uint iWinCX, _uint iWi
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-	if (FAILED(m_pSDK->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, vp, &d3dpp, &m_pDevice)))
+	DWORD MsaaSamples;
+
+	ChooseBestMSAAMode(d3dpp.BackBufferFormat,
+		d3dpp.AutoDepthStencilFormat,
+		d3dpp.Windowed, d3dpp.MultiSampleType,
+		d3dpp.MultiSampleQuality,
+		MsaaSamples);
+
+	if (FAILED(m_pSDK->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+		hWnd, vp, &d3dpp, &m_pDevice)))
 	{
 		PRINT_LOG(L"Error", L"GraphicDevice Creating Failed");
 		return E_FAIL;
@@ -85,4 +98,86 @@ void CGraphic_Device::Free()
 	{
 		PRINT_LOG(L"Warning", L"Failed To Releasing m_pSDK");
 	}
+}
+
+bool CGraphic_Device::MSAAModeSupported(D3DMULTISAMPLE_TYPE type, D3DFORMAT backBufferFmt, D3DFORMAT depthStencilFmt, BOOL windowed, DWORD& qualityLevels)
+{
+	DWORD backBufferQualityLevels = 0;
+	DWORD depthStencilQualityLevels = 0;
+
+	HRESULT hr = m_pSDK->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL, backBufferFmt, windowed, type,
+		&backBufferQualityLevels);
+
+	if (SUCCEEDED(hr))
+	{
+		hr = m_pSDK->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL, depthStencilFmt, windowed, type,
+			&depthStencilQualityLevels);
+
+		if (SUCCEEDED(hr))
+		{
+			if (backBufferQualityLevels == depthStencilQualityLevels)
+			{
+				// The valid range is between zero and one less than the level
+				// returned by IDirect3D9::CheckDeviceMultiSampleType().
+
+				if (backBufferQualityLevels > 0)
+					qualityLevels = backBufferQualityLevels - 1;
+				else
+					qualityLevels = backBufferQualityLevels;
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void CGraphic_Device::ChooseBestMSAAMode(D3DFORMAT backBufferFmt, D3DFORMAT depthStencilFmt, BOOL windowed, D3DMULTISAMPLE_TYPE& type, DWORD& qualityLevels, DWORD& samplesPerPixel)
+{
+	bool supported = false;
+
+	struct MSAAMode
+	{
+		D3DMULTISAMPLE_TYPE type;
+		DWORD samples;
+	}
+	multsamplingTypes[15] =
+	{
+		{ D3DMULTISAMPLE_16_SAMPLES,  16 },
+		{ D3DMULTISAMPLE_15_SAMPLES,  15 },
+		{ D3DMULTISAMPLE_14_SAMPLES,  14 },
+		{ D3DMULTISAMPLE_13_SAMPLES,  13 },
+		{ D3DMULTISAMPLE_12_SAMPLES,  12 },
+		{ D3DMULTISAMPLE_11_SAMPLES,  11 },
+		{ D3DMULTISAMPLE_10_SAMPLES,  10 },
+		{ D3DMULTISAMPLE_9_SAMPLES,   9 },
+		{ D3DMULTISAMPLE_8_SAMPLES,   8 },
+		{ D3DMULTISAMPLE_7_SAMPLES,   7 },
+		{ D3DMULTISAMPLE_6_SAMPLES,   6 },
+		{ D3DMULTISAMPLE_5_SAMPLES,   5 },
+		{ D3DMULTISAMPLE_4_SAMPLES,   4 },
+		{ D3DMULTISAMPLE_3_SAMPLES,   3 },
+		{ D3DMULTISAMPLE_2_SAMPLES,   2 }
+	};
+
+	for (int i = 0; i < 15; ++i)
+	{
+		type = multsamplingTypes[i].type;
+
+		supported = MSAAModeSupported(type, backBufferFmt, depthStencilFmt,
+			windowed, qualityLevels);
+
+		if (supported)
+		{
+			samplesPerPixel = multsamplingTypes[i].samples;
+			return;
+		}
+	}
+
+	type = D3DMULTISAMPLE_NONE;
+	qualityLevels = 0;
+	samplesPerPixel = 1;
 }

@@ -1,9 +1,9 @@
 matrix World;
 matrix View;
 matrix Projection;
+float4 WorldCameraLocation;
 
 float4 WorldLightLocation;
-float4 WorldCameraLocation;
 
 #define MAX_LIGHTS 8
 
@@ -22,17 +22,17 @@ struct VS_INPUT
     float3 Normal : NORMAL;
     float3 Tangent : TANGENT;
     float3 BiNormal : BINORMAL;
-	float2 UV : TEXCOORD0;
+    float2 UV : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
-	float4 Location : POSITION;
-	float2 UV : TEXCOORD0;
-	float3 Diffuse : TEXCOORD1;
-	float3 ViewDirection: TEXCOORD2;
-	float3 Reflection : TEXCOORD3;
-	float3 Distance : TEXCOORD4;
+    float4 Location : POSITION;
+    float2 UV : TEXCOORD0;
+    float3 Diffuse : TEXCOORD1;
+    float3 ViewDirection : TEXCOORD2;
+    float3 Reflection : TEXCOORD3;
+    float3 Distance : TEXCOORD4;
     float3 Normal : TEXCOORD5;
     float3 Tangent : TEXCOORD6;
     float3 BiNormal : TEXCOORD7;
@@ -40,38 +40,38 @@ struct VS_OUTPUT
 
 VS_OUTPUT main(VS_INPUT Input)
 {
-	VS_OUTPUT Output;
+    VS_OUTPUT Output;
 	
 	// Vertex Location : Local Coord -> World Coord 
-	Output.Location = mul(Input.Location, World);
+    Output.Location = mul(Input.Location, World);
 	
 	// WorldLightDirection Calc
-	float3 LightDirection = Output.Location.xyz - WorldLightLocation.xyz;
-	Output.Distance = length(LightDirection);
-	LightDirection = normalize(LightDirection);
+    float3 LightDirection = Output.Location.xyz - WorldLightLocation.xyz;
+    Output.Distance = length(LightDirection);
+    LightDirection = normalize(LightDirection);
 	
 	// WorldViewDirection Calc
-	float3 ViewDirection = normalize(Output.Location.xyz - WorldCameraLocation.xyz);
-	Output.ViewDirection = ViewDirection;
+    float3 ViewDirection = normalize(Output.Location.xyz - WorldCameraLocation.xyz);
+    Output.ViewDirection = ViewDirection;
 	
 	// Vertex Location : World Coord -> View Coord ... -> Projection Coord
-	Output.Location = mul(Output.Location, View);
-	Output.Location = mul(Output.Location, Projection);
+    Output.Location = mul(Output.Location, View);
+    Output.Location = mul(Output.Location, Projection);
 	
 	// Vertex Normal -> Local Coord -> World Coord
-	float3 WorldNormal = mul(Input.Normal, (float3x3) World);
-	WorldNormal = normalize(WorldNormal);
+    float3 WorldNormal = mul(Input.Normal, (float3x3) World);
+    WorldNormal = normalize(WorldNormal);
 	
 	// Diffuse Color Calc in World Coord System....
-	Output.Diffuse = dot(-LightDirection, WorldNormal);
+    Output.Diffuse = dot(-LightDirection, WorldNormal);
 	// Reflection Vector Calc in World Coord System.... For Specular Color Calc
-	Output.Reflection = reflect(LightDirection, WorldNormal);
+    Output.Reflection = reflect(LightDirection, WorldNormal);
 	
-	Output.UV = Input.UV;
+    Output.UV = Input.UV;
 	
     Output.Normal = Input.Normal;
     Output.Tangent = Input.Tangent;
     Output.BiNormal = Input.BiNormal;
 	
-	return Output;
+    return Output;
 };

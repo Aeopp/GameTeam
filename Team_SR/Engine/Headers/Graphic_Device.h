@@ -23,18 +23,28 @@ public:
 private:
 	ID3DXLine* _Line;
 	D3DPRESENT_PARAMETERS D3Dpp;
-	LPDIRECT3D9 m_pSDK; // ±×·¡ÇÈÄ«µåÀÇ ¼öÁØÀ» Á¶»çÇÏ°í »ý¼ºÇÏ´Â °´Ã¼. 
-	LPDIRECT3DDEVICE9 m_pDevice; // ¾Ö°¡ ½ÇÁúÀûÀ¸·Î ±×·¡ÇÈ ÀåÄ¡¸¦ Á¦¾îÇÏ´Â °´Ã¼. 
-	// ÀåÄ¡¸¦ »ý¼ºÇÏ´Â °úÁ¤. 
+	LPDIRECT3D9 m_pSDK; // ê·¸ëž˜í”½ì¹´ë“œì˜ ìˆ˜ì¤€ì„ ì¡°ì‚¬í•˜ê³  ìƒì„±í•˜ëŠ” ê°ì²´. 
+	LPDIRECT3DDEVICE9 m_pDevice; // ì• ê°€ ì‹¤ì§ˆì ìœ¼ë¡œ ê·¸ëž˜í”½ ìž¥ì¹˜ë¥¼ ì œì–´í•˜ëŠ” ê°ì²´. 
 
-	//1. ÀåÄ¡¸¦ Á¦¾îÇÏ±â À§ÇÑ °´Ã¼¸¦ »ý¼ºÇÏ´Â °´Ã¼(m_pSdk)¸¦ »ý¼º. 
-	//2. ÀåÄ¡ÀÇ ¼öÁØÀ» Á¶»çÇØ¾ßÇÑ´Ù. 
-	//3. ¼öÁØ¿¡ ¸Â´Â ÀåÄ¡¸¦ Á¦¾îÇÏ±â À§ÇÑ °´Ã¼ »ý¼º. 
+    bool MSAAModeSupported(D3DMULTISAMPLE_TYPE type, D3DFORMAT backBufferFmt,
+        D3DFORMAT depthStencilFmt, BOOL windowed,
+		DWORD& qualityLevels);
+
+    void ChooseBestMSAAMode(D3DFORMAT backBufferFmt, D3DFORMAT depthStencilFmt,
+        BOOL windowed, D3DMULTISAMPLE_TYPE& type,
+		DWORD& qualityLevels, DWORD& samplesPerPixel);
+
+
+	// ìž¥ì¹˜ë¥¼ ìƒì„±í•˜ëŠ” ê³¼ì •. 
+
+	//1. ìž¥ì¹˜ë¥¼ ì œì–´í•˜ê¸° ìœ„í•œ ê°ì²´ë¥¼ ìƒì„±í•˜ëŠ” ê°ì²´(m_pSdk)ë¥¼ ìƒì„±. 
+	//2. ìž¥ì¹˜ì˜ ìˆ˜ì¤€ì„ ì¡°ì‚¬í•´ì•¼í•œë‹¤. 
+	//3. ìˆ˜ì¤€ì— ë§žëŠ” ìž¥ì¹˜ë¥¼ ì œì–´í•˜ê¸° ìœ„í•œ ê°ì²´ ìƒì„±. 
 
 	/*
-	com - component Object ModelÀÇ ¾àÀÚ. 
-	¿ì¸®°¡ ¹è¿ì°í ÀÖ´Â ´ÙÀÌ·ºÆ®¿¡¼­´Â ÀåÄ¡ È¤Àº ¾î¶°ÇÑ µ¥ÀÌÅÍ¸¦ ´Ù·ç´Â ±â´ÉµéÀ» ÇÏ³ªÀÇ ºÎÇ°Ã³·³ Á¦°øÇØÁÖ°í ÀÖ´Ù. 
-	±×¸®°í »ç¿ëÀÚ´Â ÀÌ ºÎÇ°µéÀ» ÀÌ¿ëÇÏ¿© ¸¶Ä¡ ·¹°í¸¦ Á¶¸³ÇÏµí ÇÁ·Î±×·¥À» ±¸¼ºÇØ ³ª°¡¾ß ÇÑ´Ù. 
+	com - component Object Modelì˜ ì•½ìž. 
+	ìš°ë¦¬ê°€ ë°°ìš°ê³  ìžˆëŠ” ë‹¤ì´ë ‰íŠ¸ì—ì„œëŠ” ìž¥ì¹˜ í˜¹ì€ ì–´ë– í•œ ë°ì´í„°ë¥¼ ë‹¤ë£¨ëŠ” ê¸°ëŠ¥ë“¤ì„ í•˜ë‚˜ì˜ ë¶€í’ˆì²˜ëŸ¼ ì œê³µí•´ì£¼ê³  ìžˆë‹¤. 
+	ê·¸ë¦¬ê³  ì‚¬ìš©ìžëŠ” ì´ ë¶€í’ˆë“¤ì„ ì´ìš©í•˜ì—¬ ë§ˆì¹˜ ë ˆê³ ë¥¼ ì¡°ë¦½í•˜ë“¯ í”„ë¡œê·¸ëž¨ì„ êµ¬ì„±í•´ ë‚˜ê°€ì•¼ í•œë‹¤. 
 	*/
 };
 END

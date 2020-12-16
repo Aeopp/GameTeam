@@ -17,7 +17,7 @@ HRESULT CSceneManager::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	{
 		SafeRelease(m_pCurrentScene);
 		m_pCurrentScene = pCurrentScene;
-		CCollisionComponent::CleanUpMapPlaneInfo();
+	
 		m_iSceneID = iSceneID;
 	}
 

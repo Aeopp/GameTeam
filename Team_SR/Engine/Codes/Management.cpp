@@ -1,4 +1,4 @@
-﻿#include "..\Headers\Management.h"
+#include "..\Headers\Management.h"
 #include "CollisionComponent.h"
 
 

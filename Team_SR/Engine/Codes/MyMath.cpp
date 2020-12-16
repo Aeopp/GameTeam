@@ -46,7 +46,7 @@ Ray MATH::GetRayScreenProjection(const vec3& ScreenPos, IDirect3DDevice9* const 
 	Dir.y /= Proj(1, 1);
 	Dir = MATH::Normalize(Dir);
 	_Device->GetTransform(D3DTS_VIEW, &InvView);
-	InvView = MATH::InvMatrix(InvView);
+	InvView = MATH::Inverse(InvView);
 	Dir = MATH::MulNormal(Dir, InvView);
 	vec3 Origin = { InvView(3,0),InvView(3,1),InvView(3,2) };
 	Ray _Ray;

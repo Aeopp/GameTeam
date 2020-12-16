@@ -188,6 +188,11 @@ void CCollisionComponent::DebugDraw()
 {
 	if (!CManagement::Get_Instance()->bDebug)return;
 
+	DWORD _AlphaValue;
+	m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
+	if (_AlphaValue == TRUE)
+		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
@@ -195,11 +200,12 @@ void CCollisionComponent::DebugDraw()
 	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
 
-
-
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
+	if (_AlphaValue == TRUE)
+		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 };
+ const std::vector<PlaneInfo>& CCollisionComponent::GetMapPlaneInfo(){ return _MapPlaneInfo; };
 
 void CCollisionComponent::Regist()
 {
@@ -222,7 +228,7 @@ void CCollisionComponent::CancelRegist()
 
 void CCollisionComponent::AddMapPlaneInfo(const std::vector<PlaneInfo>& _MapPlaneInfo) noexcept 
 {
-	CCollisionComponent::_MapPlaneInfo.insert( std::begin(CCollisionComponent::_MapPlaneInfo ) , std::begin(_MapPlaneInfo), 	std::end(_MapPlaneInfo));
+	CCollisionComponent::_MapPlaneInfo.insert( std::end(CCollisionComponent::_MapPlaneInfo ) , std::begin(_MapPlaneInfo), 	std::end(_MapPlaneInfo));
 }
 
 void CCollisionComponent::CollisionUpdate(IDirect3DDevice9* const  _Device)

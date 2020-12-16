@@ -83,12 +83,21 @@ public:
 		return ReturnValue;
 	}
 
-	static mat InvMatrix(const mat& _mat)
+	static mat Inverse(const mat& _mat)
 	{
 		mat _inv;
 		D3DXMatrixInverse(&_inv, nullptr, &_mat);
 		return _inv;
 	}
+
+
+	static mat Transpose(const mat& _mat)
+	{
+		mat _transpose;
+		D3DXMatrixTranspose(&_transpose, &_mat);
+		return _transpose;
+	}
+
 
 	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,
 		const vec3& Location);

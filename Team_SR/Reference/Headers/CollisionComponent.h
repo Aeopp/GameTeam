@@ -23,7 +23,7 @@ public:
 	void Regist();
 	void CancelRegist();
 	// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
-	FORCEINLINE const std::vector<PlaneInfo>& GetMapPlaneInfo() { return _MapPlaneInfo; };
+	static const std::vector<PlaneInfo>& GetMapPlaneInfo();
 	FORCEINLINE static void CleanUpMapPlaneInfo()noexcept { _MapPlaneInfo.clear(); };
 	static void AddMapPlaneInfo(const std::vector<PlaneInfo> & _MapPlaneInfo)noexcept;;
 	static void CollisionUpdate(IDirect3DDevice9* const  _Device);

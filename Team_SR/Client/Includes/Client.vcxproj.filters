@@ -153,6 +153,9 @@
     <ClInclude Include="..\Headers\Vertexs.h">
       <Filter>97.DXWrapper</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Package.h">
+      <Filter>.ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -223,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Vertexs.cpp">
       <Filter>97.DXWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Package.cpp">
+      <Filter>.ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

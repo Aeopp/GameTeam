@@ -62,28 +62,32 @@ HRESULT CMapBase::RenderGameObject()
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
-
+	
 	{
 		_Effect.SetVSConstantData(m_pDevice, "World", MapWorld);
 	}
-	
+
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
 	for (auto& RefInfo : *_WallSubSetInfo)
 	{
+		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler") , 
+			RefInfo.Diffuse);
+		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), 
+			RefInfo.Specular);
+		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),	
+			RefInfo.Normal);
+
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		_Effect.SetPSConstantData(m_pDevice, "Ambient", RefInfo.MaterialInfo.Ambient);
 
-		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler") , RefInfo.Diffuse);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), RefInfo.Specular);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),	RefInfo.Normal);
-
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,sizeof(Vertex::Texture));
 		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
-		m_pDevice->SetVertexShader(_Effect.VsShader);
-		m_pDevice->SetPixelShader(_Effect.PsShader);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, RefInfo.TriangleCount);
-		m_pDevice->SetVertexShader(nullptr);
-		m_pDevice->SetPixelShader(nullptr);
 	}
+
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
 

@@ -79,6 +79,11 @@ _uint CStage::KeyProcess(float fDeltaTime)
 
 	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
 
+	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+	{
+		ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
+	}
+
 	return _uint();
 }
 

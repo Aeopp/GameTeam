@@ -176,7 +176,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 {
 	{
 		// 디퓨즈 + 스페큘러 ..........
-		Effect::Info _EffectInfo = Effect::CompileAndCreate(_Device, L"..\\Shader\\DiffuseSpecular");
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\DiffuseSpecular");
 
 		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
 			_EffectInfo.VsTable,
@@ -184,20 +185,21 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"World",
 				"View",
 				"Projection",
-				"WorldLightLocation",
-				"WorldCameraLocation"
+				"WorldCameraLocation",
+				"WorldLightLocation"
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
 			_EffectInfo.PsTable,
 			std::vector<std::string>{
-			"LightColor",
 				"Shine",
 				"Range",
-				"Ambient"
+				"LightColor",
+				"Ambient",
 		});
 
-		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize(_EffectInfo.PsTable,
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
 			{ "DiffuseSampler",
 			  "SpecularSampler",
 			  "NormalSampler"});
@@ -205,7 +207,54 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
 }
+void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
+	const vec4& LightLocation)
+{
+	mat View;
+	mat Projection;
+	_Device->GetTransform(D3DTS_VIEW, &View);
+	_Device->GetTransform(D3DTS_PROJECTION, &Projection);
 
+
+	//std::array< MyLight, 8ul> _Lights;
+	//int NumCurrentLight = 8;
+	//{
+	//	for (size_t i = 0; i < NumCurrentLight; ++i)
+	//	{
+	//		MyLight _Light;
+
+	//		_Light.Location =
+	//			(CameraLocation + vec4(MATH::RandVec() * MATH::RandReal
+	//			({ -100,100 }), 1.f));
+
+	//		_Light.Ambient = { MATH::RandReal({0.1,0.2}) ,
+	//		MATH::RandReal({0.1,0.2}) ,MATH::RandReal({0.1,0.2}) ,1.f };
+	//		_Light.Diffuse = { 1,1,1,1 };
+	//		_Light.Specular = { 1,1,1,1 };
+	//		_Light.Radius = MATH::RandReal({ 100,300 });
+	//		_Lights[i] = std::move(_Light);
+	//	};
+	//}
+
+
+	{
+		Effect::Info& CurEffect = Effect::GetEffectFromName(L"DiffuseSpecular");
+		CurEffect.SetVSConstantData(_Device, "View", View);
+		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
+		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
+		CurEffect.SetVSConstantData(_Device, "WorldLightLocation", LightLocation);
+
+		// 다중 조명시 수정 해야함...
+		const vec4 LightColor = { 1.0f,1.0f,1.0f,1.f };
+		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
+		const float Range = 300.f;
+		CurEffect.SetPSConstantData(_Device, "LightColor", LightColor);
+	
+		CurEffect.SetPSConstantData(_Device, "Range", Range);
+		//CurEffect.PsTable->SetValue(_Device, "Lights",(void*)(&_Lights[0]), sizeof (MyLight) * NumCurrentLight);
+		//CurEffect.SetPSConstantData(_Device, "Lights", _Lights[0], NumCurrentLight);
+	}
+}
 std::map<std::string, D3DXHANDLE> Effect::ConstantHandleInitialize(
 	ID3DXConstantTable* _ConstantTable,
 	const std::vector<std::string>& _ConstantDataNames)
@@ -345,26 +394,7 @@ typename Effect::Info Effect::CompileAndCreate(
 	return _Info;
 }
 
-void Effect::Update(IDirect3DDevice9* const _Device , const vec4& CameraLocation ,
-	const vec4& LightLocation)
-{
-	mat View;
-	mat Projection;
-	_Device->GetTransform(D3DTS_VIEW, &View);
-	_Device->GetTransform(D3DTS_PROJECTION, &Projection);
-	
-	{
-		Effect::Info& CurEffect = Effect::GetEffectFromName(L"DiffuseSpecular");
-		CurEffect.SetVSConstantData(_Device, "View", View);
-		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
-		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
-		// 다중 조명시 수정 해야함...
-		const vec4 diffusecolor = { 1.0f,1.0f,1.0f,1.0f };
-		CurEffect.SetVSConstantData(_Device, "WorldLightLocation", LightLocation);
-		CurEffect.SetPSConstantData(_Device, "LightColor", diffusecolor);
-		CurEffect.SetPSConstantData(_Device, "Range", 200.f);
-	}
-}
+
 
 
 void Effect::Info::Release()
@@ -392,7 +422,7 @@ uint8_t Effect::Info::GetTexIdx(const std::string& SamplerName)
 	return TextureDescMap[SamplerName.c_str()].RegisterIndex;
 }
 
-LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName)
+LPDIRECT3DTEXTURE9 LOAD_TEXTURE(IDirect3DDevice9* _Device, const std::wstring& FileName)
 {
 	LPDIRECT3DTEXTURE9 ret = nullptr;
 

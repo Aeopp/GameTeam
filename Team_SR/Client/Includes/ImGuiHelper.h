@@ -1,9 +1,16 @@
-﻿#pragma once
+#pragma once
 
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
+#include "Package.h"
 
+struct TestVertex
+{
+	vec3 Location;
+	vec2 UV;
+	static const DWORD FVF;
+};
 
 USING(Engine)
 class ImGuiHelper
@@ -25,14 +32,11 @@ public:
 	static bool bInitialize;
 	static bool bEditOn;
 	static bool bDemo;
-
-	
 public:
-	/*Example Code Here*/
 	static void DebugInfo(HWND _Hwnd);
-	static void Text();
-	static void Slider();
-	static void CheckBox();
-	static void Button();
+	static void Picking(IDirect3DDevice9* const _Device ,const std::vector<PlaneInfo>& _PlaneInfo);
+private:
+	static ID3DXMesh* _SphereMesh;
+	static PackageContainer _PackageContainer;
 };
 

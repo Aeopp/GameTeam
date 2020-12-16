@@ -6,6 +6,15 @@
 USING(Engine)
 
 
+struct MyLight
+{
+	vec4 Location;
+	vec4 Ambient;
+	vec4 Diffuse;
+	vec4 Specular;
+	float Radius;
+};
+
 struct MtrlInfo
 {
 	enum class Illumination :uint8_t
@@ -53,7 +62,7 @@ public:
 };
 
 
-LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* _Device, const std::wstring& FileName);
+LPDIRECT3DTEXTURE9 LOAD_TEXTURE(IDirect3DDevice9* _Device, const std::wstring& FileName);
 
 class Effect
 {
@@ -75,9 +84,9 @@ public:
 		uint8_t GetTexIdx(const std::string& SamplerName);
 
 		template<typename _Type>
-		bool  SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data);
+		bool  SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data , const size_t Num = 1);
 		template<typename _Type>
-		bool  SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data);
+		bool  SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data, const size_t Num = 1);
 	};
 public:
 	static std::map<std::wstring, Info> _EffectInfoMap;
@@ -102,9 +111,9 @@ public:
 
 
 template<typename _Type>
-bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data)
+bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data , const size_t Num  )
 {
-	const uint32_t DataSize = sizeof(std::decay_t<_Type>);
+	const uint32_t DataSize = sizeof(std::decay_t<_Type>) * Num;
 #if _DEBUG
 	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 #endif
@@ -117,9 +126,9 @@ bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, c
 		return true;
 }
 template<typename _Type>
-bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data)
+bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data ,const size_t Num)
 {
-	const uint32_t DataSize = sizeof(std::decay_t<_Type>);
+	const uint32_t DataSize = sizeof(std::decay_t<_Type>) * Num;
 #if _DEBUG
 	if (!_Device || DataSize == 0 || ConstantHandleMapKey.empty())
 	{
