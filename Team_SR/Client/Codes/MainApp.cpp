@@ -6,6 +6,7 @@
 #include "MainCamera.h"
 #include "Glacier.h"
 #include "GlacierBullet.h"
+#include "GlacierParticle.h"
 #include "CollisionComponent.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
@@ -107,6 +108,13 @@ HRESULT CMainApp::ReadyStaticResources()
 			CGlacierBullet::Create(m_pDevice))))
 			return E_FAIL;
 #pragma endregion
+#pragma region GameObject_GlacierParticle
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+			CGlacierParticle::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 		
 #pragma region GameObject_Eyebat
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -131,6 +139,7 @@ HRESULT CMainApp::ReadyStaticResources()
 			CFire::Create(m_pDevice))))
 			return E_FAIL;
 #pragma endregion
+
 
 		
 
@@ -212,6 +221,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		wstrTextureGlacier + L"Bullet",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Bullet/Bullet%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Particle
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Particle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Particle/Particle%d.png", 5))))
 		return E_FAIL;
 #pragma endregion
 

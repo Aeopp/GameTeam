@@ -1,14 +1,15 @@
 #pragma once
-#ifndef Eyebat_h__
-#define Eyebat_h__
+#ifndef Spider_h__
+#define Spider_h__
 
 #include "Monster.h"
 USING(Engine)
-class CEyebat final : public CMonster
+class CSpider final : public CMonster
 {
 private:
-	explicit CEyebat(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CEyebat() = default;
+	explicit CSpider(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CSpider() = default;
+
 public:
 	// CMonster을(를) 통해 상속됨
 	virtual HRESULT ReadyGameObjectPrototype() override;
@@ -23,7 +24,7 @@ private:
 	////////////////////AWARENESS//////////////////
 	void AI_NoAwareness();
 	void AI_FirstPhase();
-	void AI_SecondPhase();
+	//void AI_SecondPhase();
 	void AI_DeadPhase();
 	////////////////////ACTION/////////////////////
 	bool Action_Move(float fDeltaTime);
@@ -31,36 +32,30 @@ private:
 	bool Action_Shoot(float fDeltaTime);
 	bool Action_Death(float fDeltaTime);
 	///////////////////////////////////////////////
-	void CreateBullet();
+	//void CreateBullet();
 
 private:
 	enum class AWARENESS { No, Yes, End };
-	enum class PHASE { HP_High, HP_Low, HP_ZERO, End };
+	enum class PHASE { HP_High, HP_ZERO, End };
 
-	using AIFunc = void(CEyebat::*)(void);
-	using ACTFunc = bool(CEyebat::*)(float);
+	using AIFunc = void(CSpider::*)(void);
+	using ACTFunc = bool(CSpider::*)(float);
 
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();
 
 public:
-	static CEyebat* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CSpider* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
 private:
-	float m_fCountDown = 0.f;
-	float m_fStartY = 0.f;
-	int	  m_iDir = 0;
-	wstring m_wstrBase;
-
 	////////////////////////////////////////////////////
 	AWARENESS	m_eAwareness = AWARENESS::End;
 	PHASE		m_ePhase = PHASE::End;
-	AIFunc		m_fpEyebatAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
+	AIFunc		m_fpSpiderAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
-
 };
 
-#endif // Eyebat_h__
+#endif // Spider_h__

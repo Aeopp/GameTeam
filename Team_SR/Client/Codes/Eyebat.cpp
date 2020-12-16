@@ -28,6 +28,11 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 6;
 
+	//Å×½ºÆ®
+	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
+	m_iDir = 1;
+	//
+
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
@@ -176,6 +181,11 @@ bool CEyebat::Action_Move(float fDeltaTime)
 	if (fLookLength > 10)
 		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
+	m_pTransformCom->m_TransformDesc.vPosition.y += fDeltaTime * m_iDir * 2;
+	if (m_pTransformCom->m_TransformDesc.vPosition.y > m_fStartY + 2)
+		m_iDir *= -1;
+	else if(m_pTransformCom->m_TransformDesc.vPosition.y < m_fStartY - 2)
+		m_iDir *= -1;
 	m_fCountDown -= fDeltaTime;
 	if (m_fCountDown <= 0)
 	{

@@ -73,6 +73,15 @@
     <Filter Include="02.GameObject\02.Monster\04.Fire">
       <UniqueIdentifier>{1288535d-323a-4521-9469-f3029aa60ceb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\06.Effect">
+      <UniqueIdentifier>{bf557a0a-6bd9-478f-9d23-7286e816f2a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect\01.GlacierPaticle">
+      <UniqueIdentifier>{a6146444-4c1a-4936-8333-ab8f725bd83a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\05.Spider">
+      <UniqueIdentifier>{e681c001-91f3-459d-9470-89448001091e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -190,6 +199,15 @@
     <ClInclude Include="..\Headers\Fire.h">
       <Filter>02.GameObject\02.Monster\04.Fire</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierParticle.h">
+      <Filter>02.GameObject\06.Effect\01.GlacierPaticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Spider.h">
+      <Filter>02.GameObject\02.Monster\05.Spider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -279,6 +297,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Fire.cpp">
       <Filter>02.GameObject\02.Monster\04.Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierParticle.cpp">
+      <Filter>02.GameObject\06.Effect\01.GlacierPaticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Spider.cpp">
+      <Filter>02.GameObject\02.Monster\05.Spider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
