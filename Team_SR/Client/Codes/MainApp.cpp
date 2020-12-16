@@ -59,6 +59,7 @@ int CMainApp::UpdateMainApp()
 	ImGuiHelper::DebugInfo(g_hWnd);
 	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
 	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
+	ImGui::Checkbox("ObjectEdit", &ImGuiHelper::bPackageEdit);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render(m_pDevice);

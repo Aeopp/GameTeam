@@ -5,13 +5,6 @@
 #include "imgui_impl_win32.h"
 #include "Package.h"
 
-struct TestVertex
-{
-	vec3 Location;
-	vec2 UV;
-	static const DWORD FVF;
-};
-
 USING(Engine)
 class ImGuiHelper
 {
@@ -32,11 +25,14 @@ public:
 	static bool bInitialize;
 	static bool bEditOn;
 	static bool bDemo;
+	static bool bPackageEdit;
 public:
 	static void DebugInfo(HWND _Hwnd);
 	static void Picking(IDirect3DDevice9* const _Device ,const std::vector<PlaneInfo>& _PlaneInfo);
+	static void Save();
 private:
 	static ID3DXMesh* _SphereMesh;
 	static PackageContainer _PackageContainer;
+	
 };
 

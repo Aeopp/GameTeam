@@ -5,13 +5,10 @@
 
 USING(Engine)
 
-
 struct MyLight
 {
-	vec4 Location;
-	vec4 Ambient;
-	vec4 Diffuse;
-	vec4 Specular;
+	vec3 Location;
+	vec3 Diffuse;
 	float Radius;
 };
 
@@ -90,7 +87,9 @@ public:
 	};
 public:
 	static std::map<std::wstring, Info> _EffectInfoMap;
+	static std::vector<MyLight> _CurMapLights;
 public:
+	static void RegistLight(MyLight _Light)noexcept;
 	static Effect::Info& GetEffectFromName(const std::wstring& EffectName);
 	static void EffectRelease();
 	static void EffectInitialize(IDirect3DDevice9* const _Device);
@@ -106,10 +105,11 @@ public:
 		const std::vector<std::string>& _ConstantTextureNames
 	);
 };
+
+
+
 // 파일명 hlsl 확장자 없이 파일명만 입력
 	// 파일명+VS or PS 형식으로 제한
-
-
 template<typename _Type>
 bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data , const size_t Num  )
 {

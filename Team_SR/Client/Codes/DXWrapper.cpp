@@ -4,7 +4,7 @@
 
 
 std::map<std::wstring, typename Effect::Info> Effect::_EffectInfoMap{ };
-
+std::vector<MyLight> Effect::_CurMapLights;
 
 D3DMATERIAL9 Light::GetMtrl(D3DXCOLOR Diffuse, D3DXCOLOR Ambient, D3DXCOLOR Specular, D3DXCOLOR Emissive, const float Power)
 {
@@ -147,6 +147,11 @@ vec3 Mesh::CalculateNormal(const vec3 Tangent,const vec3 BiNormal)
 	return Normal;
 };
 
+void Effect::RegistLight(MyLight _Light) noexcept
+{
+	_CurMapLights.push_back(std::move(_Light));
+}
+
 typename Effect::Info& Effect::GetEffectFromName(const std::wstring& EffectName)
 {
 #if _DEBUG
@@ -171,7 +176,6 @@ void Effect::EffectRelease()
 	}
 }
 
-
 void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 {
 	{
@@ -185,17 +189,16 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"World",
 				"View",
 				"Projection",
-				"WorldCameraLocation",
-				"WorldLightLocation"
+				"WorldCameraLocation"
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
 			_EffectInfo.PsTable,
 			std::vector<std::string>{
+				"LightNum",
 				"Shine",
-				"Range",
-				"LightColor",
-				"Ambient",
+				"GlobalAmbient",
+				"Lights",
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -206,7 +209,10 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
+
 }
+
+
 void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 	const vec4& LightLocation)
 {
@@ -215,44 +221,42 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 	_Device->GetTransform(D3DTS_VIEW, &View);
 	_Device->GetTransform(D3DTS_PROJECTION, &Projection);
 
+	const vec3 CameraLocation3 = CameraLocation;
 
-	//std::array< MyLight, 8ul> _Lights;
-	//int NumCurrentLight = 8;
-	//{
-	//	for (size_t i = 0; i < NumCurrentLight; ++i)
+	//std::stable_sort(std::begin(_CurMapLights), std::end(_CurMapLights),
+	//	[CameraLocation](const MyLight&  Lhs ,const MyLight& Rhs) 
 	//	{
-	//		MyLight _Light;
-
-	//		_Light.Location =
-	//			(CameraLocation + vec4(MATH::RandVec() * MATH::RandReal
-	//			({ -100,100 }), 1.f));
-
-	//		_Light.Ambient = { MATH::RandReal({0.1,0.2}) ,
-	//		MATH::RandReal({0.1,0.2}) ,MATH::RandReal({0.1,0.2}) ,1.f };
-	//		_Light.Diffuse = { 1,1,1,1 };
-	//		_Light.Specular = { 1,1,1,1 };
-	//		_Light.Radius = MATH::RandReal({ 100,300 });
-	//		_Lights[i] = std::move(_Light);
-	//	};
-	//}
+	//		return D3DXVec4LengthSq(&(Lhs.Location - CameraLocation))
+	//											<
+	//			D3DXVec4LengthSq(&(Rhs.Location - CameraLocation));
+	//	});
 
 
+	_CurMapLights.push_back(MyLight{});
+
+	int LightNum=_CurMapLights.size() > 8 ? 8 : _CurMapLights.size();
+	for(auto & _curlight : _CurMapLights)
+	{
+		_curlight.Diffuse = { 1.f ,1.f ,1.f  };
+		_curlight.Radius = 90.f;
+		_curlight.Location = vec3{ CameraLocation.x ,CameraLocation.y,CameraLocation.z };
+	}
+
+	
 	{
 		Effect::Info& CurEffect = Effect::GetEffectFromName(L"DiffuseSpecular");
 		CurEffect.SetVSConstantData(_Device, "View", View);
 		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
-		CurEffect.SetVSConstantData(_Device, "WorldLightLocation", LightLocation);
-
+		
 		// 다중 조명시 수정 해야함...
-		const vec4 LightColor = { 1.0f,1.0f,1.0f,1.f };
-		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
-		const float Range = 300.f;
-		CurEffect.SetPSConstantData(_Device, "LightColor", LightColor);
-	
-		CurEffect.SetPSConstantData(_Device, "Range", Range);
+		const vec4 GlobalAmbient = { 0.2f,0.0f,0.0f,1.f };
+		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
+		
+		CurEffect.SetPSConstantData(_Device, "LightNum", LightNum);
 		//CurEffect.PsTable->SetValue(_Device, "Lights",(void*)(&_Lights[0]), sizeof (MyLight) * NumCurrentLight);
-		//CurEffect.SetPSConstantData(_Device, "Lights", _Lights[0], NumCurrentLight);
+		if (LightNum > 0)
+		CurEffect.SetPSConstantData(_Device, "Lights", _CurMapLights[0], LightNum);
 	}
 }
 std::map<std::string, D3DXHANDLE> Effect::ConstantHandleInitialize(

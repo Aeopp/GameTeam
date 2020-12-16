@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Map1st.h"
 #include "DXWrapper.h"
 

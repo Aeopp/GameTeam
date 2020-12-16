@@ -173,11 +173,11 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		// 충돌함.
 		if (IsCollision.first)
 		{
-//			PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+		// PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
 		}
 		else
 		{
-		//	PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+		// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
 		}
 	}
 }
@@ -199,7 +199,6 @@ void CCollisionComponent::DebugDraw()
 	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
 	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
-
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
 	if (_AlphaValue == TRUE)

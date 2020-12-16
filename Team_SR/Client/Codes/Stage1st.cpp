@@ -33,29 +33,73 @@ HRESULT CStage1st::ReadyScene()
 			LayerTag,
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
-		// 박쥐
-		MonsterBasicArgument stArg;
-		stArg.uiSize = sizeof(MonsterBasicArgument);
-		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 0.f, 10.f, 30.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + TYPE_NAME<CBatGrey>(),
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
 
-		// 글레이서
-		stArg.vPosition = { 5.f, 10.f, 30.f };
+		std::wifstream In(L"..\\Resources\\BatGrey.txt");
+		std::wstring str;
+		vec3 Location;
+		vec3 Rotation;
+		vec3 Scale;
+		while (In)
+		{
+			std::getline(In, str);
+			std::wstringstream wss(str);
+			std::wstring Token;
+			wss >> Token;
 
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + TYPE_NAME<CGlacier>(),
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+			std::wstring Name;
+
+			if (Token == L"Name")
+			{
+				wss >> Name;
+			}
+			else if(Token==L"Location")
+			{
+				wss >> Location.x;
+				wss >> Location.y;
+				wss >> Location.z;
+			}
+			else if (Token == L"Scale")
+			{
+				wss >> Scale.x;
+				wss >> Scale.y;
+				wss >> Scale.z;
+			}
+			else if (Token == L"Rotation")
+			{
+				wss >> Rotation.x;
+				wss >> Rotation.y;
+				wss >> Rotation.z;
+			}
+
+			if (Name == L"BatGrey")
+			{
+				MonsterBasicArgument stArg;
+				stArg.uiSize = sizeof(MonsterBasicArgument);
+				stArg.pPlayer = m_pPlayer;
+				stArg.vPosition = Location;
+				if (FAILED(m_pManagement->AddGameObjectInLayer(
+					(_int)ESceneID::Static,
+					CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+					(_int)ESceneID::Stage1st,
+					CLayer::Tag + TYPE_NAME<CBatGrey>(),
+					nullptr, static_cast<void*>(&stArg))))
+					return E_FAIL;
+			}
+			else if (Name == L"Glacier")
+			{
+				MonsterBasicArgument stArg;
+				stArg.uiSize = sizeof(MonsterBasicArgument);
+				stArg.pPlayer = m_pPlayer;
+				stArg.vPosition = Location;
+				if (FAILED(m_pManagement->AddGameObjectInLayer(
+					(_int)ESceneID::Static,
+					CGameObject::Tag + TYPE_NAME<CGlacier>(),
+					(_int)ESceneID::Stage1st,
+					CLayer::Tag + TYPE_NAME<CGlacier>(),
+					nullptr, static_cast<void*>(&stArg))))
+					return E_FAIL;
+			}
+		}
 	}
 
 

@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "ImGuiHelper.h"
 #include "DXWrapper.h"
-
-
+#include "CollisionComponent.h"
 
 bool ImGuiHelper::bInitialize = false;
 bool ImGuiHelper::bEditOn = true;
 bool ImGuiHelper::bDemo = false;
+bool ImGuiHelper::bPackageEdit = false;
 
 ID3DXMesh *  ImGuiHelper::_SphereMesh{ nullptr };
 PackageContainer ImGuiHelper::_PackageContainer{};
@@ -51,60 +51,35 @@ void ImGuiHelper::UpdateEnd()
 {
 	ImGui::EndFrame();
 };
-
-const DWORD TestVertex::FVF = D3DFVF_XYZ | D3DFVF_TEX1;
-IDirect3DVertexBuffer9* _VertexBuf;
-IDirect3DTexture9* _Texture;
-
 void ImGuiHelper::Render(IDirect3DDevice9* _Device)
 {
 	if (!CManagement::Get_Instance()->bDebug)return;
-
-	static bool init = false;
-	if (!init)
-	{
-		_Device->CreateVertexBuffer(sizeof(TestVertex) * 3,
-			0, TestVertex::FVF,D3DPOOL_DEFAULT,&_VertexBuf, 0);
-		TestVertex* _Vertex;
-		_VertexBuf->Lock(0, 0,(void**)(&_Vertex), 0);
-		_Vertex[0].Location = { -1,1,0 };
-		_Vertex[0].UV = { 0,1 };
-		_Vertex[1].Location = { 1,1,0 };
-		_Vertex[1].UV = { 1,0 };
-		_Vertex[2].Location = { 1,-1,0 };
-		_Vertex[2].UV = { 1,1 };
-		_VertexBuf->Unlock();
-
-		D3DXCreateTextureFromFile(
-			_Device, L"..\\Resources\\Glacier\\Attack\\Attack0.png", &_Texture);
-		init = true;
-	}
-
-	
 
 	DWORD _AlphaValue;
 	_Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
 	if (_AlphaValue == TRUE)
 		_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-	for (const auto& _CurPackege : _PackageContainer._PackageVec)
+	bool bOpen = (ImGuiHelper::bEditOn && ImGuiHelper::bPackageEdit);
+	if (bOpen)
 	{
-		_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-		_Device->SetVertexShader(nullptr);
-		_Device->SetPixelShader(nullptr);
-		mat DebugSphereWorld = MATH::WorldMatrix(
-			_CurPackege.Scale,
-			_CurPackege.Rotation,
-			_CurPackege.Location);
-		_Device->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
-		_Device->SetTexture(0, _Texture);
-		_Device->SetFVF(TestVertex::FVF);
-		_Device->SetStreamSource(0, _VertexBuf, 0, sizeof(TestVertex) * 3);
-		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
+		for (const auto& _CurPackege : _PackageContainer._PackageVec)
+		{
+			_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+			_Device->SetVertexShader(nullptr);
+			_Device->SetPixelShader(nullptr);
+			mat DebugSphereWorld = MATH::WorldMatrix(
+				_CurPackege.Scale,
+				_CurPackege.Rotation,
+				_CurPackege.Location);
+			_Device->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
+			_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
 
-		_SphereMesh->DrawSubset(0);
-		_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-	};
+			_SphereMesh->DrawSubset(0);
+			_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+		};
+	}
+	
 
 	if (_AlphaValue == TRUE)
 		_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
@@ -153,52 +128,80 @@ void ImGuiHelper::DebugInfo(HWND _Hwnd)
 		}
 		ImGui::End();
 
-		ImGui::Text("PackageEdit");
+		bool bOpen = (ImGuiHelper::bEditOn  &&ImGuiHelper::bPackageEdit);
+		ImGui::Begin("PackageEdit", &bOpen);
 		ImGui::Separator();
-		ImGui::SliderFloat3("Scale",
-			(float*)&_PackageContainer._CurEditPackage.Scale,
-			1.f, 100.f);
-		ImGui::SliderFloat3("Rotation",
-			(float*)&_PackageContainer._CurEditPackage.Rotation,
-			-360.f, +360.f);
-		ImGui::SliderFloat3("Location",
-			(float*)&_PackageContainer._CurEditPackage.Location,
-			-1000.f, +1000.f);
+		ImGui::SliderFloat3("Scale",(float*)&_PackageContainer._CurEditPackage.Scale,1.f, 100.f);
+		ImGui::SliderFloat3("Rotation",(float*)&_PackageContainer._CurEditPackage.Rotation,-360.f, +360.f);
+		ImGui::SliderFloat3("Location",(float*)&_PackageContainer._CurEditPackage.Location,-1000.f, +1000.f);
+		static char TextBuf[MAX_PATH];
+		ImGui::InputText("Name Here ", TextBuf, MAX_PATH);_PackageContainer._CurEditPackage.Name = TextBuf;
+		ImGui::Separator();
+		static char FileName[MAX_PATH];
+		ImGui::InputText("File Name ", FileName, MAX_PATH);
+		if (ImGui::Button("Save"))
+		{
+			_PackageContainer.CurInfoFileRecord(FileName);
+		}
+		ImGui::End();
 	}
 };
 
 void ImGuiHelper::Picking(IDirect3DDevice9* const _Device,
 	const std::vector<PlaneInfo>& _PlaneInfo)
 {
-	POINT MousePt;
-	GetCursorPos(&MousePt);
-	ScreenToClient(g_hWnd, &MousePt);
-	const vec3 MouseVec = { (float)MousePt.x,(float)MousePt.y ,0.f };
-	Ray _Ray=MATH::GetRayScreenProjection(MouseVec, _Device, (float)WINCX, (float)WINCY);
+	bool bOpen = (ImGuiHelper::bEditOn && ImGuiHelper::bPackageEdit);
 
-	bool Intersect = false;
-
-	float TFinal = FLT_MAX;
-	vec3 IntersectPointFinal;
-	for (const auto& _CurTriangle : _PlaneInfo)
+	if (bOpen)
 	{
-		float t = 0;
-		vec3 IntersectPoint;
-		if (Collision::IsTriangleToRay(_CurTriangle, _Ray, t, IntersectPoint))
+		POINT MousePt;
+		GetCursorPos(&MousePt);
+		ScreenToClient(g_hWnd, &MousePt);
+		const vec3 MouseVec = { (float)MousePt.x,(float)MousePt.y ,0.f };
+		Ray _Ray = MATH::GetRayScreenProjection(MouseVec, _Device, (float)WINCX, (float)WINCY);
+
+		bool Intersect = false;
+
+		float TFinal = FLT_MAX;
+		vec3 IntersectPointFinal;
+
+		for (const auto& _CurTriangle : _PlaneInfo)
 		{
-			Intersect = true;
-			if (t <=TFinal)
+			float t = 0;
+			vec3 IntersectPoint;
+			if (Collision::IsTriangleToRay(_CurTriangle, _Ray, t, IntersectPoint))
 			{
-				IntersectPointFinal = IntersectPoint;
-				TFinal = t;
+				Intersect = true;
+				if (t <= TFinal)
+				{
+					IntersectPointFinal = IntersectPoint;
+					TFinal = t;
+				}
 			}
 		}
-	}
 
-	if (Intersect)
-	{
-		_PackageContainer._CurEditPackage.Location = IntersectPointFinal;
-		_PackageContainer._PackageVec.push_back(_PackageContainer._CurEditPackage);
-	}
+		if (Intersect)
+		{
+			_PackageContainer._CurEditPackage.Location = IntersectPointFinal;
+			_PackageContainer.CurInfoPush();
+
+			{
+				MyLight _Light;
+
+				_Light.Diffuse = { 1,1,1 };
+				_Light.Location = IntersectPointFinal;
+				_Light.Radius = 10;
+
+				Effect::RegistLight(_Light);
+			}
+
+		}
+		}
+	
+}
+
+void ImGuiHelper::Save()
+{
+	_PackageContainer.CurInfoPush();
 }
 

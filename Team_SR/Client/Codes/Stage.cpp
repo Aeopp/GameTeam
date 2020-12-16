@@ -64,7 +64,6 @@ _uint CStage::LateUpdateScene()
 		(m_pManagement->GetCurrentScene())->m_pPlayer->GetTransform()->GetLocation());
 	LightLocation.w = 1.f;
 
-
 	Effect::Update(m_pDevice, CameraLocation, LightLocation);
 
 	return _uint();
@@ -76,9 +75,25 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	{
 		ImGuiHelper::bEditOn = !ImGuiHelper::bEditOn;
 	}
+	if (m_pKeyMgr->Key_Down('O'))
+	{
+		m_pManagement->bDebug = !m_pManagement->bDebug;
+	}
+	if (m_pKeyMgr->Key_Down('L'))
+	{
+		_Camera->bThirdPerson = !_Camera->bThirdPerson;
+	}
+
+	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
+	{
+		ImGui::Begin("Information");
+		ImGui::Text("Press L Key Is Third Person First Person Change");
+		ImGui::Text("Press O Key Debug Toggle");
+		ImGui::Text("Press L Key Edit Mode Toggle");
+		ImGui::End();
+	}
 
 	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
-
 	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
 	{
 		ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
@@ -87,7 +102,7 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	return _uint();
 }
 
-void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
+void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 {
 	static constexpr float DiagonalCorrection = 0.707f;
 
@@ -152,7 +167,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
 		const mat world = Desc.matWorld;
-		vec3 Up{ 0.f,1.f,0.f};
+		vec3 Up{ 0.f,1.f,0.f };
 		Up = MATH::Normalize(Up);
 		const float Speed = Desc.fSpeedPerSec;
 		Desc.vPosition += Up * Speed * fDeltaTime;
@@ -166,8 +181,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		const float Speed = Desc.fSpeedPerSec;
 		Desc.vPosition += Down * Speed * fDeltaTime;
 	}
-}
-
+};
 
 
 void CStage::Free()

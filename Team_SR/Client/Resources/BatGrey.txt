@@ -1,0 +1,270 @@
+Name BatGrey
+Location 39.9617 13.5804 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 13.2187 9.52118 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 12.5024 5.30279 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 49.8882 3 57.0424
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 54.3678 7.92933 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 45.5303 3 21.2636
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 28.0406 3 -12.905
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 10.6827 6.17566 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 3.18188 10.3278 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -13.6511 7.03448 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -17.1525 10.5352 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 4.44322 3 9.44858
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 10.1371 3 26.3414
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 18.2176 3 -2.59589
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 20.1448 3 -29.486
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 28.3337 3 -27.4188
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 6.46781 28.6011
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 21.0732 3 -31.0606
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -24 6.00435 14.4314
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -24 10.3113 22.2761
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -23.879 9.76296 2.65766
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -23.7622 9.42017 -14.0027
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -4.1754 3 -23.949
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -0.74679 3 -47.2559
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location -3.40867 3 -52.822
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 0.292549 3 -52.9549
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 12.4794 3 -41.1581
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 29.5957 3 -15.8703
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 12.3831 3 -59.6353
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 13.3816 3 -55.4158
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 34.2737 3 -25.6923
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 22.4725 3 -53.2188
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 11.0124 3 -63.5167
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 4.83122 8.74637 -87
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 3.13546 8.24041 -87
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 3.04392 7.88749 -87
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 18.2 3 -42.6143
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 3.73102 8.45384 -87
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 23.1249 3 -47.5076
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 3.69085 8.92357 -87
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 4.08975 46.2755
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 8.96403 23.949
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 41.7744 3 -23.7565
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 10.5366 25.7301
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 12.1805 16.5879
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 14.7073 11.5602
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 11.0204 5.33283
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 44.3386 3 -25.6792
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 59.2553 8.86071 58.5
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 34.4131 3 -49.6206
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 6.63045 11.9538
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 66 13.664 7.41796
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 52.468 3 -29.3365
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+
+Name BatGrey
+Location 51.3199 3 -31.1692
+Scale 7.188 12.137 7.037
+Rotation 108 36 26.341
+

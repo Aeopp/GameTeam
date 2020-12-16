@@ -98,6 +98,8 @@ HRESULT CManagement::ClearForScene(_int iSceneIndex)
 	if (FAILED(m_pComponentManager->ClearForScene(iSceneIndex)))
 		return E_FAIL;
 
+	CCollisionComponent::CleanUpMapPlaneInfo();
+
 	return S_OK;
 }
 
