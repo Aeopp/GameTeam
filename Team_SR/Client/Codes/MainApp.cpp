@@ -5,6 +5,7 @@
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "Glacier.h"
+#include "GlacierBullet.h"
 #include "CollisionComponent.h"
 
 #include "BatGrey.h"	// 박쥐
@@ -101,8 +102,16 @@ HRESULT CMainApp::ReadyStaticResources()
 			CGlacier::Create(m_pDevice))))
 			return E_FAIL;
 
+
 #pragma endregion
 
+#pragma  region GameObject_GlacierBullet
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
+			CGlacierBullet::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 		
 
 	/* For.Component */
@@ -168,6 +177,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		wstrTextureGlacier + L"Attack",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Attack/Attack%d.png", 11))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Bullet
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Bullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Bullet/Bullet%d.png", 4))))
 		return E_FAIL;
 #pragma endregion
 

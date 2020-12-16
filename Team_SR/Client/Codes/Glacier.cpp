@@ -2,7 +2,7 @@
 #include "..\Headers\Glacier.h"
 #include "CollisionComponent.h"
 #include "Camera.h"
-
+#include "GlacierBullet.h"
 CGlacier::CGlacier(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 {
@@ -45,26 +45,33 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 
 	m_fpAction = &CGlacier::Action_Idle;
 	// 플레이어를 인식하지 못함
-	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_Full] = &CGlacier::AI_NoAwareness;
+	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_High] = &CGlacier::AI_NoAwareness;
 	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_Half] = &CGlacier::AI_NoAwareness;
+	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_Low]  = &CGlacier::AI_NoAwareness;
+	m_fpGlacierAI[(int)AWARENESS::No][(int)PHASE::HP_ZERO] = &CGlacier::AI_NoAwareness;
 
-	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Full] = &CGlacier::AI_FirstPhase;		// 적극적으로 공격
-	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CGlacier::AI_SecondPhase;		// 소극적으로 공격
 
-	
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_High] = &CGlacier::AI_FirstPhase;		// 적극적으로 공격
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CGlacier::AI_SecondPhase;	// 소극적으로 공격
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_Low] = &CGlacier::AI_ThirdPhase;	// 소극적으로 공격
+	m_fpGlacierAI[(int)AWARENESS::Yes][(int)PHASE::HP_ZERO] = &CGlacier::AI_DeadPhase;	// 소극적으로 공격
 	return S_OK;
 }
 
 _uint CGlacier::UpdateGameObject(float fDeltaTime)
 {
+	if (true == m_bDead)
+		return 0;
 	CMonster::UpdateGameObject(fDeltaTime);
 
 	//테스트
-	if (GetAsyncKeyState('4'))
-		m_stStatus.fHP -= 5;
+	if (GetAsyncKeyState('4') & 0x8000)
+		m_stStatus.fHP -= 1;
 
 	//테스트
 	Update_AI(fDeltaTime);
+
+	cout << m_stStatus.fHP << endl;
 
 	IsBillboarding();
 
@@ -75,6 +82,12 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 
 _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 {
+	if (true == m_bDead)
+	{
+		if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
+			return 0;
+		return 0;
+	}
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
 	if (AWARENESS::Yes == m_eAwareness)
@@ -90,7 +103,6 @@ HRESULT CGlacier::RenderGameObject()
 
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
@@ -213,11 +225,22 @@ void CGlacier::Update_AI(float fDeltaTime)
 		}
 
 
-		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.5f) {
-			m_ePhase = PHASE::HP_Full;	
+		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
+			m_ePhase = PHASE::HP_High;	
 		}
-		else {
+		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
+			&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
+		{
 			m_ePhase = PHASE::HP_Half;	
+		}
+		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
+			&& m_stStatus.fHP > 0)
+		{
+			m_ePhase = PHASE::HP_Low;
+		}
+		else if (m_stStatus.fHP < 0)
+		{
+			m_ePhase = PHASE::HP_ZERO;
 		}
 
 		(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
@@ -248,6 +271,7 @@ void CGlacier::AI_FirstPhase()
 void CGlacier::AI_SecondPhase()
 {
 	//총알 발사
+
 	m_fpAction = &CGlacier::Action_Hurt;
 	m_fCountDown = 1.f;
 	m_wstrTextureKey = m_wstrBase + L"Hurt";
@@ -257,15 +281,44 @@ void CGlacier::AI_SecondPhase()
 
 }
 
+void CGlacier::AI_ThirdPhase()
+{
+	//총알 발사
+	m_fpAction = &CGlacier::Action_Shoot;
+	m_fCountDown = 1.f;
+	m_wstrTextureKey = m_wstrBase + L"Attack";
+	m_fFrameCnt = 0.f;
+	m_fStartFrame = 0.f;
+	m_fEndFrame = 10.f;
+}
+
+void CGlacier::AI_DeadPhase()
+{
+	m_fpAction = &CGlacier::Action_Death;
+	m_fCountDown = 1.f;
+	m_wstrTextureKey = m_wstrBase + L"Death";
+	m_fFrameCnt = 0.f;
+	m_fStartFrame = 0.f;
+	m_fEndFrame = 8.f;
+}
+
 bool CGlacier::Action_Move(float fDeltaTime)
 {
 	const _vector vPlayerPos = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
 	const _vector vGlacierPos = m_pTransformCom->m_TransformDesc.vPosition;
 	_vector vLook = vPlayerPos - vGlacierPos;
+	vLook.y = 0.f;
 	float fLookLength = D3DXVec3Length(&vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 
-	m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
+
+	//if (fLookLength < 10)
+	//{
+	//	m_stStatus.fHP = 40.f;
+	//	return true;
+	//}
+	if(fLookLength > 10)
+		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
 	m_fCountDown -= fDeltaTime;
 	if (m_fCountDown <= 0)
@@ -288,17 +341,54 @@ bool CGlacier::Action_Idle(float fDeltaTime)
 
 bool CGlacier::Action_Shoot(float fDeltaTime)
 {
+	//m_fCountDown -= fDeltaTime;
+	//if (m_fCountDown <= 0)
+	//{
+	//	return true;
+	//}
+
+	if (m_bFrameLoopCheck)
+	{
+		CreateBullet();
+		return true;
+	}
+
 	return false;
 }
 
 bool CGlacier::Action_Hurt(float fDeltaTime)
 {
+	m_fCountDown -= fDeltaTime;
+	if (m_fCountDown <= 0)
+	{
+		return true;
+	}
 	return false;
 }
 
 bool CGlacier::Action_Death(float fDeltaTime)
 {
+	if (m_bFrameLoopCheck)
+	{
+		m_bDead = true;
+		m_fFrameCnt = 8.f;
+	}
 	return false;
+}
+
+void CGlacier::CreateBullet()
+{
+	_vector pPositionArr[2];
+	pPositionArr[0] = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+	pPositionArr[1] = m_pTransformCom->m_TransformDesc.vPosition;
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
+		(_int)ESceneID::Stage1st,
+		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
+		nullptr, (void*)pPositionArr)))
+		return;
+
+
 }
 
 
