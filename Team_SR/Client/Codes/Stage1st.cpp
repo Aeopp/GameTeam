@@ -6,6 +6,7 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
+#include "Eyebat.h"
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {
@@ -14,10 +15,6 @@ CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 HRESULT CStage1st::ReadyScene()
 {
 	Super::ReadyScene();
-
-	// 2020.12.16 21:35 KMJ
-	// 자신의 씬 인덱스 저장
-	m_iSceneIndex = (_int)ESceneID::Stage1st;
 
 	{
 		const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<CMap1st>();
@@ -41,16 +38,16 @@ HRESULT CStage1st::ReadyScene()
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 0.f, 5.f, 30.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-			m_iSceneIndex,
-			CLayer::Tag + TYPE_NAME<CBatGrey>(),
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+		//stArg.vPosition = { 0.f, 5.f, 30.f };
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+		//	(_int)ESceneID::Stage1st,
+		//	CLayer::Tag + TYPE_NAME<CBatGrey>(),
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
 
-		//// 글레이서
+		// 글레이서
 		//stArg.vPosition = { 5.f, 10.f, 30.f };
 
 		//if (FAILED(m_pManagement->AddGameObjectInLayer(
@@ -60,6 +57,18 @@ HRESULT CStage1st::ReadyScene()
 		//	CLayer::Tag + TYPE_NAME<CGlacier>(),
 		//	nullptr, static_cast<void*>(&stArg))))
 		//	return E_FAIL;
+
+		// 눈깔박쥐
+		stArg.vPosition = { 5.f, 10.f, 30.f };
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CEyebat>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CEyebat>(),
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
+
 	}
 
 

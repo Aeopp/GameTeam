@@ -259,7 +259,6 @@ void CGlacier::AI_NoAwareness()
 
 void CGlacier::AI_FirstPhase()
 {
-	//빌보드로 플레이어 바라보기
 	m_fpAction = &CGlacier::Action_Move;
 	m_fCountDown = 1.f;
 	m_wstrTextureKey = m_wstrBase + L"Move";
@@ -426,12 +425,7 @@ CGameObject* CGlacier::Clone(void* pArg/* = nullptr*/)
 
 void CGlacier::Free()
 {
-	for (auto& rPair : m_mapTexture)
-		SafeRelease(rPair.second);
-	m_mapTexture.clear();
-
 	SafeRelease(_CollisionComp);
-	SafeRelease(m_pVIBufferCom);
 
-	CGameObject::Free();
+	CMonster::Free();
 }
