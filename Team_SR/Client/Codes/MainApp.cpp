@@ -7,6 +7,7 @@
 #include "Glacier.h"
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
+#include "VIBuffer_UITexture.h"
 
 #include "BatGrey.h"	// 박쥐
 
@@ -117,6 +118,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		CVIBuffer_RectTexture::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_VIBuffer_RectTexture
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CVIBuffer_UITexture>(),
+		CVIBuffer_UITexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 	

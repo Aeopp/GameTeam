@@ -2,6 +2,7 @@
 #include "..\Headers\PlyerInfoUI.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
+#include "Layer.h"
 
 CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -24,13 +25,13 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 
 	if (FAILED(AddComponent()))
 		return E_FAIL;
-	m_pTransformCom->m_TransformDesc.vScale.x = 1;
-	m_pTransformCom->m_TransformDesc.vScale.y = 1;
-	m_pTransformCom->m_TransformDesc.vScale.z = 1;
+	m_pTransformCom->m_TransformDesc.vScale.x = 200;
+	m_pTransformCom->m_TransformDesc.vScale.y = 200;
+	m_pTransformCom->m_TransformDesc.vScale.z = 0;
 
 	m_pTransformCom->m_TransformDesc.vPosition.x = 1;
 	m_pTransformCom->m_TransformDesc.vPosition.y = 1;
-	m_pTransformCom->m_TransformDesc.vPosition.z = 1;
+	m_pTransformCom->m_TransformDesc.vPosition.z = 0;
 	
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = 0.f;
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 0.f;
@@ -48,7 +49,7 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 	ImGui::Separator();
 	ImGui::SliderFloat3("Scale",
 		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vScale),
-		-100.f, +100.f, "%f");
+		-1000.f, +1000.f, "%f");
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Location",
@@ -65,17 +66,7 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
 
-	auto pCamera = (CMainCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, CGameObject::Tag + L"MainCamera");
-	if (nullptr == pCamera)
-		return E_FAIL;
-	auto cameraDesc = pCamera->GetCameraDesc();
-	_matrix matView, matProj;
-	D3DXMatrixLookAtLH(&matView, &cameraDesc.vEye, &cameraDesc.vAt, &cameraDesc.vUp);
-	D3DXMatrixPerspectiveFovLH(&matProj, cameraDesc.fFovY, cameraDesc.fAspect, cameraDesc.fNear, cameraDesc.fFar);
-
-	m_pTransformCom->m_TransformDesc.matWorld = matView * matProj;
-
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
 
 	return _uint();
@@ -83,19 +74,56 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlyerInfoUI::RenderGameObject()
 {
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	_matrix matWorld;
+
+	auto camera = m_pManagement->GetGameObject((int)ESceneID::Stage1st, CLayer::Tag + L"MainCamera", 0);
+	if (nullptr == camera)
+		return FALSE;
+
+
+	_matrix matScale, /*matRotX, matRotY, matRotZ,*/ matTrans, matOrthographic;
+
+	TRANSFORM_DESC& tTransformDesc = m_pTransformCom->m_TransformDesc;
+
+	D3DXMatrixScaling(&matScale, tTransformDesc.vScale.x, tTransformDesc.vScale.y, tTransformDesc.vScale.z);
+	//D3DXMatrixRotationX(&matRotX, D3DXToRadian(tTransformDesc.vRotation.x));
+	//D3DXMatrixRotationY(&matRotY, D3DXToRadian(tTransformDesc.vRotation.y));
+	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(tTransformDesc.vRotation.z));
+	D3DXMatrixTranslation(&matTrans, tTransformDesc.vPosition.x, tTransformDesc.vPosition.y, tTransformDesc.vPosition.z);
+
+	D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1.f);
+	tTransformDesc.matWorld = matOrthographic* matScale * matTrans;
+	//tTransformDesc.matWorld = matScale * matRotX * matRotY * matRotZ * matTrans
+	
+	D3DXMatrixIdentity(&matWorld);
+
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &matWorld)))
 		return E_FAIL;
 
+	_matrix matView;
+
+	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &matScale)))
+		return E_FAIL;
+
+	_matrix matProj;
 	
+	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &matOrthographic)))
+		return E_FAIL;
 
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Set_Texture(0)))
 		return E_FAIL;
+	
+	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
+
+	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }
