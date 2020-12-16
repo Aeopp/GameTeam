@@ -2,6 +2,7 @@
 #ifndef __MONSTER_H__
 
 #include "GameObject.h"
+#include "CollisionComponent.h"
 USING(Engine)
 class CMonster abstract : public CGameObject
 {
@@ -28,7 +29,7 @@ public:
 	virtual void Free() override;
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-
+	CCollisionComponent* _CollisionComp = nullptr;
 protected:
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작

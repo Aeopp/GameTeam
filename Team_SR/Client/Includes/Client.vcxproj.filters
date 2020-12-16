@@ -61,6 +61,9 @@
     <Filter Include="02.GameObject\05.Bullet\01.BatSpit">
       <UniqueIdentifier>{ce6a0bf8-4957-4919-a408-4a57c9ce6153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.Bullet\02.GlacierBullet">
+      <UniqueIdentifier>{b742cea3-e7c6-4acf-b977-964ff9470e72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -166,6 +169,7 @@
     <ClInclude Include="..\Headers\BatSpit.h">
       <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -244,6 +248,7 @@
     <ClCompile Include="..\Codes\BatSpit.cpp">
       <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
