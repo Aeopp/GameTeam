@@ -64,6 +64,15 @@
     <Filter Include="02.GameObject\05.Bullet\02.GlacierBullet">
       <UniqueIdentifier>{b742cea3-e7c6-4acf-b977-964ff9470e72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.Bullet\03.EyebatBullet">
+      <UniqueIdentifier>{e81365dd-f37a-4190-ad50-97add9f17e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Eyebat">
+      <UniqueIdentifier>{8ae66390-f7bf-466d-bf99-01aba1cbc0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\04.Fire">
+      <UniqueIdentifier>{2b6612ee-b8fd-4467-8983-2a27d66aa1a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -172,6 +181,15 @@
     <ClInclude Include="..\Headers\GlacierBullet.h">
       <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\EyebatBullet.h">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Eyebat.h">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fire.h">
+      <Filter>02.GameObject\02.Monster\04.Fire</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -252,6 +270,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierBullet.cpp">
       <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EyebatBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Eyebat.cpp">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fire.cpp">
+      <Filter>02.GameObject\02.Monster\04.Fire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
