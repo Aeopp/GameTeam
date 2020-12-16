@@ -34,7 +34,7 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
-	m_stOriginStatus.fMeleeRange = 1.f;
+	m_stOriginStatus.fMeleeRange = 5.f;
 	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -61,7 +61,14 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
-	Update_AI(fDeltaTime);	// 업데이트 AI
+	// 테스트용 1 누르면 데미지 받음
+	if (GetAsyncKeyState('1')) {
+		Hit(1.f);
+	}
+
+	if (!m_bDead) {
+		Update_AI(fDeltaTime);	// 업데이트 AI
+	}
 
 	return _uint();
 }
@@ -161,6 +168,31 @@ HRESULT CBatGrey::AddComponents()
 	return S_OK;
 }
 
+// 몬스터가 피해를 받음
+void CBatGrey::Hit(float fDemage)
+{
+	CMonster::Hit(fDemage);
+	
+	if (m_stStatus.fHP <= 0) {
+		m_fpAction = &CBatGrey::Action_Dead;
+		m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 11;
+		m_fFrameSpeed = 10.f;
+		return;
+	}
+
+	// 피해를 받아서 현제 행동 취소
+	// Hit 텍스처를 취함
+	m_fpAction = &CBatGrey::Action_Hit;
+	m_wstrTextureKey = L"Component_Texture_BatGreyHit";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 2;
+	m_fFrameSpeed = 5.f;
+}
+
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
 void CBatGrey::Update_AI(float fDeltaTime)
 {
@@ -168,26 +200,28 @@ void CBatGrey::Update_AI(float fDeltaTime)
 	m_fNextAtkWait -= fDeltaTime;
 
 	// 몬스터 행동
-	if ((this->*m_fpAction)(fDeltaTime)) {
-		// 플레이어를 인식했는가?
-		if (PlayerAwareness()) {
-			m_eAwareness = AWARENESS::Yes;	// 플레이어 발견
-		}
-		else {
-			m_eAwareness = AWARENESS::No;	// 플레이어 몰라
-		}
-
-		// 체력에 따른 페이즈
-		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.5f) {
-			m_ePhase = PHASE::HP_Full;	// 체력이 절반 이상
-		}
-		else {
-			m_ePhase = PHASE::HP_Half;	// 체력이 절반 이하
-		}
-
-		// AI 처리
-		(this->*m_fpMonsterAI[(int)m_eAwareness][(int)m_ePhase])();
+	if (!(this->*m_fpAction)(fDeltaTime)) {
+		return;
 	}
+
+	// 플레이어를 인식했는가?
+	if (PlayerAwareness()) {
+		m_eAwareness = AWARENESS::Yes;	// 플레이어 발견
+	}
+	else {
+		m_eAwareness = AWARENESS::No;	// 플레이어 몰라
+	}
+
+	// 체력에 따른 페이즈
+	if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.5f) {
+		m_ePhase = PHASE::HP_Full;	// 체력이 절반 이상
+	}
+	else {
+		m_ePhase = PHASE::HP_Half;	// 체력이 절반 이하
+	}
+
+	// AI 처리
+	(this->*m_fpMonsterAI[(int)m_eAwareness][(int)m_ePhase])();
 }
 
 HRESULT CBatGrey::Set_Texture()
@@ -226,45 +260,97 @@ void CBatGrey::AI_ActiveOffense()
 	// 30 %
 	// 대기
 	if (0 <= iRand && iRand < 30) {
-		m_fpAction = &CBatGrey::Action_Idle;
-		m_fCountdown = 1.f;		// 1초
-		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 8;
+		goto RETURN_IDLE;
 	}
 	// 40 %
 	// 공격
 	else if (30 <= iRand && iRand < 70) {
 		// 다음 공격 대기 시간까지 기다렸는가
 		if (m_fNextAtkWait <= 0) {
-			// 원거리 공격
-			m_fpAction = &CBatGrey::Action_Shoot;
-			m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
-			m_fFrameCnt = 0;
-			m_fStartFrame = 0;
-			m_fEndFrame = 5;
+			// 플레이어가 가까이 근접해 있나
+			if (PlayerBeNear()) {
+				// 근접 공격
+				goto RETURN_MELEE;
+			}
+			else {
+				// 원거리 공격
+				goto RETURN_SHOOT;
+			}
+		}
+		else {
+			goto RETURN_IDLE;
 		}
 	}
 	// 30 %
 	// 이동
 	else if (70 <= iRand && iRand < 100) {
-		m_fpAction = &CBatGrey::Action_Move;
+		// 플레이어가 멀리 있나
+		if (!PlayerBeNear()) {
+			goto RETURN_MOVE;
+		}
+	}
+
+RETURN_IDLE:	// 대기
+	m_fpAction = &CBatGrey::Action_Idle;
+	m_fCountdown = 1.f;		// 1초 대기
+	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyFly")) {
 		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 8;
+		m_fFrameSpeed = 10.f;
 	}
+	return;
+
+RETURN_MELEE:	// 근접 공격
+	m_fpAction = &CBatGrey::Action_Melee;
+	m_wstrTextureKey = L"Component_Texture_BatGreyAttack";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 4;
+	m_fFrameSpeed = 5.f;
+	return;
+
+RETURN_SHOOT:	// 원거리 공격
+	m_fpAction = &CBatGrey::Action_Shoot;
+	m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 5;
+	m_fFrameSpeed = 10.f;
+	return;
+
+RETURN_MOVE:	// 이동
+	m_fpAction = &CBatGrey::Action_Move;
+	m_fCountdown = 1.f;		// 1초 이동
+	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyFly")) {
+		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 8;
+		m_fFrameSpeed = 10.f;
+	}
+	return;
 }
 
 // 소극적으로 공격
 void CBatGrey::AI_PassiveOffense()
 {
+	m_fpAction = &CBatGrey::Action_Idle;
+	m_fCountdown = 1.f;		// 1초 대기
+	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyFly")) {
+		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 8;
+		m_fFrameSpeed = 10.f;
+	}
 }
 
 // 행동 대기
 bool CBatGrey::Action_Idle(float fDeltaTime)
 {
+	// 지정된 시간만큼 행동 대기
 	m_fCountdown -= fDeltaTime;
 	if (m_fCountdown <= 0) {
 		return true;
@@ -282,7 +368,14 @@ bool CBatGrey::Action_Move(float fDeltaTime)
 	// 포지션 이동
 	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
 
-	if (m_bFrameLoopCheck) {
+	// 지정된 시간만큼 이동 후 정지
+	m_fCountdown -= fDeltaTime;
+	if (m_fCountdown <= 0) {
+		return true;
+	}
+
+	// 플레어에게 가까이 접근했으면 정지
+	if (PlayerBeNear()) {
 		return true;
 	}
 
@@ -295,6 +388,39 @@ bool CBatGrey::Action_Shoot(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 5.f;
 		return true;
+	}
+
+	return false;
+}
+
+// 근접 공격
+bool CBatGrey::Action_Melee(float fDeltaTime)
+{
+	if (m_bFrameLoopCheck) {
+		m_fNextAtkWait = 1.f;
+		return true;
+	}
+
+	return false;
+}
+
+// 공격받아서 경직
+bool CBatGrey::Action_Hit(float fDeltaTime)
+{
+	if (m_bFrameLoopCheck) {
+		return true;
+	}
+	return false;
+}
+
+// 죽음
+bool CBatGrey::Action_Dead(float fDeltaTime)
+{
+	if (m_bFrameLoopCheck) {
+		m_fFrameCnt = m_fEndFrame - 1;
+		m_fStartFrame = m_fEndFrame - 1;
+		m_bDead = true;
+		return false;
 	}
 
 	return false;

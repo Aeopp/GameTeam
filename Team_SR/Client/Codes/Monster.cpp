@@ -3,9 +3,9 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
-	, m_bFrameLoopCheck(false)
+	, m_bFrameLoopCheck(false), m_bDead(false)
 {
 }
 
@@ -76,7 +76,7 @@ HRESULT CMonster::AddComponents()
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)
 {
-	m_fFrameCnt += 10.f * fDeltaTime;
+	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
 	if (m_fFrameCnt >= m_fEndFrame)
 	{
 		m_fFrameCnt = m_fStartFrame;
@@ -107,6 +107,12 @@ bool CMonster::PlayerBeNear()
 		return true;
 	}
 	return false;
+}
+
+// 몬스터가 피해를 받음
+void CMonster::Hit(float fDemage)
+{
+	m_stStatus.fHP -= fDemage;
 }
 
 void CMonster::Free()
