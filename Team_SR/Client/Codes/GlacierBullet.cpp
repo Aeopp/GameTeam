@@ -28,20 +28,23 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = ((_vector*)pArg)[1];
 		m_vLook = ((_vector*)pArg)[0] - m_pTransformCom->m_TransformDesc.vPosition;
+		// 2020.12.16 17:35 KMJ
+		// ì•„ê·œë¨¼íŠ¸ ë©”ëª¨ë¦¬ í•´ì œ
+		delete[] pArg;
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
-	// ¸ó½ºÅÍ ¿øº» ½ºÅİ
+	// ëª¬ìŠ¤í„° ì›ë³¸ ìŠ¤í…Ÿ
 	m_stOriginStatus.dwRange = 100.f;
 	m_stOriginStatus.dwPiercing = 0.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 15.f;
 	m_stOriginStatus.fImpact = 0.f;
-	// ÀÎ°ÔÀÓ¿¡¼­ »ç¿ëÇÒ ½ºÅİ
+	// ì¸ê²Œì„ì—ì„œ ì‚¬ìš©í•  ìŠ¤í…Ÿ
 	m_stStatus = m_stOriginStatus;
 
-	// ±âº» ÅØ½ºÃ³ ÇÁ·¹ÀÓ
+	// ê¸°ë³¸ í…ìŠ¤ì²˜ í”„ë ˆì„
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 3;
@@ -63,7 +66,7 @@ _uint CGlacierBullet::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	Frame_Move(fDeltaTime);	// ÅØ½ºÃ³ ÇÁ·¹ÀÓ ÀÌµ¿
+	Frame_Move(fDeltaTime);	// í…ìŠ¤ì²˜ í”„ë ˆì„ ì´ë™
 
 	return _uint();
 }
@@ -90,7 +93,7 @@ HRESULT CGlacierBullet::AddComponents()
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
-	// ¹ÚÁã Ä§ ÅØ½ºÃ³
+	// ë°•ì¥ ì¹¨ í…ìŠ¤ì²˜
 	wstring wstrTexture = CComponent::Tag + TYPE_NAME<CTexture>();
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
@@ -119,7 +122,7 @@ CGlacierBullet * CGlacierBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CGlacierBullet::Clone(void * pArg /*= nullptr*/)
 {
-	CGlacierBullet* pClone = new CGlacierBullet(*this); /* º¹»ç»ı¼ºÀÚ */
+	CGlacierBullet* pClone = new CGlacierBullet(*this); /* ë³µì‚¬ìƒì„±ì */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

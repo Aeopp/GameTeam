@@ -46,16 +46,16 @@ HRESULT CStage1st::ReadyScene()
 		//	nullptr, static_cast<void*>(&stArg))))
 		//	return E_FAIL;
 
-		//// 글레이서
-		//stArg.vPosition = { 5.f, 10.f, 30.f };
+		// 글레이서
+		stArg.vPosition = { 5.f, 10.f, 30.f };
 
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + TYPE_NAME<CGlacier>(),
-		//	(_int)ESceneID::Stage1st,
-		//	CLayer::Tag + TYPE_NAME<CGlacier>(),
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CGlacier>(),
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 	}
 
 

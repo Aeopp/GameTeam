@@ -201,7 +201,7 @@ HRESULT CManagement::AddGameObjectInLayer(
 
 // 2020.12.16 15:31 KMJ
 // 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
-HRESULT CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring & GameObjectTag, _int iToSceneIndex, const wstring & LayerTag, CGameObject ** ppGameObject, void * pArg)
+void CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring & GameObjectTag, _int iToSceneIndex, const wstring & LayerTag, CGameObject ** ppGameObject, void * pArg)
 {
 	ScheduledGameObjectInfo stScheduledObjInfo;
 	stScheduledObjInfo.iFromSceneIndex = iFromSceneIndex;
@@ -211,8 +211,6 @@ HRESULT CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const w
 	stScheduledObjInfo.ppGameObject = ppGameObject;
 	stScheduledObjInfo.pArg = pArg;
 	m_listScheduledObjInfo.push_back(stScheduledObjInfo);
-
-	return S_OK;
 }
 
 HRESULT CManagement::AddComponentPrototype(_int iSceneIndex, const wstring & ComponentTag, CComponent * pPrototype)
