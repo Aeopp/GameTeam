@@ -114,7 +114,7 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 2020.12.17 10:44 KMJ
 	// 공평회에서는 일단 고정임
 	//m_stStatus.fHP -= fDemage;
-	m_stStatus.fHP -= 1.f;
+	m_stStatus.fHP -= 5.f;
 }
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false

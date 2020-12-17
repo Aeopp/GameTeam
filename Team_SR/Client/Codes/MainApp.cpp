@@ -12,6 +12,7 @@
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 
+#include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
 #include "Fire.h"
@@ -127,12 +128,6 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 #pragma endregion
 
-#pragma  region GameObject_Glacier
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CGlacier>(),
-		CGlacier::Create(m_pDevice))))
-		return E_FAIL;
 	// 글레이서
 #pragma  region GameObject_Glacier
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -352,7 +347,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma endregion	// Component_Texture_BatGrey
 	Effect::EffectInitialize(m_pDevice);
 #pragma region Attack
 	if (FAILED(m_pManagement->AddComponentPrototype(

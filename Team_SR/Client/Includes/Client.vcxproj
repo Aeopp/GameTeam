@@ -187,6 +187,7 @@
     <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\Spider.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
