@@ -16,6 +16,10 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
+public:
+	// 2020.12.17 9:57 KMJ
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();

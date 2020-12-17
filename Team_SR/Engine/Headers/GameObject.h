@@ -3,6 +3,7 @@
 
 #include "Base.h"
 #include "Collision.h"
+#include "CollisionComponent.h"
 
 BEGIN(Engine)
 class ENGINE_DLL CGameObject abstract : public CBase
@@ -51,6 +52,7 @@ protected:
 protected:
 	class CTransform* m_pTransformCom = nullptr;
 	class CManagement* m_pManagement = nullptr;
+	CCollisionComponent* _CollisionComp = nullptr;
 
 public:
 	// 2020.12.16 11:29 KMJ

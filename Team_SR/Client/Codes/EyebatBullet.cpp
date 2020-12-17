@@ -50,21 +50,25 @@ HRESULT CEyebatBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 
 _uint CEyebatBullet::UpdateGameObject(float fDeltaTime)
 {
-	if (true == m_bTest)
-		return 0;
+	//if (true == m_bTest)
+	//	return 0;
 	CBullet::UpdateGameObject(fDeltaTime);
 	Movement(fDeltaTime);
 
-	if (m_pTransformCom->m_TransformDesc.vPosition.y < 0)
+	if (m_pTransformCom->m_TransformDesc.vPosition.y < 0) {
+		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 		CreateFire();
+	}
 	
+	_CollisionComp->Update(m_pTransformCom);
+
 	return _uint();
 }
 
 _uint CEyebatBullet::LateUpdateGameObject(float fDeltaTime)
 {
-	if (true == m_bTest)
-		return 0;
+	//if (true == m_bTest)
+	//	return 0;
 	CBullet::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
@@ -75,8 +79,8 @@ _uint CEyebatBullet::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CEyebatBullet::RenderGameObject()
 {
-	if (true == m_bTest)
-		return E_FAIL;
+	//if (true == m_bTest)
+	//	return E_FAIL;
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
 
@@ -106,6 +110,20 @@ HRESULT CEyebatBullet::AddComponents()
 		return E_FAIL;
 #pragma endregion
 
+	// 충돌 컴포넌트
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
+	_Info.bMapCollision = true;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
+
 	return S_OK;
 }
 
@@ -126,7 +144,7 @@ void CEyebatBullet::CreateFire()
 		CGameObject::Tag + TYPE_NAME<CFire>(),
 		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
 		return;
-	m_bTest = true;
+	//m_bTest = true;
 }
 
 CEyebatBullet * CEyebatBullet::Create(LPDIRECT3DDEVICE9 pDevice)

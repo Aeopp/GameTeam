@@ -55,7 +55,10 @@ _uint CFire::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	FrameMove_Fire(fDeltaTime);
+	if (Frame_Move(fDeltaTime)) {
+		// 2020.12.17 9:47
+		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);
+	}
 
 	return _uint();
 }

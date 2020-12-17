@@ -38,25 +38,25 @@ HRESULT CStage1st::ReadyScene()
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		//stArg.vPosition = { 0.f, 5.f, 30.f };
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-		//	(_int)ESceneID::Stage1st,
-		//	CLayer::Tag + TYPE_NAME<CBatGrey>(),
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
+		stArg.vPosition = { 0.f, 5.f, 30.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CBatGrey>(),
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 
 		// 글레이서
 		//stArg.vPosition = { 5.f, 10.f, 30.f };
 
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + TYPE_NAME<CGlacier>(),
-		//	(_int)ESceneID::Stage1st,
-		//	CLayer::Tag + TYPE_NAME<CGlacier>(),
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacier>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CGlacier>(),
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 
 		// 눈깔박쥐
 		stArg.vPosition = { 5.f, 10.f, 30.f };

@@ -60,8 +60,8 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 	CMonster::UpdateGameObject(fDeltaTime);
 
 	//테스트
-	if (GetAsyncKeyState('5') & 0x8000)
-		m_stStatus.fHP -= 1.f;
+	//if (GetAsyncKeyState('5') & 0x8000)
+	//	m_stStatus.fHP -= 1.f;
 
 	Update_AI(fDeltaTime);
 
@@ -97,6 +97,21 @@ HRESULT CEyebat::RenderGameObject()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+// 몬스터가 피해를 받음
+void CEyebat::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
 }
 
 void CEyebat::Update_AI(float fDeltaTime)
@@ -315,6 +330,8 @@ CGameObject * CEyebat::Clone(void * pArg /*= nullptr*/)
 
 void CEyebat::Free()
 {	
+	// 2020.12.17 11:26 KMJ
+	// CMonster 에서
 	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();

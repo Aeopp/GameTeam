@@ -2,7 +2,7 @@
 #ifndef __MONSTER_H__
 
 #include "GameObject.h"
-#include "CollisionComponent.h"
+
 USING(Engine)
 class CMonster abstract : public CGameObject
 {
@@ -19,17 +19,17 @@ public:
 protected:
 	virtual HRESULT AddComponents();
 public:
-	virtual void Hit(float fDemage);		// 몬스터가 피해를 받음
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
 	bool PlayerBeNear();					// 플레이어가 가까이 근접해 있으면 true, 아니면 false
+	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-	CCollisionComponent* _CollisionComp = nullptr;
 protected:
 	// 플래그 값들
 	enum class MonsterFlag {
@@ -43,6 +43,8 @@ protected:
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝
 	float m_fFrameSpeed;					// 프레임 속도
+	float m_fCrossValue;					// 충돌 힘
+	vec3 m_vCollisionDir;					// 충돌 방향
 	vec3 m_vAim;							// 목표
 	CGameObject* m_pPlayer;					// 플레이어 포인터
 	MonsterStatus m_stOriginStatus;			// 몬스터 원본 스텟

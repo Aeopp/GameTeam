@@ -61,15 +61,18 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
-	// 테스트용 1 누르면 데미지 받음
-	if (GetAsyncKeyState('1')) {
-		Hit(1.f);
+	// 테스트
+	//if (GetAsyncKeyState('1') & 0x8000)
+	//	Hit(nullptr, { {0.f, 0.f, 1.f}, 1.f });
+
+	// 몬스터가 죽었음
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return 0;
 	}
 
-	// 몬스터가 안죽었으면
-	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
-		Update_AI(fDeltaTime);	// 업데이트 AI
-	}
+	Update_AI(fDeltaTime);	// 업데이트 AI
+
+	_CollisionComp->Update(m_pTransformCom);
 
 	return _uint();
 }
@@ -166,18 +169,32 @@ HRESULT CBatGrey::AddComponents()
 	m_mapTexture.emplace(L"Component_Texture_BatGreyDeath", pTexture);
 #pragma endregion
 
+	// 충돌 컴포넌트
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::Monster;
+	_Info.bMapCollision = true;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
+
 	return S_OK;
 }
 
 // 몬스터가 피해를 받음
-void CBatGrey::Hit(float fDemage)
+void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
 	// 피해를 받지 않는 상태임
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
 		return;
 	}
 
-	CMonster::Hit(fDemage);		// CMonster 에서 HP 감소
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
 	
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
@@ -192,7 +209,6 @@ void CBatGrey::Hit(float fDemage)
 		}
 		return;
 	}
-	
 
 	// 피해를 받아서 현제 행동 취소
 	// Hit 텍스처를 취함
@@ -202,6 +218,10 @@ void CBatGrey::Hit(float fDemage)
 	m_fStartFrame = 0;
 	m_fEndFrame = 2;
 	m_fFrameSpeed = 5.f;
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
@@ -266,7 +286,7 @@ void CBatGrey::AI_ActiveOffense()
 {
 	// 랜덤으로 몇가지 패턴 행동을...
 
-	int iRand = rand() % 70;
+	int iRand = rand() % 100;
 
 	// 30 %
 	// 대기

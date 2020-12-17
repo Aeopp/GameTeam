@@ -54,6 +54,8 @@ _uint CBatSpit::UpdateGameObject(float fDeltaTime)
 		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 	}
 
+	_CollisionComp->Update(m_pTransformCom);
+
 	return _uint();
 }
 
@@ -100,6 +102,20 @@ HRESULT CBatSpit::AddComponents()
 		(CComponent**)&m_pTexture)))
 		return E_FAIL;
 #pragma endregion
+
+	// 충돌 컴포넌트
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
+	_Info.bMapCollision = true;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
 
 	return S_OK;
 }

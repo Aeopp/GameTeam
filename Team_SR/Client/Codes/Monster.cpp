@@ -3,7 +3,8 @@
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f), m_vAim{0.f, 0.f, 0.f}
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
+	, m_fCrossValue(0.f), m_vCollisionDir{0.f, 0.f, 0.f}, m_vAim {0.f, 0.f, 0.f}
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
 	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
@@ -42,6 +43,10 @@ _uint CMonster::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
 
+	// 2020.12.17 11:08 KMJ
+	// 충돌 이동
+	CollisionMovement(fDeltaTime);
+
 	return _uint();
 }
 
@@ -71,6 +76,17 @@ HRESULT CMonster::AddComponents()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+// 몬스터가 피해를 받음
+void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
+{
+	CGameObject::Hit(_Target, _CollisionInfo);
+
+	// 2020.12.17 10:44 KMJ
+	// 공평회에서는 일단 고정임
+	//m_stStatus.fHP -= fDemage;
+	m_stStatus.fHP -= 1.f;
 }
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
@@ -109,10 +125,15 @@ bool CMonster::PlayerBeNear()
 	return false;
 }
 
-// 몬스터가 피해를 받음
-void CMonster::Hit(float fDemage)
+// 2020.12.17 11:08 KMJ
+// 충돌 이동
+void CMonster::CollisionMovement(float fDeltaTime)
 {
-	m_stStatus.fHP -= fDemage;
+	// 개쌉 야매
+	m_fCrossValue -= 10.f * fDeltaTime;
+	if (m_fCrossValue < 0.f)
+		m_fCrossValue = 0.f;
+	m_pTransformCom->m_TransformDesc.vPosition += m_vCollisionDir * m_fCrossValue * fDeltaTime;
 }
 
 void CMonster::Free()

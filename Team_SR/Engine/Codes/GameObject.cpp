@@ -72,6 +72,8 @@ void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
+	// 2020.12.17 11:26 KMJ
+	SafeRelease(_CollisionComp);		// 충돌 컴포넌트
 
 	for (auto& Pair : m_Components)
 	{
