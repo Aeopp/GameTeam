@@ -74,12 +74,21 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlyerInfoUI::RenderGameObject()
 {
+	/// <summary>
+	/// UI 추가하자 문제가 발생해서
+	/// 뷰행렬과 투영행렬을 UI 용으로 설정하기 직전에
+	/// 값을 저장한다음 UI 를 출력후 저장
+	/// </summary>
+	/// <returns></returns>
+
 	_matrix matWorld;
 
 	auto camera = m_pManagement->GetGameObject((int)ESceneID::Stage1st, CLayer::Tag + L"MainCamera", 0);
 	if (nullptr == camera)
 		return FALSE;
-
+	mat PrevView, PrevProjection;
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	_matrix matScale, /*matRotX, matRotY, matRotZ,*/ matTrans, matOrthographic;
 
@@ -125,6 +134,9 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 
 	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
+	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	return S_OK;
 }
 
@@ -168,7 +180,7 @@ CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CPlyerInfoUI::Clone(void * pArg)
 {
-	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* ��������� */
+	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
