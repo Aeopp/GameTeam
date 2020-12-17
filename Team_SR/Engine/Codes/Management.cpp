@@ -170,6 +170,19 @@ CComponent * CManagement::GetComponent(
 	return pGameObject->GetComponent(ComponentTag);
 }
 
+std::list<class CGameObject*> CManagement::GetGameObjects(_int iSceneIndex, const wstring& LayerTag)
+{
+	if (nullptr == m_pGameObjectManager)
+		return {};
+
+	if (iSceneIndex == -1)
+	{
+		iSceneIndex = CurrentSceneIdx;
+	}
+
+	return m_pGameObjectManager->GetGameObjects(iSceneIndex, LayerTag);
+}
+
 HRESULT CManagement::AddGameObjectPrototype(
 	_int iSceneIndex, 
 	const wstring & GameObjectTag, 

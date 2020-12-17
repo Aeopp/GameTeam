@@ -12,6 +12,38 @@ struct MyLight
 	float Radius;
 };
 
+std::vector<IDirect3DTexture9*> CreateTextures (IDirect3DDevice9* const _Device ,
+	const std::wstring& Path ,
+	const size_t TextureNum);;
+
+struct AnimationTextures
+{
+	using NotifyType = std::map<uint32_t, std::function<void()> >;
+
+	std::map<std::wstring,std::vector<IDirect3DTexture9*>> _TextureMap;
+	void Release()& noexcept;
+	void AddRef()& noexcept;
+	void Update(const float DeltaTime);
+	IDirect3DTexture9* GetCurrentTexture();
+
+	void ChangeAnim(
+		std::wstring AnimKey, 
+		const float AnimDelta,
+		const size_t ImgNum,
+		const bool bLoop = false,
+		NotifyType  SetAnimNotify = {},
+		const float InitT = 0.0f, 
+		const size_t StartImgFrame = 0ul);
+private:
+	NotifyType  CurrentAnimNotify;
+	std::wstring CurrentAnimKey;
+	float AnimDelta = 0.1f;
+	float CurrentT = 0.0f;
+	size_t CurrentImgFrame = 0ul;
+	size_t ImgNum = 1ul;
+	bool bLoop = false;
+};
+
 struct MtrlInfo
 {
 	enum class Illumination :uint8_t
@@ -53,7 +85,7 @@ public:
 	IDirect3DTexture9* Normal{ nullptr };
 
 	static std::shared_ptr<SubSetInfo> MakeShared()noexcept;
-	// ex ) ..\\Resources\\Tag\\     경로까지만 입력하고 해당 경로에 Obj.obj Obj.mtl 파일과 텍스쳐가 있다고 가정하고 진행
+	// 경로와 이름까지 입력 확장자는 입력하지 않기.
 	static std::shared_ptr<std::vector<SubSetInfo>> GetMeshFromObjFile(IDirect3DDevice9* const _Device, const std::wstring& FilePath)noexcept;
 	void Release() & noexcept;
 };

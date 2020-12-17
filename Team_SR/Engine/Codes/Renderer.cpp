@@ -136,6 +136,14 @@ HRESULT CRenderer::RenderAlpha()
 	*/
 	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	mat View;
+	m_pDevice->GetTransform(D3DTS_VIEW, &View);
+
+	/*std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
+		[View](CGameObject* const _Lhs, CGameObject* const _RAISE)
+		{
+			
+		});*/
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{

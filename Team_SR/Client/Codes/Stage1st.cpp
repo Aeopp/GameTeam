@@ -81,7 +81,7 @@ HRESULT CStage1st::ReadyScene()
 					(_int)ESceneID::Static,
 					CGameObject::Tag + TYPE_NAME<CBatGrey>(),
 					(_int)ESceneID::Stage1st,
-					CLayer::Tag + TYPE_NAME<CBatGrey>(),
+					CLayer::Tag + TYPE_NAME<CMonster>(),
 					nullptr, static_cast<void*>(&stArg))))
 					return E_FAIL;
 			}
@@ -95,7 +95,7 @@ HRESULT CStage1st::ReadyScene()
 					(_int)ESceneID::Static,
 					CGameObject::Tag + TYPE_NAME<CGlacier>(),
 					(_int)ESceneID::Stage1st,
-					CLayer::Tag + TYPE_NAME<CGlacier>(),
+					CLayer::Tag + TYPE_NAME<CMonster>(),
 					nullptr, static_cast<void*>(&stArg))))
 					return E_FAIL;
 			}

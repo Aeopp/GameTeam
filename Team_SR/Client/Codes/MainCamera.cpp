@@ -102,6 +102,8 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 	}
 	else if (bThirdPerson)
 	{
+		ShowCursor(true);
+
 		Shaking(fDeltaTime);
 
 		vec3 Location = Offset;

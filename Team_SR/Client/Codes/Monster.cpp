@@ -5,9 +5,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f)
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
-	, m_bFrameLoopCheck(false)
-{
-}
+	, m_bFrameLoopCheck(false){}
 
 HRESULT CMonster::ReadyGameObjectPrototype()
 {

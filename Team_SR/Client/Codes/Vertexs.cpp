@@ -16,5 +16,5 @@ LPDIRECT3DVERTEXDECLARATION9 typename Vertex::Texture::GetVertexDecl(IDirect3DDe
 	};
 	_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
 	return VertexDeclaration;
-}
+};
 

@@ -9,23 +9,20 @@ class ENGINE_DLL CLayer final : public CBase
 private:
 	CLayer();
 	virtual ~CLayer() = default;
-
+	typedef list<class CGameObject*>	GAMEOBJECTS;
 public:
 	class CGameObject* GetGameObject(_uint iIndex = 0);
-
+	GAMEOBJECTS	 GetGameObjects();
 public:
 	HRESULT AddGameObjectInLayer(class CGameObject* pGameObject);
 	_uint UpdateGameObject(float fDeltaTime);
 	_uint LateUpdateGameObject(float fDeltaTime);
-
 public:
 	static CLayer* Create();
 	virtual void Free() override;
-
 	static const std::wstring Tag;
 private:
-	typedef list<class CGameObject*>	GAMEOBJECTS;
-	GAMEOBJECTS	m_GameObjects;	/* °ÔÀÓ ¿ÀºêÁ§Æ®ÀÇ Å¬·ĞµéÀ» º¸°ü */
+	GAMEOBJECTS	m_GameObjects;	/* ê²Œì„ ì˜¤ë¸Œì íŠ¸ì˜ í´ë¡ ë“¤ì„ ë³´ê´€ */
 };
 END
 

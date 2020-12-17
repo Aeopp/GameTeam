@@ -7,7 +7,7 @@ const std::wstring CLayer::Tag{L"Layer_"};
 
 CLayer::CLayer()
 {
-}
+};
 
 CGameObject * CLayer::GetGameObject(_uint iIndex)
 {
@@ -18,6 +18,11 @@ CGameObject * CLayer::GetGameObject(_uint iIndex)
 	for (_uint i = 0; i < iIndex; ++i, ++iter_begin);
 
 	return *iter_begin;
+}
+
+typename CLayer::GAMEOBJECTS  CLayer::GetGameObjects()
+{
+	return 	m_GameObjects;
 }
 
 HRESULT CLayer::AddGameObjectInLayer(CGameObject * pGameObject)

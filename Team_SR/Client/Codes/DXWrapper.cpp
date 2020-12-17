@@ -232,14 +232,23 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 	//	});
 
 
-	_CurMapLights.push_back(MyLight{});
 
-	int LightNum=_CurMapLights.size() > 8 ? 8 : _CurMapLights.size();
+	_CurMapLights.push_back(MyLight{});
+	
+
+	int LightNum = _CurMapLights.size();
+	if (LightNum >= 8)  LightNum = 8;
+
+	_CurMapLights[0] = MyLight{ {CameraLocation.x,CameraLocation.y,CameraLocation.z } , {} , 10.f };
+	/*_CurMapLights[1] = MyLight{ {CameraLocation.x +20,CameraLocation.y +10,CameraLocation.z +10 } , {} , 20.f };
+	_CurMapLights[2] = MyLight{ {CameraLocation.x -20,CameraLocation.y -10,CameraLocation.z -10 } , {} , 5.f };
+	_CurMapLights[3] = MyLight{ {CameraLocation.x +40,CameraLocation.y +20,CameraLocation.z  +20} , {} , 30.f};*/
+
 	for(auto & _curlight : _CurMapLights)
 	{
 		_curlight.Diffuse = { 1.f ,1.f ,1.f  };
-		_curlight.Radius = 90.f;
-		_curlight.Location = vec3{ CameraLocation.x ,CameraLocation.y,CameraLocation.z };
+		_curlight.Radius = 80.f;
+		_curlight.Location = vec3{ CameraLocation.x,CameraLocation.y,CameraLocation.z };
 	}
 
 	
@@ -250,13 +259,13 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
 		
 		// 다중 조명시 수정 해야함...
-		const vec4 GlobalAmbient = { 0.2f,0.0f,0.0f,1.f };
+		const vec4 GlobalAmbient = { 0.2f,0.2f,0.2f,1.f };
 		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
 		
 		CurEffect.SetPSConstantData(_Device, "LightNum", LightNum);
 		//CurEffect.PsTable->SetValue(_Device, "Lights",(void*)(&_Lights[0]), sizeof (MyLight) * NumCurrentLight);
 		if (LightNum > 0)
-		CurEffect.SetPSConstantData(_Device, "Lights", _CurMapLights[0], LightNum);
+				CurEffect.SetPSConstantData(_Device, "Lights", _CurMapLights[0], LightNum);
 	}
 }
 std::map<std::string, D3DXHANDLE> Effect::ConstantHandleInitialize(
@@ -320,7 +329,7 @@ typename Effect::Info Effect::CompileAndCreate(
 		// output any error messages
 		if (errorBuffer)
 		{
-			::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
+			//::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
 			SafeRelease(errorBuffer);
 		}
 
@@ -369,7 +378,7 @@ typename Effect::Info Effect::CompileAndCreate(
 		// output any error messages
 		if (errorBuffer)
 		{
-			::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
+			//::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
 			SafeRelease(errorBuffer);
 		}
 
@@ -426,6 +435,29 @@ uint8_t Effect::Info::GetTexIdx(const std::string& SamplerName)
 	return TextureDescMap[SamplerName.c_str()].RegisterIndex;
 }
 
+std::vector<IDirect3DTexture9*> CreateTextures(IDirect3DDevice9* const _Device, const std::wstring& Path, const size_t TextureNum)
+{
+	std::vector<IDirect3DTexture9*> _TextureVec;
+
+	for (size_t i = 0; i < TextureNum; ++i)
+	{
+		const std::wstring CurrentTextureFileName = Path + std::to_wstring(i) + L".png";
+		IDirect3DTexture9* _Texture;
+
+		if (FAILED(D3DXCreateTextureFromFile(_Device,
+			CurrentTextureFileName.c_str(), &_Texture)))
+		{
+			PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		}
+		else
+		{
+			_TextureVec.push_back(_Texture);
+		}
+	}
+
+	return _TextureVec;
+}
+
 LPDIRECT3DTEXTURE9 LOAD_TEXTURE(IDirect3DDevice9* _Device, const std::wstring& FileName)
 {
 	LPDIRECT3DTEXTURE9 ret = nullptr;
@@ -452,11 +484,11 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 			delete ptr;
 		});
 
-	const std::wstring _MtlFileName = FilePath + L"Obj.mtl";
+	const std::wstring _MtlFileName = FilePath + L".mtl";
 	std::wfstream _MtlStream(_MtlFileName);
 	if (!_MtlStream.is_open())
 	{
-		::MessageBox(nullptr, __FUNCTIONW__,L"File Open Fail", 0);
+		//::MessageBox(nullptr, __FUNCTIONW__,L"File Open Fail", 0);
 	}
 
 	std::map<wstring, MtrlInfo> _MtrlInfo;
@@ -536,7 +568,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 		}
 	}
 
-	std::wstring _ObjFileName = FilePath + L"Obj.obj";
+	std::wstring _ObjFileName = FilePath + L".obj";
 
 	const std::wstring V = L"v";
 	const std::wstring Vt = L"vt";
@@ -680,7 +712,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 
 			if (iter == std::end(_MtrlInfo))
 			{
-				MessageBox(nullptr, L"	if (iter == std::end ( _MtrlInfo)  ) ", nullptr, 0);
+				//MessageBox(nullptr, L"	if (iter == std::end ( _MtrlInfo)  ) ", nullptr, 0);
 			}
 			else
 			{
@@ -689,21 +721,27 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 				if (FAILED(D3DXCreateTextureFromFile(_Device,
 					TexName.c_str(), &_Info.Diffuse)))
 				{
+					#ifdef _DEBUG
 					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#endif
 				}
 
 				const std::wstring SpecularTexName = TexName + L"_SPECULAR";
 				if (FAILED(D3DXCreateTextureFromFile(_Device,
 					SpecularTexName.c_str(), &_Info.Specular)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#ifdef _DEBUG
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#endif // _DEBUG
 				}
 
 				const std::wstring NormalTexName = TexName + L"_NORMAL";
 				if (FAILED(D3DXCreateTextureFromFile(_Device,
 					NormalTexName.c_str(), &_Info.Normal)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#ifdef _DEBUG
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#endif // _DEBUG
 				}
 			}
 			_Info.Decl = Vertex::Texture::GetVertexDecl(_Device);
@@ -737,3 +775,87 @@ void SubSetInfo::Release() & noexcept
 	SafeRelease(Normal);
 }
 
+void AnimationTextures::Release() & noexcept
+{
+	for (auto& _TexturePair: _TextureMap)
+	{
+		for (auto& _Texture : _TexturePair.second)
+		{
+			SafeRelease(_Texture);
+		}
+	}
+}
+
+void AnimationTextures::AddRef() & noexcept
+{
+	for (auto&   _TexturePair : _TextureMap)
+	{
+		for (auto& _Texture : _TexturePair.second)
+		{
+			SafeAddRef(_Texture);
+		}
+	}
+}
+
+void AnimationTextures::Update(const float DeltaTime)
+{
+	CurrentT += DeltaTime;
+
+	if (CurrentT >= AnimDelta)
+	{
+		CurrentT -=AnimDelta;
+		++CurrentImgFrame;
+
+		auto find_iter = CurrentAnimNotify.find(CurrentImgFrame);
+		if (find_iter != std::end(CurrentAnimNotify))
+		{
+			if(find_iter->second)
+				find_iter->second();
+		}
+
+		if (CurrentImgFrame >= ImgNum)
+		{
+			if (bLoop)
+			{
+				CurrentImgFrame = 0;
+			}
+			else
+			{
+				CurrentImgFrame = (ImgNum - 1);
+			}
+		}
+	}
+}
+
+IDirect3DTexture9* AnimationTextures::GetCurrentTexture()
+{
+	auto find_iter = _TextureMap.find(CurrentAnimKey);
+
+	if (find_iter == std::end(_TextureMap))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return nullptr;
+	}
+	else
+	{
+		return find_iter->second[CurrentImgFrame];
+	}
+}
+
+void AnimationTextures::ChangeAnim(
+	std::wstring AnimKey, 
+	const float AnimDelta, 
+	const size_t ImgNum,
+	const bool bLoop, 
+	NotifyType  SetAnimNotify ,
+	const float InitT, 
+	const size_t StartImgFrame)
+{
+	CurrentAnimKey = std::move(AnimKey);
+	this->AnimDelta = AnimDelta;
+	CurrentT = InitT;
+	CurrentImgFrame=StartImgFrame;
+	this->ImgNum = ImgNum;
+	this->bLoop = bLoop;
+	this->CurrentAnimNotify = std::move(SetAnimNotify);
+}

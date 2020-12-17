@@ -1,9 +1,11 @@
-#include "CollisionComponent.h"
+﻿#include "CollisionComponent.h"
 #include "Management.h"
 #include "GameObject.h"
 #include "Transform.h"
 #include "Collision.h"
 #include <d3dx9.h>
+#pragma warning(disable:4819)
+
 USING(Engine)
 
 float  CCollisionComponent::MapCollisionCheckDistanceMin= 300.f;
@@ -14,7 +16,7 @@ std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
 
 std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollisionComponent::_TagBind
 {
-	// 여기서 매칭되는 타입을 정의.
+	
 	{ MonsterAttack, { Player } },
 	{ PlayerAttack, {  Monster} }
 };
@@ -64,7 +66,7 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	}
 	else
 	{
-		// 버텍스 정보가 없을 경우?? <- 대부분 이경우에 해당.
+		
 	}
 
 	D3DXCreateSphere(m_pDevice, _Sphere.Radius, 25, 25, &_SphereMesh, 0);
@@ -114,7 +116,7 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 
 	const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
-	// 맵 평면과의 충돌
+	
 	if (bMapCollision)
 	{
 		for (const auto& _CurPlane : _CurMap)

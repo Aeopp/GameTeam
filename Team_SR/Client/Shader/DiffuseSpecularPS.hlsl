@@ -46,9 +46,9 @@ float4 main(PS_INPUT Input) : COLOR
         float Distance = length(LightDirection);
         LightDirection = normalize(LightDirection);
     
-	    // Diffuse Color Calc in World Coord System....
+	// Diffuse Color Calc in World Coord System....
         float3 DiffuseDot= dot(-LightDirection, Input.Normal);
-	    // Reflection Vector Calc in World Coord System.... For Specular Color Calc
+	// Reflection Vector Calc in World Coord System.... For Specular Color Calc
         float3 ReflectionVector = reflect(LightDirection, Input.WorldLocation);
         
         float3 Diffuse = Lights[i].Diffuse.xyz * DiffuseTexColor.rgb * saturate(DiffuseDot);

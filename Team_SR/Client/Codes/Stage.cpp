@@ -163,6 +163,30 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
+	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+	{
+		m_pPlayer->MouseLeft();
+	}
+	else if (m_pKeyMgr->Key_Down('R'))
+	{
+		m_pPlayer->RButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Down(VK_RBUTTON))
+	{
+		m_pPlayer->MouseRight();
+	}
+
+	if (m_pKeyMgr->Key_Down('1'))
+	{
+		m_pPlayer->_1ButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Down('2'))
+	{
+		m_pPlayer->_2ButtonEvent();
+	}
+
+
+
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;

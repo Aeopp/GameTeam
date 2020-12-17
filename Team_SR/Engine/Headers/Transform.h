@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __TRANSFORM_H__
 
 #include "Component.h"
@@ -24,6 +24,8 @@ public:
 	void AddRotationZ(float fDelaTime);
 
 	FORCEINLINE vec3 GetLocation() { return m_TransformDesc.vPosition; }
+	FORCEINLINE vec3 GetScale() { return m_TransformDesc.vScale; };
+	FORCEINLINE vec3 GetRotation() { return m_TransformDesc.vRotation; };
 	vec3 GetLook()const&;
 	vec3 GetRight()const&;
 	vec3 GetUp()const&;
