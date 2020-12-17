@@ -45,7 +45,7 @@ public:
 	struct InitInfo
 	{
 		float Radius = 10.f;
-		bool bMapCollision = true;
+		bool bMapCollision = false;
 		bool bCollision = true;
 		bool bMapBlock = true;
 		ETag Tag = ETag::None;
@@ -55,7 +55,7 @@ public:
 		DWORD FVF;
 		DWORD VertexNumber;
 	};
-	bool bMapCollision = true;
+	bool bMapCollision = false;
 	bool bMapBlock = false;
 	bool bCollision = true;
 	class CGameObject* Owner = nullptr;

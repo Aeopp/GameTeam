@@ -203,8 +203,6 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		m_pPlayer->_2ButtonEvent();
 	}
 
-
-
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;

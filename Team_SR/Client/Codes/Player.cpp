@@ -347,6 +347,31 @@ void CPlayer::DaggerStab()
 
 	_AnimationTextures.ChangeAnim(L"Dagger_Stab", 0.1f, 4ul, false,
 		std::move(_Notify));
+
+	Sphere _Sphere;
+	_Sphere.Center = m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 1.f;
+	_Sphere.Radius = 10.f;
+
+	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+
+	for (auto& _CurrentMonster : _MonsterList)
+	{
+		auto _Component = _CurrentMonster->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsSphereToSphere(_Sphere, _CollisionComp->_Sphere);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
 }
 
 void CPlayer::DaggerThrow()
