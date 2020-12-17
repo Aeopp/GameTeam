@@ -92,13 +92,6 @@ HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
 
-	// 2020 12 17 이호준
-	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
-
-	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
-	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
-	/// <summary>
-	 
 	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
@@ -136,7 +129,7 @@ CWeaponAmmoInfoUI * CWeaponAmmoInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CWeaponAmmoInfoUI::Clone(void * pArg)
 {
-	CWeaponAmmoInfoUI* pClone = new CWeaponAmmoInfoUI(*this); /* 복사생성자 */
+	CWeaponAmmoInfoUI* pClone = new CWeaponAmmoInfoUI(*this); /* ��������� */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

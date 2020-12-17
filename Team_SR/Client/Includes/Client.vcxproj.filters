@@ -53,6 +53,7 @@
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Filter Include="02.GameObject\05.GameUI">
       <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
     </Filter>
@@ -71,6 +72,43 @@
     </Filter>
     <Filter Include="02.GameObject\05.GameUI\01.Component">
       <UniqueIdentifier>{9cf0131a-46f8-4d4e-bd6e-f52138924740}</UniqueIdentifier>
+=======
+    <Filter Include="97.DXWrapper">
+      <UniqueIdentifier>{823585c1-1122-4b5c-8cef-a3846cb02321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet">
+      <UniqueIdentifier>{64818481-6c4e-4e12-8709-f8ff3c0616f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\01.BatSpit">
+      <UniqueIdentifier>{3e44196c-2d74-406d-89c6-0b2fbf4f6880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\02.GlacierBullet">
+      <UniqueIdentifier>{cd63f17a-5d08-43f3-9517-72c6a3e41e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\03.EyebatBullet">
+      <UniqueIdentifier>{5e80dded-4ce3-4631-9cf5-e9eeec6b7360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Eyebat">
+      <UniqueIdentifier>{a4592385-6097-4974-b8c4-41770f413538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect">
+      <UniqueIdentifier>{88202fd3-7a07-4d78-ab8f-52fd7038a013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect\01.GlacierParticle">
+      <UniqueIdentifier>{2a59d0ad-8141-4baf-be07-7fd4f7589ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\04.Fire">
+      <UniqueIdentifier>{572aef64-b509-4a43-b486-9fdeb7187aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\07.UI">
+      <UniqueIdentifier>{a18525d0-00dd-47c6-96d1-5603d84754b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\07.UI\01.PlyerInfoUI">
+      <UniqueIdentifier>{e12fd84f-9d50-4fa0-bef8-d857e427addf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\07.UI\02.WeaponAmmoInfoUI">
+      <UniqueIdentifier>{b087a61a-08fe-4e3a-b500-13566b5ac30d}</UniqueIdentifier>
+>>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +203,7 @@
       <Filter>99.Headers</Filter>
     </ClInclude>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
@@ -178,18 +217,54 @@
     <ClInclude Include="..\Headers\StateBar.h">
       <Filter>02.GameObject\05.GameUI\01.Component</Filter>
 =======
+=======
+>>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClInclude Include="..\Headers\DXWrapper.h">
       <Filter>97.DXWrapper</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Vertexs.h">
       <Filter>97.DXWrapper</Filter>
+<<<<<<< HEAD
 >>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
+=======
+>>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     </ClInclude>
     <ClInclude Include="..\Headers\Package.h">
       <Filter>.ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
-    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
+    <ClInclude Include="..\Headers\Bullet.h">
+      <Filter>02.GameObject\05.Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BatSpit.h">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\EyebatBullet.h">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Eyebat.h">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierParticle.h">
+      <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fire.h">
+      <Filter>02.GameObject\05.Bullet\04.Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UIManager.h">
+      <Filter>02.GameObject\07.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PlyerInfoUI.h">
+      <Filter>02.GameObject\07.UI\01.PlyerInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\07.UI\02.WeaponAmmoInfoUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -256,6 +331,7 @@
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
@@ -269,6 +345,8 @@
     <ClCompile Include="..\Codes\StateBar.cpp">
       <Filter>02.GameObject\05.GameUI\01.Component</Filter>
 =======
+=======
+>>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClCompile Include="..\Codes\DXWrapper.cpp">
       <Filter>97.DXWrapper</Filter>
     </ClCompile>
@@ -277,10 +355,44 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Package.cpp">
       <Filter>.ImGui</Filter>
+<<<<<<< HEAD
 >>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
+=======
     </ClCompile>
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
-    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
+    <ClCompile Include="..\Codes\Bullet.cpp">
+      <Filter>02.GameObject\05.Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatSpit.cpp">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EyebatBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Eyebat.cpp">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierParticle.cpp">
+      <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fire.cpp">
+      <Filter>02.GameObject\05.Bullet\04.Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UIManager.cpp">
+      <Filter>02.GameObject\07.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
+      <Filter>02.GameObject\07.UI\01.PlyerInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\07.UI\02.WeaponAmmoInfoUI</Filter>
+>>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
