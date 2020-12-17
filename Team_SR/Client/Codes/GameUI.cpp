@@ -46,17 +46,17 @@ _uint CGameUI::LateUpdateGameObject(float fDeltaTime)
 	//_matrix matScale;
 	//_matrix matTrans;
 
-	D3DXMatrixIdentity(&m_matWorld);
-	D3DXMatrixIdentity(&m_matView);
+	D3DXMatrixIdentity(&m_UIDesc.matWorld);
+	D3DXMatrixIdentity(&m_UIDesc.matView);
 
-	m_matView._11 = m_vUISize.x;
-	m_matView._22 = m_vUISize.y;
-	m_matView._33 = 1.f;
-	m_matView._41 = m_vUIPos.x;
-	m_matView._42 = m_vUIPos.y;
-	m_matView._43 = m_vUIPos.z;
+	m_UIDesc.matView._11 = m_UIDesc.vUISize.x;
+	m_UIDesc.matView._22 = m_UIDesc.vUISize.y;
+	m_UIDesc.matView._33 = 1.f;
+	m_UIDesc.matView._41 = m_UIDesc.vUIPos.x;
+	m_UIDesc.matView._42 = m_UIDesc.vUIPos.y;
+	m_UIDesc.matView._43 = m_UIDesc.vUIPos.z;
 
-	D3DXMatrixOrthoLH(&m_matOrthographic, WINCX, WINCY, 0.f, 1.f);
+	D3DXMatrixOrthoLH(&m_UIDesc.matOrthographic, WINCX, WINCY, 0.f, 1.f);
 
 	return _uint();
 }

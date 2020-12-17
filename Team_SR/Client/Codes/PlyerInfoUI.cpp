@@ -26,13 +26,13 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	if (FAILED(AddComponent()))
 		return E_FAIL;
 	
-	m_vUISize.x = WINCX / 7.f;
-	m_vUISize.y = WINCY / 7.f;
-	m_vUISize.z = 0;
+	m_UIDesc.vUISize.x = WINCX / 7.f;
+	m_UIDesc.vUISize.y = WINCY / 7.f;
+	m_UIDesc.vUISize.z = 0;
 
-	m_vUIPos.x = -(WINCX / 2) + m_vUISize.x;
-	m_vUIPos.y = -(WINCY / 2) + m_vUISize.y + 10.f;
-	m_vUIPos.z = 0.f;
+	m_UIDesc.vUIPos.x = -(WINCX / 2) + m_UIDesc.vUISize.x;
+	m_UIDesc.vUIPos.y = -(WINCY / 2) + m_UIDesc.vUISize.y + 10.f;
+	m_UIDesc.vUIPos.z = 0.f;
 
 	return S_OK;
 }
@@ -44,12 +44,12 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Size",
-		reinterpret_cast<float*>(&m_vUISize),
+		reinterpret_cast<float*>(&m_UIDesc.vUISize),
 		-1000.f, +1000.f, "%f");
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_vUIPos),
+		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
 		-1000.f, +1000.f, "%f");
 
 	ImGui::End();
@@ -71,13 +71,13 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 {
 	CGameUI::RenderGameObject();
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_matWorld)))
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_matView)))
+	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_matOrthographic)))
+	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
 		return E_FAIL;
 
 	if (FAILED(CGameObject::RenderGameObject()))

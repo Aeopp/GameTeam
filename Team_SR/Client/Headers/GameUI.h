@@ -24,15 +24,9 @@ public:
 	virtual void Free() override;
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-	class CTexture* m_pTextureCom = nullptr;	//일단 나중에
+	class CTexture* m_pTextureCom = nullptr;
 
 protected:
-	_matrix m_matOrthographic;
-	_matrix m_matWorld;
-	_matrix m_matView;
-
-	_vector m_vUISize;
-	_vector m_vUIPos;
-
+	UI_DESC m_UIDesc;
 };
 

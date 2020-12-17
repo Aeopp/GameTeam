@@ -58,11 +58,17 @@
     <Filter Include="02.GameObject\05.GameUI">
       <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.PlayerInfoUI">
+    <Filter Include="02.GameObject\05.GameUI\00.Object">
+      <UniqueIdentifier>{894ad353-34dd-4f0f-9563-817f9a42ca78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI">
       <UniqueIdentifier>{168b3f09-1e30-4da2-94af-33f0504096b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\01.WeaponAmmoInfoUI">
+    <Filter Include="02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI">
       <UniqueIdentifier>{67780ad2-5279-4be6-9593-178138d39fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\01.Component">
+      <UniqueIdentifier>{9cf0131a-46f8-4d4e-bd6e-f52138924740}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -164,13 +170,16 @@
     </ClInclude>
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\00.PlayerInfoUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\01.WeaponAmmoInfoUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\GameUI.h">
-      <Filter>02.GameObject\05.GameUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StateBar.h">
+      <Filter>02.GameObject\05.GameUI\01.Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -245,13 +254,16 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.PlayerInfoUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\01.WeaponAmmoInfoUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\GameUI.cpp">
-      <Filter>02.GameObject\05.GameUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StateBar.cpp">
+      <Filter>02.GameObject\05.GameUI\01.Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
