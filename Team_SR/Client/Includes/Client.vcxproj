@@ -189,6 +189,7 @@
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
+    <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />

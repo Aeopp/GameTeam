@@ -45,19 +45,19 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
-	ImGui::Begin("PlayerInfoUI Edit");
+	//ImGui::Begin("PlayerInfoUI Edit");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Scale",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vScale),
-		-100.f, +100.f, "%f");
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Scale",
+	//	reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vScale),
+	//	-100.f, +100.f, "%f");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
-		-100.f, +100.f, "%f");
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Location",
+	//	reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
+	//	-100.f, +100.f, "%f");
 
-	ImGui::End();
+	//ImGui::End();
 
 	return _uint();
 }
@@ -92,24 +92,10 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
 	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
 
-	_matrix matScale, /*matRotX, matRotY, matRotZ,*/ matTrans, matOrthographic;
+	_matrix /*matScale, matRotX, matRotY, matRotZ, matTrans,*/ matOrthographic;
 
 	TRANSFORM_DESC& tTransformDesc = m_pTransformCom->m_TransformDesc;
 
-	//D3DXMatrixScaling(&matScale, tTransformDesc.vScale.x, tTransformDesc.vScale.y, tTransformDesc.vScale.z);
-	//D3DXMatrixRotationX(&matRotX, D3DXToRadian(tTransformDesc.vRotation.x));
-	//D3DXMatrixRotationY(&matRotY, D3DXToRadian(tTransformDesc.vRotation.y));
-	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(tTransformDesc.vRotation.z));
-	//D3DXMatrixTranslation(&matTrans, tTransformDesc.vPosition.x, tTransformDesc.vPosition.y, tTransformDesc.vPosition.z);
-
-	//D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1.f);
-	//tTransformDesc.matWorld = matOrthographic* matScale * matTrans;
-	//tTransformDesc.matWorld = matScale * matRotX * matRotY * matRotZ * matTrans
-	
-
-
-	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-	//	return E_FAIL;
 	_matrix matWorld;
 	D3DXMatrixIdentity(&matWorld);
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &matWorld)))
@@ -128,7 +114,7 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &matView)))
 		return E_FAIL;
 
-	D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1000.f);
+	D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1.f);
 	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &matOrthographic)))
 		return E_FAIL;
 

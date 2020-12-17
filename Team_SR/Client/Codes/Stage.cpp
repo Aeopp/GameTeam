@@ -8,10 +8,12 @@
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
+#include "UIManager.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
-	: CScene(pDevice)
+	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
 {
+	SafeAddRef(m_pUIManager);
 }
 
 HRESULT CStage::ReadyScene()
@@ -42,22 +44,6 @@ HRESULT CStage::ReadyScene()
 		}
 	}
 
-	//UI
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		(_int)ESceneID::Stage1st,
-		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
-
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		(_int)ESceneID::Stage1st,
-		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
 	return S_OK;
 }
 
@@ -231,6 +217,7 @@ void CStage::Free()
 	SafeRelease(m_pPlayer);
 	SafeRelease(_Camera);
 	SafeRelease(_CurrentMap);
+	SafeRelease(m_pUIManager);
 
 	CScene::Free();
 }

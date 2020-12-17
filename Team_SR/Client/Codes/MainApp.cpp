@@ -17,6 +17,7 @@
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
+#include "UIManager.h"	// UI 매니저
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -51,6 +52,12 @@ HRESULT CMainApp::ReadyMainApp()
 		CLogo::Create(m_pDevice))))
 	{
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
+		return E_FAIL;
+	}
+
+	// UI 초기화
+	if (FAILED(CUIManager::Get_Instance()->ReadyUI())) {
+		PRINT_LOG(L"Error", L"Failed To ReadyUI");
 		return E_FAIL;
 	}
 
@@ -105,12 +112,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-		CMainCamera::Create(m_pDevice))))
-		return E_FAIL;
-
+	// 플레이어 UI
 #pragma region GameObject_PlayerInfoUI
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -119,20 +121,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 무기 총알 UI
 #pragma region GameObject_WeaponAmmoInfoUI
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-			CWeaponAmmoInfoUI::Create(m_pDevice))))
-			return E_FAIL;
-#pragma endregion
-
-#pragma  region GameObject_Glacier
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CGlacier>(),
-		CGlacier::Create(m_pDevice))))
+		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		CWeaponAmmoInfoUI::Create(m_pDevice))))
 		return E_FAIL;
+#pragma endregion
+
 	// 글레이서
 #pragma  region GameObject_Glacier
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -161,42 +158,48 @@ HRESULT CMainApp::ReadyStaticResources()
 		CBatSpit::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	// 글레이서 파티클
 #pragma region GameObject_GlacierParticle
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
-			CGlacierParticle::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+		CGlacierParticle::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
-		
+	
+	// 눈깔 박쥐
 #pragma region GameObject_Eyebat
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CEyebat>(),
-			CEyebat::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CEyebat>(),
+		CEyebat::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
+	// 눈깔 박쥐 총알
 #pragma region GameObject_EyebatBullet
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CEyebatBullet>(),
-			CEyebatBullet::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CEyebatBullet>(),
+		CEyebatBullet::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
-		
+	
+	// 불
 #pragma region GameObject_Fire
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CFire>(),
-			CFire::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFire>(),
+		CFire::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
 
 		
 
 	/* For.Component */
+	// 렉트 텍스처
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -205,8 +208,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-
-	
+	// 트랜스폼
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -215,6 +217,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 충돌 컴포넌트
 #pragma region Component_CCollision
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		static_cast<int32_t>(ESceneID::Static),
@@ -227,14 +230,6 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma region Component_Texture_Player
 
-#pragma endregion
-
-#pragma region Component_Camera
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-		CMainCamera::Create(m_pDevice))))
-		return E_FAIL;
 #pragma endregion
 
 	// 글레이서 텍스처들
@@ -280,8 +275,8 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma endregion	// Component_Texture_Glacier
+
 	// 박쥐 텍스처들
-#pragma endregion
 #pragma region Component_Texture_BatGrey
 	// 플라이
 #pragma region Component_Texture_BatGreyFly
@@ -340,8 +335,9 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma endregion	
+#pragma endregion	// Component_Texture_BatGrey
 
+	// 눈깔 박쥐 텍스처들
 #pragma region Component_Texture_Eyebat
 	wstring wstrTextureEyebat = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CEyebat>();
 #pragma region Fly
@@ -352,7 +348,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma endregion	// Component_Texture_BatGrey
 	Effect::EffectInitialize(m_pDevice);
 #pragma region Attack
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -377,8 +372,9 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Death/Death%d.png", 12))))
 		return E_FAIL;
 #pragma endregion
-#pragma endregion
+#pragma endregion	// Component_Texture_Eyebat
 
+	// 불
 #pragma region Component_Texture_Fire
 	wstring wstrTextureFire = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFire>();
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -388,6 +384,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 플레이어 UI 텍스처
 #pragma region Component_Texture_PlayerInfoUI
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -396,6 +393,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 	
+	// 무기 탄약 UI 텍스처
 #pragma region Component_Texture_WeaponAmmoInfoUI
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -428,6 +426,7 @@ CMainApp* CMainApp::Create()
 
 void CMainApp::Free()
 {
+	CUIManager::Destroy_Instance();
 	Effect::EffectRelease();
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);

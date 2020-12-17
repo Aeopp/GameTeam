@@ -22,6 +22,7 @@ public:
 	class CPlayer* m_pPlayer = nullptr;
 	class CMainCamera* _Camera{ nullptr };
 	class CMapBase* _CurrentMap{ nullptr };
+	class CUIManager* m_pUIManager;
 };
 
 #define __STAGE_H__
