@@ -172,6 +172,7 @@
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
     <ClInclude Include="..\Headers\Fire.h" />
+    <ClInclude Include="..\Headers\GameUI.h" />
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -215,6 +216,7 @@
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
+    <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
