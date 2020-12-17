@@ -104,6 +104,8 @@ HRESULT CManagement::ClearForScene(_int iSceneIndex)
 	if (FAILED(m_pComponentManager->ClearForScene(iSceneIndex)))
 		return E_FAIL;
 
+	CCollisionComponent::CleanUpMapPlaneInfo();
+
 	return S_OK;
 }
 
@@ -172,6 +174,19 @@ CComponent * CManagement::GetComponent(
 		return nullptr;
 
 	return pGameObject->GetComponent(ComponentTag);
+}
+
+std::list<class CGameObject*> CManagement::GetGameObjects(_int iSceneIndex, const wstring& LayerTag)
+{
+	if (nullptr == m_pGameObjectManager)
+		return {};
+
+	if (iSceneIndex == -1)
+	{
+		iSceneIndex = CurrentSceneIdx;
+	}
+
+	return m_pGameObjectManager->GetGameObjects(iSceneIndex, LayerTag);
 }
 
 HRESULT CManagement::AddGameObjectPrototype(

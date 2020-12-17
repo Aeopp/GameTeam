@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __MAINCAMERA_H__
 
 #include "Camera.h"
@@ -24,9 +24,11 @@ public:
 public:
 	void Shake(const float Duration,
 				const float Force,
-				/*흔드는 축의 강도*/vec3 AxisScale,
-					/*흔들림 진동 폭*/
+				vec3 AxisScale,
+					
 					const float Vibration);
+	bool bThirdPerson = false;
+	float FirstPersonRotationSpeed = 5.f;
 private:
 	struct ShakeInfo
 	{
@@ -38,8 +40,9 @@ private:
 	};
 	vec3 Offset{ 0,0,-20};
 	vec3 OffsetRotation{ 0,0,0 };
-	bool bThirdPerson = true;
+
 private:
+	void CameraEditProcess()&;
 	void Shaking(const float DeltaTime);
 	ShakeInfo _CurrentShake;
 };

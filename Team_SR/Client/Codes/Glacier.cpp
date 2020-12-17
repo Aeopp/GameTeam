@@ -60,20 +60,28 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 
 _uint CGlacier::UpdateGameObject(float fDeltaTime)
 {
-	if (true == m_bDead)
-		return 0;
+	// 2020.12.17 10:06 KMJ
+	// 죽으면 빌보드 처리만 함
+	//if (true == m_bDead)
+	//	return 0;
 	CMonster::UpdateGameObject(fDeltaTime);
 
 	//테스트
-	if (GetAsyncKeyState('4') & 0x8000)
-		m_stStatus.fHP -= 1;
+	//if (GetAsyncKeyState('4') & 0x8000)
+	//	m_stStatus.fHP -= 1;
+
+	
+	// 2020.12.17 10:06 KMJ
+	// 몬스터가 죽음, AI, 충돌처리 X
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return 0;
+	}
 
 	//테스트
 	Update_AI(fDeltaTime);
 
 	cout << m_stStatus.fHP << endl;
 
-	IsBillboarding();
 
 	_CollisionComp->Update(m_pTransformCom);
 
@@ -82,25 +90,33 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 
 _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 {
-	if (true == m_bDead)
-	{
-		if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
-			return 0;
-		return 0;
-	}
+	// 2020.12.17 10:09 KMJ
+	// bool 값으로 분기를 나누는 것보다
+	// Action_Death 함수에서 프레임을 마지막 프레임만 반복하게 하는게 나을것 같음
+	//if (true == m_bDead)
+	//{
+	//	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
+	//		return 0;
+	//	return 0;
+	//}
 	CMonster::LateUpdateGameObject(fDeltaTime);
-
-	if (AWARENESS::Yes == m_eAwareness)
-		m_bFrameLoopCheck = Frame_Move(fDeltaTime);
+	
+	// Frame_Move, AddGameObjectInRenderer 순서
+	// m_bFrameLoopCheck 불값 관련해서 체크하는 처리가 있는데 
+	// 장치에 텍스처 초기화 예로들면 end -> 다시 start 프레임으로 넘어가고 난 후에
+	// m_bFrameLoopCheck true 되서 다음 Update에서 순간적으로 시작 프레임이 보일 것 같음
+	//if (AWARENESS::Yes == m_eAwareness)
+	//	m_bFrameLoopCheck = Frame_Move(fDeltaTime);
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
+
+	m_bFrameLoopCheck = Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
 
 	return _uint();
 }
 
 HRESULT CGlacier::RenderGameObject()
 {
-
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
@@ -114,6 +130,21 @@ HRESULT CGlacier::RenderGameObject()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+// 몬스터가 피해를 받음
+void CGlacier::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
 }
 
 HRESULT CGlacier::AddComponents()
@@ -188,29 +219,7 @@ HRESULT CGlacier::Set_Texture()
 }
 
 
-HRESULT CGlacier::IsBillboarding()
-{
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
-	if (nullptr == pCamera)
-		return E_FAIL;
 
-	_matrix matBillboardY, matView;
-	D3DXMatrixIdentity(&matBillboardY);
-	matView = pCamera->GetCameraDesc().matView;
-
-	matBillboardY._11 = matView._11;
-	matBillboardY._13 = matView._13;
-	matBillboardY._31 = matView._31;
-	matBillboardY._33 = matView._33;
-
-	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
-
-	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
-
-	
-
-	return S_OK;
-}
 
 void CGlacier::Update_AI(float fDeltaTime)
 {
@@ -293,6 +302,8 @@ void CGlacier::AI_ThirdPhase()
 
 void CGlacier::AI_DeadPhase()
 {
+	// 2020.12.17 10:02 KMJ
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락
 	m_fpAction = &CGlacier::Action_Death;
 	m_fCountDown = 1.f;
 	m_wstrTextureKey = m_wstrBase + L"Death";
@@ -369,8 +380,12 @@ bool CGlacier::Action_Death(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck)
 	{
-		m_bDead = true;
-		m_fFrameCnt = 8.f;
+		// 2020.12.17 10:03 KMJ
+		m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
+		//m_bDead = true;
+		//m_fFrameCnt = 8.f;
+		m_fFrameCnt = m_fEndFrame - 1;
+		m_fStartFrame = m_fEndFrame - 1;
 	}
 	return false;
 }
@@ -425,7 +440,9 @@ CGameObject* CGlacier::Clone(void* pArg/* = nullptr*/)
 
 void CGlacier::Free()
 {
-	SafeRelease(_CollisionComp);
+	// 2020.12.17 11:26 KMJ
+	// CMonster 에서
+	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();
 }

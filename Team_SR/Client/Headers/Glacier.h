@@ -16,10 +16,14 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
+public:
+	// 2020.12.17 9:57 KMJ
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();
-	HRESULT IsBillboarding();
+	
 private:
 	void Update_AI(float fDeltaTime);
 
@@ -60,7 +64,6 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpGlacierAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
-
 };
 
 #define __GLACIER_H__

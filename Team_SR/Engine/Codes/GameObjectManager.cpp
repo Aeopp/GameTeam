@@ -21,6 +21,19 @@ CGameObject * CGameObjectManager::GetGameObject(_int iSceneIndex, const wstring 
 	return iter_find->second->GetGameObject(iIndex);
 }
 
+std::list<class CGameObject*> CGameObjectManager::GetGameObjects(_int iSceneIndex, const wstring& LayerTag)
+{
+	if (0 > iSceneIndex ||
+		m_iSceneCount <= iSceneIndex)
+		return {};
+
+	auto iter_find = m_pLayers[iSceneIndex].find(LayerTag);
+	if (m_pLayers[iSceneIndex].end() == iter_find)
+		return {};
+
+	return iter_find->second->GetGameObjects();
+}
+
 HRESULT CGameObjectManager::ReserveSizeContainer(_int iSceneCount)
 {
 	if (0 > iSceneCount)

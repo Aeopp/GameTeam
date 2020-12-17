@@ -9,24 +9,24 @@ CVIBuffer::CVIBuffer(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CVIBuffer::ReadyComponentPrototype()
 {
-	/* ¹öÅØ½º ¹öÆÛ »ı¼º */
+	/* ë²„í…ìŠ¤ ë²„í¼ ìƒì„± */
 	if (FAILED(m_pDevice->CreateVertexBuffer(
-		m_iVertexSize * m_iVertexCount, /* ¹öÅØ½º¹öÆÛ°¡ °ü¸®ÇÒ ¹è¿­ÀÇ ÃÑ »çÀÌÁî */
-		0, /* 0ÀÌ¸é Á¤Àû¹öÆÛ */
+		m_iVertexSize * m_iVertexCount, /* ë²„í…ìŠ¤ë²„í¼ê°€ ê´€ë¦¬í•  ë°°ì—´ì˜ ì´ ì‚¬ì´ì¦ˆ */
+		0, /* 0ì´ë©´ ì •ì ë²„í¼ */
 		m_iFVF, /* FVF */
-		D3DPOOL_MANAGED, /* ¸Ş¸ğ¸® º¸°ü ¹æ½Ä */
-		&m_pVB, /* ÇÒ´çµÈ ¹öÅØ½º¹öÆÛÀÇ ÁÖ¼Ò¸¦ ¹İÈ¯ */
+		D3DPOOL_MANAGED, /* ë©”ëª¨ë¦¬ ë³´ê´€ ë°©ì‹ */
+		&m_pVB, /* í• ë‹¹ëœ ë²„í…ìŠ¤ë²„í¼ì˜ ì£¼ì†Œë¥¼ ë°˜í™˜ */
 		nullptr)))
 	{
 		return E_FAIL;
 	}
 
-	/* ÀÎµ¦½º¹öÆÛ »ı¼º */
+	/* ì¸ë±ìŠ¤ë²„í¼ ìƒì„± */
 	if (FAILED(m_pDevice->CreateIndexBuffer(
-		m_iIndexSize * m_iTriCount, /* ÀÎµ¦½º¹öÆÛ°¡ °ü¸®ÇÒ ¹è¿­ÀÇ ÃÑ »çÀÌÁî */
-		0, /* 0ÀÌ¸é Á¤Àû¹öÆÛ */
-		m_IndexFormat, /* ÀÎµ¦½º Æ÷¸Ë */
-		D3DPOOL_MANAGED, /* ¸Ş¸ğ¸® º¸°ü ¹æ½Ä */
+		m_iIndexSize * m_iTriCount, /* ì¸ë±ìŠ¤ë²„í¼ê°€ ê´€ë¦¬í•  ë°°ì—´ì˜ ì´ ì‚¬ì´ì¦ˆ */
+		0, /* 0ì´ë©´ ì •ì ë²„í¼ */
+		m_IndexFormat, /* ì¸ë±ìŠ¤ í¬ë§· */
+		D3DPOOL_MANAGED, /* ë©”ëª¨ë¦¬ ë³´ê´€ ë°©ì‹ */
 		&m_pIB,
 		nullptr)))
 		return E_FAIL;
@@ -41,20 +41,22 @@ HRESULT CVIBuffer::ReadyComponent(void * pArg)
 
 HRESULT CVIBuffer::Render_VIBuffer()
 {
-	/* ÀåÄ¡¿¡°Ô ¹öÅØ½º¹öÆÛ Àü´Ş */
+	// ì¥ì¹˜ì—ê²Œ ë²„í…ìŠ¤ë²„í¼ ì „ë‹¬ 
 	if (FAILED(m_pDevice->SetStreamSource(0, m_pVB, 0, m_iVertexSize)))
 		return E_FAIL;
 
-	/* ÀåÄ¡¿¡°Ô FVF Àü´Ş */
+	 //ì¥ì¹˜ì—ê²Œ FVF ì „ë‹¬ 
 	if (FAILED(m_pDevice->SetFVF(m_iFVF)))
 		return E_FAIL;
+
+	m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
 	return S_OK;
 }
 
 void CVIBuffer::Free()
 {
-	/* ÀÚ½ÄÀÇ ¸®¼Ò½º ÇØÁ¦ */
+	/* ìì‹ì˜ ë¦¬ì†ŒìŠ¤ í•´ì œ */
 	SafeRelease(m_pVB);
 	SafeRelease(m_pIB);
 
@@ -65,6 +67,6 @@ void CVIBuffer::Free()
 	//	SafeRelease(m_pIB);
 	//}
 
-	/* ºÎ¸ğÀÇ free */
+	/* ë¶€ëª¨ì˜ free */
 	CComponent::Free();
 }

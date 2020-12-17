@@ -15,7 +15,7 @@ private:
 
 public:
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
-
+	std::list<class CGameObject*> GetGameObjects(_int iSceneIndex, const wstring& LayerTag);
 public:
 	HRESULT ReserveSizeContainer(_int iSceneCount);
 	HRESULT AddGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, CGameObject* pPrototype);

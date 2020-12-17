@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "..\Headers\Stage.h"
 #include "Player.h"
 #include "MainCamera.h"
@@ -6,7 +6,8 @@
 #include "Map1st.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
-
+#include "PlyerInfoUI.h"
+#include "WeaponAmmoInfoUI.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -41,6 +42,22 @@ HRESULT CStage::ReadyScene()
 		}
 	}
 
+	//UI
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		(_int)ESceneID::Stage1st,
+		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		nullptr, nullptr)))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		(_int)ESceneID::Stage1st,
+		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		nullptr, nullptr)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -57,6 +74,16 @@ _uint CStage::LateUpdateScene()
 {
 	CScene::LateUpdateScene();
 
+	vec4 CameraLocation = (dynamic_cast<CStage*>
+		(m_pManagement->GetCurrentScene())->_Camera->GetTransform()->GetLocation());
+	CameraLocation.w = 1.f;
+
+	vec4 LightLocation = (dynamic_cast<CStage*>
+		(m_pManagement->GetCurrentScene())->m_pPlayer->GetTransform()->GetLocation());
+	LightLocation.w = 1.f;
+
+	Effect::Update(m_pDevice, CameraLocation, LightLocation);
+
 	return _uint();
 }
 
@@ -66,13 +93,34 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	{
 		ImGuiHelper::bEditOn = !ImGuiHelper::bEditOn;
 	}
+	if (m_pKeyMgr->Key_Down('O'))
+	{
+		m_pManagement->bDebug = !m_pManagement->bDebug;
+	}
+	if (m_pKeyMgr->Key_Down('L'))
+	{
+		_Camera->bThirdPerson = !_Camera->bThirdPerson;
+	}
+
+	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
+	{
+		ImGui::Begin("Information");
+		ImGui::Text("Press L Key Is Third Person First Person Change");
+		ImGui::Text("Press O Key Debug Toggle");
+		ImGui::Text("Press L Key Edit Mode Toggle");
+		ImGui::End();
+	}
 
 	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
+	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+	{
+		ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
+	}
 
 	return _uint();
 }
 
-void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
+void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 {
 	static constexpr float DiagonalCorrection = 0.707f;
 
@@ -133,12 +181,35 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
-	// REMOVEPLZ........
+	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+	{
+		m_pPlayer->MouseLeft();
+	}
+	else if (m_pKeyMgr->Key_Down('R'))
+	{
+		m_pPlayer->RButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Down(VK_RBUTTON))
+	{
+		m_pPlayer->MouseRight();
+	}
+
+	if (m_pKeyMgr->Key_Down('1'))
+	{
+		m_pPlayer->_1ButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Down('2'))
+	{
+		m_pPlayer->_2ButtonEvent();
+	}
+
+
+
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
 		const mat world = Desc.matWorld;
-		vec3 Up{ 0.f,1.f,0.f};
+		vec3 Up{ 0.f,1.f,0.f };
 		Up = MATH::Normalize(Up);
 		const float Speed = Desc.fSpeedPerSec;
 		Desc.vPosition += Up * Speed * fDeltaTime;
@@ -152,20 +223,7 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 		const float Speed = Desc.fSpeedPerSec;
 		Desc.vPosition += Down * Speed * fDeltaTime;
 	}
-	
-	if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
-	{
-		POINT _MousePt;
-		GetCursorPos(&_MousePt);
-		ScreenToClient(g_hWnd, &_MousePt);
-		vec3 _MouseVec { static_cast<float>(_MousePt.x),static_cast<float>(_MousePt.y),0.f };
-		Ray _Ray =MATH::GetRayScreenProjection(_MouseVec, m_pDevice,
-			static_cast<float>(WINCX),static_cast<float>( WINCY));
-		m_pPlayer->_CollisionComp->_Ray = std::move(_Ray);
-	}
-	////////////
-}
-
+};
 
 
 void CStage::Free()

@@ -20,7 +20,7 @@ private:
 	virtual HRESULT AddComponents() override;
 	
 public:
-	virtual void Hit(float fDemage) override;	// 몬스터가 피해를 받음
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI

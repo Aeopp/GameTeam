@@ -183,16 +183,14 @@
     <ClInclude Include="..\Headers\MainCamera.h" />
     <ClInclude Include="..\Headers\Map1st.h" />
     <ClInclude Include="..\Headers\MapBase.h" />
-    <ClInclude Include="..\Headers\MapVertex.h" />
     <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\Player.h" />
-    <ClInclude Include="..\Headers\Spider.h" />
+    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
-    <ClInclude Include="..\Headers\Terrain.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\Headers\Vertexs.h" />
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -227,16 +225,14 @@
     <ClCompile Include="..\Codes\MainCamera.cpp" />
     <ClCompile Include="..\Codes\Map1st.cpp" />
     <ClCompile Include="..\Codes\MapBase.cpp" />
-    <ClCompile Include="..\Codes\MapVertex.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
+    <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
-    <ClCompile Include="..\Codes\Spider.cpp" />
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
-    <ClCompile Include="..\Codes\Terrain.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Codes\Vertexs.cpp" />
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
@@ -274,6 +270,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">3.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
     </FxCompile>
     <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -284,6 +283,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">3.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

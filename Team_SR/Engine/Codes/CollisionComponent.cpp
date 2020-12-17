@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include "Collision.h"
 #include <d3dx9.h>
+#pragma warning(disable:4819)
+
 USING(Engine)
 
 float  CCollisionComponent::MapCollisionCheckDistanceMin= 300.f;
@@ -14,7 +16,7 @@ std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
 
 std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollisionComponent::_TagBind
 {
-	// 여기서 매칭되는 타입을 정의.
+	
 	{ MonsterAttack, { Player } },
 	{ PlayerAttack, {  Monster} }
 };
@@ -64,7 +66,7 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	}
 	else
 	{
-		// 버텍스 정보가 없을 경우?? <- 대부분 이경우에 해당.
+		
 	}
 
 	D3DXCreateSphere(m_pDevice, _Sphere.Radius, 25, 25, &_SphereMesh, 0);
@@ -106,12 +108,6 @@ void CCollisionComponent::Free()
 	Super::Free();
 };
 
-// TODO ::REMOVEPLZ
-vec3 scale{ 20,20,20};
-vec3 rotation{ 0,0,0 };
-vec3 location{ 33,22,11 };
-vec3 debuglocation{ 0,0,0 };
-//
 
 void CCollisionComponent::Update(class CTransform* const _Transform)&
 {
@@ -120,7 +116,7 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 
 	const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
-	// 맵 평면과의 충돌
+	
 	if (bMapCollision)
 	{
 		for (const auto& _CurPlane : _CurMap)
@@ -179,42 +175,13 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		// 충돌함.
 		if (IsCollision.first)
 		{
-//			PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+		// PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
 		}
 		else
 		{
-		//	PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+		// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
 		}
 	}
-
-	// TODO :: REMOVEPLZ
-	PlaneInfo _Info;
-	rotation.x += MATH::RandReal({0,0.3f});
-	rotation.y += MATH::RandReal({ 0,0.3f });
-	rotation.z += MATH::RandReal({ 0,0.3f });
-	mat world = MATH::WorldMatrix(scale, rotation, location);
-	_Info.Face = { MATH::Mul(vec3{-1,-1,0},world),
-					MATH::Mul(vec3{1,1,0},world),MATH::Mul(vec3{1,-1,0},world) };
-	_Info.Center = (MATH::Mul(vec3{ -1,-1,0 }, world) +
-		MATH::Mul(vec3{ 1,1,0 }, world) + MATH::Mul(vec3{ 1,-1,0 }, world)) / 3;
-	D3DXPlaneFromPoints(&_Info._Plane, &_Info.Face[0], &_Info.Face[1], &_Info.Face[2]);
-	for (auto& _Comp : _Comps)
-	{
-		{
-			float t = 0;
-			vec3 IntersectPoint{};
-
-			if (Collision::IsTriangleToRay(_Info, _Ray, t, IntersectPoint))
-			{
-				debuglocation = IntersectPoint;
-			}
-			else
-			{
-
-			}
-		}
-	}
-	//
 }
 
 
@@ -223,33 +190,23 @@ void CCollisionComponent::DebugDraw()
 {
 	if (!CManagement::Get_Instance()->bDebug)return;
 
+	DWORD _AlphaValue;
+	m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
+	if (_AlphaValue == TRUE)
+		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
 	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
 	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
 	_SphereMesh->DrawSubset(0);
-
-	//TODO ::REMOVEPLZ
-	{
-		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-		mat debugworld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, debuglocation);
-		m_pDevice->SetTransform(D3DTS_WORLD, &debugworld);
-		_SphereMesh->DrawSubset(0);
-		std::array<vec3, 4ul> vertexlist{ vec3{-1,-1,0},vec3{1,1,0},vec3{1,-1,0},vec3{-1,-1,0} };
-		mat world = MATH::WorldMatrix(scale, rotation, location);
-		mat view, proj;
-		m_pDevice->GetTransform(D3DTS_VIEW, &view);
-		m_pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-		world = world * view * proj;
-		CManagement::Get_Instance()->GetDXLine().DrawTransform(vertexlist.data(), vertexlist.size(), &world, D3DCOLOR_XRGB(255, 255, 255));
-		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	}
-	//
-
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
+	if (_AlphaValue == TRUE)
+		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 };
+ const std::vector<PlaneInfo>& CCollisionComponent::GetMapPlaneInfo(){ return _MapPlaneInfo; };
 
 void CCollisionComponent::Regist()
 {
@@ -266,6 +223,14 @@ void CCollisionComponent::CancelRegist()
 			}));
 	}
 };
+
+
+// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
+
+void CCollisionComponent::AddMapPlaneInfo(const std::vector<PlaneInfo>& _MapPlaneInfo) noexcept 
+{
+	CCollisionComponent::_MapPlaneInfo.insert( std::end(CCollisionComponent::_MapPlaneInfo ) , std::begin(_MapPlaneInfo), 	std::end(_MapPlaneInfo));
+}
 
 void CCollisionComponent::CollisionUpdate(IDirect3DDevice9* const  _Device)
 {

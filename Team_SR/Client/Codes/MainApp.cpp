@@ -8,6 +8,10 @@
 #include "GlacierBullet.h"
 #include "GlacierParticle.h"
 #include "CollisionComponent.h"
+#include "DXWrapper.h"
+#include "PlyerInfoUI.h"
+#include "WeaponAmmoInfoUI.h"
+
 #include "Eyebat.h"
 #include "EyebatBullet.h"
 #include "Fire.h"
@@ -63,6 +67,7 @@ int CMainApp::UpdateMainApp()
 	ImGuiHelper::DebugInfo(g_hWnd);
 	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
 	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
+	ImGui::Checkbox("ObjectEdit", &ImGuiHelper::bPackageEdit);
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render(m_pDevice);
@@ -100,6 +105,34 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
+
+#pragma region GameObject_PlayerInfoUI
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		CPlyerInfoUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_WeaponAmmoInfoUI
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+			CWeaponAmmoInfoUI::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma  region GameObject_Glacier
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		CGlacier::Create(m_pDevice))))
+		return E_FAIL;
 	// 글레이서
 #pragma  region GameObject_Glacier
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -171,6 +204,8 @@ HRESULT CMainApp::ReadyStaticResources()
 		CVIBuffer_RectTexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+
 	
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -317,6 +352,8 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma endregion	// Component_Texture_BatGrey
+	Effect::EffectInitialize(m_pDevice);
 #pragma region Attack
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -351,6 +388,21 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region Component_Texture_PlayerInfoUI
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_PlayerInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	
+#pragma region Component_Texture_WeaponAmmoInfoUI
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponAmmoInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
+		return E_FAIL;
+#pragma endregion
 	return S_OK;
 }
 
@@ -376,6 +428,7 @@ CMainApp* CMainApp::Create()
 
 void CMainApp::Free()
 {
+	Effect::EffectRelease();
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();

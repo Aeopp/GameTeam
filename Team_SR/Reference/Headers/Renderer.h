@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __RENDERER_H__
 
 #include "Base.h"
@@ -16,6 +16,7 @@ public:
 	HRESULT Render(HWND hWnd = nullptr);
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { this->Ambient = Ambient; };
+	D3DCAPS9 GetCaps() { return _Caps9; };
 private:
 	HRESULT RenderPriority();
 	HRESULT RenderNoAlpha();

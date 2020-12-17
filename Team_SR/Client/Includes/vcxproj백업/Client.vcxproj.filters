@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{b62cf6b7-87b7-4ee8-b49b-eda833da62b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{429149a3-cac2-4a01-816b-40523353717d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene">
+      <UniqueIdentifier>{45b7e179-d037-45a0-90e5-9a68e9b52ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\00.Logo">
+      <UniqueIdentifier>{34aa17b9-bf45-4164-88b6-6a15454defb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\01.Stage">
+      <UniqueIdentifier>{c234953c-5253-40ea-b6ef-3e666a6a61d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{34f3cfec-851c-4272-87c9-1a0524375aea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\00.Player">
+      <UniqueIdentifier>{812401ac-0272-46fc-9039-a86d58c3b660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\99.Loading">
+      <UniqueIdentifier>{877afc48-eb1c-401b-a0c7-05b132d2944f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".ImGui">
+      <UniqueIdentifier>{afcc7edc-5160-4cc5-9a03-9133f2202f29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".ImGui\Lib">
+      <UniqueIdentifier>{3c7bf642-636b-411c-9bdf-b4e2e7c287d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster">
+      <UniqueIdentifier>{09326d54-d2ad-4891-b275-cf9adb436651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\01.Glacier">
+      <UniqueIdentifier>{5f36b600-2d25-411f-890d-4740d02b5de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Map">
+      <UniqueIdentifier>{cb533816-8d62-46e5-86d0-228f63a062f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Camera">
+      <UniqueIdentifier>{b14ae1df-b4c8-4bfa-917f-65377b362a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Component">
+      <UniqueIdentifier>{3e0b9659-a1f5-4910-a552-cd896d8fea18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{0e85ea08-869f-4f5f-bdd6-f5c283757f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\02.BatGrey">
+      <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
+    </Filter>
+<<<<<<< HEAD
+    <Filter Include="97.DXWrapper">
+      <UniqueIdentifier>{823585c1-1122-4b5c-8cef-a3846cb02321}</UniqueIdentifier>
+=======
+    <Filter Include="02.GameObject\05.UI">
+      <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\00.PlayerInfoUI">
+      <UniqueIdentifier>{168b3f09-1e30-4da2-94af-33f0504096b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\01.WeaponAmmoInfoUI">
+      <UniqueIdentifier>{67780ad2-5279-4be6-9593-178138d39fa2}</UniqueIdentifier>
+>>>>>>> origin/MinCW
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Logo.h">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player.h">
+      <Filter>02.GameObject\00.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Loading.h">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx9.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>.ImGui\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiHelper.h">
+      <Filter>.ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\02.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Glacier.h">
+      <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MainCamera.h">
+      <Filter>02.GameObject\04.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapBase.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map1st.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage1st.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Extern.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Define.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Enum.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BatGrey.h">
+      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Typedef.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Struct.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\Headers\DXWrapper.h">
+      <Filter>97.DXWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Vertexs.h">
+      <Filter>97.DXWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Package.h">
+      <Filter>.ImGui</Filter>
+=======
+    <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\PlyerInfoUI.h">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+>>>>>>> origin/MinCW
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Logo.cpp">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player.cpp">
+      <Filter>02.GameObject\00.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Loading.cpp">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>.ImGui\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiHelper.cpp">
+      <Filter>.ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp">
+      <Filter>02.GameObject\02.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Glacier.cpp">
+      <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MainCamera.cpp">
+      <Filter>02.GameObject\04.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapBase.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map1st.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage1st.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatGrey.cpp">
+      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+    </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="..\Codes\DXWrapper.cpp">
+      <Filter>97.DXWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Vertexs.cpp">
+      <Filter>97.DXWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Package.cpp">
+      <Filter>.ImGui</Filter>
+=======
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+>>>>>>> origin/MinCW
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>98.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
+    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
+  </ItemGroup>
+</Project>
