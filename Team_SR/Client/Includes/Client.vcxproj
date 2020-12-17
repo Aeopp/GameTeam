@@ -166,6 +166,7 @@
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
+    <ClInclude Include="..\Headers\GameUI.h" />
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -203,6 +204,7 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
