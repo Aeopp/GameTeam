@@ -15,7 +15,7 @@ private:
 
 public:
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
-
+	std::list<class CGameObject*> GetGameObjects(_int iSceneIndex, const wstring& LayerTag);
 public:
 	HRESULT ReserveSizeContainer(_int iSceneCount);
 	HRESULT AddGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, CGameObject* pPrototype);
@@ -24,6 +24,11 @@ public:
 public:
 	_uint UpdateGameObject(float fDeltaTime);
 	_uint LateUpdateGameObject(float fDeltaTime);
+
+public:
+	// 2020.12.16 11:50 KMJ
+	// Remove 플래그가 ON된 게임 오브젝트 삭제
+	void RemoveGameObject();
 
 private:
 	CGameObject* CloneGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, void* pArg = nullptr);

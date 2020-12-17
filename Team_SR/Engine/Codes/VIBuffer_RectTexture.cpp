@@ -6,7 +6,6 @@ CVIBuffer_RectTexture::CVIBuffer_RectTexture(LPDIRECT3DDEVICE9 pDevice)
 	: CVIBuffer(pDevice)
 {
 }
-
 HRESULT CVIBuffer_RectTexture::ReadyComponentPrototype()
 {
 	m_iVertexSize = sizeof(VTX_TEXTURE);
@@ -68,11 +67,11 @@ HRESULT CVIBuffer_RectTexture::Render_VIBuffer()
 	if (FAILED(CVIBuffer::Render_VIBuffer()))
 		return E_FAIL;
 
-	/* ÀåÄ¡¿¡°Ô ÀÎµ¦½º¹öÆÛ ¼Â */
+	/* ìž¥ì¹˜ì—ê²Œ ì¸ë±ìŠ¤ë²„í¼ ì…‹ */
 	if (FAILED(m_pDevice->SetIndices(m_pIB)))
 		return E_FAIL;
 
-	/* ÀÎµ¦½º¸¦ ÀÌ¿ëÇØ¼­ µµÇüÀ» ±×¸®´Â ÇÔ¼ö */
+	/* ì¸ë±ìŠ¤ë¥¼ ì´ìš©í•´ì„œ ë„í˜•ì„ ê·¸ë¦¬ëŠ” í•¨ìˆ˜ */
 	return m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iVertexCount, 0, m_iTriCount);
 }
 

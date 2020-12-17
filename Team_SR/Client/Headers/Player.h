@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "CollisionComponent.h"
+#include "DXWrapper.h"
 
 USING(Engine)
 class CPlayer final : public CGameObject
@@ -21,13 +22,32 @@ public:
 
 	void MoveForward(const float DeltaTime)&;
 	void MoveRight(const float DeltaTime)&;
+	void MouseRight()&;
+	void MouseLeft()&;
+	void RButtonEvent()&;
+	void _1ButtonEvent()&;
+	void _2ButtonEvent()&;
 private:
 	HRESULT AddStaticComponents()override;
+	enum class EWeaponState : uint8_t
+	{
+		Dagger,
+		Harvester,
+	};
 public:
 	CCollisionComponent* _CollisionComp = nullptr;
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+private:
+	std::shared_ptr<std::vector<SubSetInfo>> _Quad;
+	AnimationTextures _AnimationTextures;
+	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
+private:
+	void HarvesterFire();
+	void HarvesterReload();
+	void DaggerStab();
+	void DaggerThrow();
 };
 
 #define __PLAYER_H__

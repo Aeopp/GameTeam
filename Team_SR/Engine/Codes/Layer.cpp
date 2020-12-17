@@ -7,7 +7,7 @@ const std::wstring CLayer::Tag{L"Layer_"};
 
 CLayer::CLayer()
 {
-}
+};
 
 CGameObject * CLayer::GetGameObject(_uint iIndex)
 {
@@ -18,6 +18,11 @@ CGameObject * CLayer::GetGameObject(_uint iIndex)
 	for (_uint i = 0; i < iIndex; ++i, ++iter_begin);
 
 	return *iter_begin;
+}
+
+typename CLayer::GAMEOBJECTS  CLayer::GetGameObjects()
+{
+	return 	m_GameObjects;
 }
 
 HRESULT CLayer::AddGameObjectInLayer(CGameObject * pGameObject)
@@ -55,6 +60,23 @@ _uint CLayer::LateUpdateGameObject(float fDeltaTime)
 	}
 
 	return _uint();
+}
+
+// 2020.12.16 11:50 KMJ
+// Remove 플래그가 ON된 게임 오브젝트 삭제
+void CLayer::RemoveGameObject()
+{
+	auto iter = m_GameObjects.begin();
+	auto iter_end = m_GameObjects.end();
+	while (iter != iter_end) {
+		// Remove 플래그 검사
+		if ((*iter)->GetOBjFlag() & static_cast<BYTE>(CGameObject::ObjFlag::Remove)) {
+			SafeRelease(*iter);			// 게임 오브젝트 삭제
+			iter = m_GameObjects.erase(iter);	// 이터레이터 삭제
+			continue;
+		}
+		++iter;
+	}
 }
 
 CLayer * CLayer::Create()

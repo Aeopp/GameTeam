@@ -1,6 +1,7 @@
 #include "..\Headers\Renderer.h"
 #include "GameObject.h"
 #include "CollisionComponent.h"
+#include "Transform.h"
 
 USING(Engine)
 
@@ -35,7 +36,7 @@ HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObj
 
 HRESULT CRenderer::Render(HWND hWnd)
 {
-	m_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 0);
+	m_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 0), 1.f, 0);
 	m_pDevice->BeginScene();
 
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
@@ -136,6 +137,17 @@ HRESULT CRenderer::RenderAlpha()
 	*/
 	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	mat View;
+	m_pDevice->GetTransform(D3DTS_VIEW, &View);
+
+	std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), 
+		std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
+		[View](CGameObject* const _Lhs, CGameObject* const _Rhs)
+		{
+			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
+			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
+			return LhsViewLocation.z  > RhsViewLocation.z;
+		});
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{

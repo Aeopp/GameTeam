@@ -93,6 +93,9 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 
 	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
+	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	return S_OK;
 }
 
@@ -128,7 +131,7 @@ CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CPlyerInfoUI::Clone(void * pArg)
 {
-	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* º¹»ç»ý¼ºÀÚ */
+	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

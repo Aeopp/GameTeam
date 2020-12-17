@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef __ENGINE_STRUCT_H__
 
@@ -128,6 +128,18 @@ typedef struct tagCameraDesc
 	float	fNear;
 	float	fFar;
 }CAMERA_DESC;
+
+// 추가 예약된 게임 오브젝트 정보
+// Managerment 의 AddGameObjectInLayer 함수 전달인자 그대로 가져옴
+struct ScheduledGameObjectInfo {
+	_int iFromSceneIndex;
+	wstring wstrGameObjectTag;
+	_int iToSceneIndex;
+	wstring wstrLayerTag;
+	class CGameObject** ppGameObject;
+	void* pArg;
+};
+
 
 END
 

@@ -1,4 +1,4 @@
-﻿#include "..\Headers\GameObjectManager.h"
+#include "..\Headers\GameObjectManager.h"
 #include "Layer.h"
 
 USING(Engine)
@@ -19,6 +19,19 @@ CGameObject * CGameObjectManager::GetGameObject(_int iSceneIndex, const wstring 
 		return nullptr;
 
 	return iter_find->second->GetGameObject(iIndex);
+}
+
+std::list<class CGameObject*> CGameObjectManager::GetGameObjects(_int iSceneIndex, const wstring& LayerTag)
+{
+	if (0 > iSceneIndex ||
+		m_iSceneCount <= iSceneIndex)
+		return {};
+
+	auto iter_find = m_pLayers[iSceneIndex].find(LayerTag);
+	if (m_pLayers[iSceneIndex].end() == iter_find)
+		return {};
+
+	return iter_find->second->GetGameObjects();
 }
 
 HRESULT CGameObjectManager::ReserveSizeContainer(_int iSceneCount)
@@ -181,6 +194,19 @@ _uint CGameObjectManager::LateUpdateGameObject(float fDeltaTime)
 	}
 
 	return _uint();
+}
+
+// 2020.12.16 11:50 KMJ
+// Remove 플래그가 ON된 게임 오브젝트 삭제
+void CGameObjectManager::RemoveGameObject()
+{
+	for (_int i = 0; i < m_iSceneCount; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->RemoveGameObject();
+		}
+	}
 }
 
 CGameObject * CGameObjectManager::CloneGameObjectPrototype(

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __MANAGEMENT_H__
 
 #include "Base.h"
@@ -37,8 +37,13 @@ public:
 public: /* For.GameObjectManager */
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
 	CComponent* GetComponent(_int iSceneIndex, const wstring& LayerTag, const wstring& ComponentTag, _uint iIndex = 0);
+	std::list<class CGameObject*> GetGameObjects(_int iSceneIndex, const wstring& LayerTag);
+
 	HRESULT AddGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, CGameObject* pPrototype);
 	HRESULT AddGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, _int iToSceneIndex, const wstring& LayerTag, CGameObject** ppGameObject = nullptr, void* pArg = nullptr);
+	// 2020.12.16 15:31 KMJ
+	// 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
+	void AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, const wstring& LayerTag, CGameObject** ppGameObject = nullptr, void* pArg = nullptr);
 
 public: /* For.ComponentManager */
 	HRESULT AddComponentPrototype(_int iSceneIndex, const wstring& ComponentTag, CComponent* pPrototype);
@@ -48,9 +53,13 @@ public: /* For.Renderer */
 	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject);
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
+	D3DCAPS9 GetCaps() { return m_pRenderer->GetCaps(); };
 public:
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
-
+private:
+	// 2020.12.16 16:44 KMJ
+	// 예약된 처리
+	HRESULT ScheduledProcessing();
 public:
 	virtual void Free() override;
 	static void ReleaseEngine();
@@ -65,6 +74,8 @@ private:
 	CRenderer*			m_pRenderer = nullptr;
 
 	_uint m_iUpdateEvent = 0;
+
+	list<ScheduledGameObjectInfo> m_listScheduledObjInfo;
 };
 END
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef __MYMATH_H__
 #include "Engine_Include.h"
@@ -23,102 +23,20 @@ public:
 	};
 
 	static vec3 GetNormalFromFace(const vec3& p0,
-		const vec3& p1, const vec3& p2)
-	{
-		const vec3 u = p1 - p0;
-		const vec3 v = p2 - p0;
-		return MATH::Normalize(MATH::Cross(u, v));
-	}
+		const vec3& p1, const vec3& p2);
 
-	static vec3 Mul(const vec3& Lhs, const mat& Rhs)
-	{
-		vec3 Return;
-		D3DXVec3TransformCoord(&Return, &Lhs, &Rhs);
-		return Return;
-	}
-	static vec3 MulNormal(const vec3& Lhs, const mat& Rhs)
-	{
-		vec3 Return;
-		D3DXVec3TransformNormal(&Return, &Lhs, &Rhs);
-		return Return;
-	}
+	static vec3 Mul(const vec3& Lhs, const mat& Rhs);
+	static vec3 MulNormal(const vec3& Lhs, const mat& Rhs);
 
 	static Ray GetRayScreenProjection(const vec3& ScreenPos,
-		IDirect3DDevice9* const _Device,const float Width,const float Height)
-	{
-		vec3 Dir{ (ScreenPos.x),(ScreenPos.y),1.f };
-		const float xfactor = (2.f / Width);
-		const float yfactor = -(2.f / Height);
-		Dir.x = Dir.x * xfactor - 1.f;
-		Dir.y = Dir.y * yfactor + 1.f;
-		mat Proj, InvView;
-		_Device->GetTransform(D3DTS_PROJECTION, &Proj);
-		Dir.x /= Proj(0, 0);
-		Dir.y /= Proj(1, 1);
-		Dir = MATH::Normalize(Dir);
-		_Device->GetTransform(D3DTS_VIEW, &InvView);
-		InvView = MATH::InvMatrix(InvView);
-		Dir = MATH::MulNormal(Dir, InvView);
-		vec3 Origin = { InvView(3,0),InvView(3,1),InvView(3,2) };
-		Ray _Ray;
-		_Ray.Start = std::move(Origin);
-		_Ray.Direction = std::move(Dir);
-		return _Ray;
-	}
-	static bool InnerPointFromFace(const vec3 & Point,const std::array<vec3, 3ul>& Face)
-	{
-		std::array <vec3, 3ul> ToVertexs;
-
-		for (size_t i = 0; i < ToVertexs.size(); ++i)
-		{
-			ToVertexs[i] = MATH::Normalize(Face[i] - Point);
-		}
-
-		float Radian= 0;
-		Radian += std::acosf(MATH::Dot(ToVertexs[0], ToVertexs[1]));
-		Radian += std::acosf(MATH::Dot(ToVertexs[1], ToVertexs[2]));
-		Radian += std::acosf(MATH::Dot(ToVertexs[2], ToVertexs[0]));
-
-		return almost_equal(Radian, MATH::PI * 2.f);
-	}
+		IDirect3DDevice9* const _Device, const float Width, const float Height);
+	static bool InnerPointFromFace(const vec3& Point, const std::array<vec3, 3ul>& Face);
 
 	// 임의의 위치 벡터를 평면에 투영시킨 위치 벡터를 반환.
-	static vec3 ProjectionPointFromFace(D3DXPLANE _Plane, const vec3& Point)
-	{
-		vec3 Normal = { _Plane.a,_Plane.b,_Plane.c };
-		Normal=MATH::Normalize(Normal);
-		const float distance = MATH::Dot(Normal, Point) +_Plane.d;
-		Normal = -Normal;
-		return Point  + ( Normal* distance);
-	}
+	static vec3 ProjectionPointFromFace(D3DXPLANE _Plane, const vec3& Point);
+
 								// 삼각형을 둘러치는 선분 3개.
-	static std::array<Segment, 3ul> MakeSegmentFromFace(const std::array<vec3, 3ul>& Face)
-	{
-		std::array<Segment, 3ul> Segments;
-
-		{
-			Segments[0]._Ray.Start = Face[0];
-			const vec3 Distance = Face[1] - Face[0];
-			Segments[0]._Ray.Direction = MATH::Normalize(Distance);
-			Segments[0].t = MATH::Length(Distance);
-		}
-
-		{
-			Segments[1]._Ray.Start = Face[1];
-			const vec3 Distance = Face[2] - Face[1];
-			Segments[1]._Ray.Direction = MATH::Normalize(Distance);
-			Segments[1].t = MATH::Length(Distance);
-		}
-
-		{
-			Segments[2]._Ray.Start = Face[2];
-			const vec3 Distance = Face[0] - Face[2];
-			Segments[2]._Ray.Direction = MATH::Normalize(Distance);
-			Segments[2].t = MATH::Length(Distance);
-		}
-
-		return Segments;
-	}
+	static std::array<Segment, 3ul> MakeSegmentFromFace(const std::array<vec3, 3ul>& Face);
 	
 	static constexpr float PI = 3.141592653589793238462643383279502884197169399375f;
 	static float ToRadian(float Degree){return Degree * ( PI / 180.0f);};
@@ -130,14 +48,7 @@ public:
 	// 해당 축으로 Lhs 을 회전시켜서 리턴
 	// D3DXVec3TransformCoord 함수를 사용함을 유의.
 	static _vector RotationVec(const _vector& Lhs,
-		const _vector& Axis, const float Degree)
-	{
-		_matrix Rotation;
-		D3DXMatrixRotationAxis(&Rotation, &Axis, ToRadian(Degree) );
-		_vector RotationVec ;
-		D3DXVec3TransformCoord(&RotationVec, &Lhs, &Rotation);
-		return RotationVec;
-	}
+		const _vector& Axis, const float Degree);
 
 	/* a + t(b-a)*/
 	// a=50 b=100 t=0.3 -> Lerp(x) = 65
@@ -172,57 +83,34 @@ public:
 		return ReturnValue;
 	}
 
-	static mat InvMatrix(const mat& _mat)
+	static mat Inverse(const mat& _mat)
 	{
 		mat _inv;
 		D3DXMatrixInverse(&_inv, nullptr, &_mat);
 		return _inv;
 	}
 
-	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,
-		const vec3& Location)
+
+	static mat Transpose(const mat& _mat)
 	{
-		mat Temp, World;
-		D3DXMatrixScaling(&World, Scale.x, Scale.y, Scale.z);
-		D3DXMatrixRotationX(&Temp, MATH::ToRadian(Rotation.x) );
-		World *= Temp;
-		D3DXMatrixRotationY(&Temp, MATH::ToRadian(Rotation.y) );
-		World *= Temp;
-		D3DXMatrixRotationZ(&Temp, MATH::ToRadian(Rotation.z) );
-		World *= Temp;
-		D3DXMatrixTranslation(&Temp, Location.x, Location.y, Location.z);
-		World *= Temp;
-		return World;
+		mat _transpose;
+		D3DXMatrixTranspose(&_transpose, &_mat);
+		return _transpose;
 	}
+
+
+	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,
+		const vec3& Location);
+
 #pragma region RANDOM
 	static std::random_device Rd;
 	static std::mt19937 gen;
 
-	static void RandomInit()
-	{
-		gen.seed(Rd());
-	};
+	static void RandomInit(){gen.seed(Rd());};
 
-	static int32_t RandInt(const std::pair<int32_t, int32_t>& Range)
-	{
-		std::uniform_int_distribution<int32_t> Dis(Range.first, Range.second);
-		return Dis(gen);
-	}
-
-	static float RandReal(const std::pair<float, float>& Range)
-	{
-		std::uniform_real_distribution<float> Dis(Range.first, Range.second);
-		return Dis(gen);
-	}
-
-	static vec3 RandVec()
-	{
-		return MATH::Normalize(vec3{
-			RandReal({ -1.f,1.f }),
-			RandReal({ -1.f,1.f }),
-			RandReal({ -1.f,1.f })
-			});
-	}
+	static int32_t RandInt(const std::pair<int32_t, int32_t>& Range);
+	static float RandReal(const std::pair<float, float>& Range);
+	static vec3 RandVec();
 #pragma endregion RANDOM
 };
 

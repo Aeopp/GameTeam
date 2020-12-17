@@ -1,0 +1,100 @@
+Name Glacier
+Location 12.9783 4.05264 58.5
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 0.535577 3 22.9503
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 8.827 3 6.71307
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 20.0072 3 29.4542
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 5.87321 3 0.661942
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location -3.94919 3 26.58
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location -3.11537 3 3.41818
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 1.257 3 -2.03733
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location -6.56289 3 27.5019
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location -4.96478 3 6.08952
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 1.08619 3 26.8835
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 6.51537 3 5.88759
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 16.9688 3 13.6982
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 11.8659 3 0.398975
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 14.3718 3 21.4508
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 13.7459 3 36.79
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 9.02225 3 12.743
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 4.33172 3 16.5202
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 5.82353 3 25.9841
+Scale 1 1 1
+Rotation 90 126 26.341
+
+Name Glacier
+Location 2.79884 3 5.88758
+Scale 1 1 1
+Rotation 90 126 26.341
+

@@ -160,33 +160,48 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\BatGrey.h" />
+    <ClInclude Include="..\Headers\BatSpit.h" />
+    <ClInclude Include="..\Headers\Bullet.h" />
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\Headers\GameUI.h" />
+=======
+    <ClInclude Include="..\Headers\Effect.h" />
+    <ClInclude Include="..\Headers\Eyebat.h" />
+    <ClInclude Include="..\Headers\EyebatBullet.h" />
+    <ClInclude Include="..\Headers\Fire.h" />
+>>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h" />
+    <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\MainCamera.h" />
     <ClInclude Include="..\Headers\Map1st.h" />
     <ClInclude Include="..\Headers\MapBase.h" />
-    <ClInclude Include="..\Headers\MapVertex.h" />
     <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\Terrain.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+=======
+    <ClInclude Include="..\Headers\Vertexs.h" />
+>>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -204,28 +219,43 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
+    <ClCompile Include="..\Codes\BatSpit.cpp" />
+    <ClCompile Include="..\Codes\Bullet.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\GameUI.cpp" />
+=======
+    <ClCompile Include="..\Codes\Effect.cpp" />
+    <ClCompile Include="..\Codes\Eyebat.cpp" />
+    <ClCompile Include="..\Codes\EyebatBullet.cpp" />
+    <ClCompile Include="..\Codes\Fire.cpp" />
+>>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp" />
+    <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\MainCamera.cpp" />
     <ClCompile Include="..\Codes\Map1st.cpp" />
     <ClCompile Include="..\Codes\MapBase.cpp" />
-    <ClCompile Include="..\Codes\MapVertex.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
+    <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+=======
+    <ClCompile Include="..\Codes\Vertexs.cpp" />
+>>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
@@ -264,6 +294,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">3.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
     </FxCompile>
     <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -274,6 +307,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">3.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

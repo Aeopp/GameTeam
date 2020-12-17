@@ -9,7 +9,7 @@ USING(Engine)
 const std::wstring CGameObject::Tag = L"GameObject_";
 
 CGameObject::CGameObject(LPDIRECT3DDEVICE9 pDevice)
-	: m_pDevice(pDevice), m_pManagement(CManagement::Get_Instance())
+	: m_pDevice(pDevice), m_pManagement(CManagement::Get_Instance()), m_byObjFlag(0)
 {
 	SafeAddRef(m_pDevice);
 }
@@ -50,8 +50,8 @@ _uint CGameObject::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CGameObject::RenderGameObject()
 {
-	m_pDevice->SetVertexShader(nullptr);
-	m_pDevice->SetPixelShader(nullptr);
+	/*m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);*/
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
@@ -72,6 +72,8 @@ void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
+	// 2020.12.17 11:26 KMJ
+	SafeRelease(_CollisionComp);		// 충돌 컴포넌트
 
 	for (auto& Pair : m_Components)
 	{
