@@ -6,6 +6,9 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
+#include "PlyerInfoUI.h"
+
+
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {

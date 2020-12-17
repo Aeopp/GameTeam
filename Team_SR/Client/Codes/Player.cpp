@@ -9,7 +9,8 @@
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
-{}
+{
+}
 
 HRESULT CPlayer::ReadyGameObjectPrototype()
 {

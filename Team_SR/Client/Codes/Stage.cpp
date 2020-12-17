@@ -6,6 +6,7 @@
 #include "Map1st.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
+#include "PlyerInfoUI.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -39,6 +40,15 @@ HRESULT CStage::ReadyScene()
 			return E_FAIL;
 		}
 	}
+
+	//UI
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		(_int)ESceneID::Stage1st,
+		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		nullptr, nullptr)))
+		return E_FAIL;
 
 	return S_OK;
 }

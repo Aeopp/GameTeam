@@ -7,6 +7,8 @@
 #include "Glacier.h"
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
+#include "PlyerInfoUI.h"
+#include "VIBuffer_UITexture.h"
 
 #include "BatGrey.h"	// 박쥐
 
@@ -89,23 +91,28 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-			CMainCamera::Create(m_pDevice))))
-			return E_FAIL;
-	/* For.Component */
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		CMainCamera::Create(m_pDevice))))
+		return E_FAIL;
 
-#pragma  region GameObject_Glacier
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
-			CGlacier::Create(m_pDevice))))
-			return E_FAIL;
-
+#pragma region GameObject_PlayerInfoUI
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		CPlyerInfoUI::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
-		
+#pragma  region GameObject_Glacier
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		CGlacier::Create(m_pDevice))))
+		return E_FAIL;
+
+#pragma endregion
 
 	/* For.Component */
 #pragma region Component_VIBuffer_RectTexture
@@ -113,6 +120,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		CVIBuffer_RectTexture::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_VIBuffer_RectTexture
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CVIBuffer_UITexture>(),
+		CVIBuffer_UITexture::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 	
@@ -227,6 +242,14 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion	// Component_Texture_BatGrey
 	Effect::EffectInitialize(m_pDevice);
+
+#pragma region Component_Texture_PlayerInfoUI
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_PlayerInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
+		return E_FAIL;
+#pragma endregion
 
 	return S_OK;
 }
