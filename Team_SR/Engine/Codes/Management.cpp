@@ -60,6 +60,12 @@ _uint CManagement::UpdateEngine()
 	/* For.DeltaTime */
 	float fDeltaTime = m_pTimeManager->Update_Time_Manager();
 
+	// 2020.12.16 16:27 KMJ
+	// 예약된 처리
+	if (FAILED(ScheduledProcessing())) {
+		PRINT_LOG(L"Error", L"Failed To ScheduledProcessing");
+	}
+
 	/* For.Update */
 	m_iUpdateEvent = m_pSceneManager->UpdateScene(fDeltaTime);
 	if (CHANGE_SCNENE == m_iUpdateEvent)
@@ -208,6 +214,20 @@ HRESULT CManagement::AddGameObjectInLayer(
 	return m_pGameObjectManager->AddGameObjectInLayer(iFromSceneIndex, GameObjectTag, iToSceneIndex, LayerTag, ppGameObject, pArg);
 }
 
+// 2020.12.16 15:31 KMJ
+// 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
+void CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring & GameObjectTag, const wstring & LayerTag, CGameObject ** ppGameObject, void * pArg)
+{
+	ScheduledGameObjectInfo stScheduledObjInfo;
+	stScheduledObjInfo.iFromSceneIndex = iFromSceneIndex;
+	stScheduledObjInfo.wstrGameObjectTag = GameObjectTag;
+	stScheduledObjInfo.iToSceneIndex = m_pSceneManager->GetCurrentScene()->GetSceneIndex();	// 현제 씬의 씬 인덱스를 가져옴
+	stScheduledObjInfo.wstrLayerTag = LayerTag;
+	stScheduledObjInfo.ppGameObject = ppGameObject;
+	stScheduledObjInfo.pArg = pArg;
+	m_listScheduledObjInfo.push_back(stScheduledObjInfo);
+}
+
 HRESULT CManagement::AddComponentPrototype(_int iSceneIndex, const wstring & ComponentTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponentManager)
@@ -238,6 +258,34 @@ HRESULT CManagement::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameO
 void CManagement::RegistLight(const D3DLIGHT9& Light)
 {
 	m_pRenderer->RegistLight(Light);
+}
+
+// 2020.12.16 16:44 KMJ
+// 예정된 처리
+HRESULT CManagement::ScheduledProcessing()
+{
+	HRESULT retVa = S_OK;
+
+	// 삭제 예약된 게임 오브젝트 삭제
+	m_pGameObjectManager->RemoveGameObject();
+
+	// 생성 예약된 게임 오브젝트 생성
+	for (auto& schedule : m_listScheduledObjInfo) {
+		// 오브젝트 레이어에 추가
+		if (FAILED(m_pGameObjectManager->AddGameObjectInLayer(
+			schedule.iFromSceneIndex,
+			schedule.wstrGameObjectTag,
+			schedule.iToSceneIndex,
+			schedule.wstrLayerTag,
+			schedule.ppGameObject,
+			schedule.pArg))) {
+			retVa = E_FAIL;
+		}
+	}
+	// 비우기
+	m_listScheduledObjInfo.clear();
+
+	return retVa;
 }
 
 void CManagement::Free()

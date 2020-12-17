@@ -27,7 +27,7 @@ public:
 				vec3 AxisScale,
 					
 					const float Vibration);
-	bool bThirdPerson = true;
+	bool bThirdPerson = false;
 	float FirstPersonRotationSpeed = 5.f;
 private:
 	struct ShakeInfo

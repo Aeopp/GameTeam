@@ -301,19 +301,23 @@ void CPlayer::HarvesterFire()
 	{
 		auto _Component = _CurrentMonster->GetComponent
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
-		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
-
-		float t0 = 0;
-		 float t1 = 0;
-		std::pair<bool,Engine::Collision::Info> 
-			IsCollision = Collision::IsRayToSphere(_Ray, 
-			_CollisionComp->_Sphere, t0, t1);
-
-		if (IsCollision.first)
+		
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
 		{
-			Collision::Info _CollisionInfo = IsCollision.second;
+			float t0 = 0;
+			float t1 = 0;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
 			_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+			}
 		}
+		
 	}
 }
 

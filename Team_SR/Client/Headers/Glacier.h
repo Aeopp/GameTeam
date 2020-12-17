@@ -2,8 +2,6 @@
 #ifndef __GLACIER_H__
 
 #include "Monster.h"
-#include "CollisionComponent.h"
-
 USING(Engine)
 class CGlacier final : public CMonster
 {
@@ -18,10 +16,14 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
+public:
+	// 2020.12.17 9:57 KMJ
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();
-	HRESULT IsBillboarding();
+	
 private:
 	void Update_AI(float fDeltaTime);
 
@@ -29,16 +31,20 @@ private:
 	void AI_NoAwareness();
 	void AI_FirstPhase();
 	void AI_SecondPhase();
+	void AI_ThirdPhase();
+	void AI_DeadPhase();
 	////////////////////ACTION/////////////////////
 	bool Action_Move(float fDeltaTime);
 	bool Action_Idle(float fDeltaTime);
 	bool Action_Shoot(float fDeltaTime);
 	bool Action_Hurt(float fDeltaTime);
 	bool Action_Death(float fDeltaTime);
+	///////////////////////////////////////////////
+	void CreateBullet();
 
 private:
 	enum class AWARENESS { No, Yes, End };
-	enum class PHASE { HP_Full, HP_Half, End };
+	enum class PHASE { HP_High , HP_Half, HP_Low, HP_ZERO ,End };
 
 	using AIFunc = void(CGlacier::*)(void);
 	using ACTFunc = bool(CGlacier::*)(float);
@@ -49,10 +55,10 @@ public:
 	virtual void Free() override;
 
 private:
-	bool m_bHit = false;
 	float m_fCountDown = 0.f;
+	bool  m_bDead = false;
 	wstring m_wstrBase;
-	CCollisionComponent* _CollisionComp = nullptr;
+	wstring m_ComTexture;
 	////////////////////////////////////////////////////
 	AWARENESS	m_eAwareness = AWARENESS::End;
 	PHASE		m_ePhase = PHASE::End;

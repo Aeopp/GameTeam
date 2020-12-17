@@ -160,15 +160,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\BatGrey.h" />
+    <ClInclude Include="..\Headers\BatSpit.h" />
+    <ClInclude Include="..\Headers\Bullet.h" />
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
+    <ClInclude Include="..\Headers\Effect.h" />
+    <ClInclude Include="..\Headers\Eyebat.h" />
+    <ClInclude Include="..\Headers\EyebatBullet.h" />
+    <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h" />
+    <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
@@ -199,10 +207,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
+    <ClCompile Include="..\Codes\BatSpit.cpp" />
+    <ClCompile Include="..\Codes\Bullet.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\Effect.cpp" />
+    <ClCompile Include="..\Codes\Eyebat.cpp" />
+    <ClCompile Include="..\Codes\EyebatBullet.cpp" />
+    <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp" />
+    <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />

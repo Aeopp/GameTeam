@@ -1,6 +1,7 @@
 #include "..\Headers\Renderer.h"
 #include "GameObject.h"
 #include "CollisionComponent.h"
+#include "Transform.h"
 
 USING(Engine)
 
@@ -139,11 +140,14 @@ HRESULT CRenderer::RenderAlpha()
 	mat View;
 	m_pDevice->GetTransform(D3DTS_VIEW, &View);
 
-	/*std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
-		[View](CGameObject* const _Lhs, CGameObject* const _RAISE)
+	std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), 
+		std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
+		[View](CGameObject* const _Lhs, CGameObject* const _Rhs)
 		{
-			
-		});*/
+			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
+			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
+			return LhsViewLocation.z  > RhsViewLocation.z;
+		});
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{

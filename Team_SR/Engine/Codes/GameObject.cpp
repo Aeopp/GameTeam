@@ -9,7 +9,7 @@ USING(Engine)
 const std::wstring CGameObject::Tag = L"GameObject_";
 
 CGameObject::CGameObject(LPDIRECT3DDEVICE9 pDevice)
-	: m_pDevice(pDevice), m_pManagement(CManagement::Get_Instance())
+	: m_pDevice(pDevice), m_pManagement(CManagement::Get_Instance()), m_byObjFlag(0)
 {
 	SafeAddRef(m_pDevice);
 }
@@ -72,6 +72,8 @@ void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
+	// 2020.12.17 11:26 KMJ
+	SafeRelease(_CollisionComp);		// 충돌 컴포넌트
 
 	for (auto& Pair : m_Components)
 	{

@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "MainCamera.h"
 #include "MyMath.h"
 #include "ImGuiHelper.h"

@@ -19,6 +19,9 @@ public:
 private:
 	virtual HRESULT AddComponents() override;
 	
+public:
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
 	HRESULT Set_Texture();					// 장치에 텍스처 셋
@@ -30,6 +33,9 @@ private:
 	bool Action_Idle(float fDeltaTime);		// 행동 대기
 	bool Action_Move(float fDeltaTime);		// 이동
 	bool Action_Shoot(float fDeltaTime);	// 원거리 공격
+	bool Action_Melee(float fDeltaTime);	// 근접 공격
+	bool Action_Hit(float fDeltaTime);		// 공격받아서 경직
+	bool Action_Dead(float fDeltaTime);		// 죽음
 
 public:
 	static CBatGrey* Create(LPDIRECT3DDEVICE9 pDevice);

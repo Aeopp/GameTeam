@@ -196,6 +196,19 @@ _uint CGameObjectManager::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
+// 2020.12.16 11:50 KMJ
+// Remove 플래그가 ON된 게임 오브젝트 삭제
+void CGameObjectManager::RemoveGameObject()
+{
+	for (_int i = 0; i < m_iSceneCount; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->RemoveGameObject();
+		}
+	}
+}
+
 CGameObject * CGameObjectManager::CloneGameObjectPrototype(
 	_int iSceneIndex,
 	const wstring & GameObjectTag,
