@@ -8,6 +8,8 @@
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
 #include "PlyerInfoUI.h"
+#include "WeaponAmmoInfoUI.h"
+
 #include "BatGrey.h"	// 박쥐
 
 CMainApp::CMainApp()
@@ -101,6 +103,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
 		CPlyerInfoUI::Create(m_pDevice))))
 		return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_WeaponAmmoInfoUI
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+			CWeaponAmmoInfoUI::Create(m_pDevice))))
+			return E_FAIL;
 #pragma endregion
 
 #pragma  region GameObject_Glacier
@@ -242,7 +252,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
 		return E_FAIL;
 #pragma endregion
-
+	
+#pragma region Component_Texture_WeaponAmmoInfoUI
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponAmmoInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
+		return E_FAIL;
+#pragma endregion
 	return S_OK;
 }
 

@@ -52,8 +52,19 @@
     <Filter Include="02.GameObject\02.Monster\02.BatGrey">
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="97.DXWrapper">
       <UniqueIdentifier>{823585c1-1122-4b5c-8cef-a3846cb02321}</UniqueIdentifier>
+=======
+    <Filter Include="02.GameObject\05.UI">
+      <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\00.PlayerInfoUI">
+      <UniqueIdentifier>{168b3f09-1e30-4da2-94af-33f0504096b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\01.WeaponAmmoInfoUI">
+      <UniqueIdentifier>{67780ad2-5279-4be6-9593-178138d39fa2}</UniqueIdentifier>
+>>>>>>> origin/MinCW
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +158,7 @@
     <ClInclude Include="..\Headers\Client_Struct.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\Headers\DXWrapper.h">
       <Filter>97.DXWrapper</Filter>
     </ClInclude>
@@ -155,9 +167,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Package.h">
       <Filter>.ImGui</Filter>
+=======
+    <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\PlyerInfoUI.h">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
-    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+>>>>>>> origin/MinCW
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -223,6 +241,7 @@
     <ClCompile Include="..\Codes\BatGrey.cpp">
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\DXWrapper.cpp">
       <Filter>97.DXWrapper</Filter>
     </ClCompile>
@@ -231,9 +250,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Package.cpp">
       <Filter>.ImGui</Filter>
+=======
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
-    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+>>>>>>> origin/MinCW
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

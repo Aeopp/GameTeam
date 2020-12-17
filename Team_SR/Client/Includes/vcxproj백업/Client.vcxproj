@@ -181,8 +181,15 @@
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\Headers\Vertexs.h" />
+=======
+    <ClInclude Include="..\Headers\Terrain.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
+>>>>>>> origin/MinCW
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -215,8 +222,15 @@
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\Vertexs.cpp" />
+=======
+    <ClCompile Include="..\Codes\Terrain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
+>>>>>>> origin/MinCW
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
