@@ -7,13 +7,10 @@
 #include "Glacier.h"
 #include "BatGrey.h"
 #include "PlyerInfoUI.h"
-
-
 #include "Eyebat.h"
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
-{
-}
+{}
 
 HRESULT CStage1st::ReadyScene()
 {
@@ -51,7 +48,7 @@ HRESULT CStage1st::ReadyScene()
 			wss >> Token;
 
 			std::wstring Name;
-
+			      
 			if (Token == L"Name")
 			{
 				wss >> Name;
@@ -136,8 +133,6 @@ HRESULT CStage1st::ReadyScene()
 			// 글레이서
 			//stArg.vPosition = { 5.f, 10.f, 30.f };
 
-		
-		
 			// 눈깔박쥐
 			stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
 

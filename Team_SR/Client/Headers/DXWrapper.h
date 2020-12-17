@@ -21,6 +21,7 @@ struct AnimationTextures
 	using NotifyType = std::map<uint32_t, std::function<void()> >;
 
 	std::map<std::wstring,std::vector<IDirect3DTexture9*>> _TextureMap;
+	FORCEINLINE const std::wstring& GetAnimationKey() { return CurrentAnimKey;  };
 	void Release()& noexcept;
 	void AddRef()& noexcept;
 	void Update(const float DeltaTime);

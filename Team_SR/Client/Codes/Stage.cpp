@@ -58,6 +58,7 @@ HRESULT CStage::ReadyScene()
 		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
 		nullptr, nullptr)))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -89,6 +90,16 @@ _uint CStage::LateUpdateScene()
 
 _uint CStage::KeyProcess(float fDeltaTime)
 {
+
+	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
+	{
+		ImGui::Begin("Information");
+		ImGui::Text("Press L Key Is Third Person First Person Change");
+		ImGui::Text("Press O Key Debug Toggle");
+		ImGui::Text("Press L Key Edit Mode Toggle");
+		ImGui::End();
+	}
+
 	if (m_pKeyMgr->Key_Down('P'))
 	{
 		ImGuiHelper::bEditOn = !ImGuiHelper::bEditOn;
@@ -102,19 +113,14 @@ _uint CStage::KeyProcess(float fDeltaTime)
 		_Camera->bThirdPerson = !_Camera->bThirdPerson;
 	}
 
-	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
-	{
-		ImGui::Begin("Information");
-		ImGui::Text("Press L Key Is Third Person First Person Change");
-		ImGui::Text("Press O Key Debug Toggle");
-		ImGui::Text("Press L Key Edit Mode Toggle");
-		ImGui::End();
-	}
-
 	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
-	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+
+	if (ImGuiHelper::bEditOn)
 	{
-		ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
+		if (m_pKeyMgr->Key_Down(VK_LBUTTON))
+		{
+			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
+		}
 	}
 
 	return _uint();
@@ -181,6 +187,26 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
+	if (m_pKeyMgr->Key_Pressing('Z'))
+	{
+		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
+		const mat world = Desc.matWorld;
+		vec3 Up{ 0.f,1.f,0.f };
+		Up = MATH::Normalize(Up);
+		const float Speed = Desc.fSpeedPerSec;
+		Desc.vPosition += Up * Speed * fDeltaTime;
+	}
+	if (m_pKeyMgr->Key_Pressing('X'))
+	{
+		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
+		const mat world = Desc.matWorld;
+		vec3 Down{ 0.f,-1.f,0.f };
+		Down = MATH::Normalize(Down);
+		const float Speed = Desc.fSpeedPerSec;
+		Desc.vPosition += Down * Speed * fDeltaTime;
+	}
+
+
 	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeft();
@@ -193,8 +219,15 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->MouseRight();
 	}
-
-	if (m_pKeyMgr->Key_Down('1'))
+	else if (m_pKeyMgr->Key_Pressing(VK_RBUTTON))
+	{
+		m_pPlayer->MouseRightPressing();
+	}
+	else if (m_pKeyMgr->Key_Up(VK_RBUTTON))
+	{
+		m_pPlayer->MouseRightUp();
+	}
+	else if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
 	}
@@ -202,26 +235,21 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->_2ButtonEvent();
 	}
-
-
-
-	if (m_pKeyMgr->Key_Pressing('Z'))
+	else if (m_pKeyMgr->Key_Down('3'))
 	{
-		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
-		const mat world = Desc.matWorld;
-		vec3 Up{ 0.f,1.f,0.f };
-		Up = MATH::Normalize(Up);
-		const float Speed = Desc.fSpeedPerSec;
-		Desc.vPosition += Up * Speed * fDeltaTime;
+		m_pPlayer->_3ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Pressing('X'))
+	else if (m_pKeyMgr->Key_Down('4'))
 	{
-		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
-		const mat world = Desc.matWorld;
-		vec3 Down{ 0.f,-1.f,0.f };
-		Down = MATH::Normalize(Down);
-		const float Speed = Desc.fSpeedPerSec;
-		Desc.vPosition += Down * Speed * fDeltaTime;
+		m_pPlayer->_4ButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Down('5'))
+	{
+		m_pPlayer->_5ButtonEvent();
+	}
+	else if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
+	{
+		m_pPlayer->MouseLeftPressing();
 	}
 };
 

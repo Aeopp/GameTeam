@@ -23,16 +23,25 @@ public:
 	void MoveForward(const float DeltaTime)&;
 	void MoveRight(const float DeltaTime)&;
 	void MouseRight()&;
+	void MouseRightPressing()&;
+	void MouseRightUp()&;
 	void MouseLeft()&;
+	void MouseLeftPressing()&;
 	void RButtonEvent()&;
 	void _1ButtonEvent()&;
 	void _2ButtonEvent()&;
+	void _3ButtonEvent()&;
+	void _4ButtonEvent()&;
+	void _5ButtonEvent()&;
 private:
 	HRESULT AddStaticComponents()override;
 	enum class EWeaponState : uint8_t
 	{
 		Dagger,
 		Harvester,
+		Akimbo,
+		Magnum,
+		Staff,
 	};
 public:
 	CCollisionComponent* _CollisionComp = nullptr;
@@ -43,11 +52,19 @@ private:
 	std::shared_ptr<std::vector<SubSetInfo>> _Quad;
 	AnimationTextures _AnimationTextures;
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
+	bool bStaffLoop = false;
 private:
+	const float WeaponAnimDelta = 0.07f;
 	void HarvesterFire();
 	void HarvesterReload();
 	void DaggerStab();
 	void DaggerThrow();
+	void AkimboFire();
+	void MagnumFire();
+	void StaffFire();
+	void StaffCharge();
+	void StaffRelease();
+	void StaffLoop();
 };
 
 #define __PLAYER_H__

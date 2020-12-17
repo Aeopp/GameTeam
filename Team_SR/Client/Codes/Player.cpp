@@ -28,6 +28,9 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 		_AnimationTextures._TextureMap[L"Harvester_Idle"] = CreateTextures(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Idle\\", 1);
 
+		_AnimationTextures._TextureMap[L"Harvester_Hud"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Harvester\\Hud\\", 1);
+
 		_AnimationTextures._TextureMap[L"Harvester_Reload"] = CreateTextures(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Reload\\", 23);
 	}
@@ -39,11 +42,58 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 		_AnimationTextures._TextureMap[L"Dagger_Idle"] = CreateTextures(
 			m_pDevice, L"..\\Resources\\Player\\Dagger\\Idle\\", 1);
 
+		_AnimationTextures._TextureMap[L"Dagger_Hud"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Dagger\\Hud\\", 1);
+
 		_AnimationTextures._TextureMap[L"Dagger_Throw"] = CreateTextures(
 			m_pDevice, L"..\\Resources\\Player\\Dagger\\Throw\\", 12);
 
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 	}
+
+	{
+		_AnimationTextures._TextureMap[L"Magnum_Fire"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Magnum\\Fire\\", 4);
+
+		_AnimationTextures._TextureMap[L"Magnum_Idle"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Magnum\\Idle\\", 1);
+
+		_AnimationTextures._TextureMap[L"Magnum_Hud"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Magnum\\Hud\\", 1);
+	}
+
+	{
+		_AnimationTextures._TextureMap[L"Akimbo_Fire"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Fire\\", 4);
+
+		_AnimationTextures._TextureMap[L"Akimbo_Idle"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Idle\\", 1);
+
+		_AnimationTextures._TextureMap[L"Akimbo_Hud"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Hud\\", 1);
+	}
+
+	{
+		_AnimationTextures._TextureMap[L"Staff_Fire"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Fire\\", 4);
+
+		_AnimationTextures._TextureMap[L"Staff_Hud"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Hud\\", 1);
+
+		_AnimationTextures._TextureMap[L"Staff_Charge"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Charge\\", 16);
+
+		_AnimationTextures._TextureMap[L"Staff_Loop"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Loop\\", 10);
+
+		_AnimationTextures._TextureMap[L"Staff_Idle"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Idle\\", 1);
+
+		_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTextures(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Release\\", 5);
+	}
+
+
 
 	return S_OK;
 }
@@ -121,7 +171,7 @@ HRESULT CPlayer::RenderGameObject()
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *2.f);
-	GunLocation.y -= 0.33f;
+	GunLocation.y -= 0.36f;
 	vec3 GunScale = m_pTransformCom->GetScale();
 	GunScale.y *= -1.f;
 
@@ -178,6 +228,58 @@ void CPlayer::MouseRight()&
 		break;
 	case CPlayer::EWeaponState::Harvester:
 		break;
+	case CPlayer::EWeaponState::Akimbo:
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		break;
+	case CPlayer::EWeaponState::Staff:
+		break;
+	default:
+		break;
+	}
+}
+void CPlayer::MouseRightPressing()&
+{
+	switch (_CurrentWeaponState)
+	{
+	case CPlayer::EWeaponState::Dagger:
+		break;
+	case CPlayer::EWeaponState::Harvester:
+		break;
+	case CPlayer::EWeaponState::Akimbo:
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		break;
+	case CPlayer::EWeaponState::Staff:
+		if (_AnimationTextures.GetAnimationKey() != L"Staff_Charge" && 
+			_AnimationTextures.GetAnimationKey() != L"Staff_Loop")
+		{
+			StaffCharge();
+		}
+		break;
+	default:
+		break;
+	}	
+}
+void CPlayer::MouseRightUp()&
+{
+	switch (_CurrentWeaponState)
+	{
+	case CPlayer::EWeaponState::Dagger:
+		break;
+	case CPlayer::EWeaponState::Harvester:
+		break;
+	case CPlayer::EWeaponState::Akimbo:
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		break;
+	case CPlayer::EWeaponState::Staff:
+		if (bStaffLoop)
+		{
+			bStaffLoop = false;
+			StaffRelease();
+		}
+		break;
 	default:
 		break;
 	}
@@ -193,10 +295,50 @@ void CPlayer::MouseLeft()&
 	case CPlayer::EWeaponState::Harvester:
 		HarvesterFire();
 		break;
+	case CPlayer::EWeaponState::Akimbo:
+		AkimboFire();
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		MagnumFire();
+		break;
+	case CPlayer::EWeaponState::Staff:
+		if (bStaffLoop)
+		{
+			bStaffLoop = false;
+			StaffRelease();
+		}
+		else
+		{
+			StaffFire();
+		}
+		break;
 	default:
 		break;
 	}
 }
+void CPlayer::MouseLeftPressing()&
+{
+	switch (_CurrentWeaponState)
+	{
+	case CPlayer::EWeaponState::Dagger:
+		break;
+	case CPlayer::EWeaponState::Harvester:
+		break;
+	case CPlayer::EWeaponState::Akimbo:
+		if (_AnimationTextures.GetAnimationKey() != L"Akimbo_Fire")
+		{
+			AkimboFire();
+		}
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		break;
+	case CPlayer::EWeaponState::Staff:
+		break;
+	default:
+		break;
+	};
+};
+
 void CPlayer::RButtonEvent()&
 {
 	switch (_CurrentWeaponState)
@@ -206,6 +348,12 @@ void CPlayer::RButtonEvent()&
 	case CPlayer::EWeaponState::Harvester:
 		HarvesterReload();
 		break;
+	case CPlayer::EWeaponState::Akimbo:
+		break;
+	case CPlayer::EWeaponState::Magnum:
+		break;
+	case CPlayer::EWeaponState::Staff:
+		break;
 	default:
 		break;
 	}
@@ -214,11 +362,31 @@ void CPlayer::RButtonEvent()&
 void CPlayer::_1ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dagger;
+	_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 }
 
 void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Harvester;
+	_AnimationTextures.ChangeAnim(L"Harvester_Idle", FLT_MAX, 1);
+}
+
+void CPlayer::_3ButtonEvent()&
+{
+	_CurrentWeaponState = EWeaponState::Akimbo;
+	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
+}
+
+void CPlayer::_4ButtonEvent()&
+{
+	_CurrentWeaponState = EWeaponState::Magnum;
+	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
+}
+
+void CPlayer::_5ButtonEvent()&
+{
+	_CurrentWeaponState = EWeaponState::Staff;
+	_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
 }
 
 HRESULT CPlayer::AddStaticComponents()
@@ -314,7 +482,7 @@ void CPlayer::HarvesterFire()
 			if (IsCollision.first)
 			{
 				Collision::Info _CollisionInfo = IsCollision.second;
-			_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
 		
@@ -330,10 +498,8 @@ void CPlayer::HarvesterReload()
 		_AnimationTextures.ChangeAnim(L"Harvester_Idle", FLT_MAX, 1);
 	};
 
-	_AnimationTextures.ChangeAnim(L"Harvester_Reload", 0.1f, 23ul,
+	_AnimationTextures.ChangeAnim(L"Harvester_Reload", 0.07f, 23ul,
 		false, std::move(_Notify));
-
-
 }
 
 void CPlayer::DaggerStab()
@@ -345,7 +511,7 @@ void CPlayer::DaggerStab()
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX,1);
 	};
 
-	_AnimationTextures.ChangeAnim(L"Dagger_Stab", 0.1f, 4ul, false,
+	_AnimationTextures.ChangeAnim(L"Dagger_Stab", 0.07f, 4ul, false,
 		std::move(_Notify));
 }
 
@@ -358,6 +524,76 @@ void CPlayer::DaggerThrow()
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 	};
 
-	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.1f, 12ul, false,
+	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.07f, 12ul, false,
 		std::move(_Notify));
+}
+
+void CPlayer::AkimboFire()
+{
+	AnimationTextures::NotifyType _Notify;
+
+	_Notify[4ul] = [this]()
+	{
+		_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
+	};
+
+	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.04f, 4ul, false, std::move(_Notify));
+}
+
+void CPlayer::MagnumFire()
+{
+	AnimationTextures::NotifyType _Notify;
+
+	_Notify[4ul] = [this]()
+	{
+		_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
+	};
+
+	_AnimationTextures.ChangeAnim(L"Magnum_Fire", 0.07f, 4ul, false, std::move(_Notify));
+}
+
+void CPlayer::StaffFire()
+{
+	AnimationTextures::NotifyType _Notify;
+
+	_Notify[4ul] = [this]()
+	{
+		_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
+	};
+
+	_AnimationTextures.ChangeAnim(L"Staff_Fire", 0.07f, 4ul, false, std::move(_Notify));
+}
+
+void CPlayer::StaffCharge()
+{
+	AnimationTextures::NotifyType _Notify;
+
+	_Notify[16ul] = [this]()
+	{
+		StaffLoop();
+	};
+
+	_AnimationTextures.ChangeAnim(L"Staff_Charge", 0.07f, 16ul, false, std::move(_Notify));
+}
+
+void CPlayer::StaffRelease()
+{
+	AnimationTextures::NotifyType _Notify;
+
+	_Notify[5ul] = [this]()
+	{
+		_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1, true);
+	};
+
+	_AnimationTextures.ChangeAnim(L"Staff_Release", 0.07f, 5ul,
+		false, std::move(_Notify));
+}
+
+void CPlayer::StaffLoop()
+{
+	_AnimationTextures.ChangeAnim(L"Staff_Loop", 0.07f, 10, true);
+	// 공격 키 눌렀을때 웨폰 상태가 스태프라면 Fire 하고 난 다음에 
+	// bStaffLoop =false 로 만들기
+	// Key Up 일때 Loop 였다면 bStaffLoop = false 하고 Release 호출
+	bStaffLoop = true;
 }
