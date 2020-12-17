@@ -26,7 +26,7 @@ public:
 	void MouseLeft()&;
 	void RButtonEvent()&;
 	void _1ButtonEvent()&;
-	void _2ButtonEvent()&;
+	void _2ButtonEvent()&; 
 private:
 	HRESULT AddStaticComponents()override;
 	enum class EWeaponState : uint8_t

@@ -1,4 +1,4 @@
-﻿#include "CollisionComponent.h"
+#include "CollisionComponent.h"
 #include "Management.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -116,7 +116,6 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 
 	const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
-	
 	if (bMapCollision)
 	{
 		for (const auto& _CurPlane : _CurMap)
