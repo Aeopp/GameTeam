@@ -7,6 +7,7 @@
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
+#include "WeaponAmmoInfoUI.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
@@ -50,6 +51,13 @@ HRESULT CStage::ReadyScene()
 		nullptr, nullptr)))
 		return E_FAIL;
 
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		(_int)ESceneID::Stage1st,
+		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		nullptr, nullptr)))
+		return E_FAIL;
 	return S_OK;
 }
 

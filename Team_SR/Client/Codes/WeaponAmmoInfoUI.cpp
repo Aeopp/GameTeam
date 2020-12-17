@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "..\Headers\PlyerInfoUI.h"
+#include "..\Headers\WeaponAmmoInfoUI.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "Layer.h"
 
-CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
+CWeaponAmmoInfoUI::CWeaponAmmoInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {
 	
 }
 
-HRESULT CPlyerInfoUI::ReadyGameObjectPrototype()
+HRESULT CWeaponAmmoInfoUI::ReadyGameObjectPrototype()
 {
 	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
-HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
+HRESULT CWeaponAmmoInfoUI::ReadyGameObject(void* pArg)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -30,7 +30,7 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	m_pTransformCom->m_TransformDesc.vScale.y = 15.f;
 	m_pTransformCom->m_TransformDesc.vScale.z = 0;
 
-	m_pTransformCom->m_TransformDesc.vPosition.x = -50.f;
+	m_pTransformCom->m_TransformDesc.vPosition.x = 50.f;
 	m_pTransformCom->m_TransformDesc.vPosition.y = -18.f;
 	m_pTransformCom->m_TransformDesc.vPosition.z = 0.f;
 	
@@ -42,10 +42,10 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	return S_OK;
 }
 
-_uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
+_uint CWeaponAmmoInfoUI::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
-	ImGui::Begin("PlayerInfoUI Edit");
+	ImGui::Begin("WeaponAmmoInfoUI Edit");
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Scale",
@@ -62,7 +62,7 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-_uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
+_uint CWeaponAmmoInfoUI::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
@@ -73,7 +73,7 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CPlyerInfoUI::RenderGameObject()
+HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 {
 	
 
@@ -138,12 +138,12 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	return S_OK;
 }
 
-HRESULT CPlyerInfoUI::AddComponent()
+HRESULT CWeaponAmmoInfoUI::AddComponent()
 {
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_PlayerInfoUI",
+		L"Component_Texture_WeaponAmmoInfoUI",
 		L"Com_Texture",
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
@@ -161,12 +161,12 @@ HRESULT CPlyerInfoUI::AddComponent()
 
 
 
-CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
+CWeaponAmmoInfoUI * CWeaponAmmoInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CPlyerInfoUI* pInstance = new CPlyerInfoUI(pDevice);
+	CWeaponAmmoInfoUI* pInstance = new CWeaponAmmoInfoUI(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Create PlyerInfoUI");
@@ -176,9 +176,9 @@ CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CGameObject * CPlyerInfoUI::Clone(void * pArg)
+CGameObject * CWeaponAmmoInfoUI::Clone(void * pArg)
 {
-	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* 복사생성자 */
+	CWeaponAmmoInfoUI* pClone = new CWeaponAmmoInfoUI(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -189,7 +189,7 @@ CGameObject * CPlyerInfoUI::Clone(void * pArg)
 	return pClone;
 }
 
-void CPlyerInfoUI::Free()
+void CWeaponAmmoInfoUI::Free()
 {
 	CGameObject::Free();
 }

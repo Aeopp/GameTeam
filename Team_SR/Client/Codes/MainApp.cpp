@@ -7,7 +7,7 @@
 #include "Glacier.h"
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
-#include "VIBuffer_UITexture.h"
+#include "WeaponAmmoInfoUI.h"
 
 #include "BatGrey.h"	// 박쥐
 
@@ -103,6 +103,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region GameObject_WeaponAmmoInfoUI
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+			CWeaponAmmoInfoUI::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
 #pragma  region GameObject_Glacier
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -121,13 +129,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma region Component_VIBuffer_RectTexture
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CVIBuffer_UITexture>(),
-		CVIBuffer_UITexture::Create(m_pDevice))))
-		return E_FAIL;
-#pragma endregion
 	
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -247,7 +248,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
 		return E_FAIL;
 #pragma endregion
-
+	
+#pragma region Component_Texture_WeaponAmmoInfoUI
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponAmmoInfoUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
+		return E_FAIL;
+#pragma endregion
 	return S_OK;
 }
 

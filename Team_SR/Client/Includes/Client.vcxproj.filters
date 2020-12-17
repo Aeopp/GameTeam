@@ -55,6 +55,15 @@
     <Filter Include="02.GameObject\02.Monster\02.BatGrey">
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.UI">
+      <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\00.PlayerInfoUI">
+      <UniqueIdentifier>{168b3f09-1e30-4da2-94af-33f0504096b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.UI\01.WeaponAmmoInfoUI">
+      <UniqueIdentifier>{67780ad2-5279-4be6-9593-178138d39fa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -154,6 +163,12 @@
       <Filter>99.Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\PlyerInfoUI.h">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -226,6 +241,12 @@
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\00.PlayerInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\05.UI\01.WeaponAmmoInfoUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
