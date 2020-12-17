@@ -68,7 +68,6 @@ HRESULT CStage1st::ReadyScene()
 			CLayer::Tag + TYPE_NAME<CEyebat>(),
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
-
 	}
 
 

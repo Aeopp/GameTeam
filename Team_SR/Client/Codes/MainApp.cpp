@@ -6,6 +6,7 @@
 #include "MainCamera.h"
 #include "Glacier.h"
 #include "GlacierBullet.h"
+#include "GlacierParticle.h"
 #include "CollisionComponent.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
@@ -127,6 +128,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		CBatSpit::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+#pragma region GameObject_GlacierParticle
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+			CGlacierParticle::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 		
 #pragma region GameObject_Eyebat
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -151,6 +159,7 @@ HRESULT CMainApp::ReadyStaticResources()
 			CFire::Create(m_pDevice))))
 			return E_FAIL;
 #pragma endregion
+
 
 		
 
