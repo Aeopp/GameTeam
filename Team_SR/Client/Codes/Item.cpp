@@ -26,7 +26,7 @@ HRESULT CItem::ReadyGameObject(void* pArg /*= nullptr*/)
 		if (sizeof(ItemBasicArgument) == *static_cast<_uint*>(pArg)) {
 			ItemBasicArgument* pArgument = static_cast<ItemBasicArgument*>(pArg);
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
-			m_stItemInfo = pArgument->stItemInfo;
+			m_stItemInfo.etype = pArgument->etype;
 			// 동적 생성된 거임
 			if (pArgument->bDeleteFlag) {
 				delete pArg;
@@ -107,10 +107,11 @@ HRESULT CItem::AddComponents()
 
 #pragma region Item_Texture
 	// 아이템 타입으로 텍스처 컴포넌트 추가
-	switch (m_stItemInfo.type)
+	switch (m_stItemInfo.etype)
 	{
 		// 겁나큰 체력 포션 텍스처
 	case ITEM::HealthBig:
+		m_stItemInfo.iAmount = 50;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
@@ -123,6 +124,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 작은 체력 포션 텍스처
 	case ITEM::HealthSmall:
+		m_stItemInfo.iAmount = 20;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
@@ -135,6 +137,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 겁나큰 마나 포션 텍스처
 	case ITEM::ManaBig:
+		m_stItemInfo.iAmount = 50;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
@@ -147,6 +150,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 작은 마나 포션 텍스처
 	case ITEM::ManaSmall:
+		m_stItemInfo.iAmount = 20;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
@@ -159,6 +163,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 총알 박스
 	case ITEM::Ammo:
+		m_stItemInfo.iAmount = 30;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 0;
@@ -171,6 +176,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 파란 열쇠
 	case ITEM::KeyBlue:
+		m_stItemInfo.iAmount = 1;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 0;
@@ -183,6 +189,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 빨강 열쇠
 	case ITEM::KeyRed:
+		m_stItemInfo.iAmount = 1;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 0;
@@ -195,6 +202,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 노랑 열쇠
 	case ITEM::KeyYellow:
+		m_stItemInfo.iAmount = 1;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 0;
@@ -207,6 +215,7 @@ HRESULT CItem::AddComponents()
 		break;
 		// 업그레이드 재화
 	case ITEM::Upgrade:
+		m_stItemInfo.iAmount = 1;
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 0;

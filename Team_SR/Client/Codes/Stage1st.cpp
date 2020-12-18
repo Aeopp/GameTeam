@@ -55,7 +55,7 @@ HRESULT CStage1st::ReadyScene()
 		ItemBasicArgument stItemArg;
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 0.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::HealthBig, 50 };
+		stItemArg.etype = ITEM::HealthBig;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -68,7 +68,7 @@ HRESULT CStage1st::ReadyScene()
 		// 작은 체력 포션
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 1.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::HealthSmall, 20 };
+		stItemArg.etype = ITEM::HealthSmall;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -81,7 +81,7 @@ HRESULT CStage1st::ReadyScene()
 		// 겁나큰 마나 포션
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 2.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::ManaBig, 50 };
+		stItemArg.etype = ITEM::ManaBig;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -94,7 +94,7 @@ HRESULT CStage1st::ReadyScene()
 		// 작은 마나 포션
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 3.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::ManaSmall, 20 };
+		stItemArg.etype = ITEM::ManaSmall;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -107,7 +107,7 @@ HRESULT CStage1st::ReadyScene()
 		// 총알 박스
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 4.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::Ammo, 20 };
+		stItemArg.etype = ITEM::Ammo;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -120,7 +120,7 @@ HRESULT CStage1st::ReadyScene()
 		// 파란 키
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 5.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::KeyBlue, 1 };
+		stItemArg.etype = ITEM::KeyBlue;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -133,7 +133,7 @@ HRESULT CStage1st::ReadyScene()
 		// 빨간 키
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 6.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::KeyRed, 1 };
+		stItemArg.etype = ITEM::KeyRed;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -146,7 +146,7 @@ HRESULT CStage1st::ReadyScene()
 		// 노랑 키
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 7.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::KeyYellow, 1 };
+		stItemArg.etype = ITEM::KeyYellow;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
@@ -159,7 +159,7 @@ HRESULT CStage1st::ReadyScene()
 		// 업그레이드 재화
 		stItemArg.uiSize = sizeof(ItemBasicArgument);
 		stItemArg.vPosition = { 8.f, 10.f, 20.f };
-		stItemArg.stItemInfo = { ITEM::Upgrade, 1 };
+		stItemArg.etype = ITEM::Upgrade;
 		stItemArg.bDeleteFlag = false;
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
