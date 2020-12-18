@@ -73,8 +73,14 @@
     <Filter Include="02.GameObject\02.Monster\04.Fire">
       <UniqueIdentifier>{2b6612ee-b8fd-4467-8983-2a27d66aa1a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\06.Item">
+    <Filter Include="02.GameObject\06.Effect">
       <UniqueIdentifier>{805bf011-dd3b-45b5-8f47-ed852e2ceb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\07.Item">
+      <UniqueIdentifier>{141557c2-8aa3-4c0e-856d-ad233ba42721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect\01.GlacierParticle">
+      <UniqueIdentifier>{216a82f1-715e-49fa-9f13-4eb3ad881f6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -191,14 +197,21 @@
       <Filter>02.GameObject\02.Monster\04.Fire</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\GameUI.h" />
-    <ClInclude Include="..\Headers\Effect.h" />
-    <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
+    <ClInclude Include="..\Headers\Item.h">
+      <Filter>02.GameObject\07.Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierParticle.h">
+      <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -287,14 +300,21 @@
       <Filter>02.GameObject\02.Monster\04.Fire</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\GameUI.cpp" />
-    <ClCompile Include="..\Codes\Effect.cpp" />
-    <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
+    <ClCompile Include="..\Codes\Item.cpp">
+      <Filter>02.GameObject\07.Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>02.GameObject\06.Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierParticle.cpp">
+      <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

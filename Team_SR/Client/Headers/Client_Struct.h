@@ -21,6 +21,12 @@ struct BulletStatus {
 	float fImpact;			// 충격력 - 총알에 맞은 적을 뒤로 물러나게 하는 정도
 };
 
+// 아이템 정보
+struct ItemInfo {
+	ITEM type;				// 아이템 종류
+	int iAmount;			// 해당 아이템 효과의 양? tag = HP, iAmout = 50 이면 HP 50회복 이런식?
+};
+
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
@@ -32,6 +38,14 @@ struct BulletBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
 	vec3 vPosition;				// 위치 정보
 	vec3 vDir;					// 방향
+};
+
+// 아이템 생성시 기본 전달 인자
+struct ItemBasicArgument {
+	_uint uiSize;				// 구조체 사이즈
+	vec3 vPosition;				// 위치 정보
+	ItemInfo stItemInfo;		// 아이템 정보
+	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
 
 #endif // !__CLIENT_STRUCT_H__

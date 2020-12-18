@@ -18,6 +18,7 @@
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
 #include "UIManager.h"	// UI 매니저
+#include "Item.h"		// 아이템
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -192,6 +193,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CFire>(),
 		CFire::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 아이템 오브젝트
+#pragma region GameObject_Fire
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CItem>(),
+		CItem::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -401,6 +411,82 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
 		return E_FAIL;
 #pragma endregion
+
+	// 아이템 텍스처들
+#pragma region Component_Texture_Item
+	// 겁나큰 체력 포션
+#pragma region Health_Big
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Health_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_HEALTH_BIG_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 작은 체력 포션
+#pragma region Health_Small
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Health_Small",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_HEALTH_SMALL_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 겁나큰 마나 포션
+#pragma region Mana_Big
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Mana_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/WAND_AMMO_BIG_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 작은 마나 포션
+#pragma region Mana_Small
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Mana_Small",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_WAND_AMMO_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 총알
+#pragma region Ammo_Box
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ammo_Box",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/ammo_box_pistol.png", 1))))
+		return E_FAIL;
+	// 파란 열쇠
+#pragma region Key_Blue
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Blue",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_BLUE.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 레드 열쇠
+#pragma region Key_Red
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Red",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_RED.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 노랑 열쇠
+#pragma region Key_Yellow
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Yellow",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_YELLOW.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 업그레이드 재화
+#pragma region Upgrade
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Upgrade",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/upgrade_pickup000%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
+
 	return S_OK;
 }
 

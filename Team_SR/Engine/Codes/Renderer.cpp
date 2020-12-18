@@ -164,6 +164,10 @@ HRESULT CRenderer::RenderAlpha()
 
 HRESULT CRenderer::RenderUI()
 {
+	mat PrevView, PrevProjection;
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -173,6 +177,11 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
+
+	// 2020 12 17 이호준
+	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
+	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	return S_OK;
 }
