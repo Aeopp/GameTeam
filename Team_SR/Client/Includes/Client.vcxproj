@@ -168,21 +168,11 @@
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClInclude Include="..\Headers\GameUI.h" />
-=======
-=======
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
     <ClInclude Include="..\Headers\Fire.h" />
-<<<<<<< HEAD
->>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
-=======
-    <ClInclude Include="..\Headers\GameUI.h" />
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -200,19 +190,13 @@
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\Terrain.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
-=======
-=======
     <ClInclude Include="..\Headers\UIManager.h" />
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClInclude Include="..\Headers\Vertexs.h" />
->>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -233,21 +217,11 @@
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClCompile Include="..\Codes\GameUI.cpp" />
-=======
-=======
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
-<<<<<<< HEAD
->>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
-=======
-    <ClCompile Include="..\Codes\GameUI.cpp" />
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -265,19 +239,13 @@
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-=======
-=======
     <ClCompile Include="..\Codes\UIManager.cpp" />
->>>>>>> 17ce792876c732801c79130789a2034b58b90a1b
     <ClCompile Include="..\Codes\Vertexs.cpp" />
->>>>>>> 077b7681da776b9dccb10dd7912f2574d3289631
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
