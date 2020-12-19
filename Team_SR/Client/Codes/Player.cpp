@@ -7,10 +7,6 @@
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
 
-
-
-
-
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {
@@ -149,12 +145,26 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	_CollisionComp->Update(m_pTransformCom);
 	_AnimationTextures.Update(fDeltaTime);
+
+
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
 	_Light.Radius = 50.0f;
 	_Light.Priority = 0l;
+
 	Effect::RegistLight(std::move(_Light));
+
+
+	{
+		//MyLight _Light;
+		//_Light.Diffuse = { 0,1,0,1 };
+		//_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 0.5f, 1.f);
+		//_Light.Radius = 50.f;
+		//_Light.Priority = 1l;
+
+		//Effect::RegistLight(std::move(_Light));
+	}
 
 	return _uint();
 }
@@ -171,7 +181,6 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlayer::RenderGameObject()
 {
-	
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
@@ -180,13 +189,13 @@ HRESULT CPlayer::RenderGameObject()
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *1.7f);
 	GunLocation.y -= 0.22f;
-
 	vec3 GunScale = m_pTransformCom->GetScale();
 	vec3 GunRotation = m_pTransformCom->GetRotation();
 
+	//GunRotation.y +=180.f;
+
 	mat GunWorld = MATH::WorldMatrix(GunScale, GunRotation, GunLocation);
 	_Effect.SetVSConstantData(m_pDevice, "World", GunWorld);
-
 
 	const auto& TextureTuple = _AnimationTextures.GetCurrentTexture();
 
@@ -200,9 +209,6 @@ HRESULT CPlayer::RenderGameObject()
 	
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
-		/*m_pDevice->SetStreamSource(0, _CurrentSubSet.VtxBuf, 0, sizeof(Vertex::Texture));
-		m_pDevice->SetVertexDeclaration(_CurrentSubSet.Decl);*/
-		//m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _CurrentSubSet.TriangleCount);
 	_VertexBuffer->Render();
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -420,7 +426,7 @@ HRESULT CPlayer::AddStaticComponents()
 	_Info.bCollision = true;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 2.f;
 	_Info.Tag = CCollisionComponent::ETag::Player;
 	_Info.bMapBlock= true;
 	_Info.Owner = this;
@@ -437,7 +443,6 @@ HRESULT CPlayer::AddStaticComponents()
 		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
 		(CComponent**)&_VertexBuffer)))
 		return E_FAIL;
-
 
 	return S_OK;
 }

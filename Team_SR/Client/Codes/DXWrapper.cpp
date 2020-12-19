@@ -236,16 +236,22 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 	_Device->GetTransform(D3DTS_PROJECTION, &Projection);
 
 	const vec3 CameraLocation3 = CameraLocation;
-
 	const size_t MapLightSize = _CurMapLights.size(); 
 
 	std::vector<vec4> LightLocations;
 	std::vector<vec4> LightDiffuse;
 	std::vector<float> LightRadius;
 
+	// 1. 우선 순위에 의해 정렬하고 이후 거리가 가까운 조명으로 또다시 정렬
+	// 미리 정의된 수의 조명만 사용 할 수 있기 때문에
 	std::sort(std::begin(_CurMapLights), std::end(_CurMapLights), [](const MyLight&  Lhs , const MyLight& Rhs)
 		{
 			return Lhs.Priority < Rhs.Priority; 
+		});
+
+	std::stable_sort(std::begin(_CurMapLights) ,std::end(_CurMapLights) , [CameraLocation](const MyLight& Lhs, const MyLight& Rhs)
+		{
+			return MATH::LengthSq((CameraLocation - Lhs.Location)) < MATH::LengthSq((CameraLocation - Rhs.Location));
 		});
 
 	for (const MyLight&  _CurLight :_CurMapLights)
@@ -267,7 +273,7 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
 		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
 		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);
-			CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
+		CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
 
 		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());
