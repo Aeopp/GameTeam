@@ -12,12 +12,14 @@
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 
+#include "Blood.h"
 #include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
+#include "FloorBlood.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -188,6 +190,29 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 #pragma endregion
 
+#pragma region GameObject_Spider
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CSpider>(),
+			CSpider::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_Blood
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CBlood>(),
+			CBlood::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_Blood
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+			CFloorBlood::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 
 		
 
@@ -271,6 +296,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		wstrTextureGlacier + L"Bullet",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Bullet/Bullet%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Particle
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Particle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Particle/Particle%d.png", 5))))
 		return E_FAIL;
 #pragma endregion
 
@@ -395,6 +428,67 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_WeaponAmmoInfoUI",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texutre_Spider
+#pragma region Spider_Attack
+	wstring wstrTextureSpider = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CSpider>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Attack/Attack%d.png", 14))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Death
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Death/Death%d.png", 14))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Hit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Hit/Hit%d.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Walk
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Walk/Walk%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Wep
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Wep",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Wep/Wep%d.png", 1))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
+
+#pragma region Component_Texture_Blood
+	wstring wstrTextureBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CBlood>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureBlood,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Blood/Blood%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_FloorBlood
+	wstring wstrTextureFloorBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFloorBlood>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureFloorBlood,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/FloorBlood/FloorBlood%d.png", 4))))
 		return E_FAIL;
 #pragma endregion
 	return S_OK;

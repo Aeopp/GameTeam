@@ -70,6 +70,30 @@
     <Filter Include="02.GameObject\02.Monster\05.Spider">
       <UniqueIdentifier>{616e1345-855c-4e39-8ffa-3ae0c6970fe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\06.Bullet\01.BatSpit">
+      <UniqueIdentifier>{ad85de71-9a76-4e60-94de-b570a7004b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Bullet\02.EyebatBullet">
+      <UniqueIdentifier>{a9708332-ad02-419c-9f24-6ebc10a90b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Bullet\03.GlacierBullet">
+      <UniqueIdentifier>{4abe6e28-560d-4c62-976c-8755e785d46a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Effect\00.Coll">
+      <UniqueIdentifier>{b7a13fae-8eb8-46ca-9d4b-716679e8eb6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Effect\00.Coll\01.GlacierParticle">
+      <UniqueIdentifier>{98db3f39-901c-4bf7-bdcd-802fc3d7e535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Effect\01.NonColl">
+      <UniqueIdentifier>{c3efae6e-1841-42d3-abd6-014430dc02db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Effect\01.NonColl\01.Blood">
+      <UniqueIdentifier>{089affcf-f483-46c9-84fc-168c97be4908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Effect\01.NonColl\02.FloorBlood">
+      <UniqueIdentifier>{499e18e0-415e-4eaf-92cf-ab72af24fd55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -176,19 +200,7 @@
     <ClInclude Include="..\Headers\Bullet.h">
       <Filter>02.GameObject\06.Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BatSpit.h">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\EyebatBullet.h">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\GlacierBullet.h">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Effect.h">
-      <Filter>02.GameObject\05.Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\GlacierParticle.h">
       <Filter>02.GameObject\05.Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Fire.h">
@@ -199,6 +211,24 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Spider.h">
       <Filter>02.GameObject\02.Monster\05.Spider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierParticle.h">
+      <Filter>02.GameObject\05.Effect\00.Coll\01.GlacierParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BatSpit.h">
+      <Filter>02.GameObject\06.Bullet\01.BatSpit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\EyebatBullet.h">
+      <Filter>02.GameObject\06.Bullet\02.EyebatBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h">
+      <Filter>02.GameObject\06.Bullet\03.GlacierBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Blood.h">
+      <Filter>02.GameObject\05.Effect\01.NonColl\01.Blood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FloorBlood.h">
+      <Filter>02.GameObject\05.Effect\01.NonColl\02.FloorBlood</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -279,19 +309,7 @@
     <ClCompile Include="..\Codes\Bullet.cpp">
       <Filter>02.GameObject\06.Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BatSpit.cpp">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\EyebatBullet.cpp">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\GlacierBullet.cpp">
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>02.GameObject\05.Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\GlacierParticle.cpp">
       <Filter>02.GameObject\05.Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Fire.cpp">
@@ -302,6 +320,24 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Spider.cpp">
       <Filter>02.GameObject\02.Monster\05.Spider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierParticle.cpp">
+      <Filter>02.GameObject\05.Effect\00.Coll\01.GlacierParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatSpit.cpp">
+      <Filter>02.GameObject\06.Bullet\01.BatSpit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EyebatBullet.cpp">
+      <Filter>02.GameObject\06.Bullet\02.EyebatBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp">
+      <Filter>02.GameObject\06.Bullet\03.GlacierBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Blood.cpp">
+      <Filter>02.GameObject\05.Effect\01.NonColl\01.Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FloorBlood.cpp">
+      <Filter>02.GameObject\05.Effect\01.NonColl\02.FloorBlood</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

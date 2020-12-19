@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
+#include "FloorBlood.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -66,20 +67,10 @@ HRESULT CMonster::IsBillboarding()
 	if (nullptr == pCamera)
 		return E_FAIL;
 
-	_matrix matBillboardY, matView;
-	D3DXMatrixIdentity(&matBillboardY);
-	matView = pCamera->GetCameraDesc().matView;
-
-	matBillboardY._11 = matView._11;
-	matBillboardY._13 = matView._13;
-	matBillboardY._31 = matView._31;
-	matBillboardY._33 = matView._33;
-
-	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
-
-	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
-
-
+	const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
 
 	return S_OK;
 }
@@ -162,6 +153,31 @@ void CMonster::CollisionMovement(float fDeltaTime)
 	if (m_fCrossValue < 0.f)
 		m_fCrossValue = 0.f;
 	m_pTransformCom->m_TransformDesc.vPosition += m_vCollisionDir * m_fCrossValue * fDeltaTime;
+}
+
+void CMonster::CreateBlood()
+{
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Blood",
+		L"Layer_Blood",
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
+}
+
+void CMonster::CreateFloorBlood()
+{
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		(_int)ESceneID::Stage1st,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
+		return;
+
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 void CMonster::Free()

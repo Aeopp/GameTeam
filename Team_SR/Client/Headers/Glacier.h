@@ -41,7 +41,7 @@ private:
 	bool Action_Death(float fDeltaTime);
 	///////////////////////////////////////////////
 	void CreateBullet();
-
+	void CreateParticle();
 private:
 	enum class AWARENESS { No, Yes, End };
 	enum class PHASE { HP_High , HP_Half, HP_Low, HP_ZERO ,End };

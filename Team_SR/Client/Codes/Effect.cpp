@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "..\Headers\Effect.h"
+#include "Camera.h"
 
 CEffect::CEffect(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(0.f), m_pTexture(nullptr)
 {
 }
 
@@ -42,6 +43,8 @@ _uint CEffect::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
+
+
 	return _uint();
 }
 
@@ -66,13 +69,31 @@ HRESULT CEffect::AddComponents()
 	return S_OK;
 }
 
-void CEffect::Frame_Move(float fDeltaTime)
+bool CEffect::Frame_Move(float fDeltaTime)
 {
-	m_fFrameCnt += 10.f * fDeltaTime;
+	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
 	if (m_fFrameCnt >= m_fEndFrame)
 	{
-		m_fFrameCnt = m_fStartFrame;
+		m_fFrameCnt = m_fEndFrame;
+		return true;
 	}
+	return false;
+}
+
+HRESULT CEffect::IsBillboarding()
+{
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	if (nullptr == pCamera)
+		return E_FAIL;
+
+	const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
+
+
+	return S_OK;
 }
 
 void CEffect::Free()

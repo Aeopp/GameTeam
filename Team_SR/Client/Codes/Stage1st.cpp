@@ -7,7 +7,7 @@
 #include "Glacier.h"
 #include "BatGrey.h"
 #include "PlyerInfoUI.h"
-
+#include "Spider.h"
 
 #include "Eyebat.h"
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
@@ -108,14 +108,24 @@ HRESULT CStage1st::ReadyScene()
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + TYPE_NAME<CMonster>(),
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+		stArg.vPosition = { -20.f, 10.f, 20 };
+		//stArg.vPosition = { -5.f, 10.f, 20 };
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + TYPE_NAME<CSpider>(),
+		//	(_int)ESceneID::Stage1st,
+		//	CLayer::Tag + TYPE_NAME<CMonster>(),
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
+
+
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + TYPE_NAME<CGlacier>(),
+		//	(_int)ESceneID::Stage1st,
+		//	CLayer::Tag + TYPE_NAME<CMonster>(),
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
 
 		//stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
 			//if (FAILED(m_pManagement->AddGameObjectInLayer(
@@ -132,14 +142,14 @@ HRESULT CStage1st::ReadyScene()
 			// 눈깔박쥐
 			//stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
 
-			//if (FAILED(m_pManagement->AddGameObjectInLayer(
-			//	(_int)ESceneID::Static,
-			//	CGameObject::Tag + TYPE_NAME<CEyebat>(),
-			//	(_int)ESceneID::Stage1st,
-			//	CLayer::Tag + TYPE_NAME<CMonster>(),
-			//	nullptr, static_cast<void*>(&stArg))))
-			//	return E_FAIL;
-		
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CEyebat>(),
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + TYPE_NAME<CMonster>(),
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
+
 	}
 
 

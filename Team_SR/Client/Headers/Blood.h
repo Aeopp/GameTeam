@@ -1,13 +1,14 @@
 #pragma once
-#ifndef GlacierParticle_h__
-#define GlacierParticle_h__
+#ifndef Blood_h__
+#define Blood_h__
+
 
 #include "Effect.h"
-class CGlacierParticle final : public CEffect
+class CBlood final : public CEffect
 {
 private:
-	explicit CGlacierParticle(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CGlacierParticle() = default;
+	explicit CBlood(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CBlood() = default;
 
 public:
 	// CEffect을(를) 통해 상속됨
@@ -16,20 +17,13 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-public:
-	void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	virtual HRESULT AddComponents() override;
 public:
-	static CGlacierParticle* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
+	static CBlood* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
-
-private:
-	_vector m_vLook;
-	float m_fStartY = 0.f;
-	float m_fJumpPower = 0.f;
-	float m_fJumpTime = 0.f;
 };
 
-#endif // GlacierParticle_h__
+
+#endif // Blood_h__

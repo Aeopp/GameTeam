@@ -18,8 +18,9 @@ public:
 	virtual HRESULT RenderGameObject() = 0;
 protected:
 	virtual HRESULT AddComponents();
+	HRESULT IsBillboarding();
 protected:
-	void Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
+	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -30,6 +31,8 @@ protected:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작
 	float m_fEndFrame;		// 프레임 끝
+	float m_fFrameSpeed;					// 프레임 속도
+	bool m_bFrameLoopCheck;					// 프레임 루프
 };
 
 #endif // Effect_h__

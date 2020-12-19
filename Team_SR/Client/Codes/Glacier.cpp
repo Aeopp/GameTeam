@@ -3,6 +3,7 @@
 #include "CollisionComponent.h"
 #include "Camera.h"
 #include "GlacierBullet.h"
+#include "GlacierParticle.h"
 CGlacier::CGlacier(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 {
@@ -80,9 +81,6 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 	//테스트
 	Update_AI(fDeltaTime);
 
-	cout << m_stStatus.fHP << endl;
-
-
 	_CollisionComp->Update(m_pTransformCom);
 
 	return _uint();
@@ -145,6 +143,7 @@ void CGlacier::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 충돌 관련 정보
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
+	CreateParticle();
 }
 
 HRESULT CGlacier::AddComponents()
@@ -386,6 +385,9 @@ bool CGlacier::Action_Death(float fDeltaTime)
 		//m_fFrameCnt = 8.f;
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+
+		for (_uint i = 0; i < 10; ++i)
+			CreateParticle();
 	}
 	return false;
 }
@@ -406,6 +408,15 @@ void CGlacier::CreateBullet()
 		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
 		L"Layer_" + TYPE_NAME<CGlacierBullet>(),
 		nullptr, (void*)pArg);
+}
+
+void CGlacier::CreateParticle()
+{
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+		L"Layer_" + TYPE_NAME<CGlacierParticle>(),
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 

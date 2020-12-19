@@ -2,6 +2,7 @@
 #include "..\Headers\Eyebat.h"
 #include "EyebatBullet.h"
 
+
 CEyebat::CEyebat(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 {
@@ -59,13 +60,14 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
-	//테스트
-	//if (GetAsyncKeyState('5') & 0x8000)
-	//	m_stStatus.fHP -= 1.f;
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return 0;
+	}
 
 	Update_AI(fDeltaTime);
 
-
+	_CollisionComp->Update(m_pTransformCom);
 	return _uint();
 }
 
@@ -73,10 +75,12 @@ _uint CEyebat::LateUpdateGameObject(float fDeltaTime)
 {
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
-	if (AWARENESS::Yes == m_eAwareness)
-		m_bFrameLoopCheck = Frame_Move(fDeltaTime);
+
+
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
+
+	m_bFrameLoopCheck = Frame_Move(fDeltaTime);
 
 
 	return _uint();
@@ -107,11 +111,16 @@ void CEyebat::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 		return;
 	}
 
-	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소l
 
 	// 충돌 관련 정보
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
+	CMonster::CreateBlood();
+}
+
+void CEyebat::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
 }
 
 void CEyebat::Update_AI(float fDeltaTime)
@@ -193,7 +202,7 @@ bool CEyebat::Action_Move(float fDeltaTime)
 	float fLookLength = D3DXVec3Length(&vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 
-	if (fLookLength > 10)
+	if (fLookLength > 15)
 		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
 	m_pTransformCom->m_TransformDesc.vPosition.y += fDeltaTime * m_iDir * 2;
@@ -233,6 +242,15 @@ bool CEyebat::Action_Shoot(float fDeltaTime)
 
 bool CEyebat::Action_Death(float fDeltaTime)
 {
+	if (m_fFrameCnt >= m_fEndFrame - 1)
+	{
+		m_fFrameCnt = m_fEndFrame - 1;
+		m_fStartFrame = m_fEndFrame - 1;
+		m_byObjFlag |= (BYTE)ObjFlag::Remove;
+		m_byMonsterFlag |= (BYTE)MonsterFlag::Dead;
+		CMonster::CreateFloorBlood();
+	}
+
 	return false;
 }
 
@@ -248,6 +266,7 @@ void CEyebat::CreateBullet()
 		nullptr, (void*)pPositionArr)))
 		return;
 }
+
 
 HRESULT CEyebat::AddComponents()
 {
@@ -282,6 +301,19 @@ HRESULT CEyebat::AddComponents()
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
+
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::Monster;
+	_Info.bMapCollision = true;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
 
 	return S_OK;
 }
