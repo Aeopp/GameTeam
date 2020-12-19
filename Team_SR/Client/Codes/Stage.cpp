@@ -115,13 +115,7 @@ _uint CStage::KeyProcess(float fDeltaTime)
 
 	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
 
-	if (ImGuiHelper::bEditOn)
-	{
-		if (m_pKeyMgr->Key_Down(VK_LBUTTON))
-		{
-			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
-		}
-	}
+
 
 	return _uint();
 }
@@ -210,6 +204,11 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	if (m_pKeyMgr->Key_Down(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeft();
+
+		if (ImGuiHelper::bEditOn)
+		{
+			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());	
+		}
 	}
 	else if (m_pKeyMgr->Key_Down('R'))
 	{

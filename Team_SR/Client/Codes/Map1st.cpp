@@ -14,7 +14,8 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 		return E_FAIL;
 
 	mat MapWorld  = MATH::WorldMatrix({ 3,3,3}, { 0,0,0}, { 0,0,0});
-	LoadMap(L"..\\Resources\\Map\\Boss\\", MapWorld);
+	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
+	LoadFloor(L"..\\Resources\\Map\\2\\");
 	return S_OK;
 }
 

@@ -66,7 +66,12 @@ HRESULT CMonster::IsBillboarding()
 	if (nullptr == pCamera)
 		return E_FAIL;
 
-	_matrix matBillboardY, matView;
+	const auto& _TransformDesc =m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
+	/*_matrix matBillboardY, matView;
 	D3DXMatrixIdentity(&matBillboardY);
 	matView = pCamera->GetCameraDesc().matView;
 
@@ -77,7 +82,7 @@ HRESULT CMonster::IsBillboarding()
 
 	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
 
-	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
+	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;*/
 
 
 

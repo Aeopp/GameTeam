@@ -19,7 +19,7 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-
+	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	void MoveForward(const float DeltaTime)&;
 	void MoveRight(const float DeltaTime)&;
 	void MouseRight()&;

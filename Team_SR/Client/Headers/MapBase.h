@@ -21,6 +21,7 @@ public:
 	virtual HRESULT RenderGameObject() override;
 protected:
 	void LoadMap(std::wstring FilePath,const mat& MapWorld);
+	void LoadFloor(const std::wstring& FilePath );
 public:
 	virtual void Free() override;
 protected:
@@ -30,7 +31,7 @@ protected:
 	// REMOVEPLZ
 	vec4 diffusecolor = { 1.f,0.f,0.f,1.f };
 private:
-	void LoadFloor(const std::wstring& FilePath);
+	
 };
 
 #define __MapBase_H__

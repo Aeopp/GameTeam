@@ -24,7 +24,6 @@ public:
 	_uint UpdateEngine();
 	HRESULT RenderEngine(HWND hWnd = nullptr);
 	HRESULT ClearForScene(_int iSceneIndex);
-
 public:
 	/* For.GraphicDev */
 	LPDIRECT3DDEVICE9 GetDevice();

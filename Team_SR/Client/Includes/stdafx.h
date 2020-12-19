@@ -17,6 +17,7 @@
 #include <memory.h>
 #include <tchar.h>
 #include <process.h>
+#include <cassert>
 
 /*
 dx9

@@ -36,8 +36,6 @@ HRESULT CWeaponAmmoInfoUI::ReadyGameObject(void* pArg)
 	
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = 0.f;
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 0.f;
-	
-	
 
 	return S_OK;
 }

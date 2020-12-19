@@ -192,7 +192,8 @@ HRESULT CGlacier::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = true;
 	_Info.Owner = this;
 
 	CGameObject::AddComponent(
@@ -223,37 +224,37 @@ HRESULT CGlacier::Set_Texture()
 
 void CGlacier::Update_AI(float fDeltaTime)
 {
-	if ((this->*m_fpAction)(fDeltaTime)) 
-	{
-		// 플레이어를 인식했는가?
-		if (PlayerAwareness()) {
-			m_eAwareness = AWARENESS::Yes;	
-		}
-		else {
-			m_eAwareness = AWARENESS::No;	
-		}
+	//if ((this->*m_fpAction)(fDeltaTime)) 
+	//{
+	//	// 플레이어를 인식했는가?
+	//	if (PlayerAwareness()) {
+	//		m_eAwareness = AWARENESS::Yes;	
+	//	}
+	//	else {
+	//		m_eAwareness = AWARENESS::No;	
+	//	}
 
 
-		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
-			m_ePhase = PHASE::HP_High;	
-		}
-		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
-			&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
-		{
-			m_ePhase = PHASE::HP_Half;	
-		}
-		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
-			&& m_stStatus.fHP > 0)
-		{
-			m_ePhase = PHASE::HP_Low;
-		}
-		else if (m_stStatus.fHP < 0)
-		{
-			m_ePhase = PHASE::HP_ZERO;
-		}
+	//	if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
+	//		m_ePhase = PHASE::HP_High;	
+	//	}
+	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
+	//		&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
+	//	{
+	//		m_ePhase = PHASE::HP_Half;	
+	//	}
+	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
+	//		&& m_stStatus.fHP > 0)
+	//	{
+	//		m_ePhase = PHASE::HP_Low;
+	//	}
+	//	else if (m_stStatus.fHP < 0)
+	//	{
+	//		m_ePhase = PHASE::HP_ZERO;
+	//	}
 
-		(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
-	}
+	//	(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
+	//}
 }
 
 void CGlacier::AI_NoAwareness()

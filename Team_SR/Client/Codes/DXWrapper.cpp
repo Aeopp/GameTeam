@@ -152,6 +152,11 @@ void Effect::RegistLight(MyLight _Light) noexcept
 	_CurMapLights.push_back(std::move(_Light));
 }
 
+void Effect::ClearRegisteredLighting() noexcept
+{
+	_CurMapLights.clear();
+}
+
 typename Effect::Info& Effect::GetEffectFromName(const std::wstring& EffectName)
 {
 #if _DEBUG
@@ -198,7 +203,9 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"LightNum",
 				"Shine",
 				"GlobalAmbient",
-				"Lights",
+				"LightLocation",
+				"LightRadius",
+				"LightDiffuse"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -223,35 +230,19 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 
 	const vec3 CameraLocation3 = CameraLocation;
 
-	//std::stable_sort(std::begin(_CurMapLights), std::end(_CurMapLights),
-	//	[CameraLocation](const MyLight&  Lhs ,const MyLight& Rhs) 
-	//	{
-	//		return D3DXVec4LengthSq(&(Lhs.Location - CameraLocation))
-	//											<
-	//			D3DXVec4LengthSq(&(Rhs.Location - CameraLocation));
-	//	});
+	const size_t MapLightSize = _CurMapLights.size(); 
 
+	std::vector<vec4> LightLocations;
+	std::vector<vec4> LightDiffuse;
+	std::vector<float> LightRadius;
 
-
-	_CurMapLights.push_back(MyLight{});
-	
-
-	int LightNum = _CurMapLights.size();
-	if (LightNum >= 8)  LightNum = 8;
-
-	_CurMapLights[0] = MyLight{ {CameraLocation.x,CameraLocation.y,CameraLocation.z } , {} , 10.f };
-	/*_CurMapLights[1] = MyLight{ {CameraLocation.x +20,CameraLocation.y +10,CameraLocation.z +10 } , {} , 20.f };
-	_CurMapLights[2] = MyLight{ {CameraLocation.x -20,CameraLocation.y -10,CameraLocation.z -10 } , {} , 5.f };
-	_CurMapLights[3] = MyLight{ {CameraLocation.x +40,CameraLocation.y +20,CameraLocation.z  +20} , {} , 30.f};*/
-
-	for(auto & _curlight : _CurMapLights)
+	for (MyLight&  _CurLight :_CurMapLights)
 	{
-		_curlight.Diffuse = { 1.f ,1.f ,1.f  };
-		_curlight.Radius = 80.f;
-		_curlight.Location = vec3{ CameraLocation.x,CameraLocation.y,CameraLocation.z };
+		LightLocations.push_back(_CurLight.Location);
+		LightDiffuse.push_back(_CurLight.Diffuse);
+		LightRadius.push_back(_CurLight.Radius);
 	}
 
-	
 	{
 		Effect::Info& CurEffect = Effect::GetEffectFromName(L"DiffuseSpecular");
 		CurEffect.SetVSConstantData(_Device, "View", View);
@@ -262,10 +253,10 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		const vec4 GlobalAmbient = { 0.2f,0.2f,0.2f,1.f };
 		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
 		
-		CurEffect.SetPSConstantData(_Device, "LightNum", LightNum);
-		//CurEffect.PsTable->SetValue(_Device, "Lights",(void*)(&_Lights[0]), sizeof (MyLight) * NumCurrentLight);
-		if (LightNum > 0)
-				CurEffect.SetPSConstantData(_Device, "Lights", _CurMapLights[0], LightNum);
+		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
+		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());
+		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightDiffuse"), LightDiffuse.data(), LightDiffuse.size());
+		CurEffect.PsTable->SetFloatArray(_Device, CurEffect.GetPSConstantHandle("LightRadius"), LightRadius.data(), LightRadius.size());
 	}
 }
 std::map<std::string, D3DXHANDLE> Effect::ConstantHandleInitialize(
@@ -433,6 +424,20 @@ uint8_t Effect::Info::GetTexIdx(const std::string& SamplerName)
 		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 #endif
 	return TextureDescMap[SamplerName.c_str()].RegisterIndex;
+}
+
+D3DXHANDLE Effect::Info::GetVSConstantHandle(const std::string& HandleKey)
+{
+	auto iter = VsHandleMap.find(HandleKey);
+	assert(iter != std::end(VsHandleMap));
+	return iter->second;
+}
+
+D3DXHANDLE Effect::Info::GetPSConstantHandle(const std::string& HandleKey)
+{
+	auto iter = PsHandleMap.find(HandleKey);
+	assert(iter != std::end(PsHandleMap));
+	return iter->second;
 }
 
 std::vector<IDirect3DTexture9*> CreateTextures(IDirect3DDevice9* const _Device, const std::wstring& Path, const size_t TextureNum)
@@ -618,6 +623,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 			D3DXVECTOR2 VertexTexCoord{ 0,0 };
 			wss >> VertexTexCoord.x;
 			wss >> VertexTexCoord.y;
+			//VertexTexCoord.y += 0.001f;
 			_TextureCoords.push_back(std::move(VertexTexCoord));
 		}
 		else if (ToKen == VN)

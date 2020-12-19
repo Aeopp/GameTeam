@@ -8,6 +8,8 @@
 #include "Player.h"
 #include "Vertexs.h"
 
+
+
 CMapBase::CMapBase(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {}
@@ -37,7 +39,10 @@ _uint CMapBase::UpdateGameObject(float fDeltaTime)
 	{
 		ImGui::Begin("LightColor" ,& ImGuiHelper::bEditOn);
 		ImGui::SliderFloat3("DiffuseColor", (float*)&diffusecolor, 0.0f, 1.0f);
+		
 		ImGui::End();
+
+		
 	}
 	
 	return _uint();
@@ -67,11 +72,11 @@ HRESULT CMapBase::RenderGameObject()
 	{
 		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler") , 
 			RefInfo.Diffuse);
-		/*m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), 
-			RefInfo.Specular);*/
-		/*m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),	
-			RefInfo.Normal);*/
-
+		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), 
+			RefInfo.Specular);
+		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),	
+			RefInfo.Normal);
+		
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,sizeof(Vertex::Texture));
 		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
@@ -79,6 +84,42 @@ HRESULT CMapBase::RenderGameObject()
 		m_pDevice->SetPixelShader(_Effect.PsShader);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, RefInfo.TriangleCount);
 	}
+
+
+	for (auto& RefInfo : *_FloorSubSetInfo)
+	{
+		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
+			RefInfo.Diffuse);
+		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
+			RefInfo.Specular);
+		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
+			RefInfo.Normal);
+		
+		{
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
+				D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
+				D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
+
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("SpecularSampler"),
+				D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("SpecularSampler"),
+				D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
+
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("NormalSampler"),
+				D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
+			m_pDevice->SetSamplerState(_Effect.GetTexIdx("NormalSampler"),
+				D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
+		}
+
+
+		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
+		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex::Texture));
+		m_pDevice->SetVertexDeclaration(RefInfo.Decl);
+		m_pDevice->SetVertexShader(_Effect.VsShader);
+		m_pDevice->SetPixelShader(_Effect.PsShader);
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, RefInfo.TriangleCount);
+	};
 
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
@@ -384,14 +425,14 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					SpecularTexName.c_str(), &_Info.Specular)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
 
 				const std::wstring NormalTexName = TexName + L"_NORMAL.png";
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					NormalTexName.c_str(), &_Info.Normal)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
 			}
 			_Info.Decl =			Vertex::Texture::GetVertexDecl(m_pDevice);
@@ -404,8 +445,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	};
 
 	CCollisionComponent::AddMapPlaneInfo(_PolygonPlanes);
-
-	LoadFloor(FilePath);
 };
 
 void CMapBase::Free()
@@ -414,10 +453,23 @@ void CMapBase::Free()
 	// 버텍스 버퍼, 텍스처 해제
 	for (auto& pInfo : *_WallSubSetInfo) {
 		SafeRelease(pInfo.Diffuse);
+		SafeRelease(pInfo.Specular);
+		SafeRelease(pInfo.Normal);
 		SafeRelease(pInfo.VtxBuf);
+		SafeRelease(pInfo.Decl);
+		pInfo.Release();
+	}
+	for (auto& pFloorInfo : *_FloorSubSetInfo)
+	{
+		SafeRelease(pFloorInfo .Diffuse);
+		SafeRelease(pFloorInfo .Specular);
+		SafeRelease(pFloorInfo .Normal);
+		SafeRelease(pFloorInfo .VtxBuf);
+		SafeRelease(pFloorInfo.Decl);
+		pFloorInfo.Release();
 	}
 	_WallSubSetInfo->clear();
-
+	_FloorSubSetInfo->clear();
 	Super::Free();
 };
 
@@ -715,18 +767,18 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					SpecularTexName.c_str(), &_Info.Specular)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
 
 				const std::wstring NormalTexName = TexName + L"_NORMAL.png";
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					NormalTexName.c_str(), &_Info.Normal)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					//MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
 				}
 			}
 			_Info.Decl = Vertex::Texture::GetVertexDecl(m_pDevice);
-			_WallSubSetInfo->push_back(_Info);
+			_FloorSubSetInfo->push_back(_Info);
 		}
 
 		wss.str(std::wstring{});
@@ -734,6 +786,6 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 		wss.clear();
 	};
 
-	CCollisionComponent::AddMapPlaneInfo(_PolygonPlanes);
+	CCollisionComponent::AddMapFloorInfo(_PolygonPlanes);
 };
 

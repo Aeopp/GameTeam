@@ -9,11 +9,11 @@ CMainCamera::CMainCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CCamera(pDevice)
 {
 	m_CameraDesc.fFovY = 45.f;
-	m_CameraDesc.fFar= 1000.f;
-	m_CameraDesc.fNear=1.f;
-	m_CameraDesc.fAspect= static_cast<float>(WINCX) / WINCY;
+	m_CameraDesc.fFar = 1000.f;
+	m_CameraDesc.fNear = 1.f;
+	m_CameraDesc.fAspect = static_cast<float>(WINCX) / WINCY;
 	m_CameraDesc.vUp = { 0,1,0 };
-}
+};
 
 HRESULT CMainCamera::ReadyGameObjectPrototype()
 {
@@ -43,7 +43,6 @@ _uint CMainCamera::UpdateGameObject(float fDeltaTime)
 	
 	}
 	
-	
 	return _uint();
 }
 
@@ -62,7 +61,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 	{
 		Shaking(fDeltaTime);
 
-		ShowCursor(false);
+		ShowCursor(true);
 
 		POINT _MousePt;
 		GetCursorPos(&_MousePt);

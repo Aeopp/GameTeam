@@ -11,7 +11,6 @@
 #include "DXWrapper.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
-
 #include "Eyebat.h"
 #include "EyebatBullet.h"
 #include "Fire.h"
@@ -47,6 +46,8 @@ HRESULT CMainApp::ReadyMainApp()
 	if (FAILED(ReadyDefaultSetting()))
 		return E_FAIL;
 
+
+
 	if (FAILED(m_pManagement->SetUpCurrentScene((_int)ESceneID::Logo,
 		CLogo::Create(m_pDevice))))
 	{
@@ -63,17 +64,17 @@ int CMainApp::UpdateMainApp()
 {
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
-
+	ImGuiHelper::Update();
 	ImGuiHelper::DebugInfo(g_hWnd);
 	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
-	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
-	ImGui::Checkbox("ObjectEdit", &ImGuiHelper::bPackageEdit);
+	ImGuiHelper::CheckBoxCall();
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render(m_pDevice);
 	m_pDevice->EndScene();
 	m_pDevice->Present(nullptr, nullptr, g_hWnd, nullptr);
 
+	Effect::ClearRegisteredLighting();
 	return 0;
 }
 

@@ -1,3 +1,5 @@
+#define MAX_LIGHT_NUM 16
+
 struct PS_INPUT
 {
     float2 UV : TEXCOORD0;
@@ -7,16 +9,10 @@ struct PS_INPUT
     float3 BiNormal : TEXCOORD4;
     float3 WorldLocation : TEXCOORD5;
 };
-#define MAX_LIGHT_NUM 8
 
-struct Light
-{
-    float3 Location;
-    float3 Diffuse;
-    float Radius;
-};
-
-Light Lights[MAX_LIGHT_NUM];
+float4 LightLocation[MAX_LIGHT_NUM];
+float4 LightDiffuse[MAX_LIGHT_NUM];
+float LightRadius[MAX_LIGHT_NUM];
 
 sampler2D DiffuseSampler;
 sampler2D SpecularSampler;
@@ -42,7 +38,7 @@ float4 main(PS_INPUT Input) : COLOR
     for (int i = 0; i < LightNum; ++i)
     {
         // WorldLightDirection Calc
-        float3 LightDirection = Input.WorldLocation - Lights[i].Location.xyz;
+        float3 LightDirection = Input.WorldLocation - LightLocation[i].xyz;
         float Distance = length(LightDirection);
         LightDirection = normalize(LightDirection);
     
@@ -51,7 +47,7 @@ float4 main(PS_INPUT Input) : COLOR
 	// Reflection Vector Calc in World Coord System.... For Specular Color Calc
         float3 ReflectionVector = reflect(LightDirection, Input.WorldLocation);
         
-        float3 Diffuse = Lights[i].Diffuse.xyz * DiffuseTexColor.rgb * saturate(DiffuseDot);
+        float3 Diffuse = LightDiffuse[i].rgb * DiffuseTexColor.rgb * saturate(DiffuseDot);
        
         float3 Specular = 0;
         
@@ -59,14 +55,14 @@ float4 main(PS_INPUT Input) : COLOR
         {
             Specular = saturate(dot(ReflectionVector, -Input.ViewDirection));
             Specular = pow(Specular, Shine);
-            Specular = Specular* SpecularTexColor.rgb * Lights[i].Diffuse.rgb;
+            Specular = Specular * SpecularTexColor.rgb * LightDiffuse[i].rgb;
         }
 	
         float3 CurrentAmbient = GlobalAmbient.rgb * DiffuseTexColor.xyz;
 	
         float4 CurrentColor = float4((CurrentAmbient + Diffuse + Specular).xyz, 0.0f);
         
-        float factor = 1.f - (Distance / Lights[i].Radius);
+        float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
 	
         CurrentColor.rgb *= factor;

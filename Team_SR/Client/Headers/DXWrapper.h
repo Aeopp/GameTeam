@@ -7,13 +7,13 @@ USING(Engine)
 
 struct MyLight
 {
-	vec3 Location;
-	vec3 Diffuse;
+	vec4 Location;
+	vec4 Diffuse;
 	float Radius;
 };
 
 std::vector<IDirect3DTexture9*> CreateTextures (IDirect3DDevice9* const _Device ,
-	const std::wstring& Path ,
+	const std::wstring& Path,
 	const size_t TextureNum);;
 
 struct AnimationTextures
@@ -113,6 +113,8 @@ public:
 		void AddRef();
 		uint8_t GetTexIdx(const std::string& SamplerName);
 
+		D3DXHANDLE GetVSConstantHandle(const std::string& HandleKey);
+		D3DXHANDLE GetPSConstantHandle(const std::string& HandleKey);
 		template<typename _Type>
 		bool  SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data , const size_t Num = 1);
 		template<typename _Type>
@@ -123,6 +125,7 @@ public:
 	static std::vector<MyLight> _CurMapLights;
 public:
 	static void RegistLight(MyLight _Light)noexcept;
+	static void ClearRegisteredLighting() noexcept;
 	static Effect::Info& GetEffectFromName(const std::wstring& EffectName);
 	static void EffectRelease();
 	static void EffectInitialize(IDirect3DDevice9* const _Device);

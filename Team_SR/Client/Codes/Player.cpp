@@ -4,6 +4,8 @@
 #include "CollisionComponent.h"
 #include "Vertexs.h"
 #include "Monster.h"
+#include "DXWrapper.h"
+
 
 
 
@@ -146,8 +148,13 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
-
 	_AnimationTextures.Update(fDeltaTime);
+	MyLight _Light;
+	_Light.Diffuse = { 1,1,1,1 };
+	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
+	_Light.Radius = 30.f;
+	
+	Effect::RegistLight(std::move(_Light));
 
 	return _uint();
 }
@@ -188,7 +195,7 @@ HRESULT CPlayer::RenderGameObject()
 		m_pDevice->SetVertexDeclaration(_CurrentSubSet.Decl);
 		m_pDevice->SetVertexShader(_Effect.VsShader);
 		m_pDevice->SetPixelShader(_Effect.PsShader);
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _CurrentSubSet.TriangleCount);
+		//m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _CurrentSubSet.TriangleCount);
 	}
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
@@ -198,6 +205,18 @@ HRESULT CPlayer::RenderGameObject()
 	_CollisionComp->DebugDraw();
 
 	return S_OK;
+}
+
+void CPlayer::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
+{
+	if (_CollisionInfo.Flag == L"Floor")
+	{
+		int i = 0;
+	}
+	else if (_CollisionInfo.Flag == L"Wall")
+	{
+		int i = 0;
+	}
 }
 
 void CPlayer::MoveForward(const float DeltaTime)&
@@ -395,10 +414,11 @@ HRESULT CPlayer::AddStaticComponents()
 
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.bMapBlock = true;
+	_Info.bWallCollision = true;
+	_Info.bFloorCollision = true;
 	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Player;
-	_Info.bMapCollision = true;
+	_Info.bMapBlock= true;
 	_Info.Owner = this;
 
 	CGameObject::AddComponent(
@@ -475,9 +495,10 @@ void CPlayer::HarvesterFire()
 		{
 			float t0 = 0;
 			float t1 = 0;
+			vec3 IntersectPoint;
 			std::pair<bool, Engine::Collision::Info>
 				IsCollision = Collision::IsRayToSphere(_Ray,
-					_CollisionComp->_Sphere, t0, t1);
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
 
 			if (IsCollision.first)
 			{
