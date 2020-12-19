@@ -42,7 +42,7 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
 	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
-	m_pDevice->SetRenderState(D3DRS_AMBIENT, Ambient);
+	m_pDevice->SetRenderState(D3DRS_AMBIENT, 0);
 
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
@@ -51,8 +51,8 @@ HRESULT CRenderer::Render(HWND hWnd)
 
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
 	};
 
 	if (FAILED(RenderPriority()))
@@ -65,6 +65,9 @@ HRESULT CRenderer::Render(HWND hWnd)
 		return E_FAIL;
 
 	CCollisionComponent::CollisionDebugRender(m_pDevice);
+
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
 	if (FAILED(RenderUI()))
 		return E_FAIL;
@@ -128,6 +131,8 @@ HRESULT CRenderer::RenderAlpha()
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 	/*
 	D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
 	D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
@@ -160,6 +165,7 @@ HRESULT CRenderer::RenderAlpha()
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
 
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }

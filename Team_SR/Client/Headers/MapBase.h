@@ -22,16 +22,18 @@ public:
 protected:
 	void LoadMap(std::wstring FilePath,const mat& MapWorld);
 	void LoadFloor(const std::wstring& FilePath );
+	void LoadCubeMap(const std::wstring& FilePath);
 public:
 	virtual void Free() override;
 protected:
-	std::shared_ptr<std::vector<SubSetInfo>> _WallSubSetInfo;
-	std::shared_ptr<std::vector<SubSetInfo>> _FloorSubSetInfo;
+	std::shared_ptr<std::vector<SubSetInfo>> _WallSubSetInfo{};
+	std::shared_ptr<std::vector<SubSetInfo>> _FloorSubSetInfo{};
+	std::shared_ptr<IDirect3DCubeTexture9>   _CubeTexture{};
+	std::shared_ptr<IDirect3DVertexBuffer9>  _CubeVertexBuf{};
+	std::shared_ptr<IDirect3DIndexBuffer9> _CubeIndexBuf{};
 	mat MapWorld;
-	// REMOVEPLZ
-	vec4 diffusecolor = { 1.f,0.f,0.f,1.f };
 private:
-	
+	void CubeMapRender();
 };
 
 #define __MapBase_H__

@@ -114,36 +114,36 @@ HRESULT CStage1st::ReadyScene()
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 
-		//for (uint32_t i = 0; i < 10; ++i)
-		//{
-		//	// 박쥐
-		//
-		//	MonsterBasicArgument stArg;
-		//	stArg.uiSize = sizeof(MonsterBasicArgument);
-		//	stArg.pPlayer = m_pPlayer;
-		//	stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
-		//	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//		(_int)ESceneID::Static,
-		//		CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-		//		(_int)ESceneID::Stage1st,
-		//		CLayer::Tag + TYPE_NAME<CMonster>(),
-		//		nullptr, static_cast<void*>(&stArg))))
-		//		return E_FAIL;
+		for (uint32_t i = 0; i < 10; ++i)
+		{
+			// 박쥐
+		
+			MonsterBasicArgument stArg;
+			stArg.uiSize = sizeof(MonsterBasicArgument);
+			stArg.pPlayer = m_pPlayer;
+			stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
+			if (FAILED(m_pManagement->AddGameObjectInLayer(
+				(_int)ESceneID::Static,
+				CGameObject::Tag + TYPE_NAME<CBatGrey>(),
+				(_int)ESceneID::Stage1st,
+				CLayer::Tag + TYPE_NAME<CMonster>(),
+				nullptr, static_cast<void*>(&stArg))))
+				return E_FAIL;
 
-		//	// 글레이서
-		//	//stArg.vPosition = { 5.f, 10.f, 30.f };
+			// 글레이서
+			//stArg.vPosition = { 5.f, 10.f, 30.f };
 
-		//	// 눈깔박쥐
-		//	stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
+			// 눈깔박쥐
+			stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
 
-		//	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//		(_int)ESceneID::Static,
-		//		CGameObject::Tag + TYPE_NAME<CEyebat>(),
-		//		(_int)ESceneID::Stage1st,
-		//		CLayer::Tag + TYPE_NAME<CMonster>(),
-		//		nullptr, static_cast<void*>(&stArg))))
-		//		return E_FAIL;
-		//}
+			if (FAILED(m_pManagement->AddGameObjectInLayer(
+				(_int)ESceneID::Static,
+				CGameObject::Tag + TYPE_NAME<CEyebat>(),
+				(_int)ESceneID::Stage1st,
+				CLayer::Tag + TYPE_NAME<CMonster>(),
+				nullptr, static_cast<void*>(&stArg))))
+				return E_FAIL;
+		}
 	}
 
 

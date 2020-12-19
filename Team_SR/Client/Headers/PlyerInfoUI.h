@@ -11,14 +11,14 @@ private:
 	virtual ~CPlyerInfoUI() = default;
 
 public:
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
-private:	//³»ºÎ¸Ş¼­µå°ü·Ã
+private:	//ë‚´ë¶€ë©”ì„œë“œê´€ë ¨
 	HRESULT	AddComponent();
 
 public:
@@ -26,13 +26,10 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-private:	//ÄÄÆ÷³ÍÆ®
+private:	//ì»´í¬ë„ŒíŠ¸
 	class CVIBuffer* m_pVIBufferCom = nullptr; 
-	class CTexture* m_pTextureCom = nullptr;	//ÀÏ´Ü ³ªÁß¿¡
-
+	class CTexture* m_pTextureCom = nullptr;	//ì¼ë‹¨ ë‚˜ì¤‘ì—
 private:
-
-
 };
 
 #define __PLAYERINFOUI_H__

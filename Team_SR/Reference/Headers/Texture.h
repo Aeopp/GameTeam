@@ -11,13 +11,13 @@ private:
 	virtual ~CTexture() = default;
 
 public:
-	// CComponentÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CComponentì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyComponentPrototype() override;
 	virtual HRESULT ReadyComponent(void * pArg = nullptr) override;
 
 public:
 	HRESULT Set_Texture(_uint iIndex);
-
+	IDirect3DBaseTexture9* GetTexture(const _uint iIndex);;
 public:
 	static CTexture* Create(LPDIRECT3DDEVICE9 pDevice, ETextureType eType,TCHAR* pFilePath, _uint iCount = 1);
 	virtual CComponent * Clone(void * pArg = nullptr) override;

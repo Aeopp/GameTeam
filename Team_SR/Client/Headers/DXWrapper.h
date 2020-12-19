@@ -5,27 +5,79 @@
 
 USING(Engine)
 
+template<typename _VertexType>
+void CreateVertex(
+	LPDIRECT3DDEVICE9 _Device,
+	const vector<_VertexType>& _VertexVector
+	, uint32_t& OutVertexCount,
+	uint32_t& OutTriangleCount,
+	uint16_t& OutVertexByteSize,
+	std::shared_ptr<IDirect3DVertexBuffer9>& OutVertexBuf,
+	std::shared_ptr<IDirect3DVertexDeclaration9>& OutVertexDecl)
+{
+	OutVertexCount = _VertexVector.size();
+	OutTriangleCount = OutVertexCount / 3;
+	OutVertexByteSize = sizeof(_VertexType);
+
+	IDirect3DVertexBuffer9* _VertexBuffer;
+	if (FAILED(_Device->CreateVertexBuffer(OutVertexByteSize * OutVertexCount,
+		D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT,
+		&_VertexBuffer, 0)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return;
+	}
+
+	_VertexType* _VertexPtr;
+	_VertexBuffer->Lock(0, OutVertexByteSize * OutVertexCount, (void**)&_VertexPtr, 0);
+	memcpy(_VertexPtr, _VertexVector.data(), OutVertexByteSize * OutVertexCount);
+	_VertexBuffer->Unlock();
+
+	OutVertexDecl = std::shared_ptr<IDirect3DVertexDeclaration9>
+		(_VertexType::GetVertexDecl(_Device),
+		[](std::shared_ptr<IDirect3DVertexDeclaration9>::element_type* Target)
+		{
+			Target->Release();
+		});
+
+	OutVertexBuf = std::shared_ptr<IDirect3DVertexBuffer9>(_VertexBuffer,
+		[](std::shared_ptr<IDirect3DVertexBuffer9>::element_type* Target)
+		{
+			Target->Release();
+		});
+}
+
 struct MyLight
 {
-	vec4 Location;
-	vec4 Diffuse;
-	float Radius;
+	vec4 Location = { 0, 0 , 0 , 0 } ;
+	vec4 Diffuse = { 1,1,1,1 };
+	float Radius =10.f;
+	int32_t Priority = (std::numeric_limits<int32_t>::max)();
 };
 
 std::vector<IDirect3DTexture9*> CreateTextures (IDirect3DDevice9* const _Device ,
 	const std::wstring& Path,
+	const size_t TextureNum);
+
+std::vector<std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*> >
+	CreateTexturesSpecularNormal(IDirect3DDevice9* const _Device,
+	const std::wstring& Path,
 	const size_t TextureNum);;
+
 
 struct AnimationTextures
 {
 	using NotifyType = std::map<uint32_t, std::function<void()> >;
-
-	std::map<std::wstring,std::vector<IDirect3DTexture9*>> _TextureMap;
+	                                          // Diffuse                 // Specular           // Normal
+	std::map<std::wstring,std::vector<std::tuple<IDirect3DTexture9* , IDirect3DTexture9*, IDirect3DTexture9*> >> _TextureMap;
 	FORCEINLINE const std::wstring& GetAnimationKey() { return CurrentAnimKey;  };
+	FORCEINLINE size_t GetCurrentImgFrame() { return CurrentImgFrame; };
+	const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& GetCurrentTexture();
+	const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& GetTexture(const std::wstring& _AnimKey, const size_t _ImgFrame);
+
 	void Release()& noexcept;
 	void AddRef()& noexcept;
 	void Update(const float DeltaTime);
-	IDirect3DTexture9* GetCurrentTexture();
 
 	void ChangeAnim(
 		std::wstring AnimKey, 
@@ -173,7 +225,7 @@ bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, c
 #endif
 	if (FAILED(PsTable->SetValue(_Device, PsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{
-		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	//	PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 		return false;
 	}
 	else

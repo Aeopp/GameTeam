@@ -191,7 +191,7 @@ std::list<class CGameObject*> CManagement::GetGameObjects(_int iSceneIndex, cons
 
 HRESULT CManagement::AddGameObjectPrototype(
 	_int iSceneIndex, 
-	const wstring & GameObjectTag, 
+	 wstring  GameObjectTag, 
 	CGameObject * pPrototype)
 {
 	if (nullptr == m_pGameObjectManager)

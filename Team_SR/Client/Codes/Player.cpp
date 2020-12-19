@@ -5,6 +5,8 @@
 #include "Vertexs.h"
 #include "Monster.h"
 #include "DXWrapper.h"
+#include "NormalUVVertexBuffer.h"
+
 
 
 
@@ -12,6 +14,7 @@
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {
+
 }
 
 HRESULT CPlayer::ReadyGameObjectPrototype()
@@ -19,79 +22,76 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	_Quad=SubSetInfo::GetMeshFromObjFile
-	(m_pDevice, L"..\\Resources\\Mesh\\Quad");
-
 	// Harvester 로딩
 	{
-		_AnimationTextures._TextureMap[L"Harvester_Fire"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Harvester_Fire"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Fire\\", 3);
 
-		_AnimationTextures._TextureMap[L"Harvester_Idle"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Harvester_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Harvester_Hud"] = CreateTextures(
-			m_pDevice, L"..\\Resources\\Player\\Harvester\\Hud\\", 1);
+		/*_AnimationTextures._TextureMap[L"Harvester_Hud"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Harvester\\Hud\\", 1);*/
 
-		_AnimationTextures._TextureMap[L"Harvester_Reload"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Harvester_Reload"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Reload\\", 23);
 	}
 
 	{
-		_AnimationTextures._TextureMap[L"Dagger_Stab"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Dagger_Stab"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Dagger\\Stab\\", 4);
 
-		_AnimationTextures._TextureMap[L"Dagger_Idle"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Dagger_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Dagger\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Dagger_Hud"] = CreateTextures(
-			m_pDevice, L"..\\Resources\\Player\\Dagger\\Hud\\", 1);
+		/*_AnimationTextures._TextureMap[L"Dagger_Hud"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Dagger\\Hud\\", 1);*/
 
-		_AnimationTextures._TextureMap[L"Dagger_Throw"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Dagger_Throw"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Dagger\\Throw\\", 12);
 
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 	}
 
 	{
-		_AnimationTextures._TextureMap[L"Magnum_Fire"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Magnum_Fire"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Magnum\\Fire\\", 4);
 
-		_AnimationTextures._TextureMap[L"Magnum_Idle"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Magnum_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Magnum\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Magnum_Hud"] = CreateTextures(
-			m_pDevice, L"..\\Resources\\Player\\Magnum\\Hud\\", 1);
+		/*_AnimationTextures._TextureMap[L"Magnum_Hud"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Magnum\\Hud\\", 1);*/
 	}
 
 	{
-		_AnimationTextures._TextureMap[L"Akimbo_Fire"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Akimbo_Fire"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Fire\\", 4);
 
-		_AnimationTextures._TextureMap[L"Akimbo_Idle"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Akimbo_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Akimbo_Hud"] = CreateTextures(
-			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Hud\\", 1);
+		/*_AnimationTextures._TextureMap[L"Akimbo_Hud"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Akimbo\\Hud\\", 1);*/
 	}
 
 	{
-		_AnimationTextures._TextureMap[L"Staff_Fire"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Staff_Fire"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Fire\\", 4);
 
-		_AnimationTextures._TextureMap[L"Staff_Hud"] = CreateTextures(
-			m_pDevice, L"..\\Resources\\Player\\Staff\\Hud\\", 1);
+	/*	_AnimationTextures._TextureMap[L"Staff_Hud"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Staff\\Hud\\", 1);*/
 
-		_AnimationTextures._TextureMap[L"Staff_Charge"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Staff_Charge"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Charge\\", 16);
 
-		_AnimationTextures._TextureMap[L"Staff_Loop"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Staff_Loop"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Loop\\", 10);
 
-		_AnimationTextures._TextureMap[L"Staff_Idle"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Staff_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTextures(
+		_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Release\\", 5);
 	}
 
@@ -112,7 +112,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
 
 	return S_OK;
-}
+};
 
 _uint CPlayer::UpdateGameObject(float fDeltaTime)
 {
@@ -152,8 +152,8 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
-	_Light.Radius = 30.f;
-	
+	_Light.Radius = 50.0f;
+	_Light.Priority = 0l;
 	Effect::RegistLight(std::move(_Light));
 
 	return _uint();
@@ -171,37 +171,41 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlayer::RenderGameObject()
 {
+	
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
-	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *2.f);
-	GunLocation.y -= 0.36f;
-	vec3 GunScale = m_pTransformCom->GetScale();
-	GunScale.y *= -1.f;
+	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *1.7f);
+	GunLocation.y -= 0.22f;
 
-	const vec3 GunRotation = m_pTransformCom->GetRotation();
+	vec3 GunScale = m_pTransformCom->GetScale();
+	vec3 GunRotation = m_pTransformCom->GetRotation();
+
 	mat GunWorld = MATH::WorldMatrix(GunScale, GunRotation, GunLocation);
 	_Effect.SetVSConstantData(m_pDevice, "World", GunWorld);
 
-	for (auto& _CurrentSubSet : *_Quad)
-	{
-		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
-			_AnimationTextures.GetCurrentTexture());
-		_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
-		m_pDevice->SetStreamSource(0, _CurrentSubSet.VtxBuf, 0,sizeof(Vertex::Texture));
-		m_pDevice->SetVertexDeclaration(_CurrentSubSet.Decl);
-		m_pDevice->SetVertexShader(_Effect.VsShader);
-		m_pDevice->SetPixelShader(_Effect.PsShader);
+
+	const auto& TextureTuple = _AnimationTextures.GetCurrentTexture();
+
+	m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),std::get<0> (TextureTuple));
+	m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+	
+	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", true );
+	_Effect.SetPSConstantData(m_pDevice,"bNormalSamplerBind", true);
+	_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
+	
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+		/*m_pDevice->SetStreamSource(0, _CurrentSubSet.VtxBuf, 0, sizeof(Vertex::Texture));
+		m_pDevice->SetVertexDeclaration(_CurrentSubSet.Decl);*/
 		//m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _CurrentSubSet.TriangleCount);
-	}
-	m_pDevice->SetVertexShader(nullptr);
-	m_pDevice->SetPixelShader(nullptr);
+	_VertexBuffer->Render();
 
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 	_CollisionComp->DebugDraw();
 
 	return S_OK;
@@ -427,6 +431,14 @@ HRESULT CPlayer::AddStaticComponents()
 		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
 		(CComponent**)&_CollisionComp, &_Info);
 
+	if (FAILED(CGameObject::AddComponent(
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -464,6 +476,8 @@ void CPlayer::Free()
 {
 	SafeRelease(_CollisionComp);
 	_AnimationTextures.Release();
+	SafeRelease(_VertexBuffer);
+
 	CGameObject::Free();
 }
 

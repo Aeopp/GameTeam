@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __MAP1ST_H__
 
 #include "MapBase.h"

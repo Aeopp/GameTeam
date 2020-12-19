@@ -49,8 +49,9 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 private:
-	std::shared_ptr<std::vector<SubSetInfo>> _Quad;
+	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
+
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
 	bool bStaffLoop = false;
 private:

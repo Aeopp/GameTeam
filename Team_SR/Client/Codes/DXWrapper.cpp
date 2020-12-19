@@ -147,6 +147,7 @@ vec3 Mesh::CalculateNormal(const vec3 Tangent,const vec3 BiNormal)
 	return Normal;
 };
 
+// 조명 등록은 Update 타이밍에 .
 void Effect::RegistLight(MyLight _Light) noexcept
 {
 	_CurMapLights.push_back(std::move(_Light));
@@ -205,14 +206,20 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"GlobalAmbient",
 				"LightLocation",
 				"LightRadius",
-				"LightDiffuse"
+				"LightDiffuse",
+				"bSpecularSamplerBind",
+				"bNormalSamplerBind",
+				 "FogEnd",
+				 "FogStart",
+				 "FogColor"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
 		(_EffectInfo.PsTable,
 			{ "DiffuseSampler",
 			  "SpecularSampler",
-			  "NormalSampler"});
+			  "NormalSampler",
+			  "EnvironmentSampler"});
 
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
@@ -236,7 +243,12 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 	std::vector<vec4> LightDiffuse;
 	std::vector<float> LightRadius;
 
-	for (MyLight&  _CurLight :_CurMapLights)
+	std::sort(std::begin(_CurMapLights), std::end(_CurMapLights), [](const MyLight&  Lhs , const MyLight& Rhs)
+		{
+			return Lhs.Priority < Rhs.Priority; 
+		});
+
+	for (const MyLight&  _CurLight :_CurMapLights)
 	{
 		LightLocations.push_back(_CurLight.Location);
 		LightDiffuse.push_back(_CurLight.Diffuse);
@@ -250,9 +262,13 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
 		
 		// 다중 조명시 수정 해야함...
-		const vec4 GlobalAmbient = { 0.2f,0.2f,0.2f,1.f };
+		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
+		const vec4 FogColor = { 0.7f,0.7f,0.7f,        1.f };
 		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
-		
+		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
+		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);
+			CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
+
 		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightDiffuse"), LightDiffuse.data(), LightDiffuse.size());
@@ -284,6 +300,7 @@ std::map<std::string, D3DXCONSTANT_DESC> Effect::ConstantHandleDescInitialize(
 	for (auto& _ConstantTextureName : _ConstantTextureNames)
 	{
 		auto TexHandle = _ConstantTable->GetConstantByName(0, _ConstantTextureName.c_str());
+		if (!TexHandle) {PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);};
 		D3DXCONSTANT_DESC _Desc;
 		_ConstantTable->GetConstantDesc(TexHandle, &_Desc, &count);
 		_ConstantDescMap[_ConstantTextureName] = (_Desc);
@@ -440,6 +457,8 @@ D3DXHANDLE Effect::Info::GetPSConstantHandle(const std::string& HandleKey)
 	return iter->second;
 }
 
+
+
 std::vector<IDirect3DTexture9*> CreateTextures(IDirect3DDevice9* const _Device, const std::wstring& Path, const size_t TextureNum)
 {
 	std::vector<IDirect3DTexture9*> _TextureVec;
@@ -461,6 +480,26 @@ std::vector<IDirect3DTexture9*> CreateTextures(IDirect3DDevice9* const _Device, 
 	}
 
 	return _TextureVec;
+}
+
+std::vector<std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*> >
+CreateTexturesSpecularNormal(IDirect3DDevice9* const _Device, const std::wstring& Path, const size_t TextureNum)
+{
+	std::vector<std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*> > _TextureTupleVec(TextureNum);
+
+	auto _Diffuse = CreateTextures(_Device, Path, TextureNum);
+	auto _Specular= CreateTextures(_Device, Path+  L"Specular\\", TextureNum);
+	auto _Normal =  CreateTextures(_Device, Path + L"Normal\\", TextureNum);
+
+	for (size_t i = 0; i < TextureNum; ++i)
+	{
+		_TextureTupleVec[i] = std::make_tuple(
+			std::move(_Diffuse[i]),
+			std::move(_Specular[i]),
+			std::move(_Normal[i]));
+	};
+
+	return _TextureTupleVec;
 }
 
 LPDIRECT3DTEXTURE9 LOAD_TEXTURE(IDirect3DDevice9* _Device, const std::wstring& FileName)
@@ -687,10 +726,6 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 				std::make_move_iterator(std::begin(_FaceVertexs)),
 				std::make_move_iterator(std::end(_FaceVertexs)));
 
-			_Vertexs.insert(std::end(_Vertexs),
-				std::make_move_iterator(std::begin(_FaceVertexs)),
-				std::make_move_iterator(std::end(_FaceVertexs)));
-
 			ReplaceLine.clear();
 		}
 
@@ -781,25 +816,44 @@ void SubSetInfo::Release() & noexcept
 	SafeRelease(Normal);
 }
 
+const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& AnimationTextures::GetTexture(const std::wstring& _AnimKey, const size_t _ImgFrame)
+{
+	auto find_iter = _TextureMap.find(_AnimKey);
+
+	if (find_iter == std::end(_TextureMap))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return {nullptr,nullptr ,nullptr };
+	}
+	else
+	{
+		return find_iter->second[_ImgFrame];
+	}
+}
+
 void AnimationTextures::Release() & noexcept
 {
 	for (auto& _TexturePair: _TextureMap)
 	{
-		for (auto& _Texture : _TexturePair.second)
+		for (auto& _TextureTuple : _TexturePair.second)
 		{
-			SafeRelease(_Texture);
-		}
+			std::get<0>(_TextureTuple)->Release();
+			std::get<1>(_TextureTuple)->Release();
+			std::get<2>(_TextureTuple)->Release();
+		};
 	}
 }
 
 void AnimationTextures::AddRef() & noexcept
 {
-	for (auto&   _TexturePair : _TextureMap)
+	for (auto& _TexturePair : _TextureMap)
 	{
-		for (auto& _Texture : _TexturePair.second)
+		for (auto& _TextureTuple : _TexturePair.second)
 		{
-			SafeAddRef(_Texture);
-		}
+			std::get<0>(_TextureTuple)->AddRef();
+			std::get<1>(_TextureTuple)->AddRef();
+			std::get<2>(_TextureTuple)->AddRef();
+		};
 	}
 }
 
@@ -833,14 +887,14 @@ void AnimationTextures::Update(const float DeltaTime)
 	}
 }
 
-IDirect3DTexture9* AnimationTextures::GetCurrentTexture()
+const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& AnimationTextures::GetCurrentTexture()
 {
 	auto find_iter = _TextureMap.find(CurrentAnimKey);
 
 	if (find_iter == std::end(_TextureMap))
 	{
 		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
-		return nullptr;
+		return  { nullptr,nullptr,nullptr };
 	}
 	else
 	{

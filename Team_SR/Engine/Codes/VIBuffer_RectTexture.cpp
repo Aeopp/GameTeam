@@ -24,16 +24,16 @@ HRESULT CVIBuffer_RectTexture::ReadyComponentPrototype()
 	m_pVB->Lock(0, 0, (void**)&pVertex, 0);
 
 	pVertex[0].vPosition = D3DXVECTOR3(-1.f, 1.f, 0.f);
-	pVertex[0].vUV = D3DXVECTOR2(0.f, 0.f);
+	pVertex[0].vUV = D3DXVECTOR2(0.015f, 0.015f);
 
 	pVertex[1].vPosition = D3DXVECTOR3(1.f, 1.f, 0.f);
-	pVertex[1].vUV = D3DXVECTOR2(1.f, 0.f);
+	pVertex[1].vUV = D3DXVECTOR2(0.985f, 0.015f);
 
 	pVertex[2].vPosition = D3DXVECTOR3(1.f, -1.f, 0.f);
-	pVertex[2].vUV = D3DXVECTOR2(1.f, 1.f);
+	pVertex[2].vUV = D3DXVECTOR2(0.985f, 0.985f);
 
 	pVertex[3].vPosition = D3DXVECTOR3(-1.f, -1.f, 0.f);
-	pVertex[3].vUV = D3DXVECTOR2(0.f, 1.f);
+	pVertex[3].vUV = D3DXVECTOR2(0.015f, 0.985f);
 
 	m_pVB->Unlock();
 

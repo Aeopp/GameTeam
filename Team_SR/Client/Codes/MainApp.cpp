@@ -13,6 +13,7 @@
 #include "WeaponAmmoInfoUI.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
+#include "NormalUVVertexBuffer.h"
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
@@ -85,6 +86,7 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
+		/*L"Layer_Player"*/
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
@@ -225,6 +227,16 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 	}
 #pragma endregion
+
+#pragma region Component_NormalUVVertexBuffer
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CNormalUVVertexBuffer::Create(m_pDevice))))
+	{
+		return E_FAIL;
+	}
+
 
 #pragma region Component_Texture_Player
 

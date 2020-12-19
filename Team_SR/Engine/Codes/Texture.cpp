@@ -23,7 +23,7 @@ HRESULT CTexture::ReadyComponentPrototype()
 
 	for (_uint i = 0; i < m_iCount; ++i)
 	{
-		//m_pFilePath = L"../Texture/ÅÂÈÄ´Ï%d.png";
+		//m_pFilePath = L"../Texture/íƒœí›„ë‹ˆ%d.png";
 		swprintf_s(szRealPath, m_pFilePath, i);
 		hr = D3DXCreateTextureFromFile(
 		m_pDevice,
@@ -57,13 +57,21 @@ HRESULT CTexture::Set_Texture(_uint iIndex)
 		return E_FAIL;
 
 	/* 
-	¹öÅØ½º ±×¸®±â ÀÌÀü¿¡ ±×¸®·Á´Â ¹öÅØ½º¿¡ 
-	¸ÊÇÎ½ÃÅ³ ÅØ½ºÃ³¸¦ ÀåÄ¡¿¡°Ô Àü´Þ 
+	ë²„í…ìŠ¤ ê·¸ë¦¬ê¸° ì´ì „ì— ê·¸ë¦¬ë ¤ëŠ” ë²„í…ìŠ¤ì— 
+	ë§µí•‘ì‹œí‚¬ í…ìŠ¤ì²˜ë¥¼ ìž¥ì¹˜ì—ê²Œ ì „ë‹¬ 
 	*/
 	if (FAILED(m_pDevice->SetTexture(0, m_Textures[iIndex])))
 		return E_FAIL;
 
 	return S_OK;
+}
+
+IDirect3DBaseTexture9* CTexture::GetTexture(const _uint iIndex)
+{
+	if (m_Textures.size() <= iIndex)
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+
+	return m_Textures[iIndex];
 }
 
 CTexture * CTexture::Create(

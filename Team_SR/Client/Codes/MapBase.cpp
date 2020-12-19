@@ -37,12 +37,7 @@ _uint CMapBase::UpdateGameObject(float fDeltaTime)
 
 	if (ImGuiHelper::bEditOn)
 	{
-		ImGui::Begin("LightColor" ,& ImGuiHelper::bEditOn);
-		ImGui::SliderFloat3("DiffuseColor", (float*)&diffusecolor, 0.0f, 1.0f);
-		
-		ImGui::End();
-
-		
+	
 	}
 	
 	return _uint();
@@ -52,7 +47,7 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 {
 	Super::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Priority, this)))
 		return 0;
 
 	return _uint();
@@ -61,12 +56,18 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 HRESULT CMapBase::RenderGameObject()
 {
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	CubeMapRender();
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 	
 	{
 		_Effect.SetVSConstantData(m_pDevice, "World", MapWorld);
 	}
+
+	m_pDevice->SetTexture(_Effect.GetTexIdx("EnvironmentSampler"),
+		_CubeTexture.get());
+	/*m_pDevice->SetTextureStageState(_Effect.GetTexIdx("EnvironmentSampler"), D3DTSS_TEXCOORDINDEX,
+		D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR | 1);*/
 
 	for (auto& RefInfo : *_WallSubSetInfo)
 	{
@@ -76,6 +77,11 @@ HRESULT CMapBase::RenderGameObject()
 			RefInfo.Specular);
 		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),	
 			RefInfo.Normal);
+
+		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
+			true);
+		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
+			true);
 		
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0,sizeof(Vertex::Texture));
@@ -84,7 +90,6 @@ HRESULT CMapBase::RenderGameObject()
 		m_pDevice->SetPixelShader(_Effect.PsShader);
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, RefInfo.TriangleCount);
 	}
-
 
 	for (auto& RefInfo : *_FloorSubSetInfo)
 	{
@@ -95,6 +100,11 @@ HRESULT CMapBase::RenderGameObject()
 		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
 			RefInfo.Normal);
 		
+		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
+			true);
+		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
+			true);
+
 		{
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
 				D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
@@ -111,7 +121,6 @@ HRESULT CMapBase::RenderGameObject()
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("NormalSampler"),
 				D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
 		}
-
 
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex::Texture));
@@ -143,8 +152,6 @@ void CMapBase::LoadMap(std::wstring FilePath,
 			delete ptr;
 		});
 	std::vector<PlaneInfo> _PolygonPlanes;
-
-
 	const std::wstring _MtlFileName = FilePath + L"MAP.mtl";
 	std::wfstream _MtlStream(_MtlFileName);
 
@@ -471,6 +478,51 @@ void CMapBase::Free()
 	_WallSubSetInfo->clear();
 	_FloorSubSetInfo->clear();
 	Super::Free();
+}
+void CMapBase::CubeMapRender()
+{
+	mat View;
+	m_pDevice->GetTransform(D3DTS_VIEW, &View);
+
+	mat InvView=MATH::Inverse(View);
+	mat CubeWorld = MATH::WorldMatrix({ 2.5,2.5,2.5 }, { 0,0,0 },{ InvView._41,InvView._42,InvView._43});
+	m_pDevice->SetTransform(D3DTS_WORLD, &CubeWorld);
+
+	DWORD _CullModePrev;
+	DWORD _ZEnablePrev;
+	DWORD _LightingPrev;
+	DWORD _SampAddressU;
+	DWORD _SampAddressV;
+
+	m_pDevice->GetRenderState(D3DRS_CULLMODE, &_CullModePrev);
+	m_pDevice->GetRenderState(D3DRS_ZENABLE, &_ZEnablePrev);
+	m_pDevice->GetRenderState(D3DRS_LIGHTING, &_LightingPrev);
+	m_pDevice->GetSamplerState(0, D3DSAMP_ADDRESSU, &_SampAddressU);
+	m_pDevice->GetSamplerState(0, D3DSAMP_ADDRESSV, &_SampAddressV);
+
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSU,D3DTADDRESS_CLAMP);
+	m_pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	// 여기서 드로잉..
+	{
+		m_pDevice->SetStreamSource(0, _CubeVertexBuf.get(), 0, sizeof(Vertex::CubeTexture));
+		m_pDevice->SetFVF(Vertex::CubeTexture::FVF);
+		m_pDevice->SetIndices(_CubeIndexBuf.get());
+		m_pDevice->SetTexture(0, _CubeTexture.get());
+		m_pDevice->SetVertexShader(nullptr);
+		m_pDevice->SetPixelShader(nullptr);
+		m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0,
+			8, 0, 12);
+	}
+
+	m_pDevice->SetRenderState(D3DRS_CULLMODE,_CullModePrev);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE,_ZEnablePrev);
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, _LightingPrev);
+	m_pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, _SampAddressU);
+	m_pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, _SampAddressV);
 };
 
 void CMapBase::LoadFloor(const std::wstring& FilePath)
@@ -787,5 +839,117 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 	};
 
 	CCollisionComponent::AddMapFloorInfo(_PolygonPlanes);
+}
+void CMapBase::LoadCubeMap(const std::wstring& FilePath)
+{
+	IDirect3DCubeTexture9* _CubeTexturePtr = nullptr;
+
+	D3DXCreateCubeTextureFromFile(m_pDevice,
+		FilePath.c_str(), &_CubeTexturePtr);
+
+	assert(_CubeTexturePtr);
+
+	_CubeTexture = std::shared_ptr<IDirect3DCubeTexture9>(_CubeTexturePtr,
+		[](IDirect3DCubeTexture9* const _Target)
+		{
+			_Target->Release();
+		});
+
+	IDirect3DVertexBuffer9* _VertexBuf = nullptr;
+
+	if (FAILED(m_pDevice->CreateVertexBuffer(
+		sizeof(Vertex::CubeTexture) * 8,
+		0,
+		Vertex::CubeTexture::FVF,
+		D3DPOOL_MANAGED, 
+		&_VertexBuf, /* 할당된 버텍스버퍼의 주소를 반환 */
+		nullptr)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	}
+
+	Vertex::CubeTexture* CubeVertexPtr = nullptr;
+	_VertexBuf->Lock(0, 0, (void**)&CubeVertexPtr, 0);
+
+	CubeVertexPtr[0].UV = CubeVertexPtr[0].Location = D3DXVECTOR3(-0.5f, 0.5f, -0.5f);
+	CubeVertexPtr[1].UV = CubeVertexPtr[1].Location = D3DXVECTOR3(0.5f, 0.5f, -0.5f);
+	CubeVertexPtr[2].UV = CubeVertexPtr[2].Location = D3DXVECTOR3(0.5f, -0.5f, -0.5f);
+	CubeVertexPtr[3].UV = CubeVertexPtr[3].Location = D3DXVECTOR3(-0.5f, -0.5f, -0.5f);
+	CubeVertexPtr[4].UV = CubeVertexPtr[4].Location = D3DXVECTOR3(-0.5f, 0.5f, 0.5f);
+	CubeVertexPtr[5].UV = CubeVertexPtr[5].Location = D3DXVECTOR3(0.5f, 0.5f, 0.5f);
+	CubeVertexPtr[6].UV = CubeVertexPtr[6].Location = D3DXVECTOR3(0.5f, -0.5f, 0.5f);
+	CubeVertexPtr[7].UV = CubeVertexPtr[7].Location = D3DXVECTOR3(-0.5f, -0.5f, 0.5f);
+
+	_VertexBuf->Unlock();
+
+	_CubeVertexBuf = std::shared_ptr<IDirect3DVertexBuffer9>
+		(_VertexBuf,
+			[](IDirect3DVertexBuffer9* const _Target)
+			{
+				_Target->Release();
+			});
+
+
+	IDirect3DIndexBuffer9* _IndexBuf = nullptr;
+	/* 인덱스버퍼 생성 */
+	if (FAILED(m_pDevice->CreateIndexBuffer(
+		sizeof(Index::_16_t) * 12, /* 인덱스버퍼가 관리할 배열의 총 사이즈 */
+		0, /* 0이면 정적버퍼 */
+		Index::_16_t::Format, /* 인덱스 포맷 */
+		D3DPOOL_MANAGED, /* 메모리 보관 방식 */
+		&_IndexBuf,
+		nullptr)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	}
+
+	Index::_16_t* _IndexBufPtr = nullptr;
+	_IndexBuf->Lock(0, 0, (void**)&_IndexBufPtr, 0);
+		
+	// +x
+	_IndexBufPtr[0]._1 = 1;
+	_IndexBufPtr[0]._2 = 5;
+	_IndexBufPtr[0]._3 = 6;
+	_IndexBufPtr[1]._1 = 1;
+	_IndexBufPtr[1]._2 = 6;
+	_IndexBufPtr[1]._3 = 2;
+	_IndexBufPtr[2]._1 = 4;
+	_IndexBufPtr[2]._2 = 0;
+	_IndexBufPtr[2]._3 = 3;
+	_IndexBufPtr[3]._1 = 4;
+	_IndexBufPtr[3]._2 = 3;
+	_IndexBufPtr[3]._3 = 7;
+	_IndexBufPtr[4]._1 = 4;
+	_IndexBufPtr[4]._2 = 5;
+	_IndexBufPtr[4]._3 = 1;
+	_IndexBufPtr[5]._1 = 4;
+	_IndexBufPtr[5]._2 = 1;
+	_IndexBufPtr[5]._3 = 0;
+	_IndexBufPtr[6]._1 = 3;
+	_IndexBufPtr[6]._2 = 2;
+	_IndexBufPtr[6]._3 = 6;
+	_IndexBufPtr[7]._1 = 3;
+	_IndexBufPtr[7]._2 = 6;
+	_IndexBufPtr[7]._3 = 7;
+	_IndexBufPtr[8]._1 = 5;
+	_IndexBufPtr[8]._2 = 4;
+	_IndexBufPtr[8]._3 = 7;
+	_IndexBufPtr[9]._1 = 5;
+	_IndexBufPtr[9]._2 = 7;
+	_IndexBufPtr[9]._3 = 6;
+	_IndexBufPtr[10]._1 = 0;
+	_IndexBufPtr[10]._2 = 1;
+	_IndexBufPtr[10]._3 = 2;
+	_IndexBufPtr[11]._1 = 0;
+	_IndexBufPtr[11]._2 = 2;
+	_IndexBufPtr[11]._3 = 3;
+
+	_IndexBuf->Unlock();
+
+	_CubeIndexBuf = std::shared_ptr<IDirect3DIndexBuffer9>(
+			_IndexBuf, [](IDirect3DIndexBuffer9 * const _Target)
+			{
+				_Target->Release();
+			} );
 };
 

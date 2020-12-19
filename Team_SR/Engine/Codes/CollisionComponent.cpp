@@ -8,8 +8,8 @@
 
 USING(Engine)
 
-float  CCollisionComponent::MapCollisionCheckDistanceMin= 50.f;
-float  CCollisionComponent::CollisionCheckDistanceMin = 50.f;
+float  CCollisionComponent::MapCollisionCheckDistanceMin= 20.f;
+float  CCollisionComponent::CollisionCheckDistanceMin = 20.f;
 std::vector<CCollisionComponent*> CCollisionComponent::_Comps{};
 int32_t CCollisionComponent::CurrentID{ 0 };
 std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
@@ -214,35 +214,35 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		}
 	}
 
-	// 충돌체 끼리의 충돌
-	for (auto& _Comp : _Comps)
-	{
-#pragma region MatchingCheck
-		if (this == _Comp)continue;
-		auto iter = _TagBind.find(this->_Tag);
-		if (iter == std::end(_TagBind))continue;
-		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
-		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
-#pragma endregion
-		// 거리검사
-		if (MATH::Length(ToRhs) > MapCollisionCheckDistanceMin)continue;
-		// ....
-		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
-		// 충돌함.
-		if (IsCollision.first)
-		{
-			auto* _LhsOwner = this->Owner;
-			auto* _RhsOwner = _Comp->Owner;
-
-			_LhsOwner->Hit(_RhsOwner, IsCollision.second);
-			_RhsOwner->Hit(_LhsOwner, IsCollision.second);
-			// PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
-		}
-		else
-		{
-			// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
-		}
-	}
+//	// 충돌체 끼리의 충돌
+//	for (auto& _Comp : _Comps)
+//	{
+//#pragma region MatchingCheck
+//		if (this == _Comp)continue;
+//		auto iter = _TagBind.find(this->_Tag);
+//		if (iter == std::end(_TagBind))continue;
+//		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+//		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+//#pragma endregion
+//		// 거리검사
+//		if (MATH::Length(ToRhs) > MapCollisionCheckDistanceMin)continue;
+//		// ....
+//		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+//		// 충돌함.
+//		if (IsCollision.first)
+//		{
+//			auto* _LhsOwner = this->Owner;
+//			auto* _RhsOwner = _Comp->Owner;
+//
+//			_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+//			_RhsOwner->Hit(_LhsOwner, IsCollision.second);
+//			// PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+//		}
+//		else
+//		{
+//			// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+//		}
+//	}
 }
 
 

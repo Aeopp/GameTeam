@@ -2,6 +2,10 @@
 #ifndef __MONSTER_H__
 
 #include "GameObject.h"
+#include "DXWrapper.h"
+#include "Vertexs.h"
+
+
 
 USING(Engine)
 class CMonster abstract : public CGameObject
@@ -55,6 +59,13 @@ protected:
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
+
+public:
+/// 조명 하이라이팅이 강해짐.
+	float Shine = 20.f;
+	//                   렌더링 컴포넌트
+	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
+/// 
 };
 
 #define  __MONSTER_H__

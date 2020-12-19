@@ -21,6 +21,7 @@ struct VS_OUTPUT
     float3 Tangent : TEXCOORD3;
     float3 BiNormal : TEXCOORD4;
     float3 WorldLocation : TEXCOORD5;
+    float ViewZ : TEXCOORD6;
 };
 
 VS_OUTPUT main(VS_INPUT Input)
@@ -37,17 +38,19 @@ VS_OUTPUT main(VS_INPUT Input)
 	
 	// Vertex Location : World Coord -> View Coord ... -> Projection Coord
     Output.Location = mul(Output.Location, View);
+    Output.ViewZ = Output.Location.z;
     Output.Location = mul(Output.Location, Projection);
 	
 	// Vertex Normal -> Local Coord -> World Coord
     float3 WorldNormal = mul(Input.Normal, (float3x3) World);
-    WorldNormal = normalize(WorldNormal);
+    Output.Normal = normalize(WorldNormal);
 
     Output.UV = Input.UV;
-	
-    Output.Normal = Input.Normal;
-    Output.Tangent = Input.Tangent;
-    Output.BiNormal = Input.BiNormal;
-	
+    
+    float3 WorldTangent = mul(Input.Tangent, (float3x3) World);
+    Output.Tangent = normalize(WorldTangent);
+    float3 WorldBiNormal  = mul(Input.BiNormal, (float3x3) World);
+    Output.BiNormal = normalize(WorldBiNormal);
+
     return Output;
 };

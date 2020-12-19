@@ -19,6 +19,8 @@
 #define CHANGE_SCNENE	1
 #define STATIC 0
 
+#define __NEAR 1
+#define __FAR 1000
 
 #define NO_COPY(ClassName)						\
 private:										\
