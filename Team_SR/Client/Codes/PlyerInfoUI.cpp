@@ -85,7 +85,8 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	/*_matrix matWorld;
 	*/
 
-	auto camera = m_pManagement->GetGameObject((int)ESceneID::Stage1st, CLayer::Tag + L"MainCamera", 0);
+	auto camera = m_pManagement->GetGameObject((int)-1/*2020 12 21 이호준 Stage1st 상수로 설정되어 있어서 다른 스테이지에서 UI가 렌더링 되지않는 문제가 발생해
+													   항상 현재 씬의 카메라를 참조하도록 수정.*/, CLayer::Tag + L"MainCamera", 0);
 	if (nullptr == camera)
 		return FALSE;
 	mat PrevView, PrevProjection;

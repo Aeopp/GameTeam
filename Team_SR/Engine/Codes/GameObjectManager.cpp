@@ -171,6 +171,25 @@ HRESULT CGameObjectManager::ClearForScene(_int iSceneIndex)
 	return S_OK;
 }
 
+HRESULT CGameObjectManager::ClearForSceneClone(const _int iSceneIndex)&
+{
+	if (0 > iSceneIndex ||
+		m_iSceneCount <= iSceneIndex)
+	{
+		PRINT_LOG(L"Error", L"Out of range GameObject PrototypeContainer");
+		return E_FAIL;
+	}
+
+	for (auto& Pair : m_pLayers[iSceneIndex])
+	{
+		SafeRelease(Pair.second);
+	}
+
+	m_pLayers[iSceneIndex].clear();
+
+	return S_OK;
+}
+
 _uint CGameObjectManager::UpdateGameObject(float fDeltaTime)
 {
 	for (_int i = 0; i < m_iSceneCount; ++i)

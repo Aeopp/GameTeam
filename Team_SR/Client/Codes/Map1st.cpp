@@ -13,10 +13,11 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	mat MapWorld  = MATH::WorldMatrix({ 3,3,3}, { 0,0,0}, { 0,0,0});
-	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
-	LoadFloor(L"..\\Resources\\Map\\2\\");
-	LoadCubeMap(L"..\\Resources\\CubeMap\\Blue.dds");
+	mat MapWorld = MATH::WorldMatrix({ 3,3,3 }, { 0,0,0 }, { 0,0,0 });
+	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
+	LoadFloor(L"..\\Resources\\Map\\1\\");
+	LoadBars(L"..\\Resources\\Map\\1\\");
+	LoadCubeMap(L"..\\Resources\\CubeMap\\Red.dds");
 
 	return S_OK;
 }
@@ -26,31 +27,27 @@ HRESULT CMap1st::ReadyGameObject(void * pArg)
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale={ 1,1,1 };
-
+	
 	return S_OK;
 }
 
 _uint CMap1st::UpdateGameObject(float fDeltaTime)
 {
-	Super::UpdateGameObject(fDeltaTime);
-
-	
-	return _uint();
+	return Super::UpdateGameObject(fDeltaTime);
 }
 
 _uint CMap1st::LateUpdateGameObject(float fDeltaTime)
 {
-	Super::LateUpdateGameObject(fDeltaTime);
+	
 
-	return _uint();
+	return Super::LateUpdateGameObject(fDeltaTime);
 }
 
 HRESULT CMap1st::RenderGameObject()
 {
-	Super::RenderGameObject();
 
-	return S_OK;
+
+	return 	Super::RenderGameObject();
 }
 
 CMap1st* CMap1st::Create(LPDIRECT3DDEVICE9 pDevice)

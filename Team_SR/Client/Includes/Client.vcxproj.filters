@@ -169,6 +169,48 @@
     <ClInclude Include="..\Headers\NormalUVVertexBuffer.h">
       <Filter>03.Component</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Map2nd.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage2nd.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map3rd.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage3rd.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage4th.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map4th.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageBoss.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage5th.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapBoss.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map5th.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageMidBoss.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapMidBoss.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map6th.h">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage6th.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -256,6 +298,48 @@
     <ClCompile Include="ComponentTemplate.md" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map2nd.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage2nd.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map3rd.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage3rd.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage4th.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map4th.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageBoss.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage5th.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapBoss.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map5th.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageMidBoss.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapMidBoss.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map6th.cpp">
+      <Filter>02.GameObject\03.Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage6th.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

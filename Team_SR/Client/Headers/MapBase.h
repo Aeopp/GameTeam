@@ -23,10 +23,12 @@ protected:
 	void LoadMap(std::wstring FilePath,const mat& MapWorld);
 	void LoadFloor(const std::wstring& FilePath );
 	void LoadCubeMap(const std::wstring& FilePath);
+	void LoadBars(const std::wstring& FilePath);
 public:
 	virtual void Free() override;
 protected:
 	std::shared_ptr<std::vector<SubSetInfo>> _WallSubSetInfo{};
+	std::shared_ptr<std::vector<SubSetInfo>> _BarSubSetInfo{};
 	std::shared_ptr<std::vector<SubSetInfo>> _FloorSubSetInfo{};
 	std::shared_ptr<IDirect3DCubeTexture9>   _CubeTexture{};
 	std::shared_ptr<IDirect3DVertexBuffer9>  _CubeVertexBuf{};
@@ -34,6 +36,9 @@ protected:
 	mat MapWorld;
 private:
 	void CubeMapRender();
+	void WallRender();
+	void FloorRender();
+	void BarRender();
 };
 
 #define __MapBase_H__

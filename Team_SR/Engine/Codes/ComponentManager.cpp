@@ -87,7 +87,7 @@ HRESULT CComponentManager::ClearForScene(_int iSceneIndex)
 	m_pPrototypes[iSceneIndex].clear();
 
 	return S_OK;
-}
+};
 
 void CComponentManager::Free()
 {

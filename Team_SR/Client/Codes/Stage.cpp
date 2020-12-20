@@ -8,7 +8,6 @@
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
-
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
 {
@@ -16,37 +15,28 @@ CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CStage::ReadyScene()
 {
+	CCollisionComponent::CleanUpMapCollisionInfo();
+
 	CScene::ReadyScene();
 
-	{
-		if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CPlayer>(),
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + TYPE_NAME<CPlayer>(),
-			(CGameObject**)&m_pPlayer,nullptr)))
-			return E_FAIL;
-	}
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CMainCamera>(),
+		reinterpret_cast<CGameObject**>(&_Camera), nullptr)))
+		return E_FAIL;
 
-	{
-		const std::wstring Type = TYPE_NAME<CMainCamera>();
-		const std::wstring GameObjTag = CGameObject::Tag + Type ;
-		const std::wstring LayerTag = CLayer::Tag + Type;
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, nullptr)))
+		return E_FAIL;
 
-		if (FAILED ( m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-			GameObjTag,
-			(_int)ESceneID::Stage1st,
-			LayerTag,
-			reinterpret_cast<CGameObject**>(&_Camera), nullptr)))
-		{
-			return E_FAIL;
-		}
-	}
-
-	//UI
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		(_int)ESceneID::Stage1st,
+		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
 		nullptr, nullptr)))
 		return E_FAIL;
@@ -54,7 +44,7 @@ HRESULT CStage::ReadyScene()
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		(_int)ESceneID::Stage1st,
+		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
 		nullptr, nullptr)))
 		return E_FAIL;
@@ -66,9 +56,7 @@ _uint CStage::UpdateScene(float fDeltaTime)
 {
 	CScene::UpdateScene(fDeltaTime);
 
-	KeyProcess(fDeltaTime);
-
-	return _uint();
+	return KeyProcess(fDeltaTime); 
 }
 
 _uint CStage::LateUpdateScene()
@@ -210,43 +198,43 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());	
 		}
 	}
-	else if (m_pKeyMgr->Key_Down('R'))
+	 if (m_pKeyMgr->Key_Down('R'))
 	{
 		m_pPlayer->RButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Down(VK_RBUTTON))
+	 if (m_pKeyMgr->Key_Down(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRight();
 	}
-	else if (m_pKeyMgr->Key_Pressing(VK_RBUTTON))
+	 if (m_pKeyMgr->Key_Pressing(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRightPressing();
 	}
-	else if (m_pKeyMgr->Key_Up(VK_RBUTTON))
+	 if (m_pKeyMgr->Key_Up(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRightUp();
 	}
-	else if (m_pKeyMgr->Key_Down('1'))
+	 if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Down('2'))
+	 if (m_pKeyMgr->Key_Down('2'))
 	{
 		m_pPlayer->_2ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Down('3'))
+	 if (m_pKeyMgr->Key_Down('3'))
 	{
 		m_pPlayer->_3ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Down('4'))
+	 if (m_pKeyMgr->Key_Down('4'))
 	{
 		m_pPlayer->_4ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Down('5'))
+	 if (m_pKeyMgr->Key_Down('5'))
 	{
 		m_pPlayer->_5ButtonEvent();
 	}
-	else if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
+	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();
 	}

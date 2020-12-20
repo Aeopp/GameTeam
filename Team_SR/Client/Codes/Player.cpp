@@ -110,6 +110,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	return S_OK;
 };
 
+
 _uint CPlayer::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
@@ -155,7 +156,37 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	Effect::RegistLight(std::move(_Light));
 
+static const 	float dis = 20.f;
 
+	vec3 v = { 1,0,0 };
+	v *= dis;
+	static float t = 0.0f;
+	t += fDeltaTime*1.f;
+	for (size_t i = 0; i < 3; ++i)
+	{
+		const float angle=  720.f / 3.f; 
+		MyLight _Light;
+		if (i == 0)
+		{
+			_Light.Diffuse = { 1.f,0,0.f,1 };
+		}
+		else if (i==1)
+		{
+			_Light.Diffuse = { 0,0,1.f,1 };
+		}
+		else if (i==2)
+		{
+			_Light.Diffuse = { 0,1.f,0.f,1 };
+		}
+		
+
+		_Light.Location = MATH::ConvertVec4((m_pTransformCom->GetLocation() + MATH::RotationVec(v, m_pTransformCom->GetUp(), angle * (i + t))), 1.f); 
+		_Light.Radius = 50.f;
+		_Light.Priority = 1l;
+
+		Effect::RegistLight(std::move(_Light));
+	}
+	
 	{
 		//MyLight _Light;
 		//_Light.Diffuse = { 0,1,0,1 };
@@ -447,7 +478,7 @@ HRESULT CPlayer::AddStaticComponents()
 	return S_OK;
 }
 
-
+ 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)

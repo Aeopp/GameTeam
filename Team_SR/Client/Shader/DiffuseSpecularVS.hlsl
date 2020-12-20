@@ -2,6 +2,7 @@ matrix World;
 matrix View;
 matrix Projection;
 float4 WorldCameraLocation;
+int UVFlag;
 
 struct VS_INPUT
 {
@@ -46,7 +47,10 @@ VS_OUTPUT main(VS_INPUT Input)
     Output.Normal = normalize(WorldNormal);
 
     Output.UV = Input.UV;
-    
+    if (UVFlag == 2)
+    {
+        Output.UV.y *= -1.f;
+    }
     float3 WorldTangent = mul(Input.Tangent, (float3x3) World);
     Output.Tangent = normalize(WorldTangent);
     float3 WorldBiNormal  = mul(Input.BiNormal, (float3x3) World);

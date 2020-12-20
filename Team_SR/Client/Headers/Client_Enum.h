@@ -9,6 +9,15 @@ enum class ESceneID :int8_t
 	Logo,
 	Menu,
 	Stage1st,
+	Stage2nd,
+	Stage3rd,
+	Stage4th,
+	Stage5th,
+	Stage6th,
+	Stage7th,
+	Stage8th,
+	StageMidBoss,
+	StageFinalBoss,
 	MaxCount
 };
 

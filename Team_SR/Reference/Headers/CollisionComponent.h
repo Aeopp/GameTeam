@@ -24,7 +24,7 @@ public:
 	void CancelRegist();
 	// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
 	static const std::vector<PlaneInfo>& GetMapPlaneInfo();
-	FORCEINLINE static void CleanUpMapPlaneInfo()noexcept { _MapPlaneInfo.clear(); };
+	FORCEINLINE static void CleanUpMapCollisionInfo()noexcept { _MapPlaneInfo.clear(); _MapFloorInfo.clear(); };
 	static void AddMapPlaneInfo(const std::vector<PlaneInfo>& _MapPlaneInfo)noexcept;
 	static void AddMapFloorInfo(const std::vector<PlaneInfo>& PMapFloorInfo)noexcept;
 	static void CollisionUpdate(IDirect3DDevice9* const  _Device);

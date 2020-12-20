@@ -166,7 +166,7 @@ HRESULT CRenderer::RenderAlpha()
 
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
 
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
@@ -174,6 +174,9 @@ HRESULT CRenderer::RenderAlpha()
 
 HRESULT CRenderer::RenderUI()
 {
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -183,6 +186,10 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
+
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	
 
 	return S_OK;
 }

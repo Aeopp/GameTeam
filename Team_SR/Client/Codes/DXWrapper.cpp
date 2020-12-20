@@ -195,7 +195,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"World",
 				"View",
 				"Projection",
-				"WorldCameraLocation"
+				"WorldCameraLocation",
+			    "UVFlag"
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
@@ -266,6 +267,7 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetVSConstantData(_Device, "View", View);
 		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
+		CurEffect.SetVSConstantData(_Device, "UVFlag", int32_t(0l));
 		
 		// 다중 조명시 수정 해야함...
 		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };

@@ -8,165 +8,86 @@
 #include "BatGrey.h"
 #include "PlyerInfoUI.h"
 #include "Eyebat.h"
+#include "Stage2nd.h"
+#include "Map2nd.h"
+
 CStage1st::CStage1st(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
-{}
+{};
 
 HRESULT CStage1st::ReadyScene()
 {
+	CurrentSceneID = ESceneID::Stage1st;
+	NextSceneID = ESceneID::Stage2nd;
+	using MapType = CMap1st;
+
 	Super::ReadyScene();
 
+	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)CurrentSceneID,
+		GameObjTag,
+		MapType::Create(m_pDevice))))
+		return E_FAIL;
+
+	const std::wstring LayerTag = CLayer::Tag + TYPE_NAME<MapType>();
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)CurrentSceneID,
+		GameObjTag,
+		(_int)CurrentSceneID,
+		LayerTag,
+		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		return E_FAIL;
+
+	for (size_t i = 0; i < 300; ++i)
 	{
-		const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<CMap1st>();
-
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Stage1st,
-			GameObjTag,
-			CMap1st::Create(m_pDevice))))
-			return E_FAIL;
-
-		const std::wstring LayerTag = CLayer::Tag + TYPE_NAME<CMap1st>();
-
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Stage1st,
-			GameObjTag,
-			(_int)ESceneID::Stage1st,
-			LayerTag,
-			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
-			return E_FAIL;
-
-		std::wifstream In(L"..\\Resources\\BatGrey.txt");
-		std::wstring str;
-		vec3 Location;
-		vec3 Rotation;
-		vec3 Scale; 
-		while (In)
-		{
-			std::getline(In, str);
-			std::wstringstream wss(str);
-			std::wstring Token;
-			wss >> Token;
-
-			std::wstring Name;
-			      
-			if (Token == L"Name")
-			{
-				wss >> Name;
-			}
-			else if (Token == L"Location")
-			{
-				wss >> Location.x;
-				wss >> Location.y;
-				wss >> Location.z;
-			}
-			else if (Token == L"Scale")
-			{
-				wss >> Scale.x;
-				wss >> Scale.y;
-				wss >> Scale.z;
-			}
-			else if (Token == L"Rotation")
-			{
-				wss >> Rotation.x;
-				wss >> Rotation.y;
-				wss >> Rotation.z;
-			}
-
-			/*if (Name == L"BatGrey")
-			{
-				MonsterBasicArgument stArg;
-				stArg.uiSize = sizeof(MonsterBasicArgument);
-				stArg.pPlayer = m_pPlayer;
-				stArg.vPosition = Location;
-				if (FAILED(m_pManagement->AddGameObjectInLayer(
-					(_int)ESceneID::Static,
-					CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-					(_int)ESceneID::Stage1st,
-					CLayer::Tag + TYPE_NAME<CMonster>(),
-					nullptr, static_cast<void*>(&stArg))))
-					return E_FAIL;
-			}
-			else if (Name == L"Glacier")
-			{
-				MonsterBasicArgument stArg;
-				stArg.uiSize = sizeof(MonsterBasicArgument);
-				stArg.pPlayer = m_pPlayer;
-				stArg.vPosition = Location;
-				if (FAILED(m_pManagement->AddGameObjectInLayer(
-					(_int)ESceneID::Static,
-					CGameObject::Tag + TYPE_NAME<CGlacier>(),
-					(_int)ESceneID::Stage1st,
-					CLayer::Tag + TYPE_NAME<CMonster>(),
-					nullptr, static_cast<void*>(&stArg))))
-					return E_FAIL;
-			}*/
-		};
-		static constexpr float RandRange = 50;
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 41, 13, 4 };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
+		stArg.vPosition = MATH::RandVec() * MATH::RandReal({ -10,10 });		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacier>(),
-			(_int)ESceneID::Stage1st,
+			CGameObject::Tag + TYPE_NAME<CEyebat>(),
+			(_int)CurrentSceneID,
 			CLayer::Tag + TYPE_NAME<CMonster>(),
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
-
-		for (uint32_t i = 0; i < 10; ++i)
-		{
-			// 박쥐
-		
-			MonsterBasicArgument stArg;
-			stArg.uiSize = sizeof(MonsterBasicArgument);
-			stArg.pPlayer = m_pPlayer;
-			stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
-			if (FAILED(m_pManagement->AddGameObjectInLayer(
-				(_int)ESceneID::Static,
-				CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-				(_int)ESceneID::Stage1st,
-				CLayer::Tag + TYPE_NAME<CMonster>(),
-				nullptr, static_cast<void*>(&stArg))))
-				return E_FAIL;
-
-			// 글레이서
-			//stArg.vPosition = { 5.f, 10.f, 30.f };
-
-			// 눈깔박쥐
-			stArg.vPosition = { MATH::RandReal({-RandRange ,RandRange }), 10.f, MATH::RandReal({-RandRange ,RandRange }) };
-
-			if (FAILED(m_pManagement->AddGameObjectInLayer(
-				(_int)ESceneID::Static,
-				CGameObject::Tag + TYPE_NAME<CEyebat>(),
-				(_int)ESceneID::Stage1st,
-				CLayer::Tag + TYPE_NAME<CMonster>(),
-				nullptr, static_cast<void*>(&stArg))))
-				return E_FAIL;
-		}
 	}
+	
 
+	
 
 	return S_OK;
 }
 
 _uint CStage1st::UpdateScene(float fDeltaTime)
 {
-	Super::UpdateScene(fDeltaTime);
-
-	return _uint();
+	return Super::UpdateScene(fDeltaTime); 
 }
 
 _uint CStage1st::LateUpdateScene()
 {
-	Super::LateUpdateScene();
-
-	return _uint();
+	return Super::LateUpdateScene();
 }
 
 _uint CStage1st::KeyProcess(float fDeltaTime)
 {
 	Super::KeyProcess(fDeltaTime);
+
+	if (m_pKeyMgr->Key_Down(VK_SHIFT))
+	{
+		CManagement* pManagement = CManagement::Get_Instance();
+		if (nullptr == pManagement)
+			return 0;
+		
+		if (FAILED(pManagement->SetUpCurrentScene((_int)NextSceneID,
+			CStage2nd::Create(m_pDevice))))
+		{
+			PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
+			return 0;
+		}
+
+		return CHANGE_SCNENE;
+	}
 
 	return _uint();
 }
@@ -174,7 +95,6 @@ _uint CStage1st::KeyProcess(float fDeltaTime)
 void CStage1st::PlayerKeyProcess(CPlayer* const _CurrentPlayer,  float fDeltaTime)
 {
 	Super::PlayerKeyProcess(_CurrentPlayer, fDeltaTime);
-
 }
 
 CStage1st* CStage1st::Create(LPDIRECT3DDEVICE9 pDevice)

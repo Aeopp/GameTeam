@@ -21,6 +21,7 @@ public:
 	HRESULT AddGameObjectPrototype(_int iSceneIndex,  wstring GameObjectTag, CGameObject* pPrototype);
 	HRESULT AddGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, _int iToSceneIndex, const wstring& LayerTag, CGameObject** ppGameObject = nullptr, void* pArg = nullptr);
 	HRESULT ClearForScene(_int iSceneIndex);
+	HRESULT ClearForSceneClone(const _int iSceneIndex)&;
 public:
 	_uint UpdateGameObject(float fDeltaTime);
 	_uint LateUpdateGameObject(float fDeltaTime);

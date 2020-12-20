@@ -104,7 +104,7 @@ HRESULT CManagement::ClearForScene(_int iSceneIndex)
 	if (FAILED(m_pComponentManager->ClearForScene(iSceneIndex)))
 		return E_FAIL;
 
-	CCollisionComponent::CleanUpMapPlaneInfo();
+	CCollisionComponent::CleanUpMapCollisionInfo();
 
 	return S_OK;
 }
@@ -136,8 +136,9 @@ HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	if (nullptr == m_pSceneManager)
 		return E_FAIL;
 
+	m_pGameObjectManager->ClearForSceneClone(CurrentSceneIdx);
+	//m_pComponentManager->ClearForScene(CurrentSceneIdx);
 	CurrentSceneIdx = iSceneID;
-
 	return m_pSceneManager->SetUpCurrentScene(iSceneID, pCurrentScene);
 }
 

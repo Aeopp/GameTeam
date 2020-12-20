@@ -25,6 +25,7 @@ float4 GlobalAmbient;
 bool bSpecularSamplerBind;
 bool bNormalSamplerBind;
 int LightNum;
+
 float Shine;
 float FogEnd;
 float FogStart;
@@ -32,10 +33,10 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
-    
     Input.Normal = normalize(Input.Normal);
     Input.Tangent = normalize(Input.Tangent);
     Input.BiNormal = normalize(Input.BiNormal);
+  
     
     float3 tangentNormal = tex2D(NormalSampler, Input.UV).xyz;
     tangentNormal = normalize(tangentNormal * 2 - 1);
@@ -52,6 +53,7 @@ float4 main(PS_INPUT Input) : COLOR
     {
         Normal = Input.Normal;
     }
+ 
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
     float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
     
@@ -95,7 +97,7 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.5f);
+        CurrentColor.rgb += (Environment * 0.99f);
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }
