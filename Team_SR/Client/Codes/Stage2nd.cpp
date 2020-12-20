@@ -43,21 +43,6 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	for (size_t i = 0; i < 300; ++i)
-	{
-		MonsterBasicArgument stArg;
-		stArg.uiSize = sizeof(MonsterBasicArgument);
-		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = MATH::RandVec() * MATH::RandReal({ -10,10 });		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CEyebat>(),
-			(_int)CurrentSceneID,
-			CLayer::Tag + TYPE_NAME<CMonster>(),
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
-	}
-
-
 
 	
 	

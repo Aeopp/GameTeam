@@ -64,7 +64,7 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMonster::IsBillboarding()
 {
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera");
 	if (nullptr == pCamera)
 		return E_FAIL;
 

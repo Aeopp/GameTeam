@@ -8,6 +8,7 @@
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
+
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice)
 {

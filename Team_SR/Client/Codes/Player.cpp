@@ -101,7 +101,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 10;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 50.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
@@ -151,7 +151,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
-	_Light.Radius = 50.0f;
+	_Light.Radius = 50.f;
 	_Light.Priority = 0l;
 
 	Effect::RegistLight(std::move(_Light));
@@ -204,7 +204,8 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha
+		, this)))
 		return 0;
 
 	return _uint();
@@ -241,8 +242,10 @@ HRESULT CPlayer::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
-
+	
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+
 	_CollisionComp->DebugDraw();
 
 	return S_OK;

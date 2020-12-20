@@ -130,7 +130,7 @@ HRESULT CRenderer::RenderAlpha()
 	알파 블렌딩 ==================================================================
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	/*
@@ -147,14 +147,14 @@ HRESULT CRenderer::RenderAlpha()
 
 	// 알파 오브젝트들은 카메라의 Z축에 투영한 위치로 정렬해서 렌더를 수행하거나 혹은 ZWRITEENABLE 을 끔으로써 해결할 수 있음. 
 
-	/*std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), 
+	std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), 
 		std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
 		[View](CGameObject* const _Lhs, CGameObject* const _Rhs)
 		{
 			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
 			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
 			return LhsViewLocation.z  > RhsViewLocation.z;
-		});*/
+		});
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{

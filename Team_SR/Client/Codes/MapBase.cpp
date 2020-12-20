@@ -570,7 +570,10 @@ void CMapBase::BarRender()
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1);
+	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
 	for (auto& RefInfo : *_BarSubSetInfo)
 	{
 		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
@@ -598,7 +601,8 @@ void CMapBase::BarRender()
 			_Effect.SetVSConstantData(m_pDevice, "UVFlag", int32_t(0l));
 		}
 	};
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 };
 
 void CMapBase::LoadFloor(const std::wstring& FilePath)

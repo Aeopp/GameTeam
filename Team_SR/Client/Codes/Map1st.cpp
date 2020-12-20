@@ -13,7 +13,7 @@ HRESULT CMap1st::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	mat MapWorld = MATH::WorldMatrix({ 3,3,3 }, { 0,0,0 }, { 0,0,0 });
+	mat MapWorld = MATH::WorldMatrix({ 5,5,5 }, { 0,0,0 }, { 0,0,0 });
 	LoadMap(L"..\\Resources\\Map\\1\\", MapWorld);
 	LoadFloor(L"..\\Resources\\Map\\1\\");
 	LoadBars(L"..\\Resources\\Map\\1\\");

@@ -282,7 +282,7 @@ HRESULT CEyebat::AddComponents()
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
-
+	
 	return S_OK;
 }
 
