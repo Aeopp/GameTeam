@@ -47,7 +47,7 @@ _uint CMonster::UpdateGameObject(float fDeltaTime)
 
 	// 2020.12.17 11:08 KMJ
 	// 충돌 이동
-	CollisionMovement(fDeltaTime);
+	//CollisionMovement(fDeltaTime);
 
 	return _uint();
 }

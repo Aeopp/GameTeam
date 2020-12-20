@@ -94,6 +94,12 @@
     <Filter Include="02.GameObject\05.Effect\01.NonColl\02.FloorBlood">
       <UniqueIdentifier>{499e18e0-415e-4eaf-92cf-ab72af24fd55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\06.Bullet\04.SpiderBullet">
+      <UniqueIdentifier>{168de8fb-4a07-41ca-b1d4-1ae949c4470c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\00.Player\01.Terret">
+      <UniqueIdentifier>{74582a3a-1009-4d13-86b9-11cc51e4860a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -230,6 +236,12 @@
     <ClInclude Include="..\Headers\FloorBlood.h">
       <Filter>02.GameObject\05.Effect\01.NonColl\02.FloorBlood</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\SpiderBullet.h">
+      <Filter>02.GameObject\06.Bullet\04.SpiderBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Terret.h">
+      <Filter>02.GameObject\00.Player\01.Terret</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -338,6 +350,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FloorBlood.cpp">
       <Filter>02.GameObject\05.Effect\01.NonColl\02.FloorBlood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SpiderBullet.cpp">
+      <Filter>02.GameObject\06.Bullet\04.SpiderBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Terret.cpp">
+      <Filter>02.GameObject\00.Player\01.Terret</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

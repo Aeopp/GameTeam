@@ -34,8 +34,9 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 1.f;
+	m_stOriginStatus.fSpeed = 2.f;
 	m_stOriginStatus.fDetectionRange = 100.f;
+	m_stOriginStatus.fMeleeRange = 15.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
@@ -44,12 +45,15 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	m_fpAction = &CSpider::Action_Idle;
-	m_fpSpiderAI[(int)AWARENESS::No][(int)PHASE::HP_High] = &CSpider::AI_NoAwareness;
-	m_fpSpiderAI[(int)AWARENESS::No][(int)PHASE::HP_ZERO] = &CSpider::AI_NoAwareness;
+	m_fpSpiderAI[(int)AWARENESS::No][(int)PHASE::WALL] = &CSpider::AI_NoAwareness;
+	m_fpSpiderAI[(int)AWARENESS::No][(int)PHASE::FLOOR] = &CSpider::AI_NoAwareness;
+	m_fpSpiderAI[(int)AWARENESS::No][(int)PHASE::DEATH] = &CSpider::AI_DeadPhase;
 
-	m_fpSpiderAI[(int)AWARENESS::Yes][(int)PHASE::HP_High] = &CSpider::AI_FirstPhase;		// 적극적으로 공격
-	m_fpSpiderAI[(int)AWARENESS::Yes][(int)PHASE::HP_ZERO] = &CSpider::AI_DeadPhase;	
-
+	m_fpSpiderAI[(int)AWARENESS::Yes][(int)PHASE::WALL] = &CSpider::AI_WallPhase;		// 적극적으로 공격
+	m_fpSpiderAI[(int)AWARENESS::Yes][(int)PHASE::FLOOR] = &CSpider::AI_FloorPhase;
+	m_fpSpiderAI[(int)AWARENESS::Yes][(int)PHASE::DEATH] = &CSpider::AI_DeadPhase;
+	
+	m_ePhase = PHASE::WALL;
 
 	return S_OK;
 }
@@ -57,6 +61,10 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 _uint CSpider::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return 0;
+	}
 
 	if (GetAsyncKeyState('6') & 0x8000)
 	{
@@ -66,11 +74,13 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 		m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 	}
 
-	if(false == m_bTest)
-		m_pTransformCom->m_TransformDesc.vPosition.z -= 0.1f /** m_stStatus.fSpeed*/;
+	if (false == m_bTest
+		&& m_pTransformCom->m_TransformDesc.vPosition.y > 20)
+		m_vRandomLook.y *= -1.f; /** m_stStatus.fSpeed*/;
 	if (true == m_bTest)
 		Jump(fDeltaTime);
-	//Update_AI(fDeltaTime);
+	Update_AI(fDeltaTime);
+	ChagneSpeed(fDeltaTime);
 	
 	_CollisionComp->Update(m_pTransformCom);
 
@@ -79,8 +89,8 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 
 _uint CSpider::LateUpdateGameObject(float fDeltaTime)
 {
-
-	//CMonster::LateUpdateGameObject(fDeltaTime);
+	if(PHASE::FLOOR ==  m_ePhase)
+		CMonster::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
@@ -131,8 +141,13 @@ void CSpider::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 void CSpider::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
 {
 	//바닥이랑 충돌하면 각도를 정면 보게
-	m_bTest = false;
-
+	if (m_bTest)
+	{
+		m_bTest = false;
+		m_ePhase = PHASE::FLOOR;
+	}
+	else
+		m_pTransformCom->m_TransformDesc.vPosition.y += 0.5f;
 }
 
 void CSpider::Update_AI(float fDeltaTime)
@@ -147,13 +162,11 @@ void CSpider::Update_AI(float fDeltaTime)
 			m_eAwareness = AWARENESS::No;
 		}
 
-		if (m_stStatus.fHP > 0) {
-			m_ePhase = PHASE::HP_High;
-		}
-		else if (m_stStatus.fHP <= 0)
+		if (m_stStatus.fHP <= 0)
 		{
-			m_ePhase = PHASE::HP_ZERO;
+			m_ePhase = PHASE::DEATH;
 		}
+
 
 		(this->*m_fpSpiderAI[(int)m_eAwareness][(int)m_ePhase])();
 	}
@@ -202,7 +215,9 @@ void CSpider::ChagneSpeed(float fDeltaTime)
 	if (m_fChangeSpeed >= 1)
 	{
 		m_fChangeSpeed = 0.f;
-		m_stStatus.fSpeed = rand() % 10 - 5;
+		float fRandomY = rand() % 3 - 1;
+		float fRandomZ = rand() % 3 - 1;
+		m_vRandomLook = { 0.f,fRandomY,fRandomZ };
 	}
 }
 
@@ -220,7 +235,8 @@ void CSpider::Jump(float fDeltaTime)
 	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition.y = m_fStartY + (m_fJumpPower * m_fJumpTime - 9.8f * m_fJumpTime * m_fJumpTime);
 
-	m_fJumpTime += 0.03f;
+	if (m_fJumpTime < 3.f)
+		m_fJumpTime += 0.03f;
 }
 
 void CSpider::AI_NoAwareness()
@@ -233,15 +249,74 @@ void CSpider::AI_NoAwareness()
 	m_fEndFrame = 0.f;
 }
 
-void CSpider::AI_FirstPhase()
+void CSpider::AI_WallPhase()
 {
+	if (m_bTest)
+		return;
+	if (m_stStatus.fHP < m_stOriginStatus.fHP * 0.5f)
+	{
+		m_bTest = true;
+		m_vLook = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+		m_vLook.y = 0.f;
+		m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
+	}
+
+	int iRand = rand() % 100;
+	//이동
+	if (0 <= iRand && iRand < 70)
+	{
+		m_fpAction = &CSpider::Action_Move_Wall;
+		m_fCountDown = 1.f;
+		m_wstrTextureKey = m_wstrBase + L"Walk";
+		m_fFrameCnt = 0.f;
+		m_fStartFrame = 0.f;
+		m_fFrameSpeed = 20.f;
+		m_fEndFrame = 3.f;
+	}
+
+	//웹 발사
+	else if (70 <= iRand && iRand < 100)
+	{
+		m_fpAction = &CSpider::Action_Shoot;
+		m_fCountDown = 1.f;
+		m_wstrTextureKey = m_wstrBase + L"Attack";
+		m_fFrameCnt = 0.f;
+		m_fStartFrame = 0.f;
+		m_fFrameSpeed = 5.f;
+		m_fEndFrame = 4.f;
+	}
+
+	//점프
+}
+
+void CSpider::AI_FloorPhase()
+{
+	//이동
+	m_fpAction = &CSpider::Action_Move_Floor;
+	m_fCountDown = 1.f;
+	m_wstrTextureKey = m_wstrBase + L"Walk";
+	m_fFrameCnt = 0.f;
+	m_fStartFrame = 0.f;
+	m_fEndFrame = 3.f;
+	m_fFrameSpeed = 20.f;
+	m_stStatus.fSpeed = 10.f;
+	//근접공격
+
+
 }
 
 void CSpider::AI_DeadPhase()
 {
+	m_fpAction = &CSpider::Action_Death;
+	m_fCountDown = 1.f;
+	m_wstrTextureKey = m_wstrBase + L"Death";
+	m_fFrameCnt = 0.f;
+	m_fStartFrame = 0.f;
+	m_fFrameSpeed = 5.f;
+	m_fEndFrame = 12.f;
 }
 
-bool CSpider::Action_Move(float fDeltaTime)
+bool CSpider::Action_Move_Wall(float fDeltaTime)
 {
 	//const _vector vPlayerPos = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
 	//const _vector vGlacierPos = m_pTransformCom->m_TransformDesc.vPosition;
@@ -259,10 +334,32 @@ bool CSpider::Action_Move(float fDeltaTime)
 	//if (fLookLength > 10)
 	//	m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
+	m_pTransformCom->m_TransformDesc.vPosition += m_vRandomLook * fDeltaTime * m_stStatus.fSpeed;
+	m_fCountDown -= fDeltaTime;
 	if (m_fCountDown <= 0)
 	{
 		return true;
 	}
+	return false;
+}
+
+bool CSpider::Action_Move_Floor(float fDeltaTime)
+{
+	m_fCountDown -= fDeltaTime;
+	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	vDir.y = 0.f;
+	float fLookLength = D3DXVec3Length(&vDir);
+	D3DXVec3Normalize(&vDir, &vDir);
+	// 포지션 이동
+	if (fLookLength > 5)
+		m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
+
+	if (m_fCountDown <= 0)
+	{
+		return true;
+	}
+
+
 	return false;
 }
 
@@ -277,8 +374,9 @@ bool CSpider::Action_Idle(float fDeltaTime)
 
 bool CSpider::Action_Shoot(float fDeltaTime)
 {
-	if (m_fCountDown <= 0)
+	if (m_bFrameLoopCheck)
 	{
+		CreateBullet();
 		return true;
 	}
 	return false;
@@ -286,11 +384,21 @@ bool CSpider::Action_Shoot(float fDeltaTime)
 
 bool CSpider::Action_Death(float fDeltaTime)
 {
-	if (m_fCountDown <= 0)
+	if (m_fFrameCnt >= m_fEndFrame - 1)
 	{
-		return true;
+		m_fFrameCnt = m_fEndFrame - 1;
+		m_fStartFrame = m_fEndFrame - 1;
+		//m_byObjFlag |= (BYTE)ObjFlag::Remove;
+		m_byMonsterFlag |= (BYTE)MonsterFlag::Dead;
+		CMonster::CreateFloorBlood();
 	}
+
 	return false;
+}
+
+void CSpider::CreateBullet()
+{
+
 }
 
 HRESULT CSpider::AddComponents()

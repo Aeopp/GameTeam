@@ -32,21 +32,22 @@ private:
 	void Jump(float fDeltaTime);
 	////////////////////AWARENESS//////////////////
 	void AI_NoAwareness();
-	void AI_FirstPhase();
-	//void AI_SecondPhase();
+	void AI_WallPhase();
+	void AI_FloorPhase();
 	void AI_DeadPhase();
 	////////////////////ACTION/////////////////////
-	bool Action_Move(float fDeltaTime);
+	bool Action_Move_Wall(float fDeltaTime);
+	bool Action_Move_Floor(float fDeltaTime);
 	bool Action_Idle(float fDeltaTime);
 	bool Action_Shoot(float fDeltaTime);
 	bool Action_Death(float fDeltaTime);
 	///////////////////////////////////////////////
-	//void CreateBullet();
+	void CreateBullet();
 
 
 private:
 	enum class AWARENESS { No, Yes, End };
-	enum class PHASE { HP_High, HP_ZERO, End };
+	enum class PHASE { WALL, FLOOR, DEATH,End };
 
 	using AIFunc = void(CSpider::*)(void);
 	using ACTFunc = bool(CSpider::*)(float);
@@ -67,6 +68,7 @@ private:
 	float		m_fChangeSpeed = 0.f;
 	float		m_fDashSpeed = 0.f;
 	_vector		m_vLook;
+	_vector		m_vRandomLook;
 	bool		m_bTest = false;
 	float		m_fStartY = 0.f;
 	float		m_fJumpPower = 0.f;
