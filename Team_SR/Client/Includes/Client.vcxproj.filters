@@ -82,6 +82,12 @@
     <Filter Include="02.GameObject\06.Effect\01.GlacierParticle">
       <UniqueIdentifier>{216a82f1-715e-49fa-9f13-4eb3ad881f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\06.Hangman">
+      <UniqueIdentifier>{35194b58-2355-4e92-ba06-4eaac09cced6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\04.HangmanBomb">
+      <UniqueIdentifier>{f951adf1-de02-44ca-87da-d61f0d275574}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -212,6 +218,12 @@
     <ClInclude Include="..\Headers\GlacierParticle.h">
       <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Hangman.h">
+      <Filter>02.GameObject\02.Monster\06.Hangman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HangmanBomb.h">
+      <Filter>02.GameObject\05.Bullet\04.HangmanBomb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -314,6 +326,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierParticle.cpp">
       <Filter>02.GameObject\06.Effect\01.GlacierParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hangman.cpp">
+      <Filter>02.GameObject\02.Monster\06.Hangman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HangmanBomb.cpp">
+      <Filter>02.GameObject\05.Bullet\04.HangmanBomb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -38,138 +38,18 @@ HRESULT CStage1st::ReadyScene()
 			reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 			return E_FAIL;
 
-		//MonsterBasicArgument stArg;
-		//stArg.uiSize = sizeof(MonsterBasicArgument);
-		//stArg.pPlayer = m_pPlayer;
-		//stArg.vPosition = { 0.f, 10.f, 20.f };
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + TYPE_NAME<CBatGrey>(),
-		//	(_int)ESceneID::Stage1st,
-		//	CLayer::Tag + TYPE_NAME<CMonster>(),
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
-
-#pragma region 아이템 생성 코드들
-		// 겁나큰 체력 포션
-		ItemBasicArgument stItemArg;
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 0.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthBig;
-		stItemArg.bDeleteFlag = false;
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 10.f, 20.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
+			CGameObject::Tag + L"Hangman",
 			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 작은 체력 포션
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 1.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 겁나큰 마나 포션
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 2.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaBig;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 작은 마나 포션
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 3.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 총알 박스
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 4.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Ammo;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 파란 키
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 5.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyBlue;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 빨간 키
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 6.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyRed;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 노랑 키
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 7.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyYellow;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// 업그레이드 재화
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 8.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Upgrade;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 	}
-#pragma endregion
 
 	return S_OK;
 }

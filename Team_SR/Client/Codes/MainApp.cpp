@@ -19,6 +19,8 @@
 #include "BatSpit.h"	// 박쥐 총알
 #include "UIManager.h"	// UI 매니저
 #include "Item.h"		// 아이템
+#include "Hangman.h"	// 행맨
+#include "HangmanBomb.h" // 행맨 폭탄
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -205,6 +207,21 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 행맨 오브젝트
+#pragma region GameObject_Hangman
+	// 행맨
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHangman>(),
+		CHangman::Create(m_pDevice))))
+		return E_FAIL;
+	// 투사체 폭탄
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHangmanBomb>(),
+		CHangmanBomb::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
 
 		
 
@@ -453,6 +470,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		L"Component_Texture_Ammo_Box",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/ammo_box_pistol.png", 1))))
 		return E_FAIL;
+#pragma endregion
 	// 파란 열쇠
 #pragma region Key_Blue
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -486,6 +504,95 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 #pragma endregion
+
+	// 행맨 텍스처들
+#pragma region Component_Texture_Hangman
+	// Idle Back
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Back",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Back/hangman_idle_back.png", 1))))
+		return E_FAIL;
+
+	// 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Attack/hangman_attack%d.png", 13))))
+		return E_FAIL;
+
+	// 원거리 폭탄 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Bomb_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Bomb/hangman_bomb%d.png", 15))))
+		return E_FAIL;
+
+	// 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Walk/hangman_walk000%d.png", 6))))
+		return E_FAIL;
+
+	// 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Hit/hangman_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Damage",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Damage/hangman_damage000%d.png", 6))))
+		return E_FAIL;
+
+	// 손상 근거리 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamageAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamageAttack/hangman_damaged_attack000%d.png", 10))))
+		return E_FAIL;
+
+	// 손상 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamagedHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamagedHit/hangman_damaged_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamagedWalk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamagedWalk/hangman_damaged_walk000%d.png", 6))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Death/hangman_damaged_death000%d.png", 10))))
+		return E_FAIL;
+
+	// 투사체 폭탄
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Bullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Bullet/bomb0000.png", 1))))
+		return E_FAIL;
+
+	// 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Gib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Gib/gib_hangman%d.png", 2))))
+		return E_FAIL;
+
+
+#pragma endregion	// Component_Texture_Hangman
 
 	return S_OK;
 }
