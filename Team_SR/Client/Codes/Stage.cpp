@@ -20,6 +20,10 @@ HRESULT CStage::ReadyScene()
 {
 	CCollisionComponent::CleanUpMapCollisionInfo();
 
+	// 2020.12.22 00:01 KMJ
+	// 엔진쪽에서 현제 씬 알기 위해서
+	m_iSceneIndex = static_cast<int>(CurrentSceneID);
+
 	CScene::ReadyScene();
 
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,

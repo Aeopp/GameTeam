@@ -203,7 +203,7 @@ bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, c
 {
 	const uint32_t DataSize = sizeof(std::decay_t<_Type>) * Num;
 #if _DEBUG
-	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	if (!_Device || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 #endif
 	if (FAILED(VsTable->SetValue(_Device, VsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{

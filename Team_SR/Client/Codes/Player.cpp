@@ -87,8 +87,8 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 		_AnimationTextures._TextureMap[L"Staff_Idle"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Idle\\", 1);
 
-		_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTexturesSpecularNormal(
-			m_pDevice, L"..\\Resources\\Player\\Staff\\Release\\", 5);
+		//_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTexturesSpecularNormal(
+		//	m_pDevice, L"..\\Resources\\Player\\Staff\\Release\\", 5);
 	}
 
 

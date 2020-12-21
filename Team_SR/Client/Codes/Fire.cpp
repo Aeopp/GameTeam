@@ -68,14 +68,14 @@ HRESULT CFire::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
 
-	if (FAILED(Set_Texture()))
-		return E_FAIL;
+	//if (FAILED(Set_Texture()))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
