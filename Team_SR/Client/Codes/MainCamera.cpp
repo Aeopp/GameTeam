@@ -79,7 +79,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		ClientToScreen(g_hWnd, &ScreenCenterPT);
 		SetCursorPos(ScreenCenterPT.x, ScreenCenterPT.y);
 
-		m_CameraDesc.vEye = m_pTransformCom->m_TransformDesc.vPosition;
+		
 		_vector Look{ 0,0,1 };
 
 		Look = MATH::RotationVec(Look, MATH::AxisX, m_pTransformCom->m_TransformDesc.vRotation.x);
@@ -93,8 +93,9 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 		_vector Right{};
 		D3DXVec3Cross(&Right, &WorldUp, &Look);
-		D3DXVec3Cross(&m_CameraDesc.vUp, &Look, &Right);
 
+		m_CameraDesc.vUp = MATH::Cross(Look, Right);
+		m_CameraDesc.vEye = m_pTransformCom->m_TransformDesc.vPosition;
 		m_CameraDesc.vAt = m_CameraDesc.vEye + (Look * 100.f);
 
 		_PlayerTransform->m_TransformDesc.vRotation = TransformDesc.vRotation;

@@ -79,7 +79,7 @@ HRESULT CStage1st::ReadyScene()
 			CLayer::Tag + L"Item",
 			nullptr, static_cast<void*>(&stItemArg))))
 			return E_FAIL;
->>>>>>> origin/MyeongJun
+
 
 		// �̳�ū ���� ����
 		stItemArg.uiSize = sizeof(ItemBasicArgument);

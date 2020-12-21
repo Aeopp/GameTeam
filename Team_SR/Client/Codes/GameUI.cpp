@@ -37,7 +37,7 @@ _uint CGameUI::UpdateGameObject(float fDeltaTime)
 _uint CGameUI::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
-	auto camera = m_pManagement->GetGameObject((int)ESceneID::Stage1st, CLayer::Tag + L"MainCamera", 0);
+	auto camera = m_pManagement->GetGameObject((int)-1, CLayer::Tag + L"MainCamera", 0);
 	if (nullptr == camera)
 		return FALSE;
 

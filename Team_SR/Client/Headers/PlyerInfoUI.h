@@ -32,12 +32,11 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-<<<<<<< HEAD
+
 private:	//컴포넌트
 	class CVIBuffer* m_pVIBufferCom = nullptr; 
 	class CTexture* m_pTextureCom = nullptr;	//일단 나중에
-=======
->>>>>>> origin/MyeongJun
+
 private:
 };
 

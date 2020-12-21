@@ -51,6 +51,7 @@ HRESULT CVIBuffer::Render_VIBuffer()
 
 	m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
+
 	return S_OK;
 }
 

@@ -18,7 +18,8 @@ std::vector<PlaneInfo> CCollisionComponent::_MapFloorInfo{};
 std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollisionComponent::_TagBind
 {
 	{ MonsterAttack, { Player } },
-	{ PlayerAttack, {  Monster} }
+	{ PlayerAttack, {  Monster} },
+	{Item,{Player} }
 };
 
 CCollisionComponent::CCollisionComponent(LPDIRECT3DDEVICE9 pDevice)

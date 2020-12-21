@@ -48,11 +48,11 @@ _uint CHangmanBomb::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
-	// Æ÷¹°¼± ÀÌµ¿
+	// í¬ë¬¼ì„  ì´ë™
 	Movement(fDeltaTime);
 
 	if (m_pTransformCom->m_TransformDesc.vPosition.y < 0) {
-		m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// ¿ÀºêÁ§Æ® »èÁ¦ ÇÃ·¡±× ON
+		m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// ì˜¤ë¸Œì íŠ¸ ì‚­ì œ í”Œë˜ê·¸ ON
 		CreateFire();
 	}
 	
@@ -101,13 +101,14 @@ HRESULT CHangmanBomb::AddComponents()
 		return E_FAIL;
 #pragma endregion
 
-	// Ãæµ¹ ÄÄÆ÷³ÍÆ®
+	// ì¶©ëŒ ì»´í¬ë„ŒíŠ¸
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bMapCollision = true;
+	_Info.bWallCollision = true;
+	_Info.bFloorCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -118,7 +119,7 @@ HRESULT CHangmanBomb::AddComponents()
 	return S_OK;
 }
 
-// Æ÷¹°¼± ÀÌµ¿
+// í¬ë¬¼ì„  ì´ë™
 void CHangmanBomb::Movement(float fDeltaTime)
 {
 	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime * m_stStatus.fSpeed;
@@ -156,7 +157,7 @@ CHangmanBomb * CHangmanBomb::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CHangmanBomb::Clone(void * pArg /*= nullptr*/)
 {
-	CHangmanBomb* pClone = new CHangmanBomb(*this); /* º¹»ç»ı¼ºÀÚ */
+	CHangmanBomb* pClone = new CHangmanBomb(*this); /* ë³µì‚¬ìƒì„±ì */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

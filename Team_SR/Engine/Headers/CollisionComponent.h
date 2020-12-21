@@ -40,6 +40,7 @@ public:
 		MonsterAttack,
 		Bullet,
 		Effect,
+		Item,
 	};
 public:
 	struct InitInfo

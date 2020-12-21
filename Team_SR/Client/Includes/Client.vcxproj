@@ -209,6 +209,7 @@
     <ClInclude Include="..\Headers\Stage6th.h" />
     <ClInclude Include="..\Headers\StageBoss.h" />
     <ClInclude Include="..\Headers\StageMidBoss.h" />
+    <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="..\Codes\Stage6th.cpp" />
     <ClCompile Include="..\Codes\StageBoss.cpp" />
     <ClCompile Include="..\Codes\StageMidBoss.cpp" />
+    <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />

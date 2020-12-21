@@ -213,7 +213,8 @@ HRESULT CHellhound::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = false;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),

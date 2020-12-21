@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Item.h"
-#include "Camera.h"
+#include "MainCamera.h"
 
 CItem::CItem(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -93,11 +93,14 @@ HRESULT CItem::AddComponents()
 
 	// 충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
+
 	_Info.bCollision = true;
-	_Info.bMapBlock = true;
 	_Info.Radius = 1.f;
-	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.Tag = CCollisionComponent::ETag::Item;
+	_Info.bWallCollision = false;
+	_Info.bFloorCollision = false;
+	_Info.bMapBlock = false;
+
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -254,22 +257,35 @@ void CItem::Frame_Move(float fDeltaTime)
 
 HRESULT CItem::IsBillboarding()
 {
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+
+
+	CMainCamera* pCamera = dynamic_cast<CMainCamera*> (m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera"));
 	if (nullptr == pCamera)
 		return E_FAIL;
 
-	_matrix matBillboardY, matView;
-	D3DXMatrixIdentity(&matBillboardY);
-	matView = pCamera->GetCameraDesc().matView;
+	if (pCamera->bThirdPerson)
+	{
+			_matrix matBillboardY, matView;
+		D3DXMatrixIdentity(&matBillboardY);
+		matView = pCamera->GetCameraDesc().matView;
 
-	matBillboardY._11 = matView._11;
-	matBillboardY._13 = matView._13;
-	matBillboardY._31 = matView._31;
-	matBillboardY._33 = matView._33;
+		matBillboardY._11 = matView._11;
+		matBillboardY._13 = matView._13;
+		matBillboardY._31 = matView._31;
+		matBillboardY._33 = matView._33;
 
-	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
+		D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
 
-	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
+		m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
+	}
+	else
+	{
+		const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+		vec3 BillboardRotation = _TransformDesc.vRotation;
+		BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+		m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+	}
+
 
 	return S_OK;
 }

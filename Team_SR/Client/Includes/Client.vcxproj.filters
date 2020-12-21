@@ -120,9 +120,6 @@
     <ClInclude Include="..\Headers\Loading.h">
       <Filter>01.Scene\99.Loading</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Terrain.h">
-      <Filter>02.GameObject\01.Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>.ImGui\Lib</Filter>
     </ClInclude>
@@ -208,8 +205,6 @@
     <ClInclude Include="..\Headers\GameUI.h" />
     <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
-    <ClInclude Include="..\Headers\StateBar.h" />
-    <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="..\Headers\BatSpit.h" />
@@ -265,6 +260,11 @@
     <ClInclude Include="..\Headers\Stage6th.h">
       <Filter>01.Scene\01.Stage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Hangman.h" />
+    <ClInclude Include="..\Headers\HangmanBomb.h" />
+    <ClInclude Include="..\Headers\Hellhound.h" />
+    <ClInclude Include="..\Headers\Item.h" />
+    <ClInclude Include="..\Headers\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -287,9 +287,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Loading.cpp">
       <Filter>01.Scene\99.Loading</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Terrain.cpp">
-      <Filter>02.GameObject\01.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
       <Filter>.ImGui\Lib</Filter>
@@ -352,8 +349,6 @@
     <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
-    <ClCompile Include="..\Codes\StateBar.cpp" />
-    <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
@@ -413,6 +408,11 @@
     <ClCompile Include="..\Codes\Stage6th.cpp">
       <Filter>01.Scene\01.Stage</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Hangman.cpp" />
+    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
+    <ClCompile Include="..\Codes\Hellhound.cpp" />
+    <ClCompile Include="..\Codes\Item.cpp" />
+    <ClCompile Include="..\Codes\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
