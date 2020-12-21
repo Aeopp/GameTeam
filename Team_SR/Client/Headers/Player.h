@@ -66,6 +66,18 @@ private:
 	void StaffCharge();
 	void StaffRelease();
 	void StaffLoop();
+
+	void PushLightFromName(const std::wstring& LightName)&;
+
+	std::map<std::wstring, float> LightingDurationTable
+	{
+		{L"HarvesterFire",0.f}, 
+		{L"AkimboFire",0.f},
+		{L"MagnumFire",0.f},
+		{L"StaffFire",0.f},
+		{L"StaffCharge",0.f},
+		{L"StaffRelease",0.f}
+	};
 };
 
 #define __PLAYER_H__

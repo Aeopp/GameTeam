@@ -76,6 +76,7 @@ int CMainApp::UpdateMainApp()
 	m_pDevice->Present(nullptr, nullptr, g_hWnd, nullptr);
 
 	Effect::ClearRegisteredLighting();
+
 	return 0;
 }
 

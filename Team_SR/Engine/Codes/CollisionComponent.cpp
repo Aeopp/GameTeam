@@ -282,10 +282,15 @@ void CCollisionComponent::CancelRegist()
 {
 	if (!_Comps.empty())
 	{
-		_Comps.erase(std::find_if(std::begin(_Comps), std::end(_Comps), [this](auto _Target)
+		auto EraseTargetIter = std::find_if(std::begin(_Comps), std::end(_Comps), [this](auto _Target)
 			{
 				return this->MyID == _Target->MyID;
-			}));
+			});
+
+		if (EraseTargetIter != std::end(_Comps))
+		{
+			_Comps.erase(EraseTargetIter);
+		}		
 	}
 };
 

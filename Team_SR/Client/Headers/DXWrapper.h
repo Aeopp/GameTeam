@@ -2,6 +2,7 @@
 #ifndef __DXWRAPPER_H__
 
 #include "Engine_Include.h"
+#include "MyMath.h"
 
 USING(Engine)
 
@@ -49,6 +50,16 @@ void CreateVertex(
 
 struct MyLight
 {
+	static MyLight Make(const vec3 Location, const vec4 Diffuse, const float Radius, const int32_t Priority)
+	{
+		MyLight _Light;
+		_Light.Location = MATH::ConvertVec4(Location, 1.f);
+		_Light.Diffuse = Diffuse;
+		_Light.Radius = Radius;
+		_Light.Priority;
+		return _Light;
+	};
+
 	vec4 Location = { 0, 0 , 0 , 0 } ;
 	vec4 Diffuse = { 1,1,1,1 };
 	float Radius =10.f;
@@ -194,8 +205,6 @@ public:
 	);
 };
 
-
-
 // 파일명 hlsl 확장자 없이 파일명만 입력
 	// 파일명+VS or PS 형식으로 제한
 template<typename _Type>
@@ -203,7 +212,7 @@ bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, c
 {
 	const uint32_t DataSize = sizeof(std::decay_t<_Type>) * Num;
 #if _DEBUG
-	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	if (!_Device  || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 #endif
 	if (FAILED(VsTable->SetValue(_Device, VsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{

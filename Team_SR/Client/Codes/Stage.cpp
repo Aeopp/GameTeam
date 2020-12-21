@@ -8,11 +8,11 @@
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
+#include "Eyebat.h"
+#include "Glacier.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
-	: CScene(pDevice)
-{
-}
+	: CScene(pDevice)                         {}
 
 HRESULT CStage::ReadyScene()
 {
@@ -250,3 +250,103 @@ void CStage::Free()
 
 	CScene::Free();
 }
+
+
+
+void CStage::LoadObjects(const std::wstring& FilePath ,
+	 const vec3 WorldScale) & noexcept
+{
+	struct ObjectSpawnInfo
+	{
+		vec3 Location{ 0,0,0 };
+		std::wstring Name{};
+	};
+	std::vector<ObjectSpawnInfo> _ObjectSpawnInfos;
+
+	std::wifstream InputStream(FilePath);
+
+	if (!InputStream.is_open())
+	{
+		PRINT_LOG(L"Warning!", L"Not Find Map Object Spawn Information");
+	}
+
+	std::wstring Token;
+	std::vector<vec3> AccumulateWorldPoint{};
+
+	while (InputStream)
+	{
+		Token.clear();
+		InputStream >> Token;
+
+		if (Token == L"v")
+		{
+			vec3 LocalPoint;
+			InputStream >> LocalPoint.x;
+			InputStream >> LocalPoint.y;
+			InputStream >> LocalPoint.z;
+
+			const vec3 WorldPoint =
+			{   LocalPoint.x * WorldScale.x ,
+				LocalPoint.y * WorldScale.y ,
+				LocalPoint.z * WorldScale.z };
+
+			AccumulateWorldPoint.push_back(WorldPoint);
+		}
+
+		if (Token == L"o")
+		{
+			ObjectSpawnInfo _CurrentObjectInfo;
+
+			InputStream >> _CurrentObjectInfo.Name;
+
+			_CurrentObjectInfo.Location =
+				std::accumulate(std::begin(AccumulateWorldPoint), std::end(AccumulateWorldPoint), vec3{ 0,0,0 })
+				/
+				static_cast<float>(AccumulateWorldPoint.size());
+
+			AccumulateWorldPoint.clear();
+			AccumulateWorldPoint.shrink_to_fit();
+
+			_ObjectSpawnInfos.push_back(std::move(_CurrentObjectInfo));
+		}
+	}
+
+	for (auto& _CurrentObjectSpawnInfo : _ObjectSpawnInfos)
+	{
+		SpawnObjectFromName(_CurrentObjectSpawnInfo.Name, _CurrentObjectSpawnInfo.Location);
+	}
+}
+void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
+{
+	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
+	{
+		using SpawnType = CEyebat;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+
+	if (ObjectName.find(L"Glacier") != std::wstring::npos)
+	{
+		using SpawnType = CGlacier;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+};

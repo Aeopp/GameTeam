@@ -9,9 +9,7 @@
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
-{
-
-}
+{}
 
 HRESULT CPlayer::ReadyGameObjectPrototype()
 {
@@ -110,7 +108,6 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	return S_OK;
 };
 
-
 _uint CPlayer::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
@@ -146,55 +143,32 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	_CollisionComp->Update(m_pTransformCom);
 	_AnimationTextures.Update(fDeltaTime);
-
+	for (auto& _LightDurationPair : LightingDurationTable)
+	{
+		float& _Duration = _LightDurationPair.second;
+		_Duration -= fDeltaTime;
+		if (_Duration > 0)
+		{
+			PushLightFromName(_LightDurationPair.first);
+		}
+	};
 
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
 	_Light.Radius = 50.f;
 	_Light.Priority = 0l;
-
 	Effect::RegistLight(std::move(_Light));
 
-static const 	float dis = 20.f;
-
-	vec3 v = { 1,0,0 };
-	v *= dis;
-	static float t = 0.0f;
-	t += fDeltaTime*1.f;
-	for (size_t i = 0; i < 3; ++i)
+	if (_AnimationTextures.GetAnimationKey() == L"Staff_Loop")
 	{
-		const float angle=  720.f / 3.f; 
-		MyLight _Light;
-		if (i == 0)
-		{
-			_Light.Diffuse = { 1.f,0,0.f,1 };
-		}
-		else if (i==1)
-		{
-			_Light.Diffuse = { 0,0,1.f,1 };
-		}
-		else if (i==2)
-		{
-			_Light.Diffuse = { 0,1.f,0.f,1 };
-		}
-		
-
-		_Light.Location = MATH::ConvertVec4((m_pTransformCom->GetLocation() + MATH::RotationVec(v, m_pTransformCom->GetUp(), angle * (i + t))), 1.f); 
-		_Light.Radius = 50.f;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,0,1,1 };
 		_Light.Priority = 1l;
-
+		_Light.Radius = 200.f;
 		Effect::RegistLight(std::move(_Light));
-	}
-	
-	{
-		//MyLight _Light;
-		//_Light.Diffuse = { 0,1,0,1 };
-		//_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 0.5f, 1.f);
-		//_Light.Radius = 50.f;
-		//_Light.Priority = 1l;
-
-		//Effect::RegistLight(std::move(_Light));
 	}
 
 	return _uint();
@@ -318,6 +292,7 @@ void CPlayer::MouseRightPressing()&
 			_AnimationTextures.GetAnimationKey() != L"Staff_Loop")
 		{
 			StaffCharge();
+
 		}
 		break;
 	default:
@@ -559,8 +534,9 @@ void CPlayer::HarvesterFire()
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
-		
 	}
+
+	LightingDurationTable[L"HarvesterFire"] = 0.3f;
 }
 
 void CPlayer::HarvesterReload()
@@ -612,6 +588,8 @@ void CPlayer::AkimboFire()
 	};
 
 	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.04f, 4ul, false, std::move(_Notify));
+
+	LightingDurationTable[L"AkimboFire"] = 0.2f;
 }
 
 void CPlayer::MagnumFire()
@@ -624,11 +602,14 @@ void CPlayer::MagnumFire()
 	};
 
 	_AnimationTextures.ChangeAnim(L"Magnum_Fire", 0.07f, 4ul, false, std::move(_Notify));
+
+	LightingDurationTable[L"MagnumFire"] = 0.2f;
 }
 
 void CPlayer::StaffFire()
 {
 	AnimationTextures::NotifyType _Notify;
+	bStaffLoop = false;
 
 	_Notify[4ul] = [this]()
 	{
@@ -636,11 +617,14 @@ void CPlayer::StaffFire()
 	};
 
 	_AnimationTextures.ChangeAnim(L"Staff_Fire", 0.07f, 4ul, false, std::move(_Notify));
+
+	LightingDurationTable[L"StaffFire"] = 0.15f;
 }
 
 void CPlayer::StaffCharge()
 {
 	AnimationTextures::NotifyType _Notify;
+	bStaffLoop = false;
 
 	_Notify[16ul] = [this]()
 	{
@@ -648,11 +632,15 @@ void CPlayer::StaffCharge()
 	};
 
 	_AnimationTextures.ChangeAnim(L"Staff_Charge", 0.07f, 16ul, false, std::move(_Notify));
+
+	LightingDurationTable[L"StaffCharge"] = 1.1f;
 }
 
 void CPlayer::StaffRelease()
 {
 	AnimationTextures::NotifyType _Notify;
+
+	bStaffLoop = false;
 
 	_Notify[5ul] = [this]()
 	{
@@ -661,6 +649,8 @@ void CPlayer::StaffRelease()
 
 	_AnimationTextures.ChangeAnim(L"Staff_Release", 0.07f, 5ul,
 		false, std::move(_Notify));
+
+	LightingDurationTable[L"StaffRelease"] = 0.2f;
 }
 
 void CPlayer::StaffLoop()
@@ -670,4 +660,94 @@ void CPlayer::StaffLoop()
 	// bStaffLoop =false 로 만들기
 	// Key Up 일때 Loop 였다면 bStaffLoop = false 하고 Release 호출
 	bStaffLoop = true;
+
+}
+
+void CPlayer::PushLightFromName(const std::wstring& LightName)&
+{
+	bool bIsValidName = false;
+
+	if (LightName == L"HarvesterFire")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,1,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 400.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	if (LightName == L"AkimboFire")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,1,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 100.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	if (LightName == L"MagnumFire")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,1,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 200.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	if (LightName == L"StaffFire")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 200.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	if (LightName == L"StaffCharge")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 400.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	if (LightName == L"StaffRelease")
+	{
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location =
+			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Priority = 1l;
+		_Light.Radius = 400.f;
+		Effect::RegistLight(std::move(_Light));
+	}
+	//if (LightName == L"StaffLoop")
+	//{
+	///*	bIsValidName = true;
+	//	MyLight _Light{};
+	//	_Light.Location =
+	//		MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+	//	_Light.Diffuse = { 0.556862f,0.317f,1,1 };
+	//	_Light.Priority = 1l;
+	//	_Light.Radius = 150.f;
+	//	Effect::RegistLight(std::move(_Light));*/
+	//}
+
+#ifdef _DEBUG
+	if (!bIsValidName = true)
+	{
+		PRINT_LOG(L"Warning!", L"Not Valid Player Lighting Name!");
+	}
+#endif 
 }

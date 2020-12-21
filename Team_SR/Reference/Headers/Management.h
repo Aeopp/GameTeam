@@ -36,6 +36,7 @@ public:
 public: /* For.GameObjectManager */
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
 	CComponent* GetComponent(_int iSceneIndex, const wstring& LayerTag, const wstring& ComponentTag, _uint iIndex = 0);
+	FORCEINLINE _int GetCurrentSceneIndex()const& { return CurrentSceneIdx; };
 	std::list<class CGameObject*> GetGameObjects(_int iSceneIndex, const wstring& LayerTag);
 
 	HRESULT AddGameObjectPrototype(_int iSceneIndex, wstring GameObjectTag, CGameObject* pPrototype);
