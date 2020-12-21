@@ -44,20 +44,20 @@ HRESULT CStage1st::ReadyScene()
 		stArg.vPosition = { 5.f, 10.f, 20.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Hangman",
+			CGameObject::Tag + L"BatGrey",
 			(_int)ESceneID::Stage1st,
 			CLayer::Tag + L"Monster",
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 
-		stArg.vPosition = { 0.f, 10.f, 30.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Hellhound",
-			(_int)ESceneID::Stage1st,
-			CLayer::Tag + L"Monster",
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+		//stArg.vPosition = { 0.f, 10.f, 30.f };
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + L"Hellhound",
+		//	(_int)ESceneID::Stage1st,
+		//	CLayer::Tag + L"Monster",
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
 
 #pragma region 아이템 생성 코드들
 		// 겁나큰 체력 포션
