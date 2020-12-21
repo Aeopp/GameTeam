@@ -99,7 +99,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 50.f;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 10.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
@@ -563,6 +563,37 @@ void CPlayer::DaggerStab()
 
 	_AnimationTextures.ChangeAnim(L"Dagger_Stab", 0.07f, 4ul, false,
 		std::move(_Notify));
+
+	Sphere _Sphere;
+	const float DaggerRich = 1.f;
+	const float DaggerRange = 2.f;
+	_Sphere.Center = m_pTransformCom->GetLocation() + (m_pTransformCom->GetLook() * DaggerRich);
+	_Sphere.Radius = DaggerRange;
+
+	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+
+	for (auto& _CurrentMonster : _MonsterList)
+	{
+		auto _Component = _CurrentMonster->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsSphereToSphere(_Sphere,_CollisionComp->_Sphere);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
 }
 
 void CPlayer::DaggerThrow()
@@ -590,6 +621,38 @@ void CPlayer::AkimboFire()
 	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.04f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"AkimboFire"] = 0.2f;
+
+
+
+	Ray _Ray;
+	_Ray.Start = m_pTransformCom->GetLocation();
+	_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
+
+	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+
+	for (auto& _CurrentMonster : _MonsterList)
+	{
+		auto _Component = _CurrentMonster->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
+
 }
 
 void CPlayer::MagnumFire()
@@ -604,6 +667,37 @@ void CPlayer::MagnumFire()
 	_AnimationTextures.ChangeAnim(L"Magnum_Fire", 0.07f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"MagnumFire"] = 0.2f;
+
+
+	Ray _Ray;
+	_Ray.Start = m_pTransformCom->GetLocation();
+	_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
+
+	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+
+	for (auto& _CurrentMonster : _MonsterList)
+	{
+		auto _Component = _CurrentMonster->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
+
 }
 
 void CPlayer::StaffFire()

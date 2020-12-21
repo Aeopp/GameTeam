@@ -6,6 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL MATH
 {
 public:
+	static constexpr float Gravity = 0.1f;
 	// Float ( == ) 연산시 사용.
 	template<class T>
 	typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type

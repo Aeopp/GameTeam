@@ -87,6 +87,8 @@ HRESULT CEyebat::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
+	_CollisionComp->DebugDraw();
+
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 	//	return E_FAIL;
 
@@ -282,6 +284,21 @@ HRESULT CEyebat::AddComponents()
 		(CComponent**)&pTexture)))
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
+
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bWallCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.Radius = 2.f;
+	_Info.Tag = CCollisionComponent::ETag::Monster;
+	_Info.bMapBlock = true;
+	_Info.Owner = this;
+
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
 	
 	return S_OK;
 }

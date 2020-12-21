@@ -131,18 +131,13 @@ HRESULT CMonster::RenderGameObject()
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
 
+
+
 	return S_OK;
 }
 
 HRESULT CMonster::AddComponents()
 {
-	/* For.Com_VIBuffer */
-	if (FAILED(CGameObject::AddComponent(
-		(_uint)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		(CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
 
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
@@ -162,7 +157,7 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 2020.12.17 10:44 KMJ
 	// 공평회에서는 일단 고정임
 	//m_stStatus.fHP -= fDemage;
-	m_stStatus.fHP -= 1.f;
+	m_stStatus.fHP -= 20.f;
 }
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
@@ -219,7 +214,7 @@ void CMonster::Free()
 	 SafeRelease(_VertexBuffer);
 	/// </summary>
 	
-	SafeRelease(m_pVIBufferCom);		// 버텍스 버퍼
+	
 	for (auto& rPair : m_mapTexture)	// map 텍스처 릴리즈
 		SafeRelease(rPair.second);
 	m_mapTexture.clear();

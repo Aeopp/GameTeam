@@ -28,6 +28,7 @@ protected:
 protected:
 	void LoadObjects(const std::wstring& FilePath, const vec3 WorldScale) & noexcept;
 	void SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept;
+	class CUIManager* m_pUIManager;
 };
 
 #define __STAGE_H__

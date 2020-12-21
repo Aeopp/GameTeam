@@ -138,6 +138,9 @@ HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 
 	m_pGameObjectManager->ClearForSceneClone(CurrentSceneIdx);
 	//m_pComponentManager->ClearForScene(CurrentSceneIdx);
+	// 2020.12.21 11:45 KMJ
+	// 생성예정인 오브젝트 리스트 비움
+	m_listScheduledObjInfo.clear();
 	CurrentSceneIdx = iSceneID;
 	return m_pSceneManager->SetUpCurrentScene(iSceneID, pCurrentScene);
 }

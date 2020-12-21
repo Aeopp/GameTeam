@@ -38,7 +38,141 @@ HRESULT CStage1st::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 		return E_FAIL;
+	{
 
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 5.f, 10.f, 20.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"BatGrey",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
+
+#pragma region ������ ���� �ڵ��
+		// �̳�ū ü�� ����
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 0.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::HealthBig;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// ���� ü�� ����
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 1.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::HealthSmall;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+
+		// �̳�ū ���� ����
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 2.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::ManaBig;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// ���� ���� ����
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 3.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::ManaSmall;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// �Ѿ� �ڽ�
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 4.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::Ammo;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// �Ķ� Ű
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 5.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::KeyBlue;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// ���� Ű
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 6.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::KeyRed;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// ��� Ű
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 7.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::KeyYellow;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+
+		// ���׷��̵� ��ȭ
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = { 8.f, 10.f, 20.f };
+		stItemArg.etype = ITEM::Upgrade;
+		stItemArg.bDeleteFlag = false;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg))))
+			return E_FAIL;
+#pragma endregion
+	}
 
 
 	
