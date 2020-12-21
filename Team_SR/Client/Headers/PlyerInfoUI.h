@@ -1,10 +1,13 @@
 #pragma once
 
 #ifndef __PLAYERINFOUI_H__
-#include "..\Headers\GameObject.h"
+#include "..\Headers\GameUI.h"
+
+//UI�� Transform�� ���� ���� ���� �Ұ�
+
 
 USING(Engine)
-class CPlyerInfoUI final : public CGameObject
+class CPlyerInfoUI final : public CGameUI
 {
 private:
 	explicit CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice);
@@ -18,7 +21,10 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
-private:	//내부메서드관련
+public:	//��ȣ�ۿ����
+
+
+private:	//���θ޼������
 	HRESULT	AddComponent();
 
 public:
@@ -26,9 +32,12 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
+<<<<<<< HEAD
 private:	//컴포넌트
 	class CVIBuffer* m_pVIBufferCom = nullptr; 
 	class CTexture* m_pTextureCom = nullptr;	//일단 나중에
+=======
+>>>>>>> origin/MyeongJun
 private:
 };
 

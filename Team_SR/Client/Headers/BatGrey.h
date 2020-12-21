@@ -36,6 +36,7 @@ private:
 	bool Action_Melee(float fDeltaTime);	// 근접 공격
 	bool Action_Hit(float fDeltaTime);		// 공격받아서 경직
 	bool Action_Dead(float fDeltaTime);		// 죽음
+	bool Action_Run(float fDeltaTime);		// 도망
 
 public:
 	static CBatGrey* Create(LPDIRECT3DDEVICE9 pDevice);

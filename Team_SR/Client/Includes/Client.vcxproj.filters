@@ -25,6 +25,9 @@
     <Filter Include="01.Scene\99.Loading">
       <UniqueIdentifier>{877afc48-eb1c-401b-a0c7-05b132d2944f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Terrain">
+      <UniqueIdentifier>{cae464e5-613c-4b5a-a3a4-bde8ff8cf440}</UniqueIdentifier>
+    </Filter>
     <Filter Include=".ImGui">
       <UniqueIdentifier>{afcc7edc-5160-4cc5-9a03-9133f2202f29}</UniqueIdentifier>
     </Filter>
@@ -52,8 +55,41 @@
     <Filter Include="02.GameObject\02.Monster\02.BatGrey">
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.DXWrapper">
-      <UniqueIdentifier>{823585c1-1122-4b5c-8cef-a3846cb02321}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.Bullet">
+      <UniqueIdentifier>{d3526062-0d90-4428-8531-a08e7db6f613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\01.BatSpit">
+      <UniqueIdentifier>{ce6a0bf8-4957-4919-a408-4a57c9ce6153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\02.GlacierBullet">
+      <UniqueIdentifier>{b742cea3-e7c6-4acf-b977-964ff9470e72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\03.EyebatBullet">
+      <UniqueIdentifier>{e81365dd-f37a-4190-ad50-97add9f17e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Eyebat">
+      <UniqueIdentifier>{8ae66390-f7bf-466d-bf99-01aba1cbc0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\04.Fire">
+      <UniqueIdentifier>{2b6612ee-b8fd-4467-8983-2a27d66aa1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect">
+      <UniqueIdentifier>{805bf011-dd3b-45b5-8f47-ed852e2ceb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\07.Item">
+      <UniqueIdentifier>{141557c2-8aa3-4c0e-856d-ad233ba42721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Effect\01.GlacierParticle">
+      <UniqueIdentifier>{216a82f1-715e-49fa-9f13-4eb3ad881f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\06.Hangman">
+      <UniqueIdentifier>{35194b58-2355-4e92-ba06-4eaac09cced6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.Bullet\04.HangmanBomb">
+      <UniqueIdentifier>{f951adf1-de02-44ca-87da-d61f0d275574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\07.Hellhound">
+      <UniqueIdentifier>{bceefafb-65cd-4150-9a7a-1102d880cc71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Loading.h">
       <Filter>01.Scene\99.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Terrain.h">
+      <Filter>02.GameObject\01.Terrain</Filter>
     </ClInclude>
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>.ImGui\Lib</Filter>
@@ -147,16 +186,31 @@
     <ClInclude Include="..\Headers\Client_Struct.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\DXWrapper.h">
-      <Filter>97.DXWrapper</Filter>
+    <ClInclude Include="..\Headers\DXWrapper.h" />
+    <ClInclude Include="..\Headers\Bullet.h">
+      <Filter>02.GameObject\05.Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Vertexs.h">
-      <Filter>97.DXWrapper</Filter>
+    <ClInclude Include="..\Headers\BatSpit.h">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Package.h">
-      <Filter>.ImGui</Filter>
+    <ClInclude Include="..\Headers\GlacierBullet.h">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\EyebatBullet.h">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Eyebat.h">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fire.h">
+      <Filter>02.GameObject\02.Monster\04.Fire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GameUI.h" />
+    <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\StateBar.h" />
+    <ClInclude Include="..\Headers\UIManager.h" />
+    <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="..\Headers\BatSpit.h" />
     <ClInclude Include="..\Headers\Bullet.h" />
@@ -234,6 +288,9 @@
     <ClCompile Include="..\Codes\Loading.cpp">
       <Filter>01.Scene\99.Loading</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Terrain.cpp">
+      <Filter>02.GameObject\01.Terrain</Filter>
+    </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
       <Filter>.ImGui\Lib</Filter>
     </ClCompile>
@@ -273,16 +330,31 @@
     <ClCompile Include="..\Codes\BatGrey.cpp">
       <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\DXWrapper.cpp">
-      <Filter>97.DXWrapper</Filter>
+    <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\Bullet.cpp">
+      <Filter>02.GameObject\05.Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Vertexs.cpp">
-      <Filter>97.DXWrapper</Filter>
+    <ClCompile Include="..\Codes\BatSpit.cpp">
+      <Filter>02.GameObject\05.Bullet\01.BatSpit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Package.cpp">
-      <Filter>.ImGui</Filter>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\02.GlacierBullet</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\EyebatBullet.cpp">
+      <Filter>02.GameObject\05.Bullet\03.EyebatBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Eyebat.cpp">
+      <Filter>02.GameObject\02.Monster\03.Eyebat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fire.cpp">
+      <Filter>02.GameObject\02.Monster\04.Fire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GameUI.cpp" />
+    <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\StateBar.cpp" />
+    <ClCompile Include="..\Codes\UIManager.cpp" />
+    <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />

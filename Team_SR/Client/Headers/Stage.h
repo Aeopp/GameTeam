@@ -25,6 +25,7 @@ public:
 protected:
 	ESceneID CurrentSceneID;
 	ESceneID NextSceneID;
+	class CUIManager* m_pUIManager;
 };
 
 #define __STAGE_H__

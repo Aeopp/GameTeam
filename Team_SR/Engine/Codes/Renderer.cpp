@@ -145,16 +145,12 @@ HRESULT CRenderer::RenderAlpha()
 	mat View;
 	m_pDevice->GetTransform(D3DTS_VIEW, &View);
 
-	// 알파 오브젝트들은 카메라의 Z축에 투영한 위치로 정렬해서 렌더를 수행하거나 혹은 ZWRITEENABLE 을 끔으로써 해결할 수 있음. 
-
-	std::stable_sort(std::begin(m_GameObjects[(_int)ERenderID::Alpha]), 
-		std::end(m_GameObjects[(_int)ERenderID::Alpha]), 
-		[View](CGameObject* const _Lhs, CGameObject* const _Rhs)
-		{
-			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
-			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
-			return LhsViewLocation.z  > RhsViewLocation.z;
-		});
+	m_GameObjects[(_int)ERenderID::Alpha].sort([View](CGameObject* const _Lhs, CGameObject* const _Rhs)
+	{
+		const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
+		const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
+		return LhsViewLocation.z > RhsViewLocation.z;
+	});
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{
@@ -175,7 +171,9 @@ HRESULT CRenderer::RenderAlpha()
 HRESULT CRenderer::RenderUI()
 {
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	mat PrevView, PrevProjection;
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
@@ -186,10 +184,12 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
-
-	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	
+	// 2020 12 17 이호준
+	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
+	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	return S_OK;
 }

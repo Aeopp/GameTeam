@@ -8,10 +8,12 @@
 #include "CollisionComponent.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
+#include "UIManager.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
-	: CScene(pDevice)
+	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
 {
+	SafeAddRef(m_pUIManager);
 }
 
 HRESULT CStage::ReadyScene()
@@ -247,6 +249,7 @@ void CStage::Free()
 	SafeRelease(m_pPlayer);
 	SafeRelease(_Camera);
 	SafeRelease(_CurrentMap);
+	SafeRelease(m_pUIManager);
 
 	CScene::Free();
 }

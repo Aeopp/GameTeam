@@ -168,6 +168,7 @@
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
+    <ClInclude Include="..\Headers\GameUI.h" />
     <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
@@ -177,6 +178,10 @@
     </ClInclude>
     <ClInclude Include="..\Headers\GlacierBullet.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
+    <ClInclude Include="..\Headers\Hangman.h" />
+    <ClInclude Include="..\Headers\HangmanBomb.h" />
+    <ClInclude Include="..\Headers\Hellhound.h" />
+    <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
@@ -225,6 +230,7 @@
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
@@ -234,6 +240,10 @@
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierBullet.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
+    <ClCompile Include="..\Codes\Hangman.cpp" />
+    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
+    <ClCompile Include="..\Codes\Hellhound.cpp" />
+    <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
