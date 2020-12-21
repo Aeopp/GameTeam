@@ -10,7 +10,7 @@ private:
 	explicit CEyebat(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CEyebat() = default;
 public:
-	// CMonsterÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CMonsterì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -19,7 +19,7 @@ public:
 
 public:
 	// 2020.12.17 11:25 KMJ
-	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ¸ó½ºÅÍ°¡ ÇÇÇØ¸¦ ¹ŞÀ½
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ëª¬ìŠ¤í„°ê°€ í”¼í•´ë¥¼ ë°›ìŒ
 
 private:
 	void Update_AI(float fDeltaTime);

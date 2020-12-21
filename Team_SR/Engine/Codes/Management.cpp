@@ -104,7 +104,7 @@ HRESULT CManagement::ClearForScene(_int iSceneIndex)
 	if (FAILED(m_pComponentManager->ClearForScene(iSceneIndex)))
 		return E_FAIL;
 
-	CCollisionComponent::CleanUpMapPlaneInfo();
+	CCollisionComponent::CleanUpMapCollisionInfo();
 
 	return S_OK;
 }
@@ -136,8 +136,12 @@ HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 	if (nullptr == m_pSceneManager)
 		return E_FAIL;
 
+	m_pGameObjectManager->ClearForSceneClone(CurrentSceneIdx);
+	//m_pComponentManager->ClearForScene(CurrentSceneIdx);
+	// 2020.12.21 11:45 KMJ
+	// 생성예정인 오브젝트 리스트 비움
+	m_listScheduledObjInfo.clear();
 	CurrentSceneIdx = iSceneID;
-
 	return m_pSceneManager->SetUpCurrentScene(iSceneID, pCurrentScene);
 }
 
@@ -191,7 +195,7 @@ std::list<class CGameObject*> CManagement::GetGameObjects(_int iSceneIndex, cons
 
 HRESULT CManagement::AddGameObjectPrototype(
 	_int iSceneIndex, 
-	const wstring & GameObjectTag, 
+	 wstring  GameObjectTag, 
 	CGameObject * pPrototype)
 {
 	if (nullptr == m_pGameObjectManager)

@@ -2,29 +2,93 @@
 #ifndef __DXWRAPPER_H__
 
 #include "Engine_Include.h"
+#include "MyMath.h"
 
 USING(Engine)
 
+template<typename _VertexType>
+void CreateVertex(
+	LPDIRECT3DDEVICE9 _Device,
+	const vector<_VertexType>& _VertexVector
+	, uint32_t& OutVertexCount,
+	uint32_t& OutTriangleCount,
+	uint16_t& OutVertexByteSize,
+	std::shared_ptr<IDirect3DVertexBuffer9>& OutVertexBuf,
+	std::shared_ptr<IDirect3DVertexDeclaration9>& OutVertexDecl)
+{
+	OutVertexCount = _VertexVector.size();
+	OutTriangleCount = OutVertexCount / 3;
+	OutVertexByteSize = sizeof(_VertexType);
+
+	IDirect3DVertexBuffer9* _VertexBuffer;
+	if (FAILED(_Device->CreateVertexBuffer(OutVertexByteSize * OutVertexCount,
+		D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT,
+		&_VertexBuffer, 0)))
+	{
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		return;
+	}
+
+	_VertexType* _VertexPtr;
+	_VertexBuffer->Lock(0, OutVertexByteSize * OutVertexCount, (void**)&_VertexPtr, 0);
+	memcpy(_VertexPtr, _VertexVector.data(), OutVertexByteSize * OutVertexCount);
+	_VertexBuffer->Unlock();
+
+	OutVertexDecl = std::shared_ptr<IDirect3DVertexDeclaration9>
+		(_VertexType::GetVertexDecl(_Device),
+		[](std::shared_ptr<IDirect3DVertexDeclaration9>::element_type* Target)
+		{
+			Target->Release();
+		});
+
+	OutVertexBuf = std::shared_ptr<IDirect3DVertexBuffer9>(_VertexBuffer,
+		[](std::shared_ptr<IDirect3DVertexBuffer9>::element_type* Target)
+		{
+			Target->Release();
+		});
+}
+
 struct MyLight
 {
-	vec3 Location;
-	vec3 Diffuse;
-	float Radius;
+	static MyLight Make(const vec3 Location, const vec4 Diffuse, const float Radius, const int32_t Priority)
+	{
+		MyLight _Light;
+		_Light.Location = MATH::ConvertVec4(Location, 1.f);
+		_Light.Diffuse = Diffuse;
+		_Light.Radius = Radius;
+		_Light.Priority;
+		return _Light;
+	};
+
+	vec4 Location = { 0, 0 , 0 , 0 } ;
+	vec4 Diffuse = { 1,1,1,1 };
+	float Radius =10.f;
+	int32_t Priority = (std::numeric_limits<int32_t>::max)();
 };
 
 std::vector<IDirect3DTexture9*> CreateTextures (IDirect3DDevice9* const _Device ,
-	const std::wstring& Path ,
+	const std::wstring& Path,
+	const size_t TextureNum);
+
+std::vector<std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*> >
+	CreateTexturesSpecularNormal(IDirect3DDevice9* const _Device,
+	const std::wstring& Path,
 	const size_t TextureNum);;
+
 
 struct AnimationTextures
 {
 	using NotifyType = std::map<uint32_t, std::function<void()> >;
+	                                          // Diffuse                 // Specular           // Normal
+	std::map<std::wstring,std::vector<std::tuple<IDirect3DTexture9* , IDirect3DTexture9*, IDirect3DTexture9*> >> _TextureMap;
+	FORCEINLINE const std::wstring& GetAnimationKey() { return CurrentAnimKey;  };
+	FORCEINLINE size_t GetCurrentImgFrame() { return CurrentImgFrame; };
+	const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& GetCurrentTexture();
+	const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& GetTexture(const std::wstring& _AnimKey, const size_t _ImgFrame);
 
-	std::map<std::wstring,std::vector<IDirect3DTexture9*>> _TextureMap;
 	void Release()& noexcept;
 	void AddRef()& noexcept;
 	void Update(const float DeltaTime);
-	IDirect3DTexture9* GetCurrentTexture();
 
 	void ChangeAnim(
 		std::wstring AnimKey, 
@@ -112,6 +176,8 @@ public:
 		void AddRef();
 		uint8_t GetTexIdx(const std::string& SamplerName);
 
+		D3DXHANDLE GetVSConstantHandle(const std::string& HandleKey);
+		D3DXHANDLE GetPSConstantHandle(const std::string& HandleKey);
 		template<typename _Type>
 		bool  SetVSConstantData(IDirect3DDevice9* const _Device, const std::string& ConstantHandleMapKey, const _Type& Data , const size_t Num = 1);
 		template<typename _Type>
@@ -122,6 +188,7 @@ public:
 	static std::vector<MyLight> _CurMapLights;
 public:
 	static void RegistLight(MyLight _Light)noexcept;
+	static void ClearRegisteredLighting() noexcept;
 	static Effect::Info& GetEffectFromName(const std::wstring& EffectName);
 	static void EffectRelease();
 	static void EffectInitialize(IDirect3DDevice9* const _Device);
@@ -138,8 +205,6 @@ public:
 	);
 };
 
-
-
 // 파일명 hlsl 확장자 없이 파일명만 입력
 	// 파일명+VS or PS 형식으로 제한
 template<typename _Type>
@@ -147,7 +212,7 @@ bool typename Effect::Info::SetVSConstantData(IDirect3DDevice9* const _Device, c
 {
 	const uint32_t DataSize = sizeof(std::decay_t<_Type>) * Num;
 #if _DEBUG
-	if (!_Device || !Data || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	if (!_Device || DataSize == 0 || ConstantHandleMapKey.empty())  PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 #endif
 	if (FAILED(VsTable->SetValue(_Device, VsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{
@@ -169,7 +234,7 @@ bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, c
 #endif
 	if (FAILED(PsTable->SetValue(_Device, PsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{
-		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+	//	PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 		return false;
 	}
 	else

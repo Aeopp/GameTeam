@@ -6,6 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL MATH
 {
 public:
+	static constexpr float Gravity = 0.1f;
 	// Float ( == ) 연산시 사용.
 	template<class T>
 	typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
@@ -71,6 +72,10 @@ public:
 	FORCEINLINE static float LengthSq(const vec3& Lhs)
 	{
 		return D3DXVec3LengthSq(&Lhs);
+	};
+	FORCEINLINE static float LengthSq(const vec4& Lhs)
+	{
+		return D3DXVec4LengthSq(&Lhs);
 	};
 	FORCEINLINE static float Dot(const vec3& Lhs, const vec3& Rhs)
 	{

@@ -41,7 +41,7 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, true);
 	m_pDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_pDevice->SetRenderState(D3DRS_SPECULARENABLE, false);
-	m_pDevice->SetRenderState(D3DRS_AMBIENT, Ambient);
+	m_pDevice->SetRenderState(D3DRS_AMBIENT, 0);
 
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
@@ -50,8 +50,8 @@ HRESULT CRenderer::Render(HWND hWnd)
 
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+		m_pDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, _Caps9.MaxAnisotropy);
 	};
 
 	if (FAILED(RenderPriority()))
@@ -64,6 +64,9 @@ HRESULT CRenderer::Render(HWND hWnd)
 		return E_FAIL;
 
 	CCollisionComponent::CollisionDebugRender(m_pDevice);
+
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
 	if (FAILED(RenderUI()))
 		return E_FAIL;
@@ -126,7 +129,9 @@ HRESULT CRenderer::RenderAlpha()
 	알파 블렌딩 ==================================================================
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 	/*
 	D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
 	D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
@@ -140,11 +145,11 @@ HRESULT CRenderer::RenderAlpha()
 	m_pDevice->GetTransform(D3DTS_VIEW, &View);
 
 	m_GameObjects[(_int)ERenderID::Alpha].sort([View](CGameObject* const _Lhs, CGameObject* const _Rhs)
-		{
-			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
-			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
-			return LhsViewLocation.z > RhsViewLocation.z;
-		});
+	{
+		const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
+		const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
+		return LhsViewLocation.z > RhsViewLocation.z;
+	});
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
 	{
@@ -156,13 +161,19 @@ HRESULT CRenderer::RenderAlpha()
 
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
 
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }
 
 HRESULT CRenderer::RenderUI()
 {
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	mat PrevView, PrevProjection;
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -172,6 +183,12 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	
+	// 2020 12 17 이호준
+	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
+	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	return S_OK;
 }

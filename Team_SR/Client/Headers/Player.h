@@ -19,20 +19,29 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-
+	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	void MoveForward(const float DeltaTime)&;
 	void MoveRight(const float DeltaTime)&;
 	void MouseRight()&;
+	void MouseRightPressing()&;
+	void MouseRightUp()&;
 	void MouseLeft()&;
+	void MouseLeftPressing()&;
 	void RButtonEvent()&;
 	void _1ButtonEvent()&;
-	void _2ButtonEvent()&; 
+	void _2ButtonEvent()&;
+	void _3ButtonEvent()&;
+	void _4ButtonEvent()&;
+	void _5ButtonEvent()&;
 private:
 	HRESULT AddStaticComponents()override;
 	enum class EWeaponState : uint8_t
 	{
 		Dagger,
 		Harvester,
+		Akimbo,
+		Magnum,
+		Staff,
 	};
 public:
 	CCollisionComponent* _CollisionComp = nullptr;
@@ -40,14 +49,35 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 private:
-	std::shared_ptr<std::vector<SubSetInfo>> _Quad;
+	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
+
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
+	bool bStaffLoop = false;
 private:
+	const float WeaponAnimDelta = 0.07f;
 	void HarvesterFire();
 	void HarvesterReload();
 	void DaggerStab();
 	void DaggerThrow();
+	void AkimboFire();
+	void MagnumFire();
+	void StaffFire();
+	void StaffCharge();
+	void StaffRelease();
+	void StaffLoop();
+
+	void PushLightFromName(const std::wstring& LightName)&;
+
+	std::map<std::wstring, float> LightingDurationTable
+	{
+		{L"HarvesterFire",0.f}, 
+		{L"AkimboFire",0.f},
+		{L"MagnumFire",0.f},
+		{L"StaffFire",0.f},
+		{L"StaffCharge",0.f},
+		{L"StaffRelease",0.f}
+	};
 };
 
 #define __PLAYER_H__

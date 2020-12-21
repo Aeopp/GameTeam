@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __GAMEOBJECT_H__
 
 #include "Base.h"
@@ -53,7 +53,7 @@ protected:
 	class CTransform* m_pTransformCom = nullptr;
 	class CManagement* m_pManagement = nullptr;
 	CCollisionComponent* _CollisionComp = nullptr;
-
+	bool bGravity = false;
 public:
 	// 2020.12.16 11:29 KMJ
 	// 플래그 값들

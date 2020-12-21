@@ -28,7 +28,7 @@ public:
 					
 					const float Vibration);
 	bool bThirdPerson = false;
-	float FirstPersonRotationSpeed = 5.f;
+	float FirstPersonRotationSpeed = 10.f;
 private:
 	struct ShakeInfo
 	{

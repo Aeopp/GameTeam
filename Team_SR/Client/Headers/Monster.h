@@ -2,6 +2,10 @@
 #ifndef __MONSTER_H__
 
 #include "GameObject.h"
+#include "DXWrapper.h"
+#include "Vertexs.h"
+
+
 
 USING(Engine)
 class CMonster abstract : public CGameObject
@@ -31,13 +35,12 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 protected:
-	class CVIBuffer* m_pVIBufferCom = nullptr;
-protected:
 	// 플래그 값들
 	enum class MonsterFlag {
-		HPLock	= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
-		Dead	= 1 << 1,		// 죽음
-		Shoot	= 1 << 2		// 총쏨
+		HPLock				= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
+		Dead				= 1 << 1,		// 죽음
+		Shoot				= 1 << 2,		// 총쏨
+		TextureChangeLock	= 1 << 3		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
 		// ... 이 밑으로 5개 예약 가능!!
 	};
 protected:
@@ -55,6 +58,13 @@ protected:
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
+
+public:
+/// 조명 하이라이팅이 강해짐.
+	float Shine = 20.f;
+	//                   렌더링 컴포넌트
+	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
+/// 
 };
 
 #define  __MONSTER_H__
