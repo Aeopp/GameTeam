@@ -21,6 +21,7 @@
 #include "Item.h"		// 아이템
 #include "Hangman.h"	// 행맨
 #include "HangmanBomb.h" // 행맨 폭탄
+#include "Hellhound.h"	// 헬 하운드
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -220,6 +221,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CHangmanBomb>(),
 		CHangmanBomb::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 헬 하운드 오브젝트
+#pragma region GameOBject_Hellhound
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellhound>(),
+		CHellhound::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -590,9 +600,94 @@ HRESULT CMainApp::ReadyStaticResources()
 		L"Component_Texture_Hangman_Gib",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Gib/gib_hangman%d.png", 2))))
 		return E_FAIL;
-
-
 #pragma endregion	// Component_Texture_Hangman
+
+	// 헬 하운드 텍스처들
+#pragma region Component_Textrue_HellHound
+	// 부화
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_EggHatch",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/EggHatch/egg_hatch_hellhound%d.png", 12))))
+		return E_FAIL;
+
+	// 대기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Idle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Idle/hellhound_idle.png", 1))))
+		return E_FAIL;
+
+	// 달리기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Run",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Run/hellhound_run000%d.png", 5))))
+		return E_FAIL;
+
+	// 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Attack/hellhound_attack000%d.png", 10))))
+		return E_FAIL;
+
+	// 아픔
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Hurt",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Hurt/hellhound_hurt.png", 1))))
+		return E_FAIL;
+
+	// 손상
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Damage",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Damage/hellhound_damage%d.png", 3))))
+		return E_FAIL;
+
+	// 손상 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedAttack/hellhound_damaged_attack000%d.png", 7))))
+		return E_FAIL;
+
+	// 손상 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedHit/hellhound_damaged_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedWalk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedWalk/hellhound_damaged_walk%d.png", 6))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Death/hellhound_death%d.png", 12))))
+		return E_FAIL;
+
+	// 손상 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamageGib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamageGib/hellhound_dmagegib_%d.png", 3))))
+		return E_FAIL;
+
+	// 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Gib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Gib/hellhound_gib_%d.png", 5))))
+		return E_FAIL;
+#pragma endregion	// Component_Textrue_HellHound
 
 	return S_OK;
 }

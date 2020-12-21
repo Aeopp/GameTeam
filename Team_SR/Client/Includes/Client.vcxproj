@@ -180,6 +180,7 @@
     <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
+    <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\Logo.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
+    <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />

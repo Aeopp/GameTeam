@@ -1,18 +1,18 @@
 #pragma once
-#ifndef __HANGMAN_H__
+#ifndef __HELLHOUND_H__
 
 /*
-근접 공격과 원거리 폭탄 던지기 공격을함
-큰 피해를 받아 손상되면 이동속도가 약간 빨라지고 근접 공격만 함
+알에서 부화해서 플레이어를 향해 겁나 빠르게 달려옴
+큰 피해를 받아 손상되면 느려짐
 */
 
 #include "Monster.h"
 USING(Engine)
-class CHangman final : public CMonster
+class CHellhound final : public CMonster
 {
 private:
-	explicit CHangman(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CHangman() = default;
+	explicit CHellhound(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CHellhound() = default;
 public:
 	// CMonster을(를) 통해 상속됨
 	virtual HRESULT ReadyGameObjectPrototype() override;
@@ -35,16 +35,16 @@ private:
 	void AI_NormalPattern();				// 일반 패턴
 	void AI_DamagedPattern();				// 손상된 패턴
 
+	bool Action_EggHatch(float fDeltaTime);	// 부화
 	bool Action_Idle(float fDeltaTime);		// 행동 대기
 	bool Action_Move(float fDeltaTime);		// 이동
-	bool Action_Shoot(float fDeltaTime);	// 원거리 공격
 	bool Action_Melee(float fDeltaTime);	// 근접 공격
 	bool Action_Hit(float fDeltaTime);		// 공격받아서 경직
 	bool Action_Dead(float fDeltaTime);		// 죽음
 	bool Action_Damage(float fDeltaTime);	// 손상
 
 public:
-	static CHangman* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CHellhound* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
@@ -52,8 +52,8 @@ private:
 	enum class AWARENESS { No, Yes, End };			// 인식 - 플레이어를 인식했는가
 	enum class PHASE { HP_Full, HP_Half, End };		// 페이즈 - 현제 체력
 
-	using AIFunc = void(CHangman::*)(void);		// AI 함수
-	using ACTFunc = bool(CHangman::*)(float);	// 몬스터 행동 함수
+	using AIFunc = void(CHellhound::*)(void);		// AI 함수
+	using ACTFunc = bool(CHellhound::*)(float);	// 몬스터 행동 함수
 
 private:
 	float m_fCountdown;			// 카운트다운
@@ -65,5 +65,5 @@ private:
 	bool isDamaged;				// 텍스처 손상 전환용
 };
 
-#define __HANGMAN_H__
+#define __HELLHOUND_H__
 #endif

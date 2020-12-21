@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "..\Headers\Hangman.h"
+#include "..\Headers\Hellhound.h"
 
 
-CHangman::CHangman(LPDIRECT3DDEVICE9 pDevice)
+CHellhound::CHellhound(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fpAction(nullptr)
 	, m_eAwareness(AWARENESS::End), m_ePhase(PHASE::End)
@@ -11,7 +11,7 @@ CHangman::CHangman(LPDIRECT3DDEVICE9 pDevice)
 }
 
 
-HRESULT CHangman::ReadyGameObjectPrototype()
+HRESULT CHellhound::ReadyGameObjectPrototype()
 {
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
@@ -19,7 +19,7 @@ HRESULT CHangman::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CHangman::ReadyGameObject(void* pArg /*= nullptr*/)
+HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CMonster::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -33,32 +33,32 @@ HRESULT CHangman::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fHP = 200.f;
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 10.f;
+	m_stOriginStatus.fSpeed = 30.f;
 	m_stOriginStatus.fMeleeRange = 6.f;
-	m_stOriginStatus.fDetectionRange = 50.f;
+	m_stOriginStatus.fDetectionRange = 100.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
 	// 기본 텍스처 프레임
-	m_wstrTextureKey = L"Com_Texture_Hangman_Back";
+	m_wstrTextureKey = L"Com_Texture_Hellhound_EggHatch";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
-	m_fEndFrame = 1;
+	m_fEndFrame = 12;
 	m_fFrameSpeed = 10.f;
 
-	// 기본 대기 행동
-	m_fpAction = &CHangman::Action_Idle;
+	// 부화
+	m_fpAction = &CHellhound::Action_EggHatch;
 	// 플레이어를 인식하지 못함
-	m_fpMonsterAI[(int)AWARENESS::No][(int)PHASE::HP_Full] = &CHangman::AI_NoAwareness;
-	m_fpMonsterAI[(int)AWARENESS::No][(int)PHASE::HP_Half] = &CHangman::AI_NoAwareness;
+	m_fpMonsterAI[(int)AWARENESS::No][(int)PHASE::HP_Full] = &CHellhound::AI_NoAwareness;
+	m_fpMonsterAI[(int)AWARENESS::No][(int)PHASE::HP_Half] = &CHellhound::AI_NoAwareness;
 
-	m_fpMonsterAI[(int)AWARENESS::Yes][(int)PHASE::HP_Full] = &CHangman::AI_NormalPattern;		// 일반 패턴
-	m_fpMonsterAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CHangman::AI_DamagedPattern;		// 손상된 패턴
+	m_fpMonsterAI[(int)AWARENESS::Yes][(int)PHASE::HP_Full] = &CHellhound::AI_NormalPattern;		// 일반 패턴
+	m_fpMonsterAI[(int)AWARENESS::Yes][(int)PHASE::HP_Half] = &CHellhound::AI_DamagedPattern;		// 손상된 패턴
 
 	return S_OK;
 }
 
-_uint CHangman::UpdateGameObject(float fDeltaTime)
+_uint CHellhound::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
@@ -78,7 +78,7 @@ _uint CHangman::UpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-_uint CHangman::LateUpdateGameObject(float fDeltaTime)
+_uint CHellhound::LateUpdateGameObject(float fDeltaTime)
 {
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
@@ -90,7 +90,7 @@ _uint CHangman::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CHangman::RenderGameObject()
+HRESULT CHellhound::RenderGameObject()
 {
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
@@ -107,7 +107,7 @@ HRESULT CHangman::RenderGameObject()
 	return S_OK;
 }
 
-HRESULT CHangman::AddComponents()
+HRESULT CHellhound::AddComponents()
 {
 	if (FAILED(CMonster::AddComponents()))	// Monster.cpp에서 RectTexture 호출
 		return E_FAIL;
@@ -115,95 +115,95 @@ HRESULT CHangman::AddComponents()
 #pragma region Add_Component_Texture
 	// 텍스처
 	CTexture* pTexture;
-	// 뒤돌아 대기
+	// 부화
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Back",
-		L"Com_Texture_Hangman_Back",
+		L"Component_Texture_Hellhound_EggHatch",
+		L"Com_Texture_Hellhound_EggHatch",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Back", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_EggHatch", pTexture);
 
-	// 원거리 공격
+	// 대기
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Bomb_Attack",
-		L"Com_Texture_Hangman_Bomb_Attack",
+		L"Component_Texture_Hellhound_Idle",
+		L"Com_Texture_Hellhound_Idle",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Bomb_Attack", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Idle", pTexture);
 
 	// 근접 공격
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Attack",
-		L"Com_Texture_Hangman_Attack",
+		L"Component_Texture_Hellhound_Attack",
+		L"Com_Texture_Hellhound_Attack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Attack", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Attack", pTexture);
 
-	// 이동
+	// 달리기
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Walk",
-		L"Com_Texture_Hangman_Walk",
+		L"Component_Texture_Hellhound_Run",
+		L"Com_Texture_Hellhound_Run",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Walk", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Run", pTexture);
 
 	// 피격
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Hit",
-		L"Com_Texture_Hangman_Hit",
+		L"Component_Texture_Hellhound_Hurt",
+		L"Com_Texture_Hellhound_Hurt",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Hit", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Hurt", pTexture);
 
 	// 손상
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Damage",
-		L"Com_Texture_Hangman_Damage",
+		L"Component_Texture_Hellhound_Damage",
+		L"Com_Texture_Hellhound_Damage",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Damage", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Damage", pTexture);
 
-	// 손상 근거리 공격
+	// 손상 근접 공격
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_DamageAttack",
-		L"Com_Texture_Hangman_DamageAttack",
+		L"Component_Texture_Hellhound_DamagedAttack",
+		L"Com_Texture_Hellhound_DamagedAttack",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_DamageAttack", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_DamagedAttack", pTexture);
 
 	// 손상 피격
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_DamagedHit",
-		L"Com_Texture_Hangman_DamagedHit",
+		L"Component_Texture_Hellhound_DamagedHit",
+		L"Com_Texture_Hellhound_DamagedHit",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_DamagedHit", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_DamagedHit", pTexture);
 
 	// 손상 이동
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_DamagedWalk",
-		L"Com_Texture_Hangman_DamagedWalk",
+		L"Component_Texture_Hellhound_DamagedWalk",
+		L"Com_Texture_Hellhound_DamagedWalk",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_DamagedWalk", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_DamagedWalk", pTexture);
 
 	// 죽음
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_Hangman_Death",
-		L"Com_Texture_Hangman_Death",
+		L"Component_Texture_Hellhound_Death",
+		L"Com_Texture_Hellhound_Death",
 		(CComponent**)&pTexture)))
 		return E_FAIL;
-	m_mapTexture.emplace(L"Com_Texture_Hangman_Death", pTexture);
+	m_mapTexture.emplace(L"Com_Texture_Hellhound_Death", pTexture);
 
 #pragma endregion
 
@@ -225,7 +225,7 @@ HRESULT CHangman::AddComponents()
 }
 
 // 몬스터가 피해를 받음
-void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
+void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
 	// 피해를 받지 않는 상태임
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
@@ -239,11 +239,11 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-			m_fpAction = &CHangman::Action_Dead;
-			m_wstrTextureKey = L"Com_Texture_Hangman_Death";
+			m_fpAction = &CHellhound::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_Hellhound_Death";
 			m_fFrameCnt = 0;
 			m_fStartFrame = 0;
-			m_fEndFrame = 10;
+			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
 		}
 		return;
@@ -262,19 +262,19 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
-			m_fpAction = &CHangman::Action_Damage;
-			m_wstrTextureKey = L"Com_Texture_Hangman_Damage";
+			m_fpAction = &CHellhound::Action_Damage;
+			m_wstrTextureKey = L"Com_Texture_Hellhound_Damage";
 			m_fFrameCnt = 0;
 			m_fStartFrame = 0;
-			m_fEndFrame = 6;
+			m_fEndFrame = 3;
 			m_fFrameSpeed = 5.f;
 			return;
 		}
 
 		// 피해를 받아서 현제 행동 취소
-		// Hit 텍스처를 취함
-		m_fpAction = &CHangman::Action_Hit;
-		m_wstrTextureKey = L"Com_Texture_Hangman_Hit";
+		// Hurt 텍스처를 취함
+		m_fpAction = &CHellhound::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hellhound_Hurt";
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 1;
@@ -283,8 +283,8 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	else {
 		// 피해를 받아서 현제 행동 취소
 		// Hit 텍스처를 취함
-		m_fpAction = &CHangman::Action_Hit;
-		m_wstrTextureKey = L"Com_Texture_Hangman_DamagedHit";
+		m_fpAction = &CHellhound::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hellhound_DamagedHit";
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 1;
@@ -293,7 +293,7 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
-void CHangman::Update_AI(float fDeltaTime)
+void CHellhound::Update_AI(float fDeltaTime)
 {
 	// 다음 공격 대기 시간 감소
 	m_fNextAtkWait -= fDeltaTime;
@@ -323,7 +323,7 @@ void CHangman::Update_AI(float fDeltaTime)
 	(this->*m_fpMonsterAI[(int)m_eAwareness][(int)m_ePhase])();
 }
 
-HRESULT CHangman::Set_Texture()
+HRESULT CHellhound::Set_Texture()
 {
 	// 텍스처 찾기
 	auto iter_find = m_mapTexture.find(m_wstrTextureKey);
@@ -338,77 +338,19 @@ HRESULT CHangman::Set_Texture()
 }
 
 // 플레이어를 인식하지 못함
-void CHangman::AI_NoAwareness()
+void CHellhound::AI_NoAwareness()
 {
-	m_fpAction = &CHangman::Action_Idle;	// 대기
+	m_fpAction = &CHellhound::Action_Idle;	// 대기
 	m_fCountdown = 1.f;		// 1초
 	// 텍스처 키, 프레임
-	m_wstrTextureKey = L"Com_Texture_Hangman_Back";
+	m_wstrTextureKey = L"Com_Texture_Hellhound_Idle";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 1;
 }
 
 // 일반 패턴
-void CHangman::AI_NormalPattern()
-{
-	// 다음 공격 대기 시간까지 기다렸는가
-	if (m_fNextAtkWait <= 0) {
-		// 플레이어가 가까이 근접해 있나
-		if (PlayerBeNear()) {
-			// 근접 공격
-			goto RETURN_MELEE;
-		}
-		else {
-			// 원거리 공격
-			goto RETURN_SHOOT;
-		}
-	}
-	else {
-		// 플레이어가 멀리 있나
-		if (!PlayerBeNear()) {
-			goto RETURN_MOVE;
-		}
-		goto RETURN_MELEE;
-	}
-
-RETURN_MELEE:	// 근접 공격
-	m_fpAction = &CHangman::Action_Melee;
-	m_wstrTextureKey = L"Com_Texture_Hangman_Attack";
-	m_fFrameCnt = 0;
-	m_fStartFrame = 0;
-	m_fEndFrame = 13;
-	m_fFrameSpeed = 10.f;
-	return;
-
-RETURN_SHOOT:	// 원거리 공격
-	m_fpAction = &CHangman::Action_Shoot;
-	m_wstrTextureKey = L"Com_Texture_Hangman_Bomb_Attack";
-	m_fFrameCnt = 0;
-	m_fStartFrame = 0;
-	m_fEndFrame = 15;
-	m_fFrameSpeed = 10.f;
-	// 목표 = 플레이어 위치 - 몬스터 위치
-	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
-	m_vAim.y = 0.f;
-	D3DXVec3Normalize(&m_vAim, &m_vAim);
-	return;
-
-RETURN_MOVE:	// 이동
-	m_fpAction = &CHangman::Action_Move;
-	m_fCountdown = 1.f;		// 1초 이동
-	if (m_wstrTextureKey.compare(L"Com_Texture_Hangman_Walk")) {
-		m_wstrTextureKey = L"Com_Texture_Hangman_Walk";
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 6;
-		m_fFrameSpeed = 10.f;
-	}
-	return;
-}
-
-// 손상된 패턴
-void CHangman::AI_DamagedPattern()
+void CHellhound::AI_NormalPattern()
 {
 	// 다음 공격 대기 시간까지 기다렸는가
 	if (m_fNextAtkWait <= 0) {
@@ -424,8 +366,8 @@ void CHangman::AI_DamagedPattern()
 	}
 
 RETURN_MELEE:	// 근접 공격
-	m_fpAction = &CHangman::Action_Melee;
-	m_wstrTextureKey = L"Com_Texture_Hangman_DamageAttack";
+	m_fpAction = &CHellhound::Action_Melee;
+	m_wstrTextureKey = L"Com_Texture_Hellhound_Attack";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 10;
@@ -433,10 +375,48 @@ RETURN_MELEE:	// 근접 공격
 	return;
 
 RETURN_MOVE:	// 이동
-	m_fpAction = &CHangman::Action_Move;
+	m_fpAction = &CHellhound::Action_Move;
 	m_fCountdown = 1.f;		// 1초 이동
-	if (m_wstrTextureKey.compare(L"Com_Texture_Hangman_DamagedWalk")) {
-		m_wstrTextureKey = L"Com_Texture_Hangman_DamagedWalk";
+	if (m_wstrTextureKey.compare(L"Com_Texture_Hellhound_Run")) {
+		m_wstrTextureKey = L"Com_Texture_Hellhound_Run";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 5;
+		m_fFrameSpeed = 10.f;
+	}
+	return;
+}
+
+// 손상된 패턴
+void CHellhound::AI_DamagedPattern()
+{
+	// 다음 공격 대기 시간까지 기다렸는가
+	if (m_fNextAtkWait <= 0) {
+		// 플레이어가 가까이 근접해 있나
+		if (PlayerBeNear()) {
+			// 근접 공격
+			goto RETURN_MELEE;
+		}
+	}
+	// 플레이어가 멀리 있나
+	if (!PlayerBeNear()) {
+		goto RETURN_MOVE;
+	}
+
+RETURN_MELEE:	// 근접 공격
+	m_fpAction = &CHellhound::Action_Melee;
+	m_wstrTextureKey = L"Com_Texture_Hellhound_DamagedAttack";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 7;
+	m_fFrameSpeed = 10.f;
+	return;
+
+RETURN_MOVE:	// 이동
+	m_fpAction = &CHellhound::Action_Move;
+	m_fCountdown = 1.f;		// 1초 이동
+	if (m_wstrTextureKey.compare(L"Com_Texture_Hellhound_DamagedWalk")) {
+		m_wstrTextureKey = L"Com_Texture_Hellhound_DamagedWalk";
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 6;
@@ -445,8 +425,22 @@ RETURN_MOVE:	// 이동
 	return;
 }
 
+bool CHellhound::Action_EggHatch(float fDeltaTime)
+{
+	if (m_bFrameLoopCheck) {
+		m_wstrTextureKey = L"Com_Texture_Hellhound_Idle";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 1;
+		m_fFrameSpeed = 10.f;
+		return true;
+	}
+
+	return false;
+}
+
 // 행동 대기
-bool CHangman::Action_Idle(float fDeltaTime)
+bool CHellhound::Action_Idle(float fDeltaTime)
 {
 	// 지정된 시간만큼 행동 대기
 	m_fCountdown -= fDeltaTime;
@@ -457,7 +451,7 @@ bool CHangman::Action_Idle(float fDeltaTime)
 }
 
 // 이동
-bool CHangman::Action_Move(float fDeltaTime)
+bool CHellhound::Action_Move(float fDeltaTime)
 {
 	// 방향
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
@@ -480,34 +474,8 @@ bool CHangman::Action_Move(float fDeltaTime)
 	return false;
 }
 
-// 원거리 공격
-bool CHangman::Action_Shoot(float fDeltaTime)
-{
-	// 단발 쏴
-	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 11.f) {	// 3번째 텍스처 때 쏨
-		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
-		BulletBasicArgument* pArg = new BulletBasicArgument;
-		pArg->uiSize = sizeof(BulletBasicArgument);
-		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
-		pArg->vDir = m_vAim;	// 방향
-		m_pManagement->AddScheduledGameObjectInLayer(
-			(_int)ESceneID::Static,
-			L"GameObject_HangmanBomb",
-			L"Layer_HangmanBomb",
-			nullptr, (void*)pArg);
-	}
-
-	if (m_bFrameLoopCheck) {
-		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 5.f;
-		return true;
-	}
-
-	return false;
-}
-
 // 근접 공격
-bool CHangman::Action_Melee(float fDeltaTime)
+bool CHellhound::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
@@ -518,7 +486,7 @@ bool CHangman::Action_Melee(float fDeltaTime)
 }
 
 // 공격받아서 경직
-bool CHangman::Action_Hit(float fDeltaTime)
+bool CHellhound::Action_Hit(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		return true;
@@ -527,7 +495,7 @@ bool CHangman::Action_Hit(float fDeltaTime)
 }
 
 // 죽음
-bool CHangman::Action_Dead(float fDeltaTime)
+bool CHellhound::Action_Dead(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag != static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
@@ -539,46 +507,46 @@ bool CHangman::Action_Dead(float fDeltaTime)
 	return false;
 }
 
-bool CHangman::Action_Damage(float fDeltaTime)
+bool CHellhound::Action_Damage(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		isDamaged = true;	// 손상 상태 ON
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
-		m_stStatus.fSpeed = 12.f;		// 속도 약간 증가
+		m_stStatus.fSpeed = 10.f;		// 스피드 대폭 감소
 		return true;
 	}
 	return false;
 }
 
-CHangman* CHangman::Create(LPDIRECT3DDEVICE9 pDevice)
+CHellhound* CHellhound::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CHangman* pInstance = new CHangman(pDevice);
+	CHellhound* pInstance = new CHellhound(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create CHangman");
+		PRINT_LOG(L"Warning", L"Failed To Create CHellhound");
 		SafeRelease(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CHangman::Clone(void* pArg/* = nullptr*/)
+CGameObject* CHellhound::Clone(void* pArg/* = nullptr*/)
 {
-	CHangman* pClone = new CHangman(*this); /* 복사생성자 */
+	CHellhound* pClone = new CHellhound(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone CHangman");
+		PRINT_LOG(L"Warning", L"Failed To Clone CHellhound");
 		SafeRelease(pClone);
 	}
 
 	return pClone;
 }
 
-void CHangman::Free()
+void CHellhound::Free()
 {
 	CMonster::Free();
 }

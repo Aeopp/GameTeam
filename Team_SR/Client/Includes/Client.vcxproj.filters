@@ -88,6 +88,9 @@
     <Filter Include="02.GameObject\05.Bullet\04.HangmanBomb">
       <UniqueIdentifier>{f951adf1-de02-44ca-87da-d61f0d275574}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\07.Hellhound">
+      <UniqueIdentifier>{bceefafb-65cd-4150-9a7a-1102d880cc71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -224,6 +227,9 @@
     <ClInclude Include="..\Headers\HangmanBomb.h">
       <Filter>02.GameObject\05.Bullet\04.HangmanBomb</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Hellhound.h">
+      <Filter>02.GameObject\02.Monster\07.Hellhound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -332,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\HangmanBomb.cpp">
       <Filter>02.GameObject\05.Bullet\04.HangmanBomb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hellhound.cpp">
+      <Filter>02.GameObject\02.Monster\07.Hellhound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
