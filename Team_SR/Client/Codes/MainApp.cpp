@@ -12,6 +12,7 @@
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 
+#include "Terret.h"
 #include "Blood.h"
 #include "Spider.h"
 #include "Eyebat.h"
@@ -211,6 +212,14 @@ HRESULT CMainApp::ReadyStaticResources()
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
 			CFloorBlood::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_Terret
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CTerret>(),
+			CTerret::Create(m_pDevice))))
 			return E_FAIL;
 #pragma endregion
 
@@ -489,6 +498,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		wstrTextureFloorBlood,
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/FloorBlood/FloorBlood%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_Terret
+	wstring wstrTextureTerret = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CTerret>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureTerret,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Terret/Fire/Fire%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
 	return S_OK;

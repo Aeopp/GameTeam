@@ -19,6 +19,9 @@ public:
 	virtual HRESULT RenderGameObject() override;
 private:
 	HRESULT AddComponents();
+	void	FindTarget();
+	void	UpdateAngle();
+	void	IsBillboarding();
 public:
 	static CTerret* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
@@ -28,6 +31,9 @@ private:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
 	CTexture* m_pTexture;
 	float m_fFrameCnt;
+	float m_fAngle = 0.f;
+	CGameObject* m_pTarget = nullptr;
+	
 };
 
 #endif // Terret_h__

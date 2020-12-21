@@ -150,6 +150,13 @@ HRESULT CStage1st::ReadyScene()
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 
+		//터렛
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Terret",
+			(_int)ESceneID::Stage1st,
+			CLayer::Tag + L"Terret")))
+			return E_FAIL;
 	}
 
 

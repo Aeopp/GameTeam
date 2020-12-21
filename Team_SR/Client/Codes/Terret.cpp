@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Terret.h"
+#include "Camera.h"
 
 CTerret::CTerret(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice),m_fFrameCnt(0.f), m_pTexture(nullptr)
@@ -15,24 +16,53 @@ HRESULT CTerret::ReadyGameObjectPrototype()
 HRESULT CTerret::ReadyGameObject(void * pArg /*= nullptr*/)
 {
 	CGameObject::ReadyGameObject(pArg);
+
+	if (FAILED(AddComponents()))
+		return E_FAIL;
+
+	m_pTransformCom->m_TransformDesc.vPosition = { 10.f,10.f,20.f };
+
 	return S_OK;
 }
 
 _uint CTerret::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
+
+	if (m_pTarget)
+	{
+		if ((BYTE)ObjFlag::Remove & m_pTarget->GetOBjFlag())
+			m_pTarget = nullptr;
+	}
+	else
+		FindTarget();
+
 	return _uint();
 }
 
 _uint CTerret::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
+	if (m_pTarget)
+	{
+		if ((BYTE)ObjFlag::Remove & m_pTarget->GetOBjFlag())
+			m_pTarget = nullptr;
+	}
+	UpdateAngle();
+	//IsBillboarding();
+
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
+		return 0;
+
 	return _uint();
 }
 
 HRESULT CTerret::RenderGameObject()
 {
 	if (FAILED(CGameObject::RenderGameObject()))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
 		return E_FAIL;
 
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
@@ -57,16 +87,63 @@ HRESULT CTerret::AddComponents()
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
-	wstring wstrTexture = CComponent::Tag + TYPE_NAME<CTexture>();
+	wstring wstrTextureTerret = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CTerret>();
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		wstrTexture + L"Terret",
+		wstrTextureTerret,
 		L"Com_Texture_Terret",
 		(CComponent**)&m_pTexture)))
 		return E_FAIL;
 #pragma endregion
 
 	return S_OK;
+}
+
+void CTerret::FindTarget()
+{
+	list<CGameObject*> Monsterlist = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+	_vector vDir;
+	float	fDistance;
+	float	fMin = -1.f;
+
+	const _vector vTerretPosition = m_pTransformCom->m_TransformDesc.vPosition;
+	for (auto& pMonster : Monsterlist)
+	{
+		vDir = vTerretPosition - pMonster->GetTransform()->m_TransformDesc.vPosition;
+		fDistance = D3DXVec3Length(&vDir);
+		if (fMin < 0.f || fMin > fDistance)
+		{
+			fMin = fDistance;
+			m_pTarget = pMonster;
+		}
+
+	}
+
+}
+
+void CTerret::UpdateAngle()
+{
+	if (nullptr == m_pTarget)
+		return;
+	_vector vMyLook = m_pTransformCom->GetLook();
+	_vector vDir = m_pTransformCom->m_TransformDesc.vPosition - m_pTarget->GetTransform()->m_TransformDesc.vPosition;
+	float fDot = D3DXVec3Dot(&vMyLook, &vDir);
+	m_fAngle = D3DXToDegree(fDot);
+
+	m_fFrameCnt = abs((int)m_fAngle % 360) / 45;
+}
+
+void CTerret::IsBillboarding()
+{
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	if (nullptr == pCamera)
+		return;
+
+	const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
 }
 
 CTerret * CTerret::Create(LPDIRECT3DDEVICE9 pDevice)
