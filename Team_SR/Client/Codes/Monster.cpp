@@ -195,7 +195,8 @@ bool CMonster::PlayerBeNear()
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
-	if (fDis <= m_stStatus.fMeleeRange) {
+	if (fDis <= m_stStatus.fMeleeRange) 
+	{
 		return true;
 	}
 	return false;
