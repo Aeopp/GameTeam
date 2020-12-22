@@ -100,7 +100,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 50.f;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 23.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
@@ -157,7 +157,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
-	_Light.Radius = 50.f;
+	_Light.Radius = 60.f;
 	_Light.Priority = 0l;
 	Effect::RegistLight(std::move(_Light));
 
@@ -198,7 +198,7 @@ HRESULT CPlayer::RenderGameObject()
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *1.7f);
-	GunLocation.y -= 0.22f;
+	GunLocation.y -= 0.25f;
 	vec3 GunScale = m_pTransformCom->GetScale();
 	vec3 GunRotation = m_pTransformCom->GetRotation();
 
@@ -505,6 +505,31 @@ void CPlayer::Free()
 	CGameObject::Free();
 }
 
+static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 Normal ,float Scale)
+{
+	Particle _Particle;
+	_Particle.StartLocation = IntersectPoint + Normal * 0.1f;
+	_Particle.Location = IntersectPoint + Normal * 0.1f;
+	_Particle.Delta = FLT_MAX;
+	_Particle.Durtaion = 1000.f;
+	_Particle.EndFrame = 1ul;
+	_Particle.Name = L"BulletHole" + std::to_wstring(MATH::RandInt({ 0,3 }));
+	_Particle.Scale = { Scale,Scale,Scale };
+
+	Normal = MATH::Normalize(Normal);
+	const vec3 Axis = MATH::Cross({ 0,0,-1 }, Normal);
+	float Degree = MATH::ToDegree(std::acosf(MATH::Dot(Normal, vec3{ 0,0,-1 })));
+	//if (MATH::almost_equal(Axis.y, 1.f) || MATH::almost_equal(Axis.y, 0.0f))
+	//{
+	//	Degree = 0.f;
+	//};
+
+	mat Rot = MATH::RotationMatrixFromAxis(Axis, Degree);
+	_Particle.bRotationMatrix = true;
+	_Particle.RotationMatrix = Rot;
+	ParticleSystem::Instance().PushParticle(std::move(_Particle));
+};
+
 void CPlayer::ShotGunShot()
 {
 	AnimationTextures::NotifyType _Notify;
@@ -529,7 +554,7 @@ void CPlayer::ShotGunShot()
 	ScreenToClient(g_hWnd, &_Pt);
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-	_Ray.Start = m_pTransformCom->GetLocation();
+//	_Ray.Start = m_pTransformCom->GetLocation();
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -559,11 +584,81 @@ void CPlayer::ShotGunShot()
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
 
 
+	
 
+	{
+		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
 
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
 
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
 
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+			for (size_t i = 0; i < 12; ++i)
+			{
+				vec3 Point = std::get<0>(*find_iter);
+				Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+				PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
+			};
+		}
+	}
+
+	{
+		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
+
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+
+			for (size_t i = 0; i < 12; ++i)
+			{
+				vec3 Point = std::get<0>(*find_iter);
+				Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+				PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
+			};
+		
+		}
+	}
 }
 
 void CPlayer::ShotGunReload()
@@ -577,13 +672,13 @@ void CPlayer::ShotGunReload()
 		ScreenToClient(g_hWnd, &_Pt);
 		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-		_Ray.Start = m_pTransformCom->GetLocation();
+	//	_Ray.Start = m_pTransformCom->GetLocation();
 
 		CollisionParticle _CollisionParticle;
 		_CollisionParticle.Delta = 10000.f;
 		_CollisionParticle.bCollision = true;
 		_CollisionParticle.bFloorCollision = true;
-		_CollisionParticle.bWallCollision = true;
+		_CollisionParticle.bWallCollision = false;
 		_CollisionParticle.bMapBlock = true;
 		_CollisionParticle.Gravity = 5.f;
 		vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction * 1.4f);
@@ -685,13 +780,13 @@ void CPlayer::DaggerThrow()
 		ScreenToClient(g_hWnd, &_Pt);
 		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-		_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
+	//	_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
 
 		Particle _Partice;
 		_Partice.Delta = 2;
 		_Partice.Durtaion = 2 * 1;
 		_Partice.EndFrame = 1;
-		_Partice.Location = _Ray.Start;
+		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
 		_Partice.AlphaLerp = (i/1.f) / 100.f;
 		//_Partice.Rotation.y = 75.f;
 		//_Partice.Rotation.x = 80.f;
@@ -727,7 +822,7 @@ void CPlayer::AkimboFire()
 	ScreenToClient(g_hWnd, &_Pt);
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-	_Ray.Start = m_pTransformCom->GetLocation();
+
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -754,12 +849,11 @@ void CPlayer::AkimboFire()
 		}
 	}
 
-
 	CollisionParticle _CollisionParticle;
 	_CollisionParticle.Delta = 10000.f;
 	_CollisionParticle.bCollision = true;
 	_CollisionParticle.bFloorCollision = true;
-	_CollisionParticle.bWallCollision = true;
+	_CollisionParticle.bWallCollision = false;
 	_CollisionParticle.bMapBlock = true;
 	_CollisionParticle.Gravity = 5.f;
 	vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction* 1.4f);
@@ -786,6 +880,70 @@ void CPlayer::AkimboFire()
 	_CollisionParticle.Radius = 0.1f;
 	_CollisionParticle.Speed = 10.f;
 	ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
+
+
+	{
+		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
+
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
+		}
+	}
+
+	{
+		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
+
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
+		}
+	}
+
 }
 
 void CPlayer::MagnumFire()
@@ -806,7 +964,6 @@ void CPlayer::MagnumFire()
 	ScreenToClient(g_hWnd, &_Pt);
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-	_Ray.Start = m_pTransformCom->GetLocation();
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -831,8 +988,103 @@ void CPlayer::MagnumFire()
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
+	};
+
+	CollisionParticle _CollisionParticle;
+	_CollisionParticle.Delta = 10000.f;
+	_CollisionParticle.bCollision = true;
+	_CollisionParticle.bFloorCollision = true;
+	_CollisionParticle.bWallCollision = false;
+	_CollisionParticle.bMapBlock = true;
+	_CollisionParticle.Gravity = 5.f;
+	vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction * 1.4f);
+
+	if (MATH::RandInt({ 0,1 }))
+	{
+		SpawnLocation.x -= 0.1f;
+	}
+	else
+	{
+		SpawnLocation.x += 0.1f;
 	}
 
+	SpawnLocation.y -= 0.3f;
+	_CollisionParticle.Scale = { 0.43f,0.43f,0.43f };
+	_CollisionParticle.StartLocation = SpawnLocation;
+	_CollisionParticle.Location = SpawnLocation;
+	_CollisionParticle.Dir = vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) };
+	_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
+	_CollisionParticle.Speed = MATH::RandReal({ 50,150 });
+	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
+	_CollisionParticle.Durtaion = 1000.f;
+	_CollisionParticle.Name = L"MagnumShell";
+	_CollisionParticle.Radius = 0.2f;
+	_CollisionParticle.Speed = 10.f;
+	ParticleSystem::Instance().PushCollisionParticle
+	(std::move(_CollisionParticle));
+	
+
+	{
+		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
+
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
+		}
+	}
+	
+	{
+		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+			Normal = MATH::Normalize(Normal);
+			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+			float t = 0;
+			vec3 IntersectPoint{ 0,0,0 };
+
+			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+			{
+				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+			});
+
+		if (find_iter != std::end(_IntersectInfo))
+		{
+			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
+		}
+	}
 }
 
 void CPlayer::StaffFire()

@@ -50,6 +50,7 @@ float4 main(PS_INPUT Input) : COLOR
     
     Input.ViewDirection = normalize(Input.ViewDirection);
     float3 Normal = worldNormal;
+    
     if (bNormalSamplerBind==0)
     {
         Normal = Input.Normal;
@@ -58,6 +59,7 @@ float4 main(PS_INPUT Input) : COLOR
  
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
     float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
+
     
     if (bSpecularSamplerBind == 0)
     {
@@ -100,7 +102,7 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.99f);
+        CurrentColor.rgb += (Environment * 0.49f);
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }

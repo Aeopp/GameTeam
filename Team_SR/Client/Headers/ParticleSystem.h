@@ -30,6 +30,8 @@ struct Particle
 	// [begin,end)
 	uint32_t EndFrame = 1ul;
 	float T = 0.0f;
+	bool bRotationMatrix= false;
+	mat RotationMatrix;
 };
 
 struct CollisionParticle : public Particle

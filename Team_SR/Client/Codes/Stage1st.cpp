@@ -175,6 +175,8 @@ HRESULT CStage1st::ReadyScene()
 	}
 
 
+	//LoadObjects();
+
 	
 
 	return S_OK;

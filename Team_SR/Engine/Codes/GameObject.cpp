@@ -77,6 +77,11 @@ void CGameObject::ParticleHit(void* const _Particle, const Collision::Info& _Col
 {
 }
 
+void CGameObject::SetLocation(const vec3 Location)
+{
+	 m_pTransformCom->SetLocation(Location); 
+}
+
 void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);

@@ -25,6 +25,7 @@ public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo);
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 	virtual void ParticleHit(void* const _Particle, const Collision::Info & _CollisionInfo);
+	void SetLocation(const vec3 Location);
 	static const std::wstring Tag;
 	class CTransform* GetTransform() { return m_pTransformCom; };
 	// 2020.12.16 11:54 KMJ

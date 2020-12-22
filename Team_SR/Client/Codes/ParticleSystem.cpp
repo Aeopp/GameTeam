@@ -93,7 +93,6 @@ void ParticleSystem::InitializeVertex() & noexcept
 
 void ParticleSystem::InitializeTextures() & noexcept
 {
-
 	_ParticleTextureTable._TextureMap[L"OverKill"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\OverKill\\", 18);
 
@@ -106,9 +105,20 @@ void ParticleSystem::InitializeTextures() & noexcept
 	_ParticleTextureTable._TextureMap[L"DaggerThrow"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\DaggerThrow\\", 1);
 
+	_ParticleTextureTable._TextureMap[L"MagnumShell"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\MagnumShell\\", 1);
 
-	
+	_ParticleTextureTable._TextureMap[L"BulletHole0"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHole\\0\\", 1);
 
+	_ParticleTextureTable._TextureMap[L"BulletHole1"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHole\\1\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"BulletHole2"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHole\\2\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"BulletHole3"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHole\\3\\", 1);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -367,7 +377,6 @@ void ParticleSystem::Render()&
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 	_Device->SetVertexShader(_Effect.VsShader);
 	_Device->SetPixelShader(_Effect.PsShader);
-	
 
 	CCamera* pCamera = (CCamera*)_Management->GetGameObject((_int)-1, L"Layer_MainCamera");
 	/*const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
@@ -380,8 +389,16 @@ void ParticleSystem::Render()&
 		vec3 BillboardRotation = _Particle.Rotation;
 		BillboardRotation  += pCamera->GetTransform()->GetRotation();
 		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
-
 		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+
+		if(_Particle.bRotationMatrix)
+		{
+			mat Scale, Trans;
+			D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
+			D3DXMatrixTranslation(&Trans, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
+			_ParticleWorld =Scale* _Particle.RotationMatrix* Trans;
+		}
+
 		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
 
 		const auto& TextureTuple =_ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
@@ -392,6 +409,7 @@ void ParticleSystem::Render()&
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
+
 		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
 
 
@@ -402,13 +420,21 @@ void ParticleSystem::Render()&
 		_Effect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
 	}
 
-
 	for (auto& _Particle : _CollisionParticles)
 	{
 		vec3 BillboardRotation = _Particle.Rotation;
 	   BillboardRotation += pCamera->GetTransform()->GetRotation();
 		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
 		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+
+		if (_Particle.bRotationMatrix)
+		{
+			mat Scale, Trans;
+			D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
+			D3DXMatrixTranslation(&Trans, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
+			_ParticleWorld = Scale * _Particle.RotationMatrix * Trans;
+		}
+
 		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
 
 		const auto& TextureTuple = _ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
@@ -463,7 +489,8 @@ void ParticleSystem::ParticleEventFromName( Particle& _Particle,
 	{
 		_Particle.Scale.x += 0.01f;
 	}
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell")
+
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell") 
 	{
 		if (_Particle.bLoop)
 		{		
@@ -489,7 +516,7 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 
 void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle)
 {
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell")
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell"  || _Particle.Name == L"MagnumShell")
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bLoop = false;

@@ -23,6 +23,7 @@ public:
 	void AddRotationY(float fDelaTime);
 	void AddRotationZ(float fDelaTime);
 
+	FORCEINLINE void SetLocation(const vec3 Location) { m_TransformDesc.vPosition = Location; };
 	FORCEINLINE vec3 GetLocation() { return m_TransformDesc.vPosition; }
 	FORCEINLINE vec3 GetScale() { return m_TransformDesc.vScale; };
 	FORCEINLINE vec3 GetRotation() { return m_TransformDesc.vRotation; };

@@ -106,7 +106,12 @@ public:
 	//static float Parabolic(const float InitY/*운동을 시작한 타이밍의 높이 좌표*/,
 	//	const float Speed/*단위 벡터가 아님 속도도 곱해야함*/,
 	//	const float Degree, const float t, const float Gravity);
-
+	static mat RotationMatrixFromAxis(const vec3 Axis, float Degree)
+	{
+		mat rot;
+		D3DXMatrixRotationAxis(&rot, &Axis, MATH::ToRadian(Degree));
+		return rot;
+	};
 
 	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,
 		const vec3& Location);

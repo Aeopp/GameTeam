@@ -503,9 +503,9 @@ void CMapBase::WallRender()
 			RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
-			1);
+			0);
 		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
-			1);
+			0);
 
 		if (RefInfo.MaterialInfo.TextureName == L"TEXTURE_GRAVEYARD_shrubbery.png")
 		{
@@ -586,9 +586,9 @@ void CMapBase::BarRender()
 			RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
-			1);
+			0);
 		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
-			1);
+			0);
 
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex::Texture));
@@ -1052,8 +1052,8 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 
 		if (!_MtlStream.is_open())
 		{
-			::MessageBox(nullptr, __FUNCTIONW__,
-				L"File Open Fail", 0);
+		/*	::MessageBox(nullptr, __FUNCTIONW__,
+				L"File Open Fail", 0);*/
 		}
 
 		std::map<wstring, MtrlInfo> _MtrlInfo;
@@ -1148,9 +1148,10 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 
 		std::wfstream _ObjStream(_ObjFileName);
 
-		if (!_ObjStream.is_open())
+		/*if (!_ObjStream.is_open())
 			::MessageBox(nullptr, __FUNCTIONW__,
-				L"File Open Fail", 0);
+				L"File Open Fail", 0
+			);*/
 
 		std::vector<typename Vertex::Texture> _Vertexs;
 		std::vector<_vector> _Locations;
