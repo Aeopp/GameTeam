@@ -29,10 +29,16 @@ _uint CTerret::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
 
+	//Å×½ºÆ®
+	//m_pTransformCom->m_TransformDesc.vRotation.y += 1.f;
+
 	if (m_pTarget)
 	{
 		if ((BYTE)ObjFlag::Remove & m_pTarget->GetOBjFlag())
+		{
 			m_pTarget = nullptr;
+		}
+		Fire(fDeltaTime);
 	}
 	else
 		FindTarget();
@@ -121,16 +127,66 @@ void CTerret::FindTarget()
 
 }
 
+void CTerret::Fire(float fDeltaTime)
+{
+	if (nullptr == m_pTarget)
+		return;
+	m_fTestTime += fDeltaTime;
+	m_fFrameCnt = 5;
+	if (m_fTestTime > 1)
+	{
+		m_fFrameCnt = 4;
+		m_fTestTime = 0.f;
+		_vector vDir = m_pTarget->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		Ray _Ray;
+		_Ray.Start = m_pTransformCom->GetLocation();
+		//_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
+		_Ray.Direction = vDir;
+
+		auto _Component = m_pTarget->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				m_pTarget->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+
+	}
+}
+
 void CTerret::UpdateAngle()
 {
 	if (nullptr == m_pTarget)
 		return;
 	_vector vMyLook = m_pTransformCom->GetLook();
-	_vector vDir = m_pTransformCom->m_TransformDesc.vPosition - m_pTarget->GetTransform()->m_TransformDesc.vPosition;
+	////_vector vDir = m_pTransformCom->m_TransformDesc.vPosition - m_pTarget->GetTransform()->m_TransformDesc.vPosition;
+	_vector vDir = m_pTarget->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&vDir, &vDir);
+	//memcpy(&m_pTransformCom->m_TransformDesc.matWorld[2], &vDir, sizeof(_vector));
 	float fDot = D3DXVec3Dot(&vMyLook, &vDir);
-	m_fAngle = D3DXToDegree(fDot);
+	float fAngle = D3DXToDegree(fDot);
+	int   iFinalAngle = (_int)fAngle % 360;
+	if (iFinalAngle < 0)
+	{
+		iFinalAngle += 360;
+	}
+	
+	m_pTransformCom->m_TransformDesc.vRotation.y = (float)iFinalAngle;
 
-	m_fFrameCnt = abs((int)m_fAngle % 360) / 45;
+	//m_fFrameCnt = abs((int)m_fAngle % 360) / 45;
 }
 
 void CTerret::IsBillboarding()
@@ -143,6 +199,8 @@ void CTerret::IsBillboarding()
 	vec3 BillboardRotation = _TransformDesc.vRotation;
 	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
 	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
+
 
 }
 

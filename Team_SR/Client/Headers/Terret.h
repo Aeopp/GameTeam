@@ -20,6 +20,7 @@ public:
 private:
 	HRESULT AddComponents();
 	void	FindTarget();
+	void	Fire(float fDeltaTime);
 	void	UpdateAngle();
 	void	IsBillboarding();
 public:
@@ -31,6 +32,7 @@ private:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
 	CTexture* m_pTexture;
 	float m_fFrameCnt;
+	float m_fTestTime;
 	float m_fAngle = 0.f;
 	CGameObject* m_pTarget = nullptr;
 	
