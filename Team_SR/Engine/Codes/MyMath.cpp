@@ -6,7 +6,7 @@ std::mt19937 MATH::gen{};
 const _vector MATH::AxisX{ 1,0,0 };
 const _vector MATH::AxisY{ 0,1,0 };
 const _vector MATH::AxisZ{ 0,0,1 };
-
+//constexpr float MATH::Gravity{ 0.1f };
 // 삼각형을 둘러치는 선분 3개.
 
 

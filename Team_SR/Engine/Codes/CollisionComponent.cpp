@@ -215,35 +215,35 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		}
 	}
 
-//	// 충돌체 끼리의 충돌
-//	for (auto& _Comp : _Comps)
-//	{
-//#pragma region MatchingCheck
-//		if (this == _Comp)continue;
-//		auto iter = _TagBind.find(this->_Tag);
-//		if (iter == std::end(_TagBind))continue;
-//		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
-//		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
-//#pragma endregion
-//		// 거리검사
-//		if (MATH::Length(ToRhs) > MapCollisionCheckDistanceMin)continue;
-//		// ....
-//		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
-//		// 충돌함.
-//		if (IsCollision.first)
-//		{
-//			auto* _LhsOwner = this->Owner;
-//			auto* _RhsOwner = _Comp->Owner;
-//
-//			_LhsOwner->Hit(_RhsOwner, IsCollision.second);
-//			_RhsOwner->Hit(_LhsOwner, IsCollision.second);
-//			// PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
-//		}
-//		else
-//		{
-//			// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
-//		}
-//	}
+	// 충돌체 끼리의 충돌
+	for (auto& _Comp : _Comps)
+	{
+#pragma region MatchingCheck
+		if (this == _Comp)continue;
+		auto iter = _TagBind.find(this->_Tag);
+		if (iter == std::end(_TagBind))continue;
+		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+		// 거리검사
+		if (MATH::Length(ToRhs) > MapCollisionCheckDistanceMin)continue;
+		// ....
+		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+		// 충돌함.
+		if (IsCollision.first)
+		{
+			auto* _LhsOwner = this->Owner;
+			auto* _RhsOwner = _Comp->Owner;
+
+			_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+			_RhsOwner->Hit(_LhsOwner, IsCollision.second);
+			 //PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+		}
+		else
+		{
+			// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+		}
+	}
 }
 
 
@@ -283,10 +283,15 @@ void CCollisionComponent::CancelRegist()
 {
 	if (!_Comps.empty())
 	{
-		_Comps.erase(std::find_if(std::begin(_Comps), std::end(_Comps), [this](auto _Target)
+		auto EraseTargetIter = std::find_if(std::begin(_Comps), std::end(_Comps), [this](auto _Target)
 			{
 				return this->MyID == _Target->MyID;
-			}));
+			});
+
+		if (EraseTargetIter != std::end(_Comps))
+		{
+			_Comps.erase(EraseTargetIter);
+		}		
 	}
 };
 

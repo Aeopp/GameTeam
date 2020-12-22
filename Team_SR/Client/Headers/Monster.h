@@ -35,8 +35,6 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 protected:
-	class CVIBuffer* m_pVIBufferCom = nullptr;
-protected:
 	// 플래그 값들
 	enum class MonsterFlag {
 		HPLock				= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것

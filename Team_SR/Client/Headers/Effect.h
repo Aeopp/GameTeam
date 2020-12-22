@@ -10,7 +10,7 @@ protected:
 	explicit CEffect(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CEffect() = default;
 public:
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() = 0;
 	virtual HRESULT ReadyGameObject(void* pArg = nullptr) = 0;
 	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
@@ -19,17 +19,17 @@ public:
 protected:
 	virtual HRESULT AddComponents();
 protected:
-	void Frame_Move(float fDeltaTime);		// ÅØ½ºÃ³ ÇÁ·¹ÀÓ ÀÌµ¿
+	void Frame_Move(float fDeltaTime);		// í…ìŠ¤ì²˜ í”„ë ˆì„ ì´ë™
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-	CTexture* m_pTexture;	// ÅØ½ºÃ³
-	float m_fFrameCnt;		// ÇÁ·¹ÀÓ ¹øÈ£
-	float m_fStartFrame;	// ÇÁ·¹ÀÓ ½ÃÀÛ
-	float m_fEndFrame;		// ÇÁ·¹ÀÓ ³¡
+	CTexture* m_pTexture;	// í…ìŠ¤ì²˜
+	float m_fFrameCnt;		// í”„ë ˆì„ ë²ˆí˜¸
+	float m_fStartFrame;	// í”„ë ˆì„ ì‹œì‘
+	float m_fEndFrame;		// í”„ë ˆì„ ë
 };
 
 #endif // Effect_h__

@@ -25,6 +25,9 @@ public:
 protected:
 	ESceneID CurrentSceneID;
 	ESceneID NextSceneID;
+protected:
+	void LoadObjects(const std::wstring& FilePath, const vec3 WorldScale) & noexcept;
+	void SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept;
 	class CUIManager* m_pUIManager;
 };
 

@@ -7,6 +7,8 @@
 #include "MainCamera.h"
 #include "Player.h"
 #include "Vertexs.h"
+#include "BatGrey.h"
+
 
 
 
@@ -1345,5 +1347,6 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 		};
 
 		CCollisionComponent::AddMapPlaneInfo(_PolygonPlanes);
-};
+}
+
 

@@ -28,14 +28,13 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 private:
-	class CVIBuffer* m_pVIBufferCom = nullptr;
-
 private:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작
 	float m_fEndFrame;		// 프레임 끝
 	CTexture* m_pTexture;	// 텍스처
 	ItemInfo m_stItemInfo;	// 아이템 정보
+	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 };
 
 #define  __ITEM_H__

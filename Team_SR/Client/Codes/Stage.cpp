@@ -9,6 +9,8 @@
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 #include "UIManager.h"
+#include "Eyebat.h"
+#include "Glacier.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
@@ -21,7 +23,7 @@ HRESULT CStage::ReadyScene()
 	CCollisionComponent::CleanUpMapCollisionInfo();
 
 	// 2020.12.22 00:01 KMJ
-	// ¿£ÁøÂÊ¿¡¼­ ÇöÁ¦ ¾À ¾Ë±â À§ÇØ¼­
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ë±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½
 	m_iSceneIndex = static_cast<int>(CurrentSceneID);
 
 	CScene::ReadyScene();
@@ -257,3 +259,241 @@ void CStage::Free()
 
 	CScene::Free();
 }
+
+
+
+void CStage::LoadObjects(const std::wstring& FilePath ,
+	 const vec3 WorldScale) & noexcept
+{
+	struct ObjectSpawnInfo
+	{
+		vec3 Location{ 0,0,0 };
+		std::wstring Name{};
+	};
+	std::vector<ObjectSpawnInfo> _ObjectSpawnInfos;
+
+	std::wifstream InputStream(FilePath);
+
+	if (!InputStream.is_open())
+	{
+		PRINT_LOG(L"Warning!", L"Not Find Map Object Spawn Information");
+	}
+
+	std::wstring Token;
+	std::vector<vec3> AccumulateWorldPoint{};
+
+	while (InputStream)
+	{
+		Token.clear();
+		InputStream >> Token;
+
+		if (Token == L"v")
+		{
+			vec3 LocalPoint;
+			InputStream >> LocalPoint.x;
+			InputStream >> LocalPoint.y;
+			InputStream >> LocalPoint.z;
+
+			const vec3 WorldPoint =
+			{   LocalPoint.x * WorldScale.x ,
+				LocalPoint.y * WorldScale.y ,
+				LocalPoint.z * WorldScale.z };
+
+			AccumulateWorldPoint.push_back(WorldPoint);
+		}
+
+		if (Token == L"o")
+		{
+			ObjectSpawnInfo _CurrentObjectInfo;
+
+			InputStream >> _CurrentObjectInfo.Name;
+
+			_CurrentObjectInfo.Location =
+				std::accumulate(std::begin(AccumulateWorldPoint), std::end(AccumulateWorldPoint), vec3{ 0,0,0 })
+				/
+				static_cast<float>(AccumulateWorldPoint.size());
+
+			AccumulateWorldPoint.clear();
+			AccumulateWorldPoint.shrink_to_fit();
+
+			_ObjectSpawnInfos.push_back(std::move(_CurrentObjectInfo));
+		}
+	}
+
+	for (auto& _CurrentObjectSpawnInfo : _ObjectSpawnInfos)
+	{
+		SpawnObjectFromName(_CurrentObjectSpawnInfo.Name, _CurrentObjectSpawnInfo.Location);
+	}
+}
+void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
+{
+	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
+	{
+		using SpawnType = CEyebat;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+
+	if (ObjectName.find(L"Glacier") != std::wstring::npos)
+	{
+		using SpawnType = CGlacier;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+
+	
+	if (ObjectName.find(L"HealthBig") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::HealthBig;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+	if (ObjectName.find(L"HealthSmall") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::HealthSmall;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+	if (ObjectName.find(L"ManaBig") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::ManaBig;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+	if (ObjectName.find(L"ManaSmall") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::ManaSmall;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+
+	if (ObjectName.find(L"Ammo") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::Ammo;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+	if (ObjectName.find(L"KeyBlue") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::KeyBlue;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	}
+
+
+	if (ObjectName.find(L"KeyRed") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::KeyRed;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	};
+
+	if (ObjectName.find(L"KeyYellow") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::KeyYellow;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	};
+	if (ObjectName.find(L"Upgrade") != std::wstring::npos)
+	{
+		ItemBasicArgument stItemArg;
+		stItemArg.uiSize = sizeof(ItemBasicArgument);
+		stItemArg.vPosition = std::move(SpawnLocation);
+		stItemArg.etype = ITEM::Upgrade;
+		stItemArg.bDeleteFlag = false;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Item",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Item",
+			nullptr, static_cast<void*>(&stItemArg));
+	};
+
+};

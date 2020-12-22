@@ -131,18 +131,13 @@ HRESULT CMonster::RenderGameObject()
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
 
+
+
 	return S_OK;
 }
 
 HRESULT CMonster::AddComponents()
 {
-	/* For.Com_VIBuffer */
-	if (FAILED(CGameObject::AddComponent(
-		(_uint)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		(CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
 
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
@@ -219,7 +214,7 @@ void CMonster::Free()
 	 SafeRelease(_VertexBuffer);
 	/// </summary>
 	
-	SafeRelease(m_pVIBufferCom);		// 버텍스 버퍼
+	
 	for (auto& rPair : m_mapTexture)	// map 텍스처 릴리즈
 		SafeRelease(rPair.second);
 	m_mapTexture.clear();

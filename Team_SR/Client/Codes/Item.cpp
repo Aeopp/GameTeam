@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "..\Headers\Item.h"
 #include "MainCamera.h"
+#include "DXWrapper.h"
+#include "NormalUVVertexBuffer.h"
+
 
 CItem::CItem(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -12,6 +15,8 @@ HRESULT CItem::ReadyGameObjectPrototype()
 {
 	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
 		return E_FAIL;
+
+	bGravity = true;
 
 	return S_OK;
 }
@@ -34,7 +39,7 @@ HRESULT CItem::ReadyGameObject(void* pArg /*= nullptr*/)
 		}
 	}
 
-	m_pTransformCom->m_TransformDesc.vScale = { 0.5f, 0.5f, 0.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 1.5, 1.5, 1.5 };
 
 	if (FAILED(CItem::AddComponents()))
 		return E_FAIL;
@@ -47,6 +52,7 @@ _uint CItem::UpdateGameObject(float fDeltaTime)
 	CGameObject::UpdateGameObject(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);
+
 
 	return _uint();
 }
@@ -69,26 +75,46 @@ HRESULT CItem::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	// 현재 사용중이던 텍스쳐를 여기에 세팅.
+	{
+		//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
+		{
+			m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), m_pTexture->GetTexture((_uint)m_fFrameCnt));
+		}
+		// 1.       그냥 세팅을 안하거나
+		{
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", false);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", false);
+		}
+		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
+		{
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
+		}
+	}
+	// 월드 행렬 바인딩
+	_Effect.SetVSConstantData(m_pDevice, "World", World);
+	// 광택 설정 
+	_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+	_VertexBuffer->Render();
 
 	return S_OK;
 }
 
 HRESULT CItem::AddComponents()
 {
-	/* For.Com_VIBuffer */
+
+
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		(CComponent**)&m_pVIBufferCom)))
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
 		return E_FAIL;
 
 	// 충돌 컴포넌트
@@ -98,8 +124,8 @@ HRESULT CItem::AddComponents()
 	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Item;
 	_Info.bWallCollision = false;
-	_Info.bFloorCollision = false;
-	_Info.bMapBlock = false;
+	_Info.bFloorCollision = true;
+	_Info.bMapBlock = true;
 
 	_Info.Owner = this;
 	CGameObject::AddComponent(
@@ -320,9 +346,10 @@ CGameObject * CItem::Clone(void * pArg)
 
 void CItem::Free()
 {
-	SafeRelease(m_pVIBufferCom);	// 버텍스 버퍼
 	SafeRelease(m_pTexture);		// 텍스처
-
+		/// <summary> 2020 12 20 이호준
+	SafeRelease(_VertexBuffer);
+	/// </summary>
 	CGameObject::Free();
 }
 

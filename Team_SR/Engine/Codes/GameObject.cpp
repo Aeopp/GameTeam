@@ -36,8 +36,14 @@ HRESULT CGameObject::ReadyGameObject(void* pArg)
 
 _uint CGameObject::UpdateGameObject(float fDeltaTime)
 {
+	if (bGravity)
+	{
+		m_pTransformCom->m_TransformDesc.vPosition.y -= MATH::Gravity;
+	}
+
 	m_pTransformCom->UpdateTransform();
 
+	
 	return _uint();
 }
 

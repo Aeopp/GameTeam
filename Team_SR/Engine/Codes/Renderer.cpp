@@ -5,7 +5,6 @@
 
 USING(Engine)
 
-
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pDevice)
 	: m_pDevice(pDevice)
 {

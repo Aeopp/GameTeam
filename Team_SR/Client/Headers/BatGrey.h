@@ -15,10 +15,8 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-
 private:
 	virtual HRESULT AddComponents() override;
-	
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 
