@@ -19,17 +19,17 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 
 	// Harvester 로딩
 	{
-		_AnimationTextures._TextureMap[L"Harvester_Fire"] = CreateTexturesSpecularNormal(
-			m_pDevice, L"..\\Resources\\Player\\Harvester\\Fire\\", 3);
+		_AnimationTextures._TextureMap[L"ShotGun_Shot"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\ShotGun\\Shot\\", 2);
 
-		_AnimationTextures._TextureMap[L"Harvester_Idle"] = CreateTexturesSpecularNormal(
-			m_pDevice, L"..\\Resources\\Player\\Harvester\\Idle\\", 1);
+		_AnimationTextures._TextureMap[L"ShotGun_Idle"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\ShotGun\\Idle\\", 1);
 
 		/*_AnimationTextures._TextureMap[L"Harvester_Hud"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Harvester\\Hud\\", 1);*/
 
-		_AnimationTextures._TextureMap[L"Harvester_Reload"] = CreateTexturesSpecularNormal(
-			m_pDevice, L"..\\Resources\\Player\\Harvester\\Reload\\", 23);
+		_AnimationTextures._TextureMap[L"ShotGun_Reload"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\ShotGun\\Reload\\", 14);
 	}
 
 	{
@@ -179,7 +179,7 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::ParticleAfterAlpha
 		, this)))
 		return 0;
 
@@ -191,9 +191,9 @@ HRESULT CPlayer::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
-	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	/*m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); 
-	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);*/
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
@@ -222,11 +222,16 @@ HRESULT CPlayer::RenderGameObject()
 	_VertexBuffer->Render();
 	
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	_CollisionComp->DebugDraw();
 
 	return S_OK;
+}
+
+void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
+{
+	HP -= 1.f;
 }
 
 void CPlayer::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
@@ -267,7 +272,7 @@ void CPlayer::MouseRight()&
 	case CPlayer::EWeaponState::Dagger:
 		DaggerThrow();
 		break;
-	case CPlayer::EWeaponState::Harvester:
+	case CPlayer::EWeaponState::ShotGun:
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		break;
@@ -285,7 +290,7 @@ void CPlayer::MouseRightPressing()&
 	{
 	case CPlayer::EWeaponState::Dagger:
 		break;
-	case CPlayer::EWeaponState::Harvester:
+	case CPlayer::EWeaponState::ShotGun:
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		break;
@@ -309,7 +314,7 @@ void CPlayer::MouseRightUp()&
 	{
 	case CPlayer::EWeaponState::Dagger:
 		break;
-	case CPlayer::EWeaponState::Harvester:
+	case CPlayer::EWeaponState::ShotGun:
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		break;
@@ -334,8 +339,8 @@ void CPlayer::MouseLeft()&
 	case CPlayer::EWeaponState::Dagger:
 		DaggerStab();
 		break;
-	case CPlayer::EWeaponState::Harvester:
-		HarvesterFire();
+	case CPlayer::EWeaponState::ShotGun:
+		ShotGunShot();
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		AkimboFire();
@@ -364,7 +369,7 @@ void CPlayer::MouseLeftPressing()&
 	{
 	case CPlayer::EWeaponState::Dagger:
 		break;
-	case CPlayer::EWeaponState::Harvester:
+	case CPlayer::EWeaponState::ShotGun:
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		if (_AnimationTextures.GetAnimationKey() != L"Akimbo_Fire")
@@ -387,8 +392,8 @@ void CPlayer::RButtonEvent()&
 	{
 	case CPlayer::EWeaponState::Dagger:
 		break;
-	case CPlayer::EWeaponState::Harvester:
-		HarvesterReload();
+	case CPlayer::EWeaponState::ShotGun:
+		ShotGunReload();
 		break;
 	case CPlayer::EWeaponState::Akimbo:
 		break;
@@ -410,8 +415,8 @@ void CPlayer::_1ButtonEvent()&
 
 void CPlayer::_2ButtonEvent()&
 {
-	_CurrentWeaponState = EWeaponState::Harvester;
-	_AnimationTextures.ChangeAnim(L"Harvester_Idle", FLT_MAX, 1);
+	_CurrentWeaponState = EWeaponState::ShotGun;
+	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
 }
 
 void CPlayer::_3ButtonEvent()&
@@ -500,16 +505,23 @@ void CPlayer::Free()
 	CGameObject::Free();
 }
 
-void CPlayer::HarvesterFire()
+void CPlayer::ShotGunShot()
 {
 	AnimationTextures::NotifyType _Notify;
 
-	_Notify[3ul] = [this]()
+	_Notify[2ul] = [this]()
 	{
-		_AnimationTextures.ChangeAnim(L"Harvester_Idle", FLT_MAX, 1);
+		ShotGunReload();
+
+		/*AnimationTextures::NotifyType _Notify;
+		_Notify[14ul] = [this]()
+		{
+			_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1ul);
+		};
+		_AnimationTextures.ChangeAnim(L"ShotGun_Reload", 0.07f, 14ul, false, std::move(_Notify));*/
 	};
 
-	_AnimationTextures.ChangeAnim(L"Harvester_Fire", 0.1f, 3ul,
+	_AnimationTextures.ChangeAnim(L"ShotGun_Shot", 0.1f, 2ul,
 		false, std::move(_Notify));
 
 	POINT _Pt;
@@ -544,19 +556,68 @@ void CPlayer::HarvesterFire()
 		}
 	}
 
-	LightingDurationTable[L"HarvesterFire"] = 0.3f;
+	LightingDurationTable[L"ShotGunShot"] = 0.3f;
+
+
+
+
+
+
+
 }
 
-void CPlayer::HarvesterReload()
+void CPlayer::ShotGunReload()
 {
 	AnimationTextures::NotifyType _Notify;
 
+	_Notify[3ul] = [this]()
+	{
+		POINT _Pt;
+		GetCursorPos(&_Pt);
+		ScreenToClient(g_hWnd, &_Pt);
+		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
+		_Ray.Start = m_pTransformCom->GetLocation();
+
+		CollisionParticle _CollisionParticle;
+		_CollisionParticle.Delta = 10000.f;
+		_CollisionParticle.bCollision = true;
+		_CollisionParticle.bFloorCollision = true;
+		_CollisionParticle.bWallCollision = true;
+		_CollisionParticle.bMapBlock = true;
+		_CollisionParticle.Gravity = 5.f;
+		vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction * 1.4f);
+
+		if (MATH::RandInt({ 0,1 }))
+		{
+			SpawnLocation.x -= 0.1f;
+		}
+		else
+		{
+			SpawnLocation.x += 0.1f;
+		}
+
+		SpawnLocation.y -= 0.3f;
+		_CollisionParticle.Scale = { 0.43f,0.43f,0.43f };
+		_CollisionParticle.StartLocation = SpawnLocation;
+		_CollisionParticle.Location = SpawnLocation;
+		_CollisionParticle.Dir = vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) };
+		_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
+		_CollisionParticle.Speed = MATH::RandReal({ 50,150 });
+		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
+		_CollisionParticle.Durtaion = 1000.f;
+		_CollisionParticle.Name = L"ShotGunShell";
+		_CollisionParticle.Radius = 0.2f;
+		_CollisionParticle.Speed = 10.f;
+		ParticleSystem::Instance().PushCollisionParticle
+		(std::move(_CollisionParticle));
+	};
 	_Notify[23ul] = [this]()
 	{
-		_AnimationTextures.ChangeAnim(L"Harvester_Idle", FLT_MAX, 1);
+		_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
 	};
 
-	_AnimationTextures.ChangeAnim(L"Harvester_Reload", 0.07f, 23ul,
+	_AnimationTextures.ChangeAnim(L"ShotGun_Reload", 0.07f, 14ul ,
 		false, std::move(_Notify));
 }
 
@@ -698,8 +759,9 @@ void CPlayer::AkimboFire()
 	_CollisionParticle.Delta = 10000.f;
 	_CollisionParticle.bCollision = true;
 	_CollisionParticle.bFloorCollision = true;
-	_CollisionParticle.bWallCollision = false;
+	_CollisionParticle.bWallCollision = true;
 	_CollisionParticle.bMapBlock = true;
+	_CollisionParticle.Gravity = 5.f;
 	vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction* 1.4f);
 
 	if (MATH::RandInt({ 0,1 }))
@@ -834,7 +896,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 {
 	bool bIsValidName = false;
 
-	if (LightName == L"HarvesterFire")
+	if (LightName == L"ShotGunShot")
 	{
 		bIsValidName = true;
 		MyLight _Light{};

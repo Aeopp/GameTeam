@@ -100,9 +100,15 @@ void ParticleSystem::InitializeTextures() & noexcept
 	_ParticleTextureTable._TextureMap[L"BulletShell"] =
 		CreateTexturesSpecularNormal(_Device, L"..\\Resources\\Effect\\BulletShell\\", 1);
 
+	_ParticleTextureTable._TextureMap[L"ShotGunShell"] =
+		CreateTexturesSpecularNormal(_Device, L"..\\Resources\\Effect\\ShotGunShell\\", 1);
 
 	_ParticleTextureTable._TextureMap[L"DaggerThrow"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\DaggerThrow\\", 1);
+
+
+	
+
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -134,6 +140,8 @@ void ParticleSystem::Update(const float DeltaTime)&
 			_Particle.Dir += _Particle.DeltaVector *DeltaTime;
 			_Particle.Dir = MATH::Normalize(_Particle.Dir);
 			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+		//	_Particle.Location.y = MATH::Parabolic(_Particle.StartLocation.y, _Particle.Speed, _Particle.Angle, _Particle.T, _Particle.Gravity);
+
 			ParticleEventFromName(_Particle, DeltaTime);
 		}
 		else
@@ -169,6 +177,8 @@ void ParticleSystem::Update(const float DeltaTime)&
 			_Particle.Dir += _Particle.DeltaVector * DeltaTime;
 			_Particle.Dir = MATH::Normalize(_Particle.Dir);
 			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+		//	_Particle.Location.y = MATH::Parabolic(_Particle.StartLocation.y, _Particle.Speed, _Particle.Angle, _Particle.T, _Particle.Gravity);
+
 			ParticleEventFromName(_Particle, DeltaTime);
 		}
 		else
@@ -453,18 +463,15 @@ void ParticleSystem::ParticleEventFromName( Particle& _Particle,
 	{
 		_Particle.Scale.x += 0.01f;
 	}
-	if (_Particle.Name == L"BulletShell")
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell")
 	{
 		if (_Particle.bLoop)
-		{
-			const float G = 5.f;
-
+		{		
 			_Particle.Location.y =
 				_Particle.StartLocation.y +
 				((_Particle.Speed *
 					std::sinf(MATH::ToRadian(_Particle.Angle)) * _Particle.T)
-					* -((_Particle.T * _Particle.T) * G * (1.f / 2.f)));
-			//_Particle.Location.y -= (std::powf(_Particle.T ,10.f)*  MATH::Gravity* DeltaTime);
+					* -((_Particle.T * _Particle.T) * _Particle.Gravity * (1.f / 2.f)));
 		}
 	}
 }
@@ -482,7 +489,7 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 
 void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle)
 {
-	if (_Particle.Name == L"BulletShell")
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell")
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bLoop = false;

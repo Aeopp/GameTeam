@@ -121,6 +121,18 @@ std::array<Segment, 3ul> MATH::MakeSegmentFromFace(const std::array<vec3, 3ul>& 
 	 return RotationVec;
  }
 
+ 
+
+ //float MATH::Parabolic(const float InitY,
+	// const float Speed, 
+	// const float Degree, 
+	// const float t, 
+	// const float Gravity)
+ //{
+	// return InitY + ((Speed * std::sinf(MATH::ToRadian(Degree)) * t)
+	//	 - (((t * t) * Gravity) * 0.5f));
+ //}
+
  mat MATH::WorldMatrix(const vec3& Scale, const vec3& Rotation, const vec3& Location)
  {
 	 mat Temp, World;

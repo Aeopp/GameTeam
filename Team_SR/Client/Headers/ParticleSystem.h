@@ -17,6 +17,7 @@ struct Particle
 	vec3 Dir = { 0,0,0 };
 	vec3 DeltaVector = { 0,0,0 };
 	float Angle = 0.0f;
+	float Gravity = 0.0f;
 	vec3 StartLocation{ 0,0,0 };
 	
 	bool bLoop = true;

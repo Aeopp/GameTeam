@@ -65,7 +65,8 @@ HRESULT CRenderer::Render(HWND hWnd)
 
 	if (_ParticleRender)_ParticleRender();
 
-
+	if (FAILED(RenderParticleAfterAlpha()))
+		return E_FAIL;
 
 	CCollisionComponent::CollisionDebugRender(m_pDevice);
 
@@ -164,6 +165,71 @@ HRESULT CRenderer::RenderAlpha()
 	}
 
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
+
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
+	return S_OK;
+}
+
+HRESULT CRenderer::RenderParticleAfterAlpha()
+{
+
+
+	/*
+		알파 테스팅 ==================================================================
+		*/
+		//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		//m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); /*알파기준값*/
+		//m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
+		//for (auto& pObject : m_GameObjects[(_int)ERenderID::Alpha])
+		//{
+		//	if (FAILED(pObject->RenderGameObject()))
+		//		return E_FAIL;
+
+		//	SafeRelease(pObject);
+		//}
+
+		//m_GameObjects[(_int)ERenderID::Alpha].clear();
+
+		//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+		/*
+		알파 블렌딩 ==================================================================
+		*/
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	/*
+	D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
+	D3DRS_DESTBLEND: 이미 그려져있는 픽셀	 ARGB
+	D3DBLEND_SRCALPHA: 혼합비율 값은 0~1 범위. (As, As, As, As)
+	D3DBLEND_INVSRCALPHA: 혼합비율 값은 0~1 범위. (1-As, 1-As, 1-As, 1-As)
+	최종픽셀 = D3DRS_SRCBLEND * D3DBLEND_SRCALPHA + D3DRS_DESTBLEND * D3DBLEND_INVSRCALPHA
+	*/
+	m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	mat View;
+	m_pDevice->GetTransform(D3DTS_VIEW, &View);
+
+	m_GameObjects[(_int)ERenderID::ParticleAfterAlpha].sort([View](CGameObject* const _Lhs, CGameObject* const _Rhs)
+		{
+			const vec3 LhsViewLocation = MATH::Mul(_Lhs->GetTransform()->m_TransformDesc.vPosition, View);
+			const vec3 RhsViewLocation = MATH::Mul(_Rhs->GetTransform()->m_TransformDesc.vPosition, View);
+			return LhsViewLocation.z > RhsViewLocation.z;
+		});
+
+	for (auto& pObject : m_GameObjects[(_int)ERenderID::ParticleAfterAlpha])
+	{
+		if (FAILED(pObject->RenderGameObject()))
+			return E_FAIL;
+
+		SafeRelease(pObject);
+	}
+
+	m_GameObjects[(_int)ERenderID::ParticleAfterAlpha].clear();
 
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);

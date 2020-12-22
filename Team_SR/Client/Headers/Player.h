@@ -19,6 +19,7 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
+	virtual void Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo);
 	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	void MoveForward(const float DeltaTime)&;
 	void MoveRight(const float DeltaTime)&;
@@ -38,7 +39,7 @@ private:
 	enum class EWeaponState : uint8_t
 	{
 		Dagger,
-		Harvester,
+		ShotGun,
 		Akimbo,
 		Magnum,
 		Staff,
@@ -60,8 +61,8 @@ private:
 	bool bStaffLoop = false;
 private:
 	const float WeaponAnimDelta = 0.07f;
-	void HarvesterFire();
-	void HarvesterReload();
+	void ShotGunShot();
+	void ShotGunReload();
 	void DaggerStab();
 	void DaggerThrow();
 	void AkimboFire();
@@ -75,7 +76,7 @@ private:
 
 	std::map<std::wstring, float> LightingDurationTable
 	{
-		{L"HarvesterFire",0.f}, 
+		{L"ShotGunShot",0.f}, 
 		{L"AkimboFire",0.f},
 		{L"MagnumFire",0.f},
 		{L"StaffFire",0.f},
