@@ -22,6 +22,8 @@
 #include "Hangman.h"	// 행맨
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
+#include "ParticleSystem.h"
+
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -51,6 +53,9 @@ HRESULT CMainApp::ReadyMainApp()
 
 	if (FAILED(ReadyDefaultSetting()))
 		return E_FAIL;
+
+	ParticleSystem::Initialize(m_pManagement, m_pDevice);
+	auto& _ParticleSys = ParticleSystem::Instance();
 
 
 
@@ -733,5 +738,6 @@ void CMainApp::Free()
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
+	ParticleSystem::Release();
 	CManagement::ReleaseEngine();
 }

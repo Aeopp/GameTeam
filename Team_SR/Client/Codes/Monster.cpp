@@ -114,8 +114,8 @@ HRESULT CMonster::RenderGameObject()
 		}
 		// 1.       그냥 세팅을 안하거나
 		{
-			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", false);
-			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", false);
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
 		}
 		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
 		{

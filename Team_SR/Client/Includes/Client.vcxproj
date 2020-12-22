@@ -198,6 +198,7 @@
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\NormalUVVertexBuffer.h" />
     <ClInclude Include="..\Headers\Package.h" />
+    <ClInclude Include="..\Headers\ParticleSystem.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\NormalUVVertexBuffer.cpp" />
     <ClCompile Include="..\Codes\Package.cpp" />
+    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />

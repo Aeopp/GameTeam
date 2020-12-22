@@ -54,6 +54,7 @@ public: /* For.Renderer */
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
 	D3DCAPS9 GetCaps() { return m_pRenderer->GetCaps(); };
+	void SetEffectRender(std::function<void()> _EffectRender) { m_pRenderer->_ParticleRender = std::move(_EffectRender); };
 public:
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
 private:
@@ -65,6 +66,10 @@ public:
 	static void ReleaseEngine();
 	int32_t CurrentSceneIdx;
 	bool bDebug = false;
+	std::function<void(const float)> _ParticleUpdate;
+	std::function<void(const float)> _ParticleLateUpdate;
+	std::function<void()> _ParticleCollision;
+	std::function<void()> _ParticleRender;
 private:
 	CGraphic_Device*	m_pGraphic_Dev = nullptr;
 	CTime_Manager*		m_pTimeManager = nullptr;

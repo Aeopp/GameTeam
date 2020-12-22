@@ -22,8 +22,9 @@ samplerCUBE EnvironmentSampler;
 
 float4 GlobalAmbient;
 
-bool bSpecularSamplerBind;
-bool bNormalSamplerBind;
+int bSpecularSamplerBind;
+int bNormalSamplerBind;
+float AlphaLerp;
 int LightNum;
 
 float Shine;
@@ -49,18 +50,20 @@ float4 main(PS_INPUT Input) : COLOR
     
     Input.ViewDirection = normalize(Input.ViewDirection);
     float3 Normal = worldNormal;
-    if (bNormalSamplerBind==false)
+    if (bNormalSamplerBind==0)
     {
         Normal = Input.Normal;
     }
+   
  
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
     float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
     
-    if (bSpecularSamplerBind == false)
+    if (bSpecularSamplerBind == 0)
     {
-        SpecularTexColor = DiffuseTexColor; 
+        SpecularTexColor = DiffuseTexColor;
     }
+   
     
     float3 OutputColor = float3(0.0f, 0.0f, 0.0f);
     
@@ -110,5 +113,10 @@ float4 main(PS_INPUT Input) : COLOR
     
     OutputColor.rgb = (FogColor.rgb * FogFactor) + (OutputColor.rgb * (1.0f - FogFactor));
     
-    return float4(OutputColor.rgb, DiffuseTexColor.a);
+    float OutAlpha = DiffuseTexColor.a;
+    
+    OutAlpha *= AlphaLerp;
+    
+    
+    return float4(OutputColor.rgb, OutAlpha);
 };

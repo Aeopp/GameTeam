@@ -234,7 +234,7 @@ bool typename Effect::Info::SetPSConstantData(IDirect3DDevice9* const _Device, c
 #endif
 	if (FAILED(PsTable->SetValue(_Device, PsHandleMap[ConstantHandleMapKey], reinterpret_cast<const void*>(&Data), DataSize)))
 	{
-	//	PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 		return false;
 	}
 	else

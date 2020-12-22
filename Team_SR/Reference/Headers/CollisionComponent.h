@@ -67,14 +67,18 @@ public:
 	Sphere _Sphere;
 	ETag _Tag = ETag::None;
 	int32_t MyID= 0;
-private:
-	static std::vector<CCollisionComponent*> _Comps;
 	static std::vector<PlaneInfo> _MapPlaneInfo; // 월드로 변환한 이후의 정보
 	static std::vector<PlaneInfo> _MapFloorInfo; // 월드로 변환한 이후의 정보 (바닥)
-	static int32_t CurrentID;
-	static std::map<ETag, std::set<ETag>> _TagBind;
 	static float MapCollisionCheckDistanceMin;
 	static float CollisionCheckDistanceMin;
+	static std::vector<CCollisionComponent*> _Comps;
+	static std::map<ETag, std::set<ETag>> _TagBind;
+private:
+	
+	
+	static int32_t CurrentID;
+
+
 };
 
 END

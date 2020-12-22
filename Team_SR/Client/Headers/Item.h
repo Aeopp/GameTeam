@@ -19,7 +19,6 @@ private:
 	HRESULT AddComponents();
 public:
 	ItemInfo GetItemInfo();		// 아이템 정보
-
 private:
 	void Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
 	HRESULT IsBillboarding();	// 빌보드
@@ -27,7 +26,6 @@ public:
 	static CItem* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
-private:
 private:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작

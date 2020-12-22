@@ -44,10 +44,14 @@ private:
 		Staff,
 	};
 public:
+	FORCEINLINE CPlayer::EWeaponState GetWeaponState()const& { return _CurrentWeaponState; };
 	CCollisionComponent* _CollisionComp = nullptr;
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+
+	float HP = 100.f;
+	float MP = 100.f;
 private:
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;

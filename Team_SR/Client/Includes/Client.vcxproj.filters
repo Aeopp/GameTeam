@@ -265,6 +265,7 @@
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
+    <ClInclude Include="..\Headers\ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -413,6 +414,7 @@
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
+    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

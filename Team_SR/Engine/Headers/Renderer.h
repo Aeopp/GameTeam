@@ -28,6 +28,7 @@ public:
 public:
 	D3DCAPS9 _Caps9;
 	size_t MaxTexState = 8;
+	std::function<void()> _ParticleRender;
 private:
 	DWORD Ambient = 0x00202020;
 	LPDIRECT3DDEVICE9	m_pDevice;

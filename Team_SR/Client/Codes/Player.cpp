@@ -6,6 +6,7 @@
 #include "Monster.h"
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
+#include "ParticleSystem.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -86,7 +87,7 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 			m_pDevice, L"..\\Resources\\Player\\Staff\\Idle\\", 1);
 
 		_AnimationTextures._TextureMap[L"Staff_Release"] = CreateTexturesSpecularNormal(
-			m_pDevice, L"..\\Resources\\Player\\Staff\\Release\\", 5);
+			m_pDevice, L"..\\Resources\\Player\\Staff\\ChargeFire\\", 5);
 	}
 
 
@@ -99,7 +100,7 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 10.f;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 50.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
@@ -178,7 +179,7 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha
 		, this)))
 		return 0;
 
@@ -190,6 +191,9 @@ HRESULT CPlayer::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); 
+	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
@@ -209,8 +213,8 @@ HRESULT CPlayer::RenderGameObject()
 	m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
 	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
 	
-	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", true );
-	_Effect.SetPSConstantData(m_pDevice,"bNormalSamplerBind", true);
+	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0 );
+	_Effect.SetPSConstantData(m_pDevice,"bNormalSamplerBind", 0);
 	_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
 	
 	m_pDevice->SetVertexShader(_Effect.VsShader);
@@ -218,7 +222,7 @@ HRESULT CPlayer::RenderGameObject()
 	_VertexBuffer->Render();
 	
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
+	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	_CollisionComp->DebugDraw();
 
@@ -401,6 +405,7 @@ void CPlayer::_1ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dagger;
 	_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_2ButtonEvent()&
@@ -507,18 +512,21 @@ void CPlayer::HarvesterFire()
 	_AnimationTextures.ChangeAnim(L"Harvester_Fire", 0.1f, 3ul,
 		false, std::move(_Notify));
 
-	Ray _Ray;
+	POINT _Pt;
+	GetCursorPos(&_Pt);
+	ScreenToClient(g_hWnd, &_Pt);
+	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 	_Ray.Start = m_pTransformCom->GetLocation();
-	_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
 
-	auto _MonsterList =m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
 	{
 		auto _Component = _CurrentMonster->GetComponent
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
-		
-			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -607,6 +615,36 @@ void CPlayer::DaggerThrow()
 
 	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.07f, 12ul, false,
 		std::move(_Notify));
+
+
+	for (size_t i = 0; i < 100; ++i)
+	{
+		POINT _Pt;
+		GetCursorPos(&_Pt);
+		ScreenToClient(g_hWnd, &_Pt);
+		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
+		_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
+
+		Particle _Partice;
+		_Partice.Delta = 2;
+		_Partice.Durtaion = 2 * 1;
+		_Partice.EndFrame = 1;
+		_Partice.Location = _Ray.Start;
+		_Partice.AlphaLerp = (i/1.f) / 100.f;
+		//_Partice.Rotation.y = 75.f;
+		//_Partice.Rotation.x = 80.f;
+
+		_Partice.Scale = { 0.5f, 0.5f,0.5f };
+		_Partice.Name = L"DaggerThrow";
+
+		_Partice.Dir = _Ray.Direction;
+
+		_Partice.Speed = 10.f;
+
+		ParticleSystem::Instance().PushParticle(_Partice);
+	}
+
 }
 
 void CPlayer::AkimboFire()
@@ -618,15 +656,17 @@ void CPlayer::AkimboFire()
 		_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
 	};
 
-	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.04f, 4ul, false, std::move(_Notify));
+	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.025f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"AkimboFire"] = 0.2f;
 
-
-
-	Ray _Ray;
+	
+	POINT _Pt;
+	GetCursorPos(&_Pt);
+	ScreenToClient(g_hWnd, &_Pt);
+	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 	_Ray.Start = m_pTransformCom->GetLocation();
-	_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -653,6 +693,37 @@ void CPlayer::AkimboFire()
 		}
 	}
 
+
+	CollisionParticle _CollisionParticle;
+	_CollisionParticle.Delta = 10000.f;
+	_CollisionParticle.bCollision = true;
+	_CollisionParticle.bFloorCollision = true;
+	_CollisionParticle.bWallCollision = false;
+	_CollisionParticle.bMapBlock = true;
+	vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction* 1.4f);
+
+	if (MATH::RandInt({ 0,1 }))
+	{
+		SpawnLocation.x -= 0.1f;
+	}
+	else
+	{
+		SpawnLocation.x += 0.1f;
+	}
+
+	SpawnLocation.y -= 0.3f;
+	_CollisionParticle.Scale = { 0.43f,0.43f,0.43f };
+	_CollisionParticle.StartLocation = SpawnLocation;
+	_CollisionParticle.Location = SpawnLocation;
+	_CollisionParticle.Dir = vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) };
+	_CollisionParticle.Angle = MATH::RandReal({ 90,130});
+	_CollisionParticle.Speed = MATH::RandReal({ 50,150});
+	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
+	_CollisionParticle.Durtaion = 1000.f;
+	_CollisionParticle.Name = L"BulletShell";
+	_CollisionParticle.Radius = 0.1f;
+	_CollisionParticle.Speed = 10.f;
+	ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
 }
 
 void CPlayer::MagnumFire()
@@ -668,10 +739,12 @@ void CPlayer::MagnumFire()
 
 	LightingDurationTable[L"MagnumFire"] = 0.2f;
 
-
-	Ray _Ray;
+	POINT _Pt;
+	GetCursorPos(&_Pt);
+	ScreenToClient(g_hWnd, &_Pt);
+	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 	_Ray.Start = m_pTransformCom->GetLocation();
-	_Ray.Direction = MATH::Normalize(m_pTransformCom->GetLook());
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -839,7 +912,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 	//}
 
 #ifdef _DEBUG
-	if (!bIsValidName = true)
+	if (!bIsValidName == true)
 	{
 		PRINT_LOG(L"Warning!", L"Not Valid Player Lighting Name!");
 	}

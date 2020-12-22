@@ -73,6 +73,8 @@ _uint CManagement::UpdateEngine()
 
 	m_iUpdateEvent = m_pGameObjectManager->UpdateGameObject(fDeltaTime);
 
+	if (_ParticleUpdate) _ParticleUpdate(fDeltaTime);
+
 	/* For.LateUpdate */
 	m_iUpdateEvent = m_pSceneManager->LateUpdateScene();
 	if (CHANGE_SCNENE == m_iUpdateEvent)
@@ -80,7 +82,12 @@ _uint CManagement::UpdateEngine()
 
 	m_iUpdateEvent = m_pGameObjectManager->LateUpdateGameObject(fDeltaTime);
 
+	if (_ParticleLateUpdate) _ParticleLateUpdate(fDeltaTime);
+
 	CCollisionComponent::CollisionUpdate(m_pGraphic_Dev->Get_Device());
+
+	if (_ParticleCollision) _ParticleCollision();
+
 	
 	return _uint();
 }

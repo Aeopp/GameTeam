@@ -63,6 +63,10 @@ HRESULT CRenderer::Render(HWND hWnd)
 	if (FAILED(RenderAlpha()))
 		return E_FAIL;
 
+	if (_ParticleRender)_ParticleRender();
+
+
+
 	CCollisionComponent::CollisionDebugRender(m_pDevice);
 
 	m_pDevice->SetVertexShader(nullptr);
@@ -129,7 +133,7 @@ HRESULT CRenderer::RenderAlpha()
 	알파 블렌딩 ==================================================================
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	//m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	/*
@@ -219,4 +223,8 @@ void CRenderer::Free()
 	}
 
 	SafeRelease(m_pDevice);
-}
+};
+
+
+
+

@@ -210,6 +210,7 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"LightDiffuse",
 				"bSpecularSamplerBind",
 				"bNormalSamplerBind",
+				"AlphaLerp",
 				 "FogEnd",
 				 "FogStart",
 				 "FogColor"
@@ -276,6 +277,7 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
 		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);
 		CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
+		CurEffect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
 
 		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());

@@ -1,0 +1,504 @@
+#include "stdafx.h"
+#include "..\Headers\ParticleSystem.h"
+#include "Camera.h"
+
+
+std::shared_ptr<ParticleSystem>ParticleSystem::_Instance{nullptr};
+
+
+void ParticleSystem::Initialize(CManagement* const _Management,IDirect3DDevice9* const _Device) noexcept
+{
+	if (!_Instance)
+	{
+		_Instance = std::shared_ptr<ParticleSystem>(new ParticleSystem{});
+		_Instance->_Device = _Device;
+		_Instance->_Management = _Management;
+		_Instance->EventBind();
+		_Instance->InitializeVertex();
+		_Instance->InitializeTextures();
+	};
+}
+
+void ParticleSystem::Release() noexcept
+{
+	_Instance->_ParticleTextureTable.Release();
+	_Instance.reset();
+}
+
+void ParticleSystem::EventBind()&
+{
+	_Management->_ParticleCollision = [this]()
+	{
+		Collision();
+	};
+
+	_Management->_ParticleUpdate = [this](const float DeltaTime)
+	{
+		Update(DeltaTime);
+	};
+
+	_Management->_ParticleLateUpdate= [this](const float DeltaTime)
+	{
+		LateUpdate(DeltaTime);
+	};
+	
+	_Management->SetEffectRender([this]() {Render();  });
+}
+
+void ParticleSystem::InitializeVertex() & noexcept
+{
+	std::vector<Vertex::Texture> _Vertexs(6);
+
+	for (size_t i = 0; i < VertexCount; ++i)
+	{
+		_Vertexs[i].Normal = { 0.f,0.f,-1.f };
+	}
+
+	_Vertexs[0].TexCoord = { 0.03f,0.97f };
+	_Vertexs[0].Location = { -0.5f,-0.5f,0.f };
+	_Vertexs[1].TexCoord = { 0.03f,0.03f };
+	_Vertexs[1].Location = { -0.5f,+0.5f,0.f };
+	_Vertexs[2].TexCoord = { 0.97f,0.03f };
+	_Vertexs[2].Location = { +0.5f,+0.5f,0.f };
+	_Vertexs[3].TexCoord = { 0.03f,0.97f };
+	_Vertexs[3].Location = { -0.5f,-0.5f,0.f };
+	_Vertexs[4].TexCoord = { 0.97f,0.03f };
+	_Vertexs[4].Location = { +0.5f,+0.5f,0.f };
+	_Vertexs[5].TexCoord = { 0.97f,0.97f };
+	_Vertexs[5].Location = { +0.5f,-0.5f,0.f };
+
+	CreateVertex(_Device, _Vertexs, VertexCount, TriangleCount, VertexByteSize, _VertexBuf, _VertexDecl);
+	Vertex::Texture* _VertexPtr = nullptr;
+	_VertexBuf->Lock(0, 0, (void**)&_VertexPtr, 0);
+
+	for (size_t i = 0; i < VertexCount; i += 3)
+	{
+		const auto Tangent_BiNormal = Mesh::CalculateTangentBinormal(
+			TempVertexType{ _VertexPtr[i].Location,  _VertexPtr[i].TexCoord },
+			TempVertexType{ _VertexPtr[i + 1].Location,_VertexPtr[i + 1].TexCoord },
+			TempVertexType{ _VertexPtr[i + 2].Location,_VertexPtr[i + 2].TexCoord });
+
+		const vec3 Normal = Mesh::CalculateNormal(Tangent_BiNormal.first, Tangent_BiNormal.second);
+
+		for (size_t j = i; j <= (i + 2); ++j)
+		{
+			_VertexPtr[j].Normal = Normal;
+			_VertexPtr[j].Tangent = Tangent_BiNormal.first;
+			_VertexPtr[j].BiNormal = Tangent_BiNormal.second;
+		};
+	};
+
+
+}
+
+void ParticleSystem::InitializeTextures() & noexcept
+{
+
+	_ParticleTextureTable._TextureMap[L"OverKill"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\OverKill\\", 18);
+
+	_ParticleTextureTable._TextureMap[L"BulletShell"] =
+		CreateTexturesSpecularNormal(_Device, L"..\\Resources\\Effect\\BulletShell\\", 1);
+
+
+	_ParticleTextureTable._TextureMap[L"DaggerThrow"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\DaggerThrow\\", 1);
+}
+
+void ParticleSystem::Update(const float DeltaTime)&
+{
+	for (size_t i = 0; i < _Particles.size(); ++i)
+	{
+		auto& _Particle = _Particles[i];
+
+		_Particle.T += DeltaTime;
+
+		_Particle.Durtaion -= DeltaTime;
+
+		if (_Particle.Durtaion > 0.f)
+		{
+			_Particle.CurrentT += DeltaTime;
+			if (_Particle.CurrentT > _Particle.Delta)
+			{
+				_Particle.CurrentT -= _Particle.Delta;
+				++_Particle.CurrentFrame;
+
+				if (_Particle.CurrentFrame >= _Particle.EndFrame)
+				{
+					if (_Particle.bLoop)
+					{
+						_Particle.CurrentFrame = 0ul;
+					}
+				}
+			}
+			_Particle.Dir += _Particle.DeltaVector *DeltaTime;
+			_Particle.Dir = MATH::Normalize(_Particle.Dir);
+			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			ParticleEventFromName(_Particle, DeltaTime);
+		}
+		else
+		{
+			std::swap(_Particle, _Particles.back());
+			_Particles.pop_back();
+		}
+	}
+
+	for (size_t i = 0; i < _CollisionParticles.size(); ++i)
+	{
+		auto& _Particle = _CollisionParticles[i];
+
+		_Particle.Durtaion -= DeltaTime;
+		_Particle.T += DeltaTime;
+
+		if (_Particle.Durtaion > 0.f)
+		{
+			_Particle.CurrentT += DeltaTime;
+			if (_Particle.CurrentT > _Particle.Delta)
+			{
+				_Particle.CurrentT -= _Particle.Delta;
+				++_Particle.CurrentFrame;
+
+				if (_Particle.CurrentFrame >= _Particle.EndFrame)
+				{
+					if (_Particle.bLoop)
+					{
+						_Particle.CurrentFrame = 0ul;
+					}
+				}
+			}
+			_Particle.Dir += _Particle.DeltaVector * DeltaTime;
+			_Particle.Dir = MATH::Normalize(_Particle.Dir);
+			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			ParticleEventFromName(_Particle, DeltaTime);
+		}
+		else
+		{
+			std::swap(_Particle, _CollisionParticles.back());
+			_CollisionParticles.pop_back();
+		}
+	}
+}
+
+
+void ParticleSystem::LateUpdate(const float DeltaTime)&
+{
+
+}
+
+void ParticleSystem::Collision()&
+{
+	for (auto&  _Particle : _CollisionParticles)
+	{
+		if (!_Particle.bCollision)
+		{
+			continue;
+		}
+		Sphere _Sphere;
+		_Sphere.Center = _Particle.Location;
+		_Sphere.Radius = _Particle.Radius;
+		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+
+		if (_Particle.bWallCollision)
+		{
+			for (const auto& _CurPlane : _CurMap)
+			{
+				vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
+				const float Distance = MATH::Length(ToPlaneCenter);
+				if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+			
+
+				auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+				const bool bCurCollision = CheckInfo.first;
+				auto& CollisionInfo = CheckInfo.second;
+
+				// 평면과는 일단 충돌한다.
+				if (bCurCollision)
+				{
+					const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+					// 평면과 일단 충돌한 상태에서
+					// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+					if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+					{
+						CollisionInfo.Flag = L"Wall";
+						CollisionInfo.IntersectPoint = ProjPt;
+				
+						if (_Particle.bMapBlock)
+						{
+							_Particle.Location += CollisionInfo.Dir * CollisionInfo.CrossValue;
+						}
+						ParticleCollisionEventFromName(_Particle);
+						break;
+					}
+					else
+					{
+						// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+						bool bSegmentCollision = false;
+						std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+						for (const auto& _CurSegment : _Segments)
+						{
+							float t0 = 0;
+							float t1 = 0;
+							vec3 IntersectPoint;
+							auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+							if (IsCollision.first)
+							{
+								CollisionInfo.Flag = L"Wall";
+								CollisionInfo.IntersectPoint = IntersectPoint;
+							
+								if (_Particle.bMapBlock)
+								{
+									_Particle.Location += CollisionInfo.Dir * CollisionInfo.CrossValue;
+								}
+								ParticleCollisionEventFromName(_Particle);
+								bSegmentCollision = true;
+								break;
+							}
+						}
+						if (bSegmentCollision)
+							break;
+					}
+				}
+			}
+		}
+
+		{
+			const auto& _CurMapFloor = CCollisionComponent::_MapFloorInfo;
+
+			if (_Particle.bFloorCollision)
+			{
+				for (const auto& _CurPlane : _CurMapFloor)
+				{
+					// 벽과의 충돌의 차이점은 바닥은 현재 최적화로
+				   // 삼각형 두개 만으로 만들었기 때문에 중심점이 매우 멀수 있어서
+				   // 거리검사로 컬링을 하지 않는다.
+					auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+					const bool bCurCollision = CheckInfo.first;
+					auto& CollisionInfo = CheckInfo.second;
+
+					// 평면과는 일단 충돌한다.
+					if (bCurCollision)
+					{
+						const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+						// 평면과 일단 충돌한 상태에서
+						// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+						if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+						{
+							CollisionInfo.Flag = L"Floor";
+							CollisionInfo.IntersectPoint = ProjPt;
+						
+							if (_Particle.bMapBlock)
+							{
+								_Particle.Location += CollisionInfo.Dir * CollisionInfo.CrossValue;
+							}
+							ParticleCollisionEventFromName(_Particle);
+							continue;
+						}
+						// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+						std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+						for (const auto& _CurSegment : _Segments)
+						{
+							vec3 IntersectPoint;
+							float t0 = 0;
+							float t1 = 0;
+
+							auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+							if (IsCollision.first)
+							{
+								CollisionInfo.Flag = L"Floor";
+								CollisionInfo.IntersectPoint = IntersectPoint;
+								if (_Particle.bMapBlock)
+								{
+									_Particle.Location += CollisionInfo.Dir * CollisionInfo.CrossValue;
+								}
+								ParticleCollisionEventFromName(_Particle);
+								continue;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// 충돌체 끼리의 충돌
+		for (auto& _Comp : CCollisionComponent::_Comps)
+		{
+#pragma region MatchingCheck
+			auto iter = CCollisionComponent::_TagBind.find(_Particle._Tag);
+			if (iter == std::end(CCollisionComponent::_TagBind))continue;
+			if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+			vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+			// 거리검사
+			if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
+			// ....
+			auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+			// 충돌함.
+			if (IsCollision.first)
+			{
+				ParticleCollisionEventFromName(_Particle);
+				_Comp->Owner->ParticleHit(&_Particle, IsCollision.second);
+				/*_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+				_RhsOwner->Hit(_LhsOwner, IsCollision.second);*/
+				//PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+			}
+			else
+			{
+				// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+			}
+		}
+	}
+}
+
+void ParticleSystem::Render()&
+{
+	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	_Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
+	_Device->SetVertexShader(_Effect.VsShader);
+	_Device->SetPixelShader(_Effect.PsShader);
+	
+
+	CCamera* pCamera = (CCamera*)_Management->GetGameObject((_int)-1, L"Layer_MainCamera");
+	/*const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);*/
+
+	for (auto& _Particle : _Particles)
+	{
+		vec3 BillboardRotation = _Particle.Rotation;
+		BillboardRotation  += pCamera->GetTransform()->GetRotation();
+		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+
+		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
+
+		const auto& TextureTuple =_ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
+
+		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+
+		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
+		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
+		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
+
+
+		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
+		_Device->SetVertexDeclaration(_VertexDecl.get());
+		_Effect.SetPSConstantData(_Device, "AlphaLerp", _Particle.AlphaLerp);
+		ParticleRenderSetFromName(_Particle, _Effect);
+		_Effect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+	}
+
+
+	for (auto& _Particle : _CollisionParticles)
+	{
+		vec3 BillboardRotation = _Particle.Rotation;
+	   BillboardRotation += pCamera->GetTransform()->GetRotation();
+		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
+
+		const auto& TextureTuple = _ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
+
+		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+
+		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
+		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
+		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
+
+		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
+		_Device->SetVertexDeclaration(_VertexDecl.get());
+		_Effect.SetPSConstantData(_Device, "AlphaLerp", _Particle.AlphaLerp);
+		ParticleRenderSetFromName(_Particle, _Effect);
+		_Effect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+	}
+	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
+	/*if (!CManagement::Get_Instance()->bDebug)return;
+
+	DWORD _AlphaValue;
+	_Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
+	if (_AlphaValue == TRUE)
+		_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
+	_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	_Device->SetVertexShader(nullptr);
+	_Device->SetPixelShader(nullptr);
+	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
+	_Device->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
+	CCollisionComponent::_SphereMesh->DrawSubset(0);
+	_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
+	if (_AlphaValue == TRUE)
+		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);*/
+}
+
+void ParticleSystem::ClearParticle() & noexcept
+{
+	_Particles.clear();
+	_CollisionParticles.clear();
+}
+
+void ParticleSystem::ParticleEventFromName( Particle& _Particle,
+	const float DeltaTime)
+{
+	if (_Particle.Name == L"DaggerThrow")
+	{
+		_Particle.Scale.x += 0.01f;
+	}
+	if (_Particle.Name == L"BulletShell")
+	{
+		if (_Particle.bLoop)
+		{
+			const float G = 5.f;
+
+			_Particle.Location.y =
+				_Particle.StartLocation.y +
+				((_Particle.Speed *
+					std::sinf(MATH::ToRadian(_Particle.Angle)) * _Particle.T)
+					* -((_Particle.T * _Particle.T) * G * (1.f / 2.f)));
+			//_Particle.Location.y -= (std::powf(_Particle.T ,10.f)*  MATH::Gravity* DeltaTime);
+		}
+	}
+}
+
+void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info& _Effect)
+{
+	if (_Particle.Name == L"DaggerThrow")
+	{
+		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);	
+		return;
+	}
+
+	_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+}
+
+void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle)
+{
+	if (_Particle.Name == L"BulletShell")
+	{
+		_Particle.Dir = { 0,0,0 };
+		_Particle.bLoop = false;
+		_Particle.Rotation = { 0,0,MATH::RandReal({-360,360}) };
+		_Particle.bCollision = false;
+	}
+}
+
+void ParticleSystem::PushParticle(Particle _Particle)
+{
+	_Particles.emplace_back(std::move(_Particle));
+}
+
+void ParticleSystem::PushCollisionParticle(CollisionParticle _Particle)
+{
+	_CollisionParticles.emplace_back(std::move(_Particle));
+}
+
+

@@ -11,6 +11,8 @@
 #include "UIManager.h"
 #include "Eyebat.h"
 #include "Glacier.h"
+#include "ParticleSystem.h"
+
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
@@ -21,6 +23,7 @@ CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 HRESULT CStage::ReadyScene()
 {
 	CCollisionComponent::CleanUpMapCollisionInfo();
+	ParticleSystem::Instance().ClearParticle();
 
 	// 2020.12.22 00:01 KMJ
 	// �����ʿ��� ���� �� �˱� ���ؼ�

@@ -24,6 +24,7 @@ public:
 	//            업데이트와 늦은 업데이트 이후 충돌 되면 호출. 
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo);
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
+	virtual void ParticleHit(void* const _Particle, const Collision::Info & _CollisionInfo);
 	static const std::wstring Tag;
 	class CTransform* GetTransform() { return m_pTransformCom; };
 	// 2020.12.16 11:54 KMJ

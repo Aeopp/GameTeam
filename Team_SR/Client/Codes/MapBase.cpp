@@ -503,9 +503,9 @@ void CMapBase::WallRender()
 			RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
-			true);
+			1);
 		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
-			true);
+			1);
 
 		if (RefInfo.MaterialInfo.TextureName == L"TEXTURE_GRAVEYARD_shrubbery.png")
 		{
@@ -539,9 +539,9 @@ void CMapBase::FloorRender()
 			RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
-			true);
+			0);
 		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
-			true);
+			0);
 
 		{
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
@@ -586,9 +586,9 @@ void CMapBase::BarRender()
 			RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
-			true);
+			1);
 		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind",
-			true);
+			1);
 
 		_Effect.SetPSConstantData(m_pDevice, "Shine", RefInfo.MaterialInfo.Shine);
 		m_pDevice->SetStreamSource(0, RefInfo.VtxBuf, 0, sizeof(Vertex::Texture));

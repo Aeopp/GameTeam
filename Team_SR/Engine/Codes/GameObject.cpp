@@ -73,6 +73,10 @@ void CGameObject::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _Co
 
 }
 
+void CGameObject::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+}
+
 void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
