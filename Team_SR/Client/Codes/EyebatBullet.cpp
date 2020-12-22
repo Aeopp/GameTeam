@@ -99,7 +99,9 @@ HRESULT CEyebatBullet::RenderGameObject()
 
 void CEyebatBullet::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
 {
-	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// ������Ʈ ���� �÷��� ON
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT_BULLET);
+	CSoundMgr::Get_Instance()->PlaySound(L"explosion_2.wav", CSoundMgr::EYEBAT_BULLET);
+	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	
 	CreateFire();
 }
 
