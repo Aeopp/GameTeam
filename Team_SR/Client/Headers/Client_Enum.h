@@ -33,5 +33,10 @@ typedef enum class Item {
 	Upgrade			// 업그레이드 재화
 }ITEM;
 
+typedef enum class MyEffect {
+	BloodHit_Big,	// 큰 출혈
+	End
+}EFFECT;
+
 #define __CLIENT_ENUM_H__
 #endif

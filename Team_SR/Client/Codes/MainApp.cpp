@@ -22,6 +22,7 @@
 #include "Hangman.h"	// 행맨
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
+#include "Particle.h"	// 파티클
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -233,6 +234,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CHellhound>(),
 		CHellhound::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 파티클 오브젝트
+#pragma region GameOBject_Particle
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CParticle>(),
+		CParticle::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -701,6 +711,23 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Gib/hellhound_gib_%d.png", 5))))
 		return E_FAIL;
 #pragma endregion	// Component_Textrue_HellHound
+
+	// 이펙트 텍스처들
+#pragma region Component_Textrue_Effect
+	// 큰 출혈 이펙트 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BloodHit_1_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_1_Big/bloodhit_big000%d.png", 8))))
+		return E_FAIL;
+
+	// 큰 출혈 이펙트 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BloodHit_2_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_2_Big/bloodhit_2_big000%d.png", 8))))
+		return E_FAIL;
+#pragma endregion	// Component_Textrue_Effect
 
 	return S_OK;
 }

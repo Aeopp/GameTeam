@@ -48,4 +48,11 @@ struct ItemBasicArgument {
 	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
 
+// 이펙트 생성시 기본 전달 인자
+struct EffectBasicArgument {
+	_uint uiSize;				// 구조체 사이즈
+	vec3 vPosition;				// 위치 정보
+	EFFECT eType;				// 이펙트 종류
+};
+
 #endif // !__CLIENT_STRUCT_H__

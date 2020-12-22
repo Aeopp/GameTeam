@@ -36,6 +36,8 @@ HRESULT CVIBuffer::ReadyComponentPrototype()
 
 HRESULT CVIBuffer::ReadyComponent(void * pArg)
 {
+	m_IsClone = true;
+
 	return S_OK;
 }
 
@@ -58,15 +60,16 @@ HRESULT CVIBuffer::Render_VIBuffer()
 void CVIBuffer::Free()
 {
 	/* 자식의 리소스 해제 */
-	SafeRelease(m_pVB);
-	SafeRelease(m_pIB);
+	//SafeRelease(m_pVB);
+	//SafeRelease(m_pIB);
 
-	//if (false == m_IsClone)
-	//{
-	//	SafeDeleteArray(m_pVertices);
-	//	SafeRelease(m_pVB);
-	//	SafeRelease(m_pIB);
-	//}
+	// 이거 왜 주석 쳐져있는거임? 이거 왜안씀?
+	if (false == m_IsClone)
+	{
+		//SafeDeleteArray(m_pVertices);
+		SafeRelease(m_pVB);
+		SafeRelease(m_pIB);
+	}
 
 	/* 부모의 free */
 	CComponent::Free();

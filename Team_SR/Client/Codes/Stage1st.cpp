@@ -43,7 +43,7 @@ HRESULT CStage1st::ReadyScene()
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 5.f, 10.f, 20.f };
+		stArg.vPosition = { 0.f, 10.f, 20.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + L"BatGrey",
@@ -51,7 +51,7 @@ HRESULT CStage1st::ReadyScene()
 			CLayer::Tag + L"Monster",
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
-
+		/*
 #pragma region ������ ���� �ڵ��
 		// �̳�ū ü�� ����
 		ItemBasicArgument stItemArg;
@@ -172,6 +172,7 @@ HRESULT CStage1st::ReadyScene()
 			nullptr, static_cast<void*>(&stItemArg))))
 			return E_FAIL;
 #pragma endregion
+*/
 	}
 
 
