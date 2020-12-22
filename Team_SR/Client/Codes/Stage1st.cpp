@@ -49,16 +49,17 @@ HRESULT CStage1st::ReadyScene()
 	SpawnObjectFromName(L"BoxSteel1", { -6.f, 10.f, 14.f });
 	SpawnObjectFromName(L"BoxSteel2", { -4.f, 10.f, 14.f });
 	SpawnObjectFromName(L"Headstone1", { 0.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Headstone2", { 3.f, 10.f, 10.f });
+	SpawnObjectFromName(L"Headstone2", { 4.f, 10.f, 10.f });
+	SpawnObjectFromName(L"Headstone3", { 8.f, 10.f, 10.f });
 	SpawnObjectFromName(L"ThornyVine", { 0.f, 10.f, 14.f });
 	SpawnObjectFromName(L"TreeBlight", { 3.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Tree1", { 6.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Tree2", { 9.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Dead_Caleb", { -9.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Doomguy", { -6.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Duke", { -3.f, 10.f, 16.f });
+	SpawnObjectFromName(L"Tree1", { 10.f, 10.f, 14.f });
+	SpawnObjectFromName(L"Tree2", { 15.f, 10.f, 14.f });
+	SpawnObjectFromName(L"Dead_Caleb", { -20.f, 10.f, 16.f });
+	SpawnObjectFromName(L"Dead_Doomguy", { -14.f, 10.f, 16.f });
+	SpawnObjectFromName(L"Dead_Duke", { -8.f, 10.f, 16.f });
 	SpawnObjectFromName(L"Dead_Sam", { 0.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Wang", { 3.f, 10.f, 16.f });
+	SpawnObjectFromName(L"Dead_Wang", { 6.f, 10.f, 16.f });
 
 	
 	return S_OK;

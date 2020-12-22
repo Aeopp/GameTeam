@@ -133,8 +133,9 @@ HRESULT CDecorator::AddComponents()
 	{
 		// 횃불
 	case DECO::Torch:
-		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_pTransformCom->m_TransformDesc.vScale = { 1.f, 3.f, 1.f };
+		_Info.Radius = 1.5f;
+		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 1.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -154,6 +155,7 @@ HRESULT CDecorator::AddComponents()
 		// 양초
 	case DECO::Candle:
 		m_pTransformCom->m_TransformDesc.vScale = { 1.f, 3.5f, 1.f };
+		_Info.Radius = 1.75f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 5.f;
@@ -311,7 +313,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 1
 	case DECO::Headstone1:
-		m_pTransformCom->m_TransformDesc.vScale = { 3.f, 3.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
+		_Info.Radius = 2.f;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 700.f;
 		m_fFrameCnt = 0.f;
@@ -359,7 +362,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 2
 	case DECO::Headstone2:
-		m_pTransformCom->m_TransformDesc.vScale = { 3.f, 3.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
+		_Info.Radius = 2.f;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 700.f;
 		m_fFrameCnt = 0.f;
@@ -407,7 +411,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 3
 	case DECO::Headstone3:
-		m_pTransformCom->m_TransformDesc.vScale = { 3.f, 3.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
+		_Info.Radius = 2.f;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 600.f;
 		m_fFrameCnt = 0.f;
@@ -447,7 +452,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 가시 덩굴
 	case DECO::ThornyVine:
-		m_pTransformCom->m_TransformDesc.vScale = { 3.f, 3.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
+		_Info.Radius = 2.f;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 500.f;
 		m_fFrameCnt = 0.f;
@@ -483,7 +489,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 나무
 	case DECO::TreeBlight:
-		m_pTransformCom->m_TransformDesc.vScale = { 3.f, 3.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
+		_Info.Radius = 5.f;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 500.f;
 		m_fFrameCnt = 0.f;
@@ -516,6 +523,7 @@ HRESULT CDecorator::AddComponents()
 		// 나무 1
 	case DECO::Tree1:
 		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
+		_Info.Radius = 5.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -530,6 +538,7 @@ HRESULT CDecorator::AddComponents()
 		// 나무 2
 	case DECO::Tree2:
 		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
+		_Info.Radius = 5.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -544,6 +553,7 @@ HRESULT CDecorator::AddComponents()
 		// 죽은 시체 1
 	case DECO::Dead_Caleb:
 		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
+		_Info.Radius = 3.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -558,6 +568,7 @@ HRESULT CDecorator::AddComponents()
 		// 죽은 시체 2
 	case DECO::Dead_Doomguy:
 		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
+		_Info.Radius = 3.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -572,6 +583,7 @@ HRESULT CDecorator::AddComponents()
 		// 죽은 시체 3
 	case DECO::Dead_Duke:
 		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
+		_Info.Radius = 3.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -586,6 +598,7 @@ HRESULT CDecorator::AddComponents()
 		// 죽은 시체 4
 	case DECO::Dead_Sam:
 		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
+		_Info.Radius = 3.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -600,6 +613,7 @@ HRESULT CDecorator::AddComponents()
 		// 죽은 시체 5
 	case DECO::Dead_Wang:
 		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
+		_Info.Radius = 3.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;

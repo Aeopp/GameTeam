@@ -11,6 +11,8 @@
 #include "UIManager.h"
 #include "Eyebat.h"
 #include "Glacier.h"
+#include "Hangman.h"
+#include "Hellhound.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
@@ -346,6 +348,40 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 	if (ObjectName.find(L"Glacier") != std::wstring::npos)
 	{
 		using SpawnType = CGlacier;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+
+	// 행맨
+	if (ObjectName.find(L"Hangman") != std::wstring::npos)
+	{
+		using SpawnType = CHangman;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+	}
+
+	// 헬 하운드
+	if (ObjectName.find(L"Hellhound") != std::wstring::npos)
+	{
+		using SpawnType = CHellhound;
 
 		MonsterBasicArgument _MonsterBasicArgument;
 		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
