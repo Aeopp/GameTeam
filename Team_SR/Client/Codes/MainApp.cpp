@@ -23,6 +23,7 @@
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
 #include "Particle.h"	// 파티클
+#include "Decorator.h"	// 장식품
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -247,6 +248,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 장식품 오브젝트
+#pragma region GameObject_Decorator
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CDecorator>(),
+		CDecorator::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
 		
 
 	/* For.Component */
@@ -729,6 +738,156 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_2_Big/bloodhit_2_big000%d.png", 8))))
 		return E_FAIL;
 #pragma endregion	// Component_Textrue_Effect
+
+	// 장식품 텍스처들
+#pragma region Component_Texture_Decorator
+	// 횃불
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Torch",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Torch/texture_misc_Torch_000%d.png", 9))))
+		return E_FAIL;
+
+	// 양초
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Candle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Candle/Candle%d.png", 5))))
+		return E_FAIL;
+
+	// 나무 통
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Barrel",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Barrel/Barrel%d.png", 2))))
+		return E_FAIL;
+
+	// 폭탄 통
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BarrelBomb",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/BarrelBomb/BarrelBomb%d.png", 2))))
+		return E_FAIL;
+
+	// 폐기물 통
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BarrelWaste",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/BarrelWaste/BarrelWaste%d.png", 3))))
+		return E_FAIL;
+
+	// 상자 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Box1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Box1/Box1_%d.png", 2))))
+		return E_FAIL;
+
+	// 상자 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Box2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Box2/Box2_%d.png", 2))))
+		return E_FAIL;
+
+	// 강철 상자 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BoxSteel1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/BoxSteel1/BoxSteel1_%d.png", 2))))
+		return E_FAIL;
+
+	// 강철 상자 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BoxSteel2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/BoxSteel2/BoxSteel2_%d.png", 2))))
+		return E_FAIL;
+
+	// 묘비 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Headstone1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Headstone1/Headstone1_%d.png", 9))))
+		return E_FAIL;
+
+	// 묘비 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Headstone2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Headstone2/Headstone2_%d.png", 9))))
+		return E_FAIL;
+
+	// 묘비 3
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Headstone3",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Headstone3/Headstone3_%d.png", 7))))
+		return E_FAIL;
+
+	// 가시 덩굴
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_ThornyVine",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/ThornyVine/ThornyVine%d.png", 6))))
+		return E_FAIL;
+
+	// 죽은 나무
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_TreeBlight",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/TreeBlight/TreeBlight%d.png", 5))))
+		return E_FAIL;
+
+	// 나무 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Tree1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Tree1.png", 1))))
+		return E_FAIL;
+
+	// 나무 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Tree2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/Tree2.png", 1))))
+		return E_FAIL;
+
+	// 죽은 갈렙 - 블러드 패러디
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Dead_Caleb",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_caleb.png", 1))))
+		return E_FAIL;
+
+	// 죽은 둠가이 - 둠 패러디
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Dead_Doomguy",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_doomguy.png", 1))))
+		return E_FAIL;
+
+	// 죽은 듀크 - 듀크 뉴켐 패러디
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Dead_Duke",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_duke.png", 1))))
+		return E_FAIL;
+
+	// 죽은 샘 - 시리어스 샘 패러디
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Dead_Sam",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_sam.png", 1))))
+		return E_FAIL;
+
+	// 죽은 왕 - 쉐도우 워리어 패러디
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Dead_Wang",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_wang.png", 1))))
+		return E_FAIL;
+#pragma endregion	// Component_Texture_Decorator
 
 	return S_OK;
 }

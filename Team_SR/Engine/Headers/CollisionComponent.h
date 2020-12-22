@@ -41,6 +41,8 @@ public:
 		Bullet,
 		Effect,
 		Item,
+		Decorator,
+		DestroyDecorator,
 	};
 public:
 	struct InitInfo

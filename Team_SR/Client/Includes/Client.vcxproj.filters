@@ -91,6 +91,9 @@
     <Filter Include="02.GameObject\02.Monster\07.Hellhound">
       <UniqueIdentifier>{bceefafb-65cd-4150-9a7a-1102d880cc71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\08.Decorator">
+      <UniqueIdentifier>{b784e838-9699-4b0f-b100-f57df68a00ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -280,6 +283,9 @@
     <ClInclude Include="..\Headers\Particle.h">
       <Filter>02.GameObject\06.Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Decorator.h">
+      <Filter>02.GameObject\08.Decorator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -442,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Glacier.cpp">
       <Filter>02.GameObject\02.Monster\01.Glacier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Decorator.cpp">
+      <Filter>02.GameObject\08.Decorator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

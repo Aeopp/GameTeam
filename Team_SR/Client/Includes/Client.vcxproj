@@ -165,6 +165,7 @@
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
+    <ClInclude Include="..\Headers\Decorator.h" />
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="..\Codes\BatGrey.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
+    <ClCompile Include="..\Codes\Decorator.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
     <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />

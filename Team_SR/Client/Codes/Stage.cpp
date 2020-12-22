@@ -496,4 +496,301 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			nullptr, static_cast<void*>(&stItemArg));
 	};
 
+
+#pragma region 장식들
+	// 횃불
+	if (ObjectName.find(L"Torch") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Torch;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 양초
+	if (ObjectName.find(L"Candle") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Candle;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 나무 통
+	if (ObjectName.find(L"Barrel") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Barrel;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 폭탄 통
+	if (ObjectName.find(L"BarrelBomb") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::BarrelBomb;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 폐기물 통
+	if (ObjectName.find(L"BarrelWaste") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::BarrelWaste;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 나무 상자 1
+	if (ObjectName.find(L"Box1") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Box1;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 나무 상자 2
+	if (ObjectName.find(L"Box2") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Box2;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 강철 상자 1
+	if (ObjectName.find(L"BoxSteel1") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::BoxSteel1;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 강철 상자 2
+	if (ObjectName.find(L"BoxSteel2") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::BoxSteel2;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 묘비 1
+	if (ObjectName.find(L"Headstone1") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Headstone1;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 묘비 2
+	if (ObjectName.find(L"Headstone2") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Headstone2;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 묘비 3
+	if (ObjectName.find(L"Headstone3") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Headstone3;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 가시 덩굴
+	if (ObjectName.find(L"ThornyVine") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::ThornyVine;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 나무
+	if (ObjectName.find(L"TreeBlight") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::TreeBlight;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 나무 1
+	if (ObjectName.find(L"Tree1") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Tree1;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 나무 2
+	if (ObjectName.find(L"Tree2") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Tree2;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 시체 1
+	if (ObjectName.find(L"Dead_Caleb") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Dead_Caleb;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 시체 2
+	if (ObjectName.find(L"Dead_Doomguy") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Dead_Doomguy;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 시체 3
+	if (ObjectName.find(L"Dead_Duke") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Dead_Duke;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 시체 4
+	if (ObjectName.find(L"Dead_Sam") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Dead_Sam;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+	// 죽은 시체 5
+	if (ObjectName.find(L"Dead_Wang") != std::wstring::npos)
+	{
+		DecoratorBasicArgument stDecoArg;
+		stDecoArg.vPosition = std::move(SpawnLocation);
+		stDecoArg.eType = DECO::Dead_Wang;
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Decorator",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Decorator",
+			nullptr, static_cast<void*>(&stDecoArg));
+	}
+
+#pragma endregion
 };
