@@ -95,8 +95,8 @@ void CShark::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 	}
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
-	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
-	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
+	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+	//CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
 }
 
 void CShark::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
@@ -275,6 +275,8 @@ bool CShark::Action_Idle(float fDeltaTime)
 
 bool CShark::Action_Shoot(float fDeltaTime)
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+	CSoundMgr::Get_Instance()->PlaySound(L"shambler_attack_3.wav", CSoundMgr::SHARK);
 	if (m_bFrameLoopCheck)
 	{
 		//CreateBullet(fDeltaTime);
@@ -309,6 +311,8 @@ bool CShark::Action_HighJump(float fDeltaTime)
 
 bool CShark::Action_MeleeAttack(float fDeltaTime)
 {
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+		CSoundMgr::Get_Instance()->PlaySound(L"shambler_attack_2.wav", CSoundMgr::SHARK);
 	if (m_bFrameLoopCheck) 
 	{
 		m_fNextAtkWait = 1.f;
@@ -326,6 +330,9 @@ bool CShark::Action_Death(float fDeltaTime)
 		m_fStartFrame = m_fEndFrame - 1;
 		m_byObjFlag |= (BYTE)ObjFlag::Remove;
 		m_byMonsterFlag |= (BYTE)MonsterFlag::Dead;
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+		CSoundMgr::Get_Instance()->PlaySound(L"shambler_death_bloody.wav", CSoundMgr::SHARK);
+		
 	}
 
 	return false;
@@ -360,6 +367,8 @@ void CShark::CreateBullet(float fDeltaTime)
 			CGameObject::Tag + TYPE_NAME<CMonster>(),
 			nullptr, (void*)&vPos)))
 			return;
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+		CSoundMgr::Get_Instance()->PlaySound(L"ice_breaking_1.wav", CSoundMgr::GALICER);
 		++m_iBulletCount;
 	}
 
