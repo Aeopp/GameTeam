@@ -383,24 +383,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Fire/Fire%d.png", 22))))
 		return E_FAIL;
 #pragma endregion
-
-	// 플레이어 UI 텍스처
-#pragma region Component_Texture_PlayerInfoUI
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_Texture_PlayerInfoUI",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_left.png", 1))))
-		return E_FAIL;
-#pragma endregion
-	
-	// 무기 탄약 UI 텍스처
-#pragma region Component_Texture_WeaponAmmoInfoUI
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		L"Component_Texture_WeaponAmmoInfoUI",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bottom_right.png", 1))))
-		return E_FAIL;
-#pragma endregion
 	return S_OK;
 }
 

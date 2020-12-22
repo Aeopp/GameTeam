@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #ifndef __CLIENT_STRUCT_H__
 
@@ -33,5 +34,24 @@ struct BulletBasicArgument {
 	vec3 vPosition;				// 위치 정보
 	vec3 vDir;					// 방향
 };
+
+//UI
+typedef struct tagUIDesc
+{
+	tagUIDesc()
+	{
+		ZeroMemory(this, sizeof(tagUIDesc));
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matView);
+		D3DXMatrixIdentity(&matWorld);
+	}
+	_vector	vUIPos;
+	_vector	vUISize;
+	_vector vCenter; //각 축당 -1 ~ 1
+
+	_matrix matWorld;
+	_matrix matView;
+	_matrix matOrthographic;
+}UI_DESC;
 
 #endif // !__CLIENT_STRUCT_H__

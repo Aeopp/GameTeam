@@ -12,5 +12,14 @@ enum class ESceneID :int8_t
 	MaxCount
 };
 
+enum class ESetupUVDir :int8_t
+{
+	EAST,
+	WEST,
+	SOUTH,
+	NORTH,
+	DIR_END,
+};
+
 #define __CLIENT_ENUM_H__
 #endif

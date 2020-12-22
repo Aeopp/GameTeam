@@ -123,7 +123,6 @@ struct ScheduledGameObjectInfo {
 	void* pArg;
 };
 
-
 END
 
 #define __ENGINE_STRUCT_H__

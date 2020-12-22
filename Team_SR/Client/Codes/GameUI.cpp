@@ -49,20 +49,26 @@ _uint CGameUI::LateUpdateGameObject(float fDeltaTime)
 	D3DXMatrixIdentity(&m_UIDesc.matWorld);
 	D3DXMatrixIdentity(&m_UIDesc.matView);
 
-	m_UIDesc.matView._11 = m_UIDesc.vUISize.x;
-	m_UIDesc.matView._22 = m_UIDesc.vUISize.y;
-	m_UIDesc.matView._33 = 1.f;
-	m_UIDesc.matView._41 = m_UIDesc.vUIPos.x;
-	m_UIDesc.matView._42 = m_UIDesc.vUIPos.y;
-	m_UIDesc.matView._43 = m_UIDesc.vUIPos.z;
+	//D3DXMatrixTranslation(&m_UIDesc.matWorld, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
+	
+	m_UIDesc.matWorld._11 = m_UIDesc.vUISize.x / 2;
+	m_UIDesc.matWorld._22 = m_UIDesc.vUISize.y / 2;
+	m_UIDesc.matWorld._33 = m_UIDesc.vUISize.z / 2;
 
-	D3DXMatrixOrthoLH(&m_UIDesc.matOrthographic, WINCX, WINCY, 0.f, 1.f);
+	m_UIDesc.matWorld._41 = m_UIDesc.vUIPos.x - (m_UIDesc.vUISize.x * m_UIDesc.vCenter.x / 2);
+	m_UIDesc.matWorld._42 = m_UIDesc.vUIPos.y - (m_UIDesc.vUISize.y * m_UIDesc.vCenter.y / 2);
+	m_UIDesc.matWorld._43 = m_UIDesc.vUIPos.z;
+
+	D3DXMatrixOrthoLH(&m_UIDesc.matOrthographic, WINCX, WINCY, 0.f, 5.f);
 
 	return _uint();
 }
 
 HRESULT CGameUI::RenderGameObject()
 {
+	if (FAILED(CGameObject::RenderGameObject()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -71,8 +77,8 @@ HRESULT CGameUI::AddComponent()
 	/* For.Com_VIBuffer */
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Engine::CVIBuffer_RectTexture",
-		L"Com_VIBuffer",
+		L"Component_VIBuffer_UITexture",
+		L"Com_VIBufferUI",
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
@@ -81,5 +87,7 @@ HRESULT CGameUI::AddComponent()
 
 void CGameUI::Free()
 {
+	//SafeRelease(m_pVIBufferCom);	// 버텍스 버퍼
+	//SafeRelease(m_pTextureCom);		// 텍스처
 	CGameObject::Free();
 }

@@ -164,6 +164,13 @@ HRESULT CRenderer::RenderAlpha()
 
 HRESULT CRenderer::RenderUI()
 {
+	mat PrevView, PrevProjection;
+
+	if (HRESULT(m_pDevice->GetTransform(D3DTS_VIEW, &PrevView)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection)))
+		return E_FAIL;
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -173,6 +180,11 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
+
+	if (HRESULT(m_pDevice->SetTransform(D3DTS_VIEW, &PrevView)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection)))
+		return E_FAIL;
 
 	return S_OK;
 }

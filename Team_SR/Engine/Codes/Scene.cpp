@@ -5,7 +5,8 @@ USING(Engine)
 CScene::CScene(LPDIRECT3DDEVICE9 pDevice)
 	: m_pDevice(pDevice),m_pKeyMgr(CKeyMgr::Get_Instance()),m_pManagement(CManagement::Get_Instance())
 {
-	SafeAddRef(pDevice);
+	//SafeAddRef(pDevice);
+	SafeAddRef(m_pDevice);
 }
 
 HRESULT CScene::ReadyScene()
