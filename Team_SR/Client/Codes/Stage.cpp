@@ -62,7 +62,7 @@ HRESULT CStage::ReadyScene()
 _uint CStage::UpdateScene(float fDeltaTime)
 {
 	CScene::UpdateScene(fDeltaTime);
-
+	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav", CSoundMgr::BGM);
 	return KeyProcess(fDeltaTime); 
 }
 

@@ -129,7 +129,7 @@ void CTerret::FindTarget()
 
 void CTerret::Fire(float fDeltaTime)
 {
-
+	CSoundMgr::Get_Instance()->PlaySound(L"crossbow_shot.wav", CSoundMgr::TURRET);
 	if (nullptr == m_pTarget)
 		return;
 	m_fTestTime += fDeltaTime;

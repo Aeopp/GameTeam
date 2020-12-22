@@ -574,6 +574,8 @@ void CPlayer::HarvesterReload()
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
 	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_pumpin.wav", CSoundMgr::PLAYER_WEAPON);
 
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::TANP);
+	CSoundMgr::Get_Instance()->PlaySound(L"TanP.wav", CSoundMgr::TANP);
 
 	AnimationTextures::NotifyType _Notify;
 
