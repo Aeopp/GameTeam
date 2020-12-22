@@ -185,6 +185,7 @@ HRESULT CStage1st::ReadyScene()
 
 _uint CStage1st::UpdateScene(float fDeltaTime)
 {
+	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav",CSoundMgr::BGM);
 	return Super::UpdateScene(fDeltaTime); 
 }
 

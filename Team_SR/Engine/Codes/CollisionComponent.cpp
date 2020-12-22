@@ -59,7 +59,6 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	_Sphere.Radius = _Info.Radius;
 	_Tag = _Info.Tag;
 	Owner = _Info.Owner;
-	bMapCollision = _Info.bCollision;
 	if (_Info.Vertex)
 	{
 		D3DXComputeBoundingSphere(

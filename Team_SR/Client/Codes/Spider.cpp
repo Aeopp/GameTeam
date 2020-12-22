@@ -131,6 +131,8 @@ void CSpider::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
 
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_03.wav", CSoundMgr::SPIDER);
 												// 충돌 관련 정보
 	//m_vCollisionDir = _CollisionInfo.Dir;
 	//m_fCrossValue = _CollisionInfo.CrossValue;
@@ -318,6 +320,9 @@ void CSpider::AI_DeadPhase()
 
 bool CSpider::Action_Move_Wall(float fDeltaTime)
 {
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+	CSoundMgr::Get_Instance()->PlaySound(L"Spider_detect_03.wav", CSoundMgr::SPIDER);
 	//const _vector vPlayerPos = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
 	//const _vector vGlacierPos = m_pTransformCom->m_TransformDesc.vPosition;
 	//_vector vLook = vPlayerPos - vGlacierPos;
@@ -374,6 +379,8 @@ bool CSpider::Action_Idle(float fDeltaTime)
 
 bool CSpider::Action_Shoot(float fDeltaTime)
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+	CSoundMgr::Get_Instance()->PlaySound(L"Spider_attack_02.wav", CSoundMgr::SPIDER);
 	if (m_bFrameLoopCheck)
 	{
 		CreateBullet();
@@ -391,6 +398,9 @@ bool CSpider::Action_Death(float fDeltaTime)
 		//m_byObjFlag |= (BYTE)ObjFlag::Remove;
 		m_byMonsterFlag |= (BYTE)MonsterFlag::Dead;
 		CMonster::CreateFloorBlood();
+
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+		CSoundMgr::Get_Instance()->PlaySound(L"Spider_death_01.wav", CSoundMgr::SPIDER);
 	}
 
 	return false;
@@ -448,7 +458,8 @@ HRESULT CSpider::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 1.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = true;
 	_Info.Owner = this;
 
 	CGameObject::AddComponent(

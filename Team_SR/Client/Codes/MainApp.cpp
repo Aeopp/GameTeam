@@ -75,6 +75,8 @@ HRESULT CMainApp::ReadyMainApp()
 
 	srand(0);	// 랜덤 시드값
 
+	CSoundMgr::Get_Instance()->Initialize();
+
 	return S_OK;
 }
 
@@ -872,4 +874,7 @@ void CMainApp::Free()
 	SafeRelease(m_pManagement);
 	CKeyMgr::Destroy_Instance();
 	CManagement::ReleaseEngine();
+	CSoundMgr::Get_Instance()->Release();
+	CSoundMgr::Destroy_Instance();
+
 }

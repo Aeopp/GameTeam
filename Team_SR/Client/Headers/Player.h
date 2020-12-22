@@ -66,6 +66,9 @@ private:
 	void StaffCharge();
 	void StaffRelease();
 	void StaffLoop();
+	void PlayStepSound();
+private:
+	int	m_iStepIndex = 0;
 };
 
 #define __PLAYER_H__

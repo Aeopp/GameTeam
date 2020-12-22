@@ -103,7 +103,8 @@ HRESULT CFloorBlood::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 1.0f;
 	_Info.Tag = CCollisionComponent::ETag::Particle;
-	_Info.bMapCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = false;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),

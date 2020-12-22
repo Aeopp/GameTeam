@@ -154,9 +154,10 @@ void CTerret::Fire(float fDeltaTime)
 		{
 			float t0 = 0;
 			float t1 = 0;
+			vec3 IntersectPoint;
 			std::pair<bool, Engine::Collision::Info>
 				IsCollision = Collision::IsRayToSphere(_Ray,
-					_CollisionComp->_Sphere, t0, t1);
+					_CollisionComp->_Sphere, t0, t1,IntersectPoint);
 
 			if (IsCollision.first)
 			{

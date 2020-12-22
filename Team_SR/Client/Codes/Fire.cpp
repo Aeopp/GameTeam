@@ -44,7 +44,8 @@ HRESULT CFire::ReadyGameObject(void * pArg /*= nullptr*/)
 _uint CFire::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
-
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::FIRE);
+	CSoundMgr::Get_Instance()->PlaySound(L"fire_burn.wav", CSoundMgr::FIRE);
 	return _uint();
 }
 

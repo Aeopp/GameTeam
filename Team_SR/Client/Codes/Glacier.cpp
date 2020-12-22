@@ -71,6 +71,9 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 	//if (GetAsyncKeyState('4') & 0x8000)
 	//	m_stStatus.fHP -= 1;
 
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+	CSoundMgr::Get_Instance()->PlaySound(L"vaseBreak.wav", CSoundMgr::GALICER);
+
 	
 	// 2020.12.17 10:06 KMJ
 	// 몬스터가 죽음, AI, 충돌처리 X
@@ -381,7 +384,7 @@ bool CGlacier::Action_Death(float fDeltaTime)
 	if (m_bFrameLoopCheck)
 	{
 		// 2020.12.17 10:03 KMJ
-		m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		//m_bDead = true;
 		//m_fFrameCnt = 8.f;
 		m_fFrameCnt = m_fEndFrame - 1;
@@ -389,6 +392,8 @@ bool CGlacier::Action_Death(float fDeltaTime)
 
 		for (_uint i = 0; i < 10; ++i)
 			CreateParticle();
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+		CSoundMgr::Get_Instance()->PlaySound(L"ice_breaking_1.wav", CSoundMgr::GALICER);
 	}
 	return false;
 }
@@ -399,6 +404,8 @@ void CGlacier::CreateBullet()
 	// 예약된 생성은 아규먼트가 다음 예약처리 시점까지 메모리에 있어야 함
 	// 동적 생성해서 힙에 데이터를 남김
 	// 메모리 해제는 만들어지는 객체에서 아규먼트 데이터 처리후 해제
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+	CSoundMgr::Get_Instance()->PlaySound(L"supersonicnew_new_rocket_shot_.wav", CSoundMgr::GALICER);
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	BulletBasicArgument* pArg = new BulletBasicArgument;
 	pArg->uiSize = sizeof(BulletBasicArgument);

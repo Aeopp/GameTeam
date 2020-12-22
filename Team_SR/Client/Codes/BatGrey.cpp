@@ -196,6 +196,9 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	}
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BATGRAY);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::BATGRAY);
 	
 	// 이펙트
 	EffectBasicArgument* pArg = new EffectBasicArgument;
@@ -523,6 +526,8 @@ bool CBatGrey::Action_Shoot(float fDeltaTime)
 // 근접 공격
 bool CBatGrey::Action_Melee(float fDeltaTime)
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BATGRAY);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_attack_01.wav", CSoundMgr::BATGRAY);
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
 		return true;

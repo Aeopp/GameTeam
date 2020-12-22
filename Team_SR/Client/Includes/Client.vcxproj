@@ -203,13 +203,12 @@
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\SpiderBullet.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
-<<<<<<< HEAD
     <ClInclude Include="..\Headers\Terret.h" />
-=======
     <ClInclude Include="..\Headers\Stage2nd.h" />
     <ClInclude Include="..\Headers\Stage3rd.h" />
     <ClInclude Include="..\Headers\Stage4th.h" />
@@ -218,7 +217,6 @@
     <ClInclude Include="..\Headers\StageBoss.h" />
     <ClInclude Include="..\Headers\StageMidBoss.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
->>>>>>> origin/MyeongJun
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
@@ -275,13 +273,12 @@
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\Spider.cpp" />
     <ClCompile Include="..\Codes\SpiderBullet.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="..\Codes\Terret.cpp" />
-=======
     <ClCompile Include="..\Codes\Stage2nd.cpp" />
     <ClCompile Include="..\Codes\Stage3rd.cpp" />
     <ClCompile Include="..\Codes\Stage4th.cpp" />
@@ -290,7 +287,6 @@
     <ClCompile Include="..\Codes\StageBoss.cpp" />
     <ClCompile Include="..\Codes\StageMidBoss.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
->>>>>>> origin/MyeongJun
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
