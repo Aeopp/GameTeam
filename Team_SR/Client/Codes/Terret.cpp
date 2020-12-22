@@ -129,6 +129,7 @@ void CTerret::FindTarget()
 
 void CTerret::Fire(float fDeltaTime)
 {
+
 	if (nullptr == m_pTarget)
 		return;
 	m_fTestTime += fDeltaTime;

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __MAP1ST_H__
 
 #include "MapBase.h"
@@ -22,8 +22,7 @@ public:
 	static CMap1st* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
-private:
-	std::vector<D3DLIGHT9> MapLight;
+
 };
 
 #define __MAP1ST_H__

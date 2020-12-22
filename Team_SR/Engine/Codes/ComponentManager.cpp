@@ -14,6 +14,7 @@ HRESULT CComponentManager::ReserveSizePrototypeContainer(_int iSceneCount)
 
 	m_iSceneCount = iSceneCount;
 	m_pPrototypes = new PROTOTYPES[m_iSceneCount];
+
 	if (nullptr == m_pPrototypes)
 	{
 		PRINT_LOG(L"Error", L"Failed To ReserveSizePrototypeContainer");
@@ -40,6 +41,7 @@ HRESULT CComponentManager::AddComponentPrototype(
 	{
 		m_pPrototypes[iSceneIndex].insert(make_pair(ComponentTag, pPrototype));
 	}
+
 
 	return S_OK;
 }
@@ -85,7 +87,7 @@ HRESULT CComponentManager::ClearForScene(_int iSceneIndex)
 	m_pPrototypes[iSceneIndex].clear();
 
 	return S_OK;
-}
+};
 
 void CComponentManager::Free()
 {

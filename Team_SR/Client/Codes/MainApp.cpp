@@ -17,10 +17,17 @@
 #include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
+#include "NormalUVVertexBuffer.h"
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
 #include "FloorBlood.h"
+#include "UIManager.h"	// UI 매니저
+#include "Item.h"		// 아이템
+#include "Hangman.h"	// 행맨
+#include "HangmanBomb.h" // 행맨 폭탄
+#include "Hellhound.h"	// 헬 하운드
+#include "Particle.h"	// 파티클
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -51,10 +58,18 @@ HRESULT CMainApp::ReadyMainApp()
 	if (FAILED(ReadyDefaultSetting()))
 		return E_FAIL;
 
+
+
 	if (FAILED(m_pManagement->SetUpCurrentScene((_int)ESceneID::Logo,
 		CLogo::Create(m_pDevice))))
 	{
 		PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
+		return E_FAIL;
+	}
+
+	// UI 초기화
+	if (FAILED(CUIManager::Get_Instance()->ReadyUI())) {
+		PRINT_LOG(L"Error", L"Failed To ReadyUI");
 		return E_FAIL;
 	}
 
@@ -67,17 +82,17 @@ int CMainApp::UpdateMainApp()
 {
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
-
+	ImGuiHelper::Update();
 	ImGuiHelper::DebugInfo(g_hWnd);
 	ImGui::Checkbox("Debug ?", &m_pManagement->bDebug);
-	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
-	ImGui::Checkbox("ObjectEdit", &ImGuiHelper::bPackageEdit);
+	ImGuiHelper::CheckBoxCall();
 	ImGuiHelper::UpdateEnd();
 	m_pManagement->RenderEngine();
 	ImGuiHelper::Render(m_pDevice);
 	m_pDevice->EndScene();
 	m_pDevice->Present(nullptr, nullptr, g_hWnd, nullptr);
 
+	Effect::ClearRegisteredLighting();
 	return 0;
 }
 
@@ -88,6 +103,7 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
+		/*L"Layer_Player"*/
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
@@ -109,12 +125,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-		CMainCamera::Create(m_pDevice))))
-		return E_FAIL;
-
+	// 플레이어 UI
 #pragma region GameObject_PlayerInfoUI
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -123,12 +134,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 무기 총알 UI
 #pragma region GameObject_WeaponAmmoInfoUI
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-			CWeaponAmmoInfoUI::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+		CWeaponAmmoInfoUI::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
 	// 글레이서
@@ -159,36 +171,41 @@ HRESULT CMainApp::ReadyStaticResources()
 		CBatSpit::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	// 글레이서 파티클
 #pragma region GameObject_GlacierParticle
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
-			CGlacierParticle::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+		CGlacierParticle::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
-		
+	
+	// 눈깔 박쥐
 #pragma region GameObject_Eyebat
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CEyebat>(),
-			CEyebat::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CEyebat>(),
+		CEyebat::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
+	// 눈깔 박쥐 총알
 #pragma region GameObject_EyebatBullet
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CEyebatBullet>(),
-			CEyebatBullet::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CEyebatBullet>(),
+		CEyebatBullet::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
-		
+	
+	// 불
 #pragma region GameObject_Fire
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CFire>(),
-			CFire::Create(m_pDevice))))
-			return E_FAIL;
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFire>(),
+		CFire::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region GameObject_Spider
@@ -207,7 +224,7 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 #pragma endregion
 
-#pragma region GameObject_Blood
+#pragma region GameObject_FloorBlood
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
@@ -221,11 +238,53 @@ HRESULT CMainApp::ReadyStaticResources()
 			CGameObject::Tag + TYPE_NAME<CTerret>(),
 			CTerret::Create(m_pDevice))))
 			return E_FAIL;
+	// 아이템 오브젝트
+#pragma region GameObject_Fire
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CItem>(),
+		CItem::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 행맨 오브젝트
+#pragma region GameObject_Hangman
+	// 행맨
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHangman>(),
+		CHangman::Create(m_pDevice))))
+		return E_FAIL;
+	// 투사체 폭탄
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHangmanBomb>(),
+		CHangmanBomb::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 헬 하운드 오브젝트
+#pragma region GameOBject_Hellhound
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellhound>(),
+		CHellhound::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 파티클 오브젝트
+#pragma region GameOBject_Particle
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CParticle>(),
+		CParticle::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
 		
 
 	/* For.Component */
+	// 렉트 텍스처
 #pragma region Component_VIBuffer_RectTexture
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -234,8 +293,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-
-	
+	// 트랜스폼
 #pragma region Component_Transform
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -244,6 +302,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 충돌 컴포넌트
 #pragma region Component_CCollision
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		static_cast<int32_t>(ESceneID::Static),
@@ -254,16 +313,18 @@ HRESULT CMainApp::ReadyStaticResources()
 	}
 #pragma endregion
 
+#pragma region Component_NormalUVVertexBuffer
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CNormalUVVertexBuffer::Create(m_pDevice))))
+	{
+		return E_FAIL;
+	}
+
+
 #pragma region Component_Texture_Player
 
-#pragma endregion
-
-#pragma region Component_Camera
-	if (FAILED(m_pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CMainCamera>(),
-		CMainCamera::Create(m_pDevice))))
-		return E_FAIL;
 #pragma endregion
 
 	// 글레이서 텍스처들
@@ -317,8 +378,8 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma endregion
 
 #pragma endregion	// Component_Texture_Glacier
+
 	// 박쥐 텍스처들
-#pragma endregion
 #pragma region Component_Texture_BatGrey
 	// 플라이
 #pragma region Component_Texture_BatGreyFly
@@ -377,8 +438,9 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
-#pragma endregion	
+#pragma endregion	// Component_Texture_BatGrey
 
+	// 눈깔 박쥐 텍스처들
 #pragma region Component_Texture_Eyebat
 	wstring wstrTextureEyebat = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CEyebat>();
 #pragma region Fly
@@ -413,8 +475,9 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Eyebat/Death/Death%d.png", 12))))
 		return E_FAIL;
 #pragma endregion
-#pragma endregion
+#pragma endregion	// Component_Texture_Eyebat
 
+	// 불
 #pragma region Component_Texture_Fire
 	wstring wstrTextureFire = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFire>();
 	if (FAILED(m_pManagement->AddComponentPrototype(
@@ -424,6 +487,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 플레이어 UI 텍스처
 #pragma region Component_Texture_PlayerInfoUI
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -432,6 +496,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 	
+	// 무기 탄약 UI 텍스처
 #pragma region Component_Texture_WeaponAmmoInfoUI
 	if (FAILED(m_pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
@@ -509,6 +574,273 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Terret/Fire/Fire%d.png", 8))))
 		return E_FAIL;
 #pragma endregion
+	// 아이템 텍스처들
+#pragma region Component_Texture_Item
+	// 겁나큰 체력 포션
+#pragma region Health_Big
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Health_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_HEALTH_BIG_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 작은 체력 포션
+#pragma region Health_Small
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Health_Small",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_HEALTH_SMALL_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 겁나큰 마나 포션
+#pragma region Mana_Big
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Mana_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/WAND_AMMO_BIG_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 작은 마나 포션
+#pragma region Mana_Small
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Mana_Small",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_WAND_AMMO_000%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+	// 총알
+#pragma region Ammo_Box
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ammo_Box",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/ammo_box_pistol.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 파란 열쇠
+#pragma region Key_Blue
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Blue",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_BLUE.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 레드 열쇠
+#pragma region Key_Red
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Red",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_RED.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 노랑 열쇠
+#pragma region Key_Yellow
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Key_Yellow",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/TEXTURE_KEY_YELLOW.png", 1))))
+		return E_FAIL;
+#pragma endregion
+	// 업그레이드 재화
+#pragma region Upgrade
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Upgrade",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Item/upgrade_pickup000%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
+
+	// 행맨 텍스처들
+#pragma region Component_Texture_Hangman
+	// Idle Back
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Back",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Back/hangman_idle_back.png", 1))))
+		return E_FAIL;
+
+	// 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Attack/hangman_attack%d.png", 13))))
+		return E_FAIL;
+
+	// 원거리 폭탄 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Bomb_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Bomb/hangman_bomb%d.png", 15))))
+		return E_FAIL;
+
+	// 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Walk/hangman_walk000%d.png", 6))))
+		return E_FAIL;
+
+	// 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Hit/hangman_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Damage",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Damage/hangman_damage000%d.png", 6))))
+		return E_FAIL;
+
+	// 손상 근거리 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamageAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamageAttack/hangman_damaged_attack000%d.png", 10))))
+		return E_FAIL;
+
+	// 손상 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamagedHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamagedHit/hangman_damaged_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_DamagedWalk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/DamagedWalk/hangman_damaged_walk000%d.png", 6))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Death/hangman_damaged_death000%d.png", 10))))
+		return E_FAIL;
+
+	// 투사체 폭탄
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Bullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Bullet/bomb0000.png", 1))))
+		return E_FAIL;
+
+	// 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hangman_Gib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hangman/Gib/gib_hangman%d.png", 2))))
+		return E_FAIL;
+#pragma endregion	// Component_Texture_Hangman
+
+	// 헬 하운드 텍스처들
+#pragma region Component_Textrue_HellHound
+	// 부화
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_EggHatch",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/EggHatch/egg_hatch_hellhound%d.png", 12))))
+		return E_FAIL;
+
+	// 대기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Idle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Idle/hellhound_idle.png", 1))))
+		return E_FAIL;
+
+	// 달리기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Run",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Run/hellhound_run000%d.png", 5))))
+		return E_FAIL;
+
+	// 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Attack/hellhound_attack000%d.png", 10))))
+		return E_FAIL;
+
+	// 아픔
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Hurt",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Hurt/hellhound_hurt.png", 1))))
+		return E_FAIL;
+
+	// 손상
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Damage",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Damage/hellhound_damage%d.png", 3))))
+		return E_FAIL;
+
+	// 손상 근접 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedAttack/hellhound_damaged_attack000%d.png", 7))))
+		return E_FAIL;
+
+	// 손상 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedHit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedHit/hellhound_damaged_hit.png", 1))))
+		return E_FAIL;
+
+	// 손상 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamagedWalk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamagedWalk/hellhound_damaged_walk%d.png", 6))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Death/hellhound_death%d.png", 12))))
+		return E_FAIL;
+
+	// 손상 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_DamageGib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/DamageGib/hellhound_dmagegib_%d.png", 3))))
+		return E_FAIL;
+
+	// 내장
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Hellhound_Gib",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Hellhound/Gib/hellhound_gib_%d.png", 5))))
+		return E_FAIL;
+#pragma endregion	// Component_Textrue_HellHound
+
+	// 이펙트 텍스처들
+#pragma region Component_Textrue_Effect
+	// 큰 출혈 이펙트 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BloodHit_1_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_1_Big/bloodhit_big000%d.png", 8))))
+		return E_FAIL;
+
+	// 큰 출혈 이펙트 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_BloodHit_2_Big",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_2_Big/bloodhit_2_big000%d.png", 8))))
+		return E_FAIL;
+#pragma endregion	// Component_Textrue_Effect
+
 	return S_OK;
 }
 
@@ -534,6 +866,7 @@ CMainApp* CMainApp::Create()
 
 void CMainApp::Free()
 {
+	CUIManager::Destroy_Instance();
 	Effect::EffectRelease();
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pManagement);

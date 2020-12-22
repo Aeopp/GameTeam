@@ -1,6 +1,5 @@
 #include "..\Headers\GameObject.h"
 #include "Management.h"
-
 #include "Scene.h"
 
 
@@ -73,7 +72,7 @@ void CGameObject::Free()
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
 	// 2020.12.17 11:26 KMJ
-	SafeRelease(_CollisionComp);		// Ãæµ¹ ÄÄÆ÷³ÍÆ®
+	SafeRelease(_CollisionComp);		// ì¶©ëŒ ì»´í¬ë„ŒíŠ¸
 
 	for (auto& Pair : m_Components)
 	{

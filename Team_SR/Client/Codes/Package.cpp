@@ -1,5 +1,21 @@
 #include "stdafx.h"
 #include "Package.h"
+#include "DXWrapper.h"
+
+void PackageContainer::Initialize(IDirect3DDevice9* const _Device) & noexcept
+{
+	_MapFloorTexture = CreateTextures(_Device, L"..\\Resources\\Texture\\Map\\Floor\\", 53);
+	/*_MapFloorTexture = CreateTextures(_Device, L"..\\Resources\\Texture\\Map\\Wall\\", 53);
+	_MapFloorTexture = CreateTextures(_Device, L"..\\Resources\\Texture\\Map\\Wall\\", 53);*/
+}
+
+void PackageContainer::Release() & noexcept
+{
+	for (auto&  _CurMapTex :_MapFloorTexture)
+	{
+		SafeRelease(_CurMapTex);
+	}
+}
 
 void PackageContainer::CurInfoPush()
 {

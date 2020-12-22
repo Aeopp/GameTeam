@@ -24,8 +24,9 @@ public:
 	void CancelRegist();
 	// 월드 공간으로 변환한 이후의 정보를 넘겨주기.
 	static const std::vector<PlaneInfo>& GetMapPlaneInfo();
-	FORCEINLINE static void CleanUpMapPlaneInfo()noexcept { _MapPlaneInfo.clear(); };
-	static void AddMapPlaneInfo(const std::vector<PlaneInfo> & _MapPlaneInfo)noexcept;;
+	FORCEINLINE static void CleanUpMapCollisionInfo()noexcept { _MapPlaneInfo.clear(); _MapFloorInfo.clear(); };
+	static void AddMapPlaneInfo(const std::vector<PlaneInfo>& _MapPlaneInfo)noexcept;
+	static void AddMapFloorInfo(const std::vector<PlaneInfo>& PMapFloorInfo)noexcept;
 	static void CollisionUpdate(IDirect3DDevice9* const  _Device);
 	static void CollisionDebugRender(IDirect3DDevice9* const  _Device);
 	void MapHitProcess(const Collision::Info& CollisionInfo, const PlaneInfo& _CurPlane);
@@ -39,15 +40,16 @@ public:
 		MonsterAttack,
 		Bullet,
 		Effect,
+		Item,
 	};
-	
 public:
 	struct InitInfo
 	{
 		float Radius = 10.f;
-		bool bMapCollision = false;
+		bool bWallCollision = false;
+		bool bFloorCollision = false;
 		bool bCollision = true;
-		bool bMapBlock = true;
+		bool bMapBlock = false;
 		ETag Tag = ETag::None;
 		class CGameObject* Owner = nullptr;
 		// 버텍스 정보로 계산하고 싶다면 세팅
@@ -55,7 +57,8 @@ public:
 		DWORD FVF;
 		DWORD VertexNumber;
 	};
-	bool bMapCollision = false;
+	bool bWallCollision = false;
+	bool bFloorCollision = false;
 	bool bMapBlock = false;
 	bool bCollision = true;
 	class CGameObject* Owner = nullptr;
@@ -67,6 +70,7 @@ public:
 private:
 	static std::vector<CCollisionComponent*> _Comps;
 	static std::vector<PlaneInfo> _MapPlaneInfo; // 월드로 변환한 이후의 정보
+	static std::vector<PlaneInfo> _MapFloorInfo; // 월드로 변환한 이후의 정보 (바닥)
 	static int32_t CurrentID;
 	static std::map<ETag, std::set<ETag>> _TagBind;
 	static float MapCollisionCheckDistanceMin;

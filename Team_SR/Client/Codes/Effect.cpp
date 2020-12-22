@@ -26,7 +26,7 @@ HRESULT CEffect::ReadyGameObject(void * pArg)
 
 	if (nullptr != pArg)
 	{
-		// ±¸Á¶Ã¼ Å©±â °Ë»ç
+		// êµ¬ì¡°ì²´ í¬ê¸° ê²€ì‚¬
 	}
 
 	return S_OK;
@@ -98,8 +98,8 @@ HRESULT CEffect::IsBillboarding()
 
 void CEffect::Free()
 {
-	SafeRelease(m_pVIBufferCom);	// ¹öÅØ½º ¹öÆÛ
-	SafeRelease(m_pTexture);		// ÅØ½ºÃ³
+	SafeRelease(m_pVIBufferCom);	// ë²„í…ìŠ¤ ë²„í¼
+	SafeRelease(m_pTexture);		// í…ìŠ¤ì²˜
 
 	CGameObject::Free();
 }

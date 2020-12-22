@@ -5,14 +5,14 @@
 #include "Layer.h"
 
 CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
-	: CGameObject(pDevice)
+	: CGameUI(pDevice)
 {
 	
 }
 
 HRESULT CPlyerInfoUI::ReadyGameObjectPrototype()
 {
-	if (FAILED(CGameObject::ReadyGameObjectPrototype()))
+	if (FAILED(CGameUI::ReadyGameObjectPrototype()))
 		return E_FAIL;
 	
 	return S_OK;
@@ -20,42 +20,37 @@ HRESULT CPlyerInfoUI::ReadyGameObjectPrototype()
 
 HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 {
-	if (FAILED(CGameObject::ReadyGameObject(pArg)))
+	if (FAILED(CGameUI::ReadyGameObject(pArg)))
 		return E_FAIL;
 
 	if (FAILED(AddComponent()))
 		return E_FAIL;
 	
-	m_pTransformCom->m_TransformDesc.vScale.x = 15.f;
-	m_pTransformCom->m_TransformDesc.vScale.y = 15.f;
-	m_pTransformCom->m_TransformDesc.vScale.z = 0;
+	m_UIDesc.vUISize.x = WINCX / 7.f;
+	m_UIDesc.vUISize.y = WINCY / 7.f;
+	m_UIDesc.vUISize.z = 0;
 
-	m_pTransformCom->m_TransformDesc.vPosition.x = -50.f;
-	m_pTransformCom->m_TransformDesc.vPosition.y = -18.f;
-	m_pTransformCom->m_TransformDesc.vPosition.z = 0.f;
-	
-	m_pTransformCom->m_TransformDesc.fRotatePerSec = 0.f;
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 0.f;
-	
-	
+	m_UIDesc.vUIPos.x = -(WINCX / 2) + m_UIDesc.vUISize.x;
+	m_UIDesc.vUIPos.y = -(WINCY / 2) + m_UIDesc.vUISize.y + 10.f;
+	m_UIDesc.vUIPos.z = 0.f;
 
 	return S_OK;
 }
 
 _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 {
-	CGameObject::UpdateGameObject(fDeltaTime);
+	CGameUI::UpdateGameObject(fDeltaTime);
 	ImGui::Begin("PlayerInfoUI Edit");
 
 	ImGui::Separator();
-	ImGui::SliderFloat3("Scale",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vScale),
-		-100.f, +100.f, "%f");
+	ImGui::SliderFloat3("Size",
+		reinterpret_cast<float*>(&m_UIDesc.vUISize),
+		-1000.f, +1000.f, "%f");
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
-		-100.f, +100.f, "%f");
+		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
+		-1000.f, +1000.f, "%f");
 
 	ImGui::End();
 
@@ -64,8 +59,7 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 
 _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 {
-	CGameObject::LateUpdateGameObject(fDeltaTime);
-
+	CGameUI::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
@@ -75,78 +69,29 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlyerInfoUI::RenderGameObject()
 {
-	/// <summary>
-	/// UI 추가하자 문제가 발생해서
-	/// 뷰행렬과 투영행렬을 UI 용으로 설정하기 직전에
-	/// 값을 저장한다음 UI 를 출력후 저장
-	/// </summary>
-	/// <returns></returns>
+	//CGameUI::RenderGameObject();
 
-	/*_matrix matWorld;
-	*/
-
-	auto camera = m_pManagement->GetGameObject((int)ESceneID::Stage1st, CLayer::Tag + L"MainCamera", 0);
-	if (nullptr == camera)
-		return FALSE;
-	mat PrevView, PrevProjection;
-	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
-	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
-
-	_matrix matScale, /*matRotX, matRotY, matRotZ,*/ matTrans, matOrthographic;
-
-	TRANSFORM_DESC& tTransformDesc = m_pTransformCom->m_TransformDesc;
-
-	//D3DXMatrixScaling(&matScale, tTransformDesc.vScale.x, tTransformDesc.vScale.y, tTransformDesc.vScale.z);
-	//D3DXMatrixRotationX(&matRotX, D3DXToRadian(tTransformDesc.vRotation.x));
-	//D3DXMatrixRotationY(&matRotY, D3DXToRadian(tTransformDesc.vRotation.y));
-	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(tTransformDesc.vRotation.z));
-	//D3DXMatrixTranslation(&matTrans, tTransformDesc.vPosition.x, tTransformDesc.vPosition.y, tTransformDesc.vPosition.z);
-
-	//D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1.f);
-	//tTransformDesc.matWorld = matOrthographic* matScale * matTrans;
-	//tTransformDesc.matWorld = matScale * matRotX * matRotY * matRotZ * matTrans
-	
-
-
-	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
 	//	return E_FAIL;
-	_matrix matWorld;
-	D3DXMatrixIdentity(&matWorld);
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &matWorld)))
-		return E_FAIL;
 
-	_matrix matView;
-	D3DXMatrixIdentity(&matView);
-	
-	matView._11 = tTransformDesc.vScale.x;
-	matView._22 = tTransformDesc.vScale.y;
-	matView._33 = 1.f;
-	//matView._41 = tTransformDesc.vPosition.x;
-	//matView._42 = tTransformDesc.vPosition.y;
-	//matView._43 = tTransformDesc.vPosition.z;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &matView)))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
+	//	return E_FAIL;
 
-	D3DXMatrixOrthoLH(&matOrthographic, WINCX, WINCY, 0.f, 1000.f);
-	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &matOrthographic)))
-		return E_FAIL;
+	//if (FAILED(CGameObject::RenderGameObject()))
+	//	return E_FAIL;
 
-	if (FAILED(CGameObject::RenderGameObject()))
-		return E_FAIL;
+	//if (FAILED(m_pTextureCom->Set_Texture(0)))
+	//	return E_FAIL;
+	//
+	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-	if (FAILED(m_pTextureCom->Set_Texture(0)))
-		return E_FAIL;
-	
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
-
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
-	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
-	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
+	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }
@@ -159,14 +104,6 @@ HRESULT CPlyerInfoUI::AddComponent()
 		L"Component_Texture_PlayerInfoUI",
 		L"Com_Texture",
 		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;
-
-	/* For.Com_VIBuffer */
-	if (FAILED(CGameObject::AddComponent(
-		(_int)ESceneID::Static,
-		L"Component_Engine::CVIBuffer_RectTexture",
-		L"Com_VIBuffer",
-		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -191,7 +128,7 @@ CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CPlyerInfoUI::Clone(void * pArg)
 {
-	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* 복사생성자 */
+	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* ��������� */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -204,5 +141,5 @@ CGameObject * CPlyerInfoUI::Clone(void * pArg)
 
 void CPlyerInfoUI::Free()
 {
-	CGameObject::Free();
+	CGameUI::Free();
 }

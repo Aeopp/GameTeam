@@ -82,6 +82,7 @@ HRESULT CGlacierParticle::RenderGameObject()
 
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -138,7 +139,7 @@ CGlacierParticle * CGlacierParticle::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CGlacierParticle::Clone(void * pArg /*= nullptr*/)
 {
-	CGlacierParticle* pClone = new CGlacierParticle(*this); /* º¹»ç»ý¼ºÀÚ */
+	CGlacierParticle* pClone = new CGlacierParticle(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

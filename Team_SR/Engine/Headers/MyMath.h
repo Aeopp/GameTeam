@@ -72,6 +72,10 @@ public:
 	{
 		return D3DXVec3LengthSq(&Lhs);
 	};
+	FORCEINLINE static float LengthSq(const vec4& Lhs)
+	{
+		return D3DXVec4LengthSq(&Lhs);
+	};
 	FORCEINLINE static float Dot(const vec3& Lhs, const vec3& Rhs)
 	{
 		return D3DXVec3Dot(&Lhs, &Rhs);

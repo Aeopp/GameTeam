@@ -20,15 +20,13 @@ HRESULT CLogo::ReadyScene()
 _uint CLogo::UpdateScene(float fDeltaTime)
 {
 	CScene::UpdateScene(fDeltaTime);
-	KeyProcess(fDeltaTime);
-	return _uint();
+	return  KeyProcess(fDeltaTime);
+
 } 
 
 _uint CLogo::LateUpdateScene()
 {
-	CScene::LateUpdateScene();
-
-	return _uint();
+	return CScene::LateUpdateScene();
 }
 
 _uint CLogo::KeyProcess(float fDeltaTime)

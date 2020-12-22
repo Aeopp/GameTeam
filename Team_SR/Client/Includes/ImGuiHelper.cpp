@@ -7,9 +7,14 @@ bool ImGuiHelper::bInitialize = false;
 bool ImGuiHelper::bEditOn = true;
 bool ImGuiHelper::bDemo = false;
 bool ImGuiHelper::bPackageEdit = false;
+bool ImGuiHelper::bMapPackageEdit = false;
 
 ID3DXMesh *  ImGuiHelper::_SphereMesh{ nullptr };
 PackageContainer ImGuiHelper::_PackageContainer{};
+float ImGuiHelper::Radius = 10.f;
+
+vec4 ImGuiHelper::PackageDiffuseColor{ 1,1,1,1 };
+
 
 void ImGuiHelper::Init(HWND _Hwnd,
 	IDirect3DDevice9* _Device)noexcept 
@@ -30,6 +35,7 @@ void ImGuiHelper::Init(HWND _Hwnd,
 	}
 #pragma endregion
 	D3DXCreateSphere(_Device, 1.f, 25, 25, &_SphereMesh, 0);
+	_PackageContainer.Initialize(_Device);
 }
 
 void ImGuiHelper::UpdateStart()
@@ -47,9 +53,28 @@ void ImGuiHelper::UpdateStart()
 	}
 }
 
+
+void ImGuiHelper::Update()
+{
+	ImGui::Begin("MapEdit", &bMapPackageEdit);
+	{
+		auto& _CurMapPackage = _PackageContainer._CurMapPlanePackage;
+		ImGui::SliderFloat3("Rotation", (float*)&_CurMapPackage.Rotation, -360, 360);
+		ImGui::InputFloat3("Normal", (float*)&_CurMapPackage.Normal);
+		//Gui::InputText()
+	}
+	ImGui::End();
+}
+
 void ImGuiHelper::UpdateEnd()
 {
 	ImGui::EndFrame();
+}
+void ImGuiHelper::CheckBoxCall()
+{
+	ImGui::Checkbox("Imgui Edit On ?", &ImGuiHelper::bEditOn);
+	ImGui::Checkbox("PackageEdit", &ImGuiHelper::bPackageEdit);
+	ImGui::Checkbox("MapEdit", &ImGuiHelper::bMapPackageEdit);
 };
 void ImGuiHelper::Render(IDirect3DDevice9* _Device)
 {
@@ -91,6 +116,7 @@ void ImGuiHelper::Render(IDirect3DDevice9* _Device)
 void ImGuiHelper::ShutDown()noexcept 
 {
 	SafeRelease(_SphereMesh);
+	_PackageContainer.Release();
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -134,9 +160,10 @@ void ImGuiHelper::DebugInfo(HWND _Hwnd)
 		ImGui::SliderFloat3("Scale",(float*)&_PackageContainer._CurEditPackage.Scale,1.f, 100.f);
 		ImGui::SliderFloat3("Rotation",(float*)&_PackageContainer._CurEditPackage.Rotation,-360.f, +360.f);
 		ImGui::SliderFloat3("Location",(float*)&_PackageContainer._CurEditPackage.Location,-1000.f, +1000.f);
+		ImGui::SliderFloat4("Color", (float*)&PackageDiffuseColor, 0.f, 1.f);
+		ImGui::SliderFloat("Radius", (float*)&Radius, 0.f, 1000.f);
 		static char TextBuf[MAX_PATH];
 		ImGui::InputText("Name Here ", TextBuf, MAX_PATH);_PackageContainer._CurEditPackage.Name = TextBuf;
-		ImGui::Separator();
 		static char FileName[MAX_PATH];
 		ImGui::InputText("File Name ", FileName, MAX_PATH);
 		if (ImGui::Button("Save"))
@@ -174,6 +201,7 @@ void ImGuiHelper::Picking(IDirect3DDevice9* const _Device,
 				Intersect = true;
 				if (t <= TFinal)
 				{
+					vec3 normal = { _CurTriangle._Plane.a, _CurTriangle._Plane.b,_CurTriangle._Plane.c };
 					IntersectPointFinal = IntersectPoint;
 					TFinal = t;
 				}
@@ -186,17 +214,24 @@ void ImGuiHelper::Picking(IDirect3DDevice9* const _Device,
 			_PackageContainer.CurInfoPush();
 
 			{
-				MyLight _Light;
+				//MyLight _Light;
 
-				_Light.Diffuse = { 1,1,1 };
-				_Light.Location = IntersectPointFinal;
-				_Light.Radius = 10;
+				//// _Light.Diffuse = PackageDiffuseColor;
+				//int flag = MATH::RandInt({ 0,3 });
+				//if (flag == 0) { _Light.Diffuse = vec4{ 0.f,1.f,0.f,1.f }; };
+				//if (flag == 2) { _Light.Diffuse = vec4{ 0.f,0.f,1.f,1.f }; };
+				//if (flag == 3) { _Light.Diffuse = vec4{ 1.f,1.f,1.f,1.f }; };
+				//if (flag == 1) { _Light.Diffuse = vec4{ 1.f,0.f,0.f,1.f }; }; 
 
-				Effect::RegistLight(_Light);
+				////_Light.Diffuse = vec4{ MATH::RandReal({ 0.5,1.f }) , MATH::RandReal({ 0.5,1.f }),MATH::RandReal({ 0.5,1.f }),1.f };
+				//_Light.Location = MATH::ConvertVec4(IntersectPointFinal, 1.f);
+				//// _Light.Radius = ImGuiHelper::Radius;
+				//_Light.Radius = MATH::RandReal({ 100,200});
+
+				//Effect::RegistLight(_Light);
 			}
-
 		}
-		}
+	}
 	
 }
 
