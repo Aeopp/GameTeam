@@ -41,6 +41,7 @@ public:
 		Bullet,
 		Effect,
 		Item,
+		Particle,
 	};
 public:
 	struct InitInfo

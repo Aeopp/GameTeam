@@ -28,6 +28,8 @@
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
 #include "Particle.h"	// 파티클
+#include "Shark.h"
+#include "SharkBullet.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -241,6 +243,14 @@ HRESULT CMainApp::ReadyStaticResources()
 			CTerret::Create(m_pDevice))))
 			return E_FAIL;
 	// 아이템 오브젝트
+#pragma endregion
+#pragma region GameObject_Shark
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CShark>(),
+			CShark::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 #pragma region GameObject_Fire
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -248,6 +258,8 @@ HRESULT CMainApp::ReadyStaticResources()
 		CItem::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	
 
 	// 행맨 오브젝트
 #pragma region GameObject_Hangman
@@ -282,6 +294,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		CParticle::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+#pragma region GameObject_Sharkicile
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
+		CSharkBullet::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
 
 		
 
@@ -842,6 +863,106 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/BloodHit_2_Big/bloodhit_2_big000%d.png", 8))))
 		return E_FAIL;
 #pragma endregion	// Component_Textrue_Effect
+
+#pragma region Component_Texutre_Shark
+
+	wstring wstrShark = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CShark>();
+	wstring wstrIcicle =CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CSharkBullet>();
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Death/Death%d.png", 13))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Howling",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Howling/Howling%d.png", 10))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleA",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleA/icicleA%d.png", 18))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleB",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleB/icicleB%d.png", 16))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleC",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleC/icicleC%d.png", 18))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"LoseBothArm",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/LoseBothArm/LoseBothArm%d.png", 7))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"LoseRightArm",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/LoseRightArm/LoseRightArm%d.png", 6))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Melee",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Melee/Melee%d.png", 11))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Melee_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Melee_1Phase/Melee_1Phase%d.png", 14))))
+		return E_FAIL;
+	
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Particle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Particle/Particle%d.png", 4))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"RangeAttack_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/RangeAttack_1Phase/RangeAttack_1Phase%d.png", 12))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"RangeAttack_2Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/RangeAttack_2Phase/RangeAttack_2Phase%d.png", 11))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_1Phase/Walk_1Phase%d.png", 8))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_2Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_2Phase/Walk_2Phase%d.png", 8))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_3Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_3Phase/Walk_3Phase%d.png", 9))))
+		return E_FAIL;
+
+
+#pragma endregion Component_Texutre_Shark
+
 
 	return S_OK;
 }

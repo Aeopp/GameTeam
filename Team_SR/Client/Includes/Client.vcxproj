@@ -203,6 +203,8 @@
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\Shark.h" />
+    <ClInclude Include="..\Headers\SharkBullet.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\SpiderBullet.h" />
@@ -273,6 +275,8 @@
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\Shark.cpp" />
+    <ClCompile Include="..\Codes\SharkBullet.cpp" />
     <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\Spider.cpp" />
     <ClCompile Include="..\Codes\SpiderBullet.cpp" />

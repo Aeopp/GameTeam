@@ -103,6 +103,12 @@
     <Filter Include="96.SoundMgr">
       <UniqueIdentifier>{d6cba527-df74-49fe-a52d-a4c4f316d621}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\06.Boss_Shark">
+      <UniqueIdentifier>{190ae1dc-a69f-4cbe-ba89-b188ddedf29c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Bullet\05.SharkBullet">
+      <UniqueIdentifier>{cfeee460-dad2-4a9d-b233-6db7cb511167}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -270,6 +276,10 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>96.SoundMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Shark.h">
+      <Filter>02.GameObject\02.Monster\06.Boss_Shark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SharkBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -411,6 +421,10 @@
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>96.SoundMgr</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Shark.cpp">
+      <Filter>02.GameObject\02.Monster\06.Boss_Shark</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SharkBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
