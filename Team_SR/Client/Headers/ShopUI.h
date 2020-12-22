@@ -1,14 +1,12 @@
 #pragma once
-#ifndef __HUD_HPBAR_H__
-
 #include "GameUI.h"
 
 USING(Engine)
-class CHUD_HpBar final : public CGameUI
+class CShopUI :	public CGameUI
 {
 private:
-	explicit CHUD_HpBar(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CHUD_HpBar() = default;
+	explicit CShopUI(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CShopUI() = default;
 
 public:
 	// CGameUI을(를) 통해 상속됨
@@ -19,20 +17,19 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxHPAndHP(int& _iMaxHP, int& _iHP);
+	void SetShownBarUI() { m_bShown = true; }//ui나타내기
+	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
 
-protected://내부메서드관련
+private:
 	HRESULT	AddComponent();
 
 public:
-	static CHUD_HpBar* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CShopUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+protected:
+	bool m_bShown;
 
-private:
-	float m_fRatio = 1.f;//Test
-	const float m_fMaxSize;
+
 };
 
-#define __HUD_HPBAR_H__
-#endif // !__HUD_HPBAR_H__

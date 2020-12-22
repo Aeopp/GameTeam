@@ -4,9 +4,9 @@
 #include "VIBuffer_UITexture.h"
 #include "UIManager.h"
 
-
+using namespace UI_AddTag;
 CLoadingBar::CLoadingBar(LPDIRECT3DDEVICE9 pDevice)
-	: CGameUI(pDevice), m_fMaxSize(312.f)
+	: CGameUI(pDevice), m_fMaxSize(0.f)
 {
 
 }
@@ -115,9 +115,12 @@ _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	m_fRatio = (float)*m_piMinValue / (float)*m_piMaxValue;
-	if (1.f < m_fRatio)
-		m_fRatio = 1.f;
+	if (m_piMinValue && m_piMaxValue)
+	{
+		m_fRatio = (float)*m_piMinValue / (float)*m_piMaxValue;
+		if (1.f < m_fRatio)
+			m_fRatio = 1.f;
+	}
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
@@ -127,6 +130,9 @@ _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CLoadingBar::RenderGameObject()
 {
+	if (!m_bShown)
+		return S_OK;
+
 	if (FAILED(CGameUI::RenderGameObject()))
 		return E_FAIL;
 
@@ -147,10 +153,9 @@ HRESULT CLoadingBar::RenderGameObject()
 	if (FAILED(m_pTextureCom->Set_Texture(0)))
 		return E_FAIL;
 
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
 	static_cast<CVIBuffer_UITexture*>(m_pVIBufferCom)->ResetDisUVpos();
 
 	TCHAR szRenderLife[64] = L"";

@@ -41,25 +41,7 @@ _uint CGameUI::LateUpdateGameObject(float fDeltaTime)
 	if (nullptr == camera)
 		return FALSE;
 
-	TRANSFORM_DESC& tTransformDesc = m_pTransformCom->m_TransformDesc;
-
-	//_matrix matScale;
-	//_matrix matTrans;
-
-	D3DXMatrixIdentity(&m_UIDesc.matWorld);
-	D3DXMatrixIdentity(&m_UIDesc.matView);
-
-	//D3DXMatrixTranslation(&m_UIDesc.matWorld, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
-	
-	m_UIDesc.matWorld._11 = m_UIDesc.vUISize.x / 2;
-	m_UIDesc.matWorld._22 = m_UIDesc.vUISize.y / 2;
-	m_UIDesc.matWorld._33 = m_UIDesc.vUISize.z / 2;
-
-	m_UIDesc.matWorld._41 = m_UIDesc.vUIPos.x - (m_UIDesc.vUISize.x * m_UIDesc.vCenter.x / 2);
-	m_UIDesc.matWorld._42 = m_UIDesc.vUIPos.y - (m_UIDesc.vUISize.y * m_UIDesc.vCenter.y / 2);
-	m_UIDesc.matWorld._43 = m_UIDesc.vUIPos.z;
-
-	D3DXMatrixOrthoLH(&m_UIDesc.matOrthographic, WINCX, WINCY, 0.f, 5.f);
+	SetupUIMatrix(m_UIDesc);
 
 	return _uint();
 }
@@ -83,6 +65,26 @@ HRESULT CGameUI::AddComponent()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_uint CGameUI::SetupUIMatrix(UI_DESC & _desc)
+{
+	D3DXMatrixIdentity(&_desc.matWorld);
+	D3DXMatrixIdentity(&_desc.matView);
+
+	//D3DXMatrixTranslation(&m_UIDesc.matWorld, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
+
+	_desc.matWorld._11 = _desc.vUISize.x / 2;
+	_desc.matWorld._22 = _desc.vUISize.y / 2;
+	_desc.matWorld._33 = _desc.vUISize.z / 2;
+						 
+	_desc.matWorld._41 = _desc.vUIPos.x - (_desc.vUISize.x * _desc.vCenter.x / 2);
+	_desc.matWorld._42 = _desc.vUIPos.y - (_desc.vUISize.y * _desc.vCenter.y / 2);
+	_desc.matWorld._43 = _desc.vUIPos.z;
+
+	D3DXMatrixOrthoLH(&_desc.matOrthographic, WINCX, WINCY, 0.f, 5.f);
+
+	return _uint();
 }
 
 void CGameUI::Free()

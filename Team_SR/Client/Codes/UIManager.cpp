@@ -3,8 +3,11 @@
 #include "Management.h"
 #include "VIBuffer_UITexture.h"
 #include "LoadingBar.h"
+#include "HUDTopUI.h"
+
 IMPLEMENT_SINGLETON(CUIManager)
 
+using namespace UI_AddTag;
 CUIManager::CUIManager()
 	: m_pPlayerInfoUI(nullptr), m_pWeaponAmmoInfoUI(nullptr)
 {
@@ -20,14 +23,6 @@ HRESULT CUIManager::ReadyUI()
 	//Add Prototype
 #pragma region Add_Prototype
 	//Ojbect
-#pragma region GameObject_HUD_HpBar
-	if (FAILED(pManagement->AddGameObjectPrototype(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CLoadingBar>(),
-		CLoadingBar::Create(m_pDevice))))
-		return E_FAIL;
-#pragma endregion
-
 	//Componet
 	//Texture
 	// 플레이어 UI 텍스처
@@ -74,6 +69,14 @@ HRESULT CUIManager::ReadyUI()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bar_ammo.png", 1))))
 		return E_FAIL;
 #pragma endregion
+
+#pragma region Component_Texture_HUDBossBar
+	if (FAILED(pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HUDTopUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_top.png", 1))))
+		return E_FAIL;
+#pragma endregion
 	
 	//Buffer
 #pragma region Component_VIBuffer_UITexture
@@ -85,6 +88,22 @@ HRESULT CUIManager::ReadyUI()
 #pragma endregion
 #pragma endregion
 
+#pragma region Add_GameObject
+#pragma region GameObject_LoadingBar
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CLoadingBar>(),
+		CLoadingBar::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+#pragma region GameObject_HUDBossBar
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHUDTopUI>(),
+		CHUDTopUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
 
 	//Add Layer
 #pragma region Add_Layer
@@ -106,7 +125,18 @@ HRESULT CUIManager::ReadyUI()
 		(CGameObject**)&m_pWeaponAmmoInfoUI, nullptr)))
 		return E_FAIL;
 
+	// 상단UI / 보스 체력
+	if (FAILED(pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_HUDTopUI",
+		(_int)ESceneID::Stage1st,
+		L"Layer_HUDTopUI",
+		(CGameObject**)&m_pHUD_TopUIaBossBar, nullptr)))
+		return E_FAIL;
+
+//------------------------------------------------------
 	UI_ADD_COMPONENT tagLayerCom;
+#pragma region HUD_HP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 312.f;
 	tagLayerCom.tUIDesc.vUISize.y = 60.f;
@@ -126,7 +156,8 @@ HRESULT CUIManager::ReadyUI()
 		L"Layer_HUD_HpBar",
 		(CGameObject**)&m_pHUD_HpBar, &tagLayerCom)))
 		return E_FAIL;
-
+#pragma endregion
+#pragma region HUD_Mana_Bar
 	//HUD_Mana_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 310.f;
 	tagLayerCom.tUIDesc.vUISize.y = 60.f;
@@ -145,7 +176,8 @@ HRESULT CUIManager::ReadyUI()
 		L"Layer_HUD_ManaBar",
 		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom)))
 		return E_FAIL;
-
+#pragma endregion
+#pragma region HUD_Mana_Bar
 	//HUD_Ammo_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 535.f;
 	tagLayerCom.tUIDesc.vUISize.y = 90.f;
@@ -164,6 +196,7 @@ HRESULT CUIManager::ReadyUI()
 		L"Layer_HUD_AmmoBar",
 		(CGameObject**)&m_pHUD_AmmoBar, &tagLayerCom)))
 		return E_FAIL;
+#pragma endregion
 #pragma endregion
 
 #pragma region Test_Font

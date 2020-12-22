@@ -3,13 +3,16 @@
 
 #include "Base.h"
 
-typedef struct tagAddComUI
+namespace UI_AddTag
 {
-	UI_DESC tUIDesc;
-	wstring wsPrototypeTag;
-	wstring wsComponentTag;
-//	BOOL bReverse;
-}UI_ADD_COMPONENT;
+	typedef struct tagAddComUI
+	{
+		UI_DESC tUIDesc;
+		wstring wsPrototypeTag;
+		wstring wsComponentTag;
+		//	BOOL bReverse;
+	}UI_ADD_COMPONENT;
+}
 
 USING(Engine)
 class CUIManager final : public CBase
@@ -41,11 +44,15 @@ public:
 	virtual void Free() override;
 
 private:
-	class CPlyerInfoUI* m_pPlayerInfoUI;
-	class CWeaponAmmoInfoUI* m_pWeaponAmmoInfoUI;
-	class CLoadingBar* m_pHUD_HpBar;
-	class CLoadingBar* m_pHUD_ManaBar;
-	class CLoadingBar* m_pHUD_AmmoBar;
+	class CPlyerInfoUI* m_pPlayerInfoUI = nullptr;
+	class CWeaponAmmoInfoUI* m_pWeaponAmmoInfoUI = nullptr;
+	class CLoadingBar* m_pHUD_HpBar = nullptr;
+	class CLoadingBar* m_pHUD_ManaBar = nullptr;
+	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
+	class CHUDBossBar* m_pHUD_TopUIaBossBar = nullptr;
+
+public:
+
 
 private:
 #pragma region Test_Font

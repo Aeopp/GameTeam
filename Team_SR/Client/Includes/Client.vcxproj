@@ -178,7 +178,7 @@
     </ClInclude>
     <ClInclude Include="..\Headers\GlacierBullet.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
-    <ClInclude Include="..\Headers\HUD_HpBar.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Logo.h" />
@@ -190,6 +190,7 @@
     <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
@@ -225,7 +226,7 @@
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierBullet.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
-    <ClCompile Include="..\Codes\HUD_HpBar.cpp" />
+    <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
@@ -237,6 +238,7 @@
     <ClCompile Include="..\Codes\Package.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />

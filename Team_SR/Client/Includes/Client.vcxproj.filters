@@ -79,14 +79,11 @@
     <Filter Include="02.GameObject\05.GameUI\00.Object\02.LoadingBar">
       <UniqueIdentifier>{e295a209-867a-4782-8163-fd984ed43128}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\02.LoadingBar\00.HUD_HpBar">
-      <UniqueIdentifier>{06cbb1b8-68ce-405c-b8cb-3b94687f0083}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\03.ShopUI">
+      <UniqueIdentifier>{6f5f95ba-eec1-42ba-96f4-9c63a8f9e98c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\02.LoadingBar\01.HUD_ManaBar">
-      <UniqueIdentifier>{dee4c440-c80b-4bc4-88ab-c719bb08a1d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\02.LoadingBar\02.HUD_AmmoBar">
-      <UniqueIdentifier>{1b9f0085-8dc3-4ed9-8134-04f14859448b}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\04.HUDBossBar">
+      <UniqueIdentifier>{3d94d708-0137-4fa9-ba86-c5331718d002}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +186,6 @@
     <ClInclude Include="..\Headers\UIManager.h">
       <Filter>02.GameObject\05.GameUI\99.Managerment</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GameUI.h">
-      <Filter>02.GameObject\05.GameUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BatSpit.h">
       <Filter>97.Others</Filter>
     </ClInclude>
@@ -231,8 +225,12 @@
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h">
       <Filter>03.Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\HUD_HpBar.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar\00.HUD_HpBar</Filter>
+    <ClInclude Include="..\Headers\ShopUI.h" />
+    <ClInclude Include="..\Headers\GameUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.ShopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.HUDBossBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -308,9 +306,6 @@
     <ClCompile Include="..\Codes\UIManager.cpp">
       <Filter>02.GameObject\05.GameUI\99.Managerment</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GameUI.cpp">
-      <Filter>02.GameObject\05.GameUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BatSpit.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
@@ -350,8 +345,12 @@
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\HUD_HpBar.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar\00.HUD_HpBar</Filter>
+    <ClCompile Include="..\Codes\ShopUI.cpp" />
+    <ClCompile Include="..\Codes\GameUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.ShopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.HUDBossBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

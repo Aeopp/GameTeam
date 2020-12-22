@@ -20,6 +20,8 @@ public:
 
 public:
 	void SetMaxHPAndHP(int* _piMaxValue, int* _piValue);
+	void SetShownBarUI() { m_bShown = true; }//ui나타내기
+	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
 
 protected://내부메서드관련
 	HRESULT	AddComponent(wstring _PrototypeTag, wstring _ComponentTag);
@@ -33,6 +35,7 @@ private:
 	D3DXFONT_DESCW m_tFontInfo;
 	LPD3DXSPRITE m_pSprite;
 	LPD3DXFONT m_pFont;
+	bool m_bShown = true;
 
 	float m_fRatio = 1.f;//Test
 	float m_fMaxSize;
