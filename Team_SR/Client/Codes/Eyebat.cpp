@@ -2,6 +2,7 @@
 #include "..\Headers\Eyebat.h"
 #include "EyebatBullet.h"
 
+
 CEyebat::CEyebat(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 {
@@ -28,7 +29,7 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 6;
 
-	//Å×½ºÆ®
+	//í…ŒìŠ¤íŠ¸
 	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 	m_iDir = 1;
 	//
@@ -48,9 +49,9 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fpEyebatAI[(int)AWARENESS::No][(int)PHASE::HP_Low] = &CEyebat::AI_NoAwareness;
 	m_fpEyebatAI[(int)AWARENESS::No][(int)PHASE::HP_ZERO] = &CEyebat::AI_NoAwareness;
 
-	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_High] = &CEyebat::AI_FirstPhase;		// Àû±ØÀûÀ¸·Î °ø°İ
-	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_Low] = &CEyebat::AI_SecondPhase;	// ¼Ò±ØÀûÀ¸·Î °ø°İ
-	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_ZERO] = &CEyebat::AI_DeadPhase;	// ¼Ò±ØÀûÀ¸·Î °ø°İ
+	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_High] = &CEyebat::AI_FirstPhase;		// ì ê·¹ì ìœ¼ë¡œ ê³µê²©
+	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_Low] = &CEyebat::AI_SecondPhase;	// ì†Œê·¹ì ìœ¼ë¡œ ê³µê²©
+	m_fpEyebatAI[(int)AWARENESS::Yes][(int)PHASE::HP_ZERO] = &CEyebat::AI_DeadPhase;	// ì†Œê·¹ì ìœ¼ë¡œ ê³µê²©
 
 	return S_OK;
 }
@@ -59,13 +60,17 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
 
-	//Å×½ºÆ®
+	//í…ŒìŠ¤íŠ¸
 	//if (GetAsyncKeyState('5') & 0x8000)
 	//	m_stStatus.fHP -= 1.f;
 
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return 0;
+	}
+
 	Update_AI(fDeltaTime);
 
-
+	_CollisionComp->Update(m_pTransformCom);
 	return _uint();
 }
 
@@ -73,10 +78,12 @@ _uint CEyebat::LateUpdateGameObject(float fDeltaTime)
 {
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
-	if (AWARENESS::Yes == m_eAwareness)
-		m_bFrameLoopCheck = Frame_Move(fDeltaTime);
+
+
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
+
+	m_bFrameLoopCheck = Frame_Move(fDeltaTime);
 
 
 	return _uint();
@@ -87,38 +94,46 @@ HRESULT CEyebat::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	_CollisionComp->DebugDraw();
 
-	if (FAILED(Set_Texture()))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(Set_Texture()))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
 
-// ¸ó½ºÅÍ°¡ ÇÇÇØ¸¦ ¹ŞÀ½
+// ëª¬ìŠ¤í„°ê°€ í”¼í•´ë¥¼ ë°›ìŒ
 void CEyebat::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
-	// ÇÇÇØ¸¦ ¹ŞÁö ¾Ê´Â »óÅÂÀÓ
+	// í”¼í•´ë¥¼ ë°›ì§€ ì•ŠëŠ” ìƒíƒœì„
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
 		return;
 	}
 
-	CMonster::Hit(_Target, _CollisionInfo);		// CMonster ¿¡¼­ HP °¨¼Ò
-
-	// Ãæµ¹ °ü·Ã Á¤º¸
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster ì—ì„œ HP ê°ì†Œ
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::EYEBAT);
+	// ì¶©ëŒ ê´€ë ¨ ì •ë³´
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
+	CMonster::CreateBlood();
+}
+
+void CEyebat::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
 }
 
 void CEyebat::Update_AI(float fDeltaTime)
 {
 	if ((this->*m_fpAction)(fDeltaTime))
 	{
-		// ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇß´Â°¡?
+		// í”Œë ˆì´ì–´ë¥¼ ì¸ì‹í–ˆëŠ”ê°€?
 		if (PlayerAwareness()) {
 			m_eAwareness = AWARENESS::Yes;
 		}
@@ -193,7 +208,7 @@ bool CEyebat::Action_Move(float fDeltaTime)
 	float fLookLength = D3DXVec3Length(&vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 
-	if (fLookLength > 10)
+	if (fLookLength > 15)
 		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 
 	m_pTransformCom->m_TransformDesc.vPosition.y += fDeltaTime * m_iDir * 2;
@@ -233,11 +248,22 @@ bool CEyebat::Action_Shoot(float fDeltaTime)
 
 bool CEyebat::Action_Death(float fDeltaTime)
 {
+	if (m_fFrameCnt >= m_fEndFrame - 1)
+	{
+		m_fFrameCnt = m_fEndFrame - 1;
+		m_fStartFrame = m_fEndFrame - 1;
+		m_byObjFlag |= (BYTE)ObjFlag::Remove;
+		m_byMonsterFlag |= (BYTE)MonsterFlag::Dead;
+		CMonster::CreateFloorBlood();
+	}
+
 	return false;
 }
 
 void CEyebat::CreateBullet()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Incubus_attack_01.wav", CSoundMgr::EYEBAT);
 	_vector pPositionArr[2];
 	pPositionArr[0] = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
 	pPositionArr[1] = m_pTransformCom->m_TransformDesc.vPosition;
@@ -249,9 +275,10 @@ void CEyebat::CreateBullet()
 		return;
 }
 
+
 HRESULT CEyebat::AddComponents()
 {
-	if (FAILED(CMonster::AddComponents()))	// Monster.cpp¿¡¼­ RectTexture È£Ãâ
+	if (FAILED(CMonster::AddComponents()))	// Monster.cppì—ì„œ RectTexture í˜¸ì¶œ
 		return E_FAIL;
 
 	CTexture* pTexture = nullptr;
@@ -283,6 +310,19 @@ HRESULT CEyebat::AddComponents()
 		return E_FAIL;
 	m_mapTexture.emplace(m_wstrBase + L"Death", pTexture);
 
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::Monster;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = true;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
 	return S_OK;
 }
 
@@ -294,7 +334,7 @@ HRESULT CEyebat::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆì„ í…ìŠ¤ì²˜ ì¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -317,7 +357,7 @@ CEyebat * CEyebat::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CEyebat::Clone(void * pArg /*= nullptr*/)
 {
-	CEyebat* pClone = new CEyebat(*this); /* º¹»ç»ı¼ºÀÚ */
+	CEyebat* pClone = new CEyebat(*this); /* ë³µì‚¬ìƒì„±ì */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -331,7 +371,7 @@ CGameObject * CEyebat::Clone(void * pArg /*= nullptr*/)
 void CEyebat::Free()
 {	
 	// 2020.12.17 11:26 KMJ
-	// CMonster ¿¡¼­
+	// CMonster ì—ì„œ
 	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();

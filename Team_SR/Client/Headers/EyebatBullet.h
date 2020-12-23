@@ -10,12 +10,14 @@ private:
 	explicit CEyebatBullet(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CEyebatBullet() = default;
 public:
-	// CBullet¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CBulletÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
+public:
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	virtual HRESULT AddComponents() override;
 	void Movement(float fDeltaTime);

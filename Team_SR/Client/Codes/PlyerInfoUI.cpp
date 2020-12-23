@@ -72,30 +72,38 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlyerInfoUI::RenderGameObject()
 {
+<<<<<<< HEAD
 	if (FAILED(CGameUI::RenderGameObject()))
 		return E_FAIL;
+=======
+	//CGameUI::RenderGameObject();
+>>>>>>> origin/main
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
-		return E_FAIL;
-
-	//if (FAILED(CGameUI::RenderGameObject()))
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
 	//	return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_Texture(0)))
-		return E_FAIL;
-	
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
+	//	return E_FAIL;
 
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+<<<<<<< HEAD
+	//if (FAILED(CGameUI::RenderGameObject()))
+=======
+	//if (FAILED(CGameObject::RenderGameObject()))
+>>>>>>> origin/main
+	//	return E_FAIL;
+
+	//if (FAILED(m_pTextureCom->Set_Texture(0)))
+	//	return E_FAIL;
+	//
+	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
+
+	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }

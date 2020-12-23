@@ -30,7 +30,7 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 100.f;
 	m_stOriginStatus.fATK = 7.f;
-	m_stOriginStatus.fSpeed = 15.f;
+	m_stOriginStatus.fSpeed = 5.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -108,7 +108,8 @@ HRESULT CGlacierBullet::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bMapCollision = true;
+	_Info.bWallCollision = true;
+	_Info.bFloorCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),

@@ -16,6 +16,7 @@ enum class ERenderID
 	NoAlpha,
 	Alpha,
 	UI,
+	ParticleAfterAlpha,
 	MaxCount
 };
 

@@ -1,4 +1,4 @@
-﻿#include "..\Headers\Camera.h"
+#include "..\Headers\Camera.h"
 
 USING(Engine)
 

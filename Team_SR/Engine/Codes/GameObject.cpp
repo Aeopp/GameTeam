@@ -1,6 +1,5 @@
 #include "..\Headers\GameObject.h"
 #include "Management.h"
-
 #include "Scene.h"
 
 
@@ -37,8 +36,14 @@ HRESULT CGameObject::ReadyGameObject(void* pArg)
 
 _uint CGameObject::UpdateGameObject(float fDeltaTime)
 {
+	if (bGravity)
+	{
+		m_pTransformCom->m_TransformDesc.vPosition.y -= MATH::Gravity;
+	}
+
 	m_pTransformCom->UpdateTransform();
 
+	
 	return _uint();
 }
 
@@ -68,12 +73,21 @@ void CGameObject::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _Co
 
 }
 
+void CGameObject::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+}
+
+void CGameObject::SetLocation(const vec3 Location)
+{
+	 m_pTransformCom->SetLocation(Location); 
+}
+
 void CGameObject::Free()
 {
 	SafeRelease(m_pDevice);
 	SafeRelease(m_pTransformCom);
 	// 2020.12.17 11:26 KMJ
-	SafeRelease(_CollisionComp);		// Ãæµ¹ ÄÄÆ÷³ÍÆ®
+	SafeRelease(_CollisionComp);		// ì¶©ëŒ ì»´í¬ë„ŒíŠ¸
 
 	for (auto& Pair : m_Components)
 	{

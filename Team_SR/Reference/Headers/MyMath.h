@@ -6,6 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL MATH
 {
 public:
+	static constexpr float Gravity = 0.1f;
 	// Float ( == ) 연산시 사용.
 	template<class T>
 	typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
@@ -72,6 +73,10 @@ public:
 	{
 		return D3DXVec3LengthSq(&Lhs);
 	};
+	FORCEINLINE static float LengthSq(const vec4& Lhs)
+	{
+		return D3DXVec4LengthSq(&Lhs);
+	};
 	FORCEINLINE static float Dot(const vec3& Lhs, const vec3& Rhs)
 	{
 		return D3DXVec3Dot(&Lhs, &Rhs);
@@ -98,6 +103,15 @@ public:
 		return _transpose;
 	}
 
+	//static float Parabolic(const float InitY/*운동을 시작한 타이밍의 높이 좌표*/,
+	//	const float Speed/*단위 벡터가 아님 속도도 곱해야함*/,
+	//	const float Degree, const float t, const float Gravity);
+	static mat RotationMatrixFromAxis(const vec3 Axis, float Degree)
+	{
+		mat rot;
+		D3DXMatrixRotationAxis(&rot, &Axis, MATH::ToRadian(Degree));
+		return rot;
+	};
 
 	static mat WorldMatrix(const vec3& Scale, const vec3& Rotation,
 		const vec3& Location);

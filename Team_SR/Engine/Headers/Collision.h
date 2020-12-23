@@ -20,6 +20,8 @@ public:
 		vec3 Dir;
 		// ?? ?? ? ?? ?? ?
 		float CrossValue;
+		std::wstring Flag = L"None";
+		vec3 IntersectPoint;
 	};
 
 	// ??? ???? ?? ??? R(t) = Q+V(t) ??? t? ??.
@@ -51,10 +53,9 @@ public:
 
 	// ?? ??.
 	static std::pair<bool, Collision::Info> IsSegmentToSphere(const Segment& Lhs, const Sphere& Rhs,
-		float& t0,float& t1/*??? ??? ??????? ??? ?????
-				  ???? ??? ?? ???? t? ?? ??? ?? ?? ??*/)
+		float& t0,float& t1 , vec3& IntersectPoint/**/)
 	{
-		auto _Info=IsRayToSphere(Lhs._Ray, Rhs,t0,t1);
+		auto _Info=IsRayToSphere(Lhs._Ray, Rhs,t0,t1 , IntersectPoint);
 
 		bool bInnerSegment =  ( ((t0 >= 0 ) && (t0 <= Lhs.t) && _Info.first) ||
 								((t1 >= 0) &&  (t1 <= Lhs.t) && _Info.first) );
@@ -63,6 +64,7 @@ public:
 		//??
 		if (bInnerSegment)
 		{
+			OInfo.second.IntersectPoint = IntersectPoint;
 			OInfo.first = true;
 			OInfo.second = std::move(_Info.second);
 			return OInfo;
@@ -86,8 +88,7 @@ public:
 	// ????? ??? ??? + ??? ?? * t0 or t1 ? ??? ??? ? ?? ? ??.
 	// ??? ???? ?? ?? ????? ???? t0 ? ????? t1? ???? ??.
 	static std::pair<bool, Collision::Info> IsRayToSphere(const Ray& Lhs ,const Sphere& Rhs,
-		float& t0,float& t1 /*??? ??? ??????? ??? ?????
-				  ???? ??? ?? ???? t? ?? ??? ?? ?? ??*/)
+		float& t0,float& t1 ,vec3& OutIntersectPoint)
 	{
 		const vec3 RayStartToCenter = Rhs.Center - Lhs.Start;
 		const float dot =MATH::Dot(Lhs.Direction, RayStartToCenter);
@@ -108,6 +109,7 @@ public:
 		t1=dot + q;
 		if (Distance < Rhs.Radius && (t0>=0 ||t1>=0) )
 		{
+			OutIntersectPoint = IntersectPoint;
 			OInfo.first = true;	
 			// ??
 		}
@@ -120,7 +122,7 @@ public:
 
 	static std::pair<bool, Collision::Info> IsSphereToSphere(const Sphere& Lhs, const Sphere& Rhs)
 	{
-		const vec3 ToRhs = Rhs.Center - Lhs.Center;
+		vec3 ToRhs = Rhs.Center - Lhs.Center;
 		const float Distance = MATH::Length(ToRhs);
 		const float RadiusSum = Lhs.Radius + Rhs.Radius;
 
@@ -129,7 +131,10 @@ public:
 		if (Distance < RadiusSum)
 		{
 			OInfo.first = true;
-			OInfo.second = Collision::Info::Make(MATH::Normalize(ToRhs), RadiusSum - Distance);
+			ToRhs = MATH::Normalize(ToRhs);
+			const float CrossValue = RadiusSum - Distance;
+			OInfo.second.IntersectPoint = Lhs.Center + (ToRhs * CrossValue);
+			OInfo.second = Collision::Info::Make(ToRhs, CrossValue);
 			return OInfo;
 		}
 		else

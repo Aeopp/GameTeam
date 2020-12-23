@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef __GAMEOBJECT_H__
 
 #include "Base.h"
@@ -24,6 +24,8 @@ public:
 	//            업데이트와 늦은 업데이트 이후 충돌 되면 호출. 
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo);
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
+	virtual void ParticleHit(void* const _Particle, const Collision::Info & _CollisionInfo);
+	void SetLocation(const vec3 Location);
 	static const std::wstring Tag;
 	class CTransform* GetTransform() { return m_pTransformCom; };
 	// 2020.12.16 11:54 KMJ
@@ -53,7 +55,7 @@ protected:
 	class CTransform* m_pTransformCom = nullptr;
 	class CManagement* m_pManagement = nullptr;
 	CCollisionComponent* _CollisionComp = nullptr;
-
+	bool bGravity = false;
 public:
 	// 2020.12.16 11:29 KMJ
 	// 플래그 값들

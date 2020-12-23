@@ -10,7 +10,7 @@ private:
 	explicit CEyebat(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CEyebat() = default;
 public:
-	// CMonster¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CMonsterÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -19,8 +19,8 @@ public:
 
 public:
 	// 2020.12.17 11:25 KMJ
-	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ∏ÛΩ∫≈Õ∞° «««ÿ∏¶ πﬁ¿Ω
-
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	void Update_AI(float fDeltaTime);
 
@@ -36,7 +36,6 @@ private:
 	bool Action_Death(float fDeltaTime);
 	///////////////////////////////////////////////
 	void CreateBullet();
-
 private:
 	enum class AWARENESS { No, Yes, End };
 	enum class PHASE { HP_High, HP_Low, HP_ZERO, End };

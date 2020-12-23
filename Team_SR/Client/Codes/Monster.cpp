@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
+#include "FloorBlood.h"
+#include "NormalUVVertexBuffer.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -26,6 +28,7 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 
 	if (FAILED(CMonster::AddComponents()))
 		return E_FAIL;
+
 	if (nullptr != pArg)
 	{
 		// 구조체 크기 검사
@@ -46,7 +49,7 @@ _uint CMonster::UpdateGameObject(float fDeltaTime)
 
 	// 2020.12.17 11:08 KMJ
 	// 충돌 이동
-	CollisionMovement(fDeltaTime);
+	//CollisionMovement(fDeltaTime);
 
 	return _uint();
 }
@@ -62,11 +65,16 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMonster::IsBillboarding()
 {
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera");
 	if (nullptr == pCamera)
 		return E_FAIL;
 
-	_matrix matBillboardY, matView;
+	const auto& _TransformDesc =m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
+	/*_matrix matBillboardY, matView;
 	D3DXMatrixIdentity(&matBillboardY);
 	matView = pCamera->GetCameraDesc().matView;
 
@@ -77,7 +85,7 @@ HRESULT CMonster::IsBillboarding()
 
 	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
 
-	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;
+	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;*/
 
 
 
@@ -90,17 +98,52 @@ HRESULT CMonster::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
+	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
+
+	// 현재 사용중이던 텍스쳐를 여기에 세팅.
+	{
+		//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
+		{
+			auto iter_find = m_mapTexture.find(m_wstrTextureKey);
+			if (m_mapTexture.end() == iter_find)
+				return E_FAIL;
+			CTexture* pTexture = (CTexture*)iter_find->second;
+			IDirect3DBaseTexture9* const  DiffuseTexture = pTexture->GetTexture((_uint)m_fFrameCnt);
+
+			m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),DiffuseTexture);
+		}
+		// 1.       그냥 세팅을 안하거나
+		{
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+		}
+		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
+		{
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
+		}
+	}
+	// 월드 행렬 바인딩
+	_Effect.SetVSConstantData(m_pDevice, "World", World);
+	// 광택 설정 
+	_Effect.SetPSConstantData(m_pDevice, "Shine", Shine);
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+	_VertexBuffer->Render();
+
+
 	return S_OK;
 }
 
 HRESULT CMonster::AddComponents()
 {
-	/* For.Com_VIBuffer */
+
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
-		(CComponent**)&m_pVIBufferCom)))
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
 		return E_FAIL;
 
 	return S_OK;
@@ -147,7 +190,8 @@ bool CMonster::PlayerBeNear()
 	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
-	if (fDis <= m_stStatus.fMeleeRange) {
+	if (fDis <= m_stStatus.fMeleeRange) 
+	{
 		return true;
 	}
 	return false;
@@ -164,9 +208,38 @@ void CMonster::CollisionMovement(float fDeltaTime)
 	m_pTransformCom->m_TransformDesc.vPosition += m_vCollisionDir * m_fCrossValue * fDeltaTime;
 }
 
+void CMonster::CreateBlood()
+{
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Blood",
+		L"Layer_Blood",
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
+}
+
+void CMonster::CreateFloorBlood()
+{
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		(_int)ESceneID::Stage1st,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
+		return;
+
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
+}
+
 void CMonster::Free()
 {
-	SafeRelease(m_pVIBufferCom);		// 버텍스 버퍼
+	/// <summary> 2020 12 20 이호준
+	 SafeRelease(_VertexBuffer);
+	/// </summary>
+	
+	
 	for (auto& rPair : m_mapTexture)	// map 텍스처 릴리즈
 		SafeRelease(rPair.second);
 	m_mapTexture.clear();

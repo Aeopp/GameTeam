@@ -1,4 +1,4 @@
-﻿#include "..\Headers\Transform.h"
+#include "..\Headers\Transform.h"
 
 USING(Engine)
 

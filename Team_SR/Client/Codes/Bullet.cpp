@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Bullet.h"
-
+#include "Camera.h"
 CBullet::CBullet(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr)
@@ -49,6 +49,16 @@ _uint CBullet::UpdateGameObject(float fDeltaTime)
 _uint CBullet::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
+
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	if (nullptr == pCamera)
+		return E_FAIL;
+
+	const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
+	vec3 BillboardRotation = _TransformDesc.vRotation;
+	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
+	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
+
 
 	return _uint();
 }

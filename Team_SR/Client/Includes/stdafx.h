@@ -17,6 +17,7 @@
 #include <memory.h>
 #include <tchar.h>
 #include <process.h>
+#include <cassert>
 
 /*
 dx9
@@ -34,6 +35,13 @@ dx9
 #include "Client_Struct.h"
 #include "Management.h"
 #include "Engine_Include.h"
+
+/**********************************************************/
+#include <io.h>
+#include "fmod.h"
+#pragma comment (lib, "fmodex_vc.lib")
+#include "SoundMgr.h"
+/**********************************************************/
 
 #ifdef _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 

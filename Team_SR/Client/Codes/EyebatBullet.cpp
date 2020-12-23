@@ -32,7 +32,7 @@ HRESULT CEyebatBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 1.f, 1.f, 1.f };
 
 	m_stOriginStatus.dwPiercing = 0;
-	m_stOriginStatus.fRange = 100;
+	m_stOriginStatus.fRange = 150;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 1.f;
 	m_stOriginStatus.fImpact = 0.f;
@@ -52,13 +52,15 @@ _uint CEyebatBullet::UpdateGameObject(float fDeltaTime)
 {
 	//if (true == m_bTest)
 	//	return 0;
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CBullet::UpdateGameObject(fDeltaTime);
 	Movement(fDeltaTime);
 
-	if (m_pTransformCom->m_TransformDesc.vPosition.y < 0) {
-		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// ø¿∫Í¡ß∆Æ ªË¡¶ «√∑°±◊ ON
-		CreateFire();
-	}
+	//if (m_pTransformCom->m_TransformDesc.vPosition.y < 0) {
+	//	m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ∆Æ ÔøΩÔøΩÔøΩÔøΩ ÔøΩ√∑ÔøΩÔøΩÔøΩ ON
+	//	CreateFire();
+	//}
 	
 	_CollisionComp->Update(m_pTransformCom);
 
@@ -95,6 +97,14 @@ HRESULT CEyebatBullet::RenderGameObject()
 	return S_OK;
 }
 
+void CEyebatBullet::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT_BULLET);
+	CSoundMgr::Get_Instance()->PlaySound(L"explosion_2.wav", CSoundMgr::EYEBAT_BULLET);
+	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	
+	CreateFire();
+}
+
 HRESULT CEyebatBullet::AddComponents()
 {
 	if (FAILED(CBullet::AddComponents()))
@@ -110,13 +120,14 @@ HRESULT CEyebatBullet::AddComponents()
 		return E_FAIL;
 #pragma endregion
 
-	// √Êµπ ƒƒ∆˜≥Õ∆Æ
+	// Ï∂©Îèå Ïª¥Ìè¨ÎÑåÌä∏
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bMapCollision = true;
+	_Info.bWallCollision= true;
+	_Info.bFloorCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -131,8 +142,11 @@ void CEyebatBullet::Movement(float fDeltaTime)
 {
 	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition.y = m_fStartY + (m_fJumpPower * m_fJumpTime - 9.8f * m_fJumpTime * m_fJumpTime);
-	m_fJumpTime += 0.01f;
-	
+
+	float fDistance = D3DXVec3Length(&m_vLook);
+
+	//m_fJumpTime += 0.001f * fDistance;
+	m_fJumpTime += 0.05f;
 	//m_pTransformCom->m_TransformDesc.vRotation.z += 5.f;
 }
 
@@ -164,7 +178,7 @@ CEyebatBullet * CEyebatBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CEyebatBullet::Clone(void * pArg /*= nullptr*/)
 {
-	CEyebatBullet* pClone = new CEyebatBullet(*this); /* ∫πªÁª˝º∫¿⁄ */
+	CEyebatBullet* pClone = new CEyebatBullet(*this); /* Î≥µÏÇ¨ÏÉùÏÑ±Ïûê */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

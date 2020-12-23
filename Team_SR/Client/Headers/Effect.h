@@ -10,7 +10,7 @@ protected:
 	explicit CEffect(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CEffect() = default;
 public:
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() = 0;
 	virtual HRESULT ReadyGameObject(void* pArg = nullptr) = 0;
 	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
@@ -18,18 +18,21 @@ public:
 	virtual HRESULT RenderGameObject() = 0;
 protected:
 	virtual HRESULT AddComponents();
+	HRESULT IsBillboarding();
 protected:
-	void Frame_Move(float fDeltaTime);		// ÅØ½ºÃ³ ÇÁ·¹ÀÓ ÀÌµ¿
+	bool Frame_Move(float fDeltaTime);		// ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-	CTexture* m_pTexture;	// ÅØ½ºÃ³
-	float m_fFrameCnt;		// ÇÁ·¹ÀÓ ¹øÈ£
-	float m_fStartFrame;	// ÇÁ·¹ÀÓ ½ÃÀÛ
-	float m_fEndFrame;		// ÇÁ·¹ÀÓ ³¡
+	CTexture* m_pTexture;	// ï¿½Ø½ï¿½Ã³
+	float m_fFrameCnt;		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£
+	float m_fStartFrame;	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float m_fEndFrame;		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	float m_fFrameSpeed;					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½
+	bool m_bFrameLoopCheck;					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 };
 
 #endif // Effect_h__

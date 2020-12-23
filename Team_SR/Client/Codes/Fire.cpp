@@ -8,6 +8,7 @@ CFire::CFire(LPDIRECT3DDEVICE9 pDevice)
 
 HRESULT CFire::ReadyGameObjectPrototype()
 {
+
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
@@ -27,7 +28,7 @@ HRESULT CFire::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (nullptr != pArg)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = *(_vector*)pArg;
-		m_pTransformCom->m_TransformDesc.vPosition.y = 0.f;
+		m_pTransformCom->m_TransformDesc.vPosition.y += 1.f;
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 1.5f,1.5f,1.5f };
@@ -43,7 +44,8 @@ HRESULT CFire::ReadyGameObject(void * pArg /*= nullptr*/)
 _uint CFire::UpdateGameObject(float fDeltaTime)
 {
 	CMonster::UpdateGameObject(fDeltaTime);
-
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::FIRE);
+	CSoundMgr::Get_Instance()->PlaySound(L"fire_burn.wav", CSoundMgr::FIRE);
 	return _uint();
 }
 
@@ -55,7 +57,7 @@ _uint CFire::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	if (Frame_Move(fDeltaTime)) {
+	if (FrameMove_Fire(fDeltaTime)) {
 		// 2020.12.17 9:47
 		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);
 	}
@@ -68,14 +70,14 @@ HRESULT CFire::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
 
-	if (FAILED(Set_Texture()))
-		return E_FAIL;
+	//if (FAILED(Set_Texture()))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -111,12 +113,15 @@ HRESULT CFire::Set_Texture()
 	return S_OK;
 }
 
-void CFire::FrameMove_Fire(float fDeltaTime)
+bool CFire::FrameMove_Fire(float fDeltaTime)
 {
-	m_fFrameCnt += fDeltaTime * m_fFrameSpeed;
-	if (m_fFrameCnt > 13.f)
-		m_fFrameCnt = 8.f;
-
+	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
+	if (m_fFrameCnt >= m_fEndFrame)
+	{
+		m_fFrameCnt = m_fEndFrame;
+		return true;
+	}
+	return false;
 }
 
 CFire * CFire::Create(LPDIRECT3DDEVICE9 pDevice)

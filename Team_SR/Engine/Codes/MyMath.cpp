@@ -6,7 +6,7 @@ std::mt19937 MATH::gen{};
 const _vector MATH::AxisX{ 1,0,0 };
 const _vector MATH::AxisY{ 0,1,0 };
 const _vector MATH::AxisZ{ 0,0,1 };
-
+//constexpr float MATH::Gravity{ 0.1f };
 // 삼각형을 둘러치는 선분 3개.
 
 
@@ -120,6 +120,18 @@ std::array<Segment, 3ul> MATH::MakeSegmentFromFace(const std::array<vec3, 3ul>& 
 	 D3DXVec3TransformCoord(&RotationVec, &Lhs, &Rotation);
 	 return RotationVec;
  }
+
+ 
+
+ //float MATH::Parabolic(const float InitY,
+	// const float Speed, 
+	// const float Degree, 
+	// const float t, 
+	// const float Gravity)
+ //{
+	// return InitY + ((Speed * std::sinf(MATH::ToRadian(Degree)) * t)
+	//	 - (((t * t) * Gravity) * 0.5f));
+ //}
 
  mat MATH::WorldMatrix(const vec3& Scale, const vec3& Rotation, const vec3& Location)
  {

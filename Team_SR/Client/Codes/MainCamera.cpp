@@ -9,11 +9,11 @@ CMainCamera::CMainCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CCamera(pDevice)
 {
 	m_CameraDesc.fFovY = 45.f;
-	m_CameraDesc.fFar= 1000.f;
-	m_CameraDesc.fNear=1.f;
-	m_CameraDesc.fAspect= static_cast<float>(WINCX) / WINCY;
+	m_CameraDesc.fFar = 1000.f;
+	m_CameraDesc.fNear = 1.f;
+	m_CameraDesc.fAspect = static_cast<float>(WINCX) / WINCY;
 	m_CameraDesc.vUp = { 0,1,0 };
-}
+};
 
 HRESULT CMainCamera::ReadyGameObjectPrototype()
 {
@@ -43,7 +43,6 @@ _uint CMainCamera::UpdateGameObject(float fDeltaTime)
 	
 	}
 	
-	
 	return _uint();
 }
 
@@ -62,7 +61,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 	{
 		Shaking(fDeltaTime);
 
-		ShowCursor(false);
+		ShowCursor(true);
 
 		POINT _MousePt;
 		GetCursorPos(&_MousePt);
@@ -80,7 +79,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		ClientToScreen(g_hWnd, &ScreenCenterPT);
 		SetCursorPos(ScreenCenterPT.x, ScreenCenterPT.y);
 
-		m_CameraDesc.vEye = m_pTransformCom->m_TransformDesc.vPosition;
+		
 		_vector Look{ 0,0,1 };
 
 		Look = MATH::RotationVec(Look, MATH::AxisX, m_pTransformCom->m_TransformDesc.vRotation.x);
@@ -94,8 +93,9 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 		_vector Right{};
 		D3DXVec3Cross(&Right, &WorldUp, &Look);
-		D3DXVec3Cross(&m_CameraDesc.vUp, &Look, &Right);
 
+		m_CameraDesc.vUp = MATH::Cross(Look, Right);
+		m_CameraDesc.vEye = m_pTransformCom->m_TransformDesc.vPosition;
 		m_CameraDesc.vAt = m_CameraDesc.vEye + (Look * 100.f);
 
 		_PlayerTransform->m_TransformDesc.vRotation = TransformDesc.vRotation;

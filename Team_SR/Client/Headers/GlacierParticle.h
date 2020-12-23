@@ -10,18 +10,26 @@ private:
 	virtual ~CGlacierParticle() = default;
 
 public:
-	// CEffect¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CEffectÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
+public:
+	void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	virtual HRESULT AddComponents() override;
 public:
 	static CGlacierParticle* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+
+private:
+	_vector m_vLook;
+	float m_fStartY = 0.f;
+	float m_fJumpPower = 0.f;
+	float m_fJumpTime = 0.f;
 };
 
 #endif // GlacierParticle_h__

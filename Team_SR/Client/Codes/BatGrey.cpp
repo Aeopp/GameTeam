@@ -94,14 +94,14 @@ HRESULT CBatGrey::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	/*if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 		return E_FAIL;
 
 	if (FAILED(Set_Texture()))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -175,7 +175,8 @@ HRESULT CBatGrey::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.bWallCollision = true;
+	_Info.bFloorCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -195,7 +196,21 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	}
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BATGRAY);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::BATGRAY);
 	
+	// 이펙트
+	EffectBasicArgument* pArg = new EffectBasicArgument;
+	pArg->uiSize = sizeof(EffectBasicArgument);
+	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	pArg->eType = EFFECT::BloodHit_Big;
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_Particle",
+		L"Layer_Particle",
+		nullptr, (void*)pArg);
+
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
@@ -351,6 +366,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fFrameSpeed = 10.f;
 	// 목표 = 플레이어 위치 - 몬스터 위치
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	m_vAim.y = 0.f;
 	D3DXVec3Normalize(&m_vAim, &m_vAim);
 	return;
 
@@ -370,8 +386,72 @@ RETURN_MOVE:	// 이동
 // 소극적으로 공격
 void CBatGrey::AI_PassiveOffense()
 {
-	m_fpAction = &CBatGrey::Action_Idle;
-	m_fCountdown = 1.f;		// 1초 대기
+	// 랜덤으로 몇가지 패턴 행동을...
+
+	int iRand = rand() % 100;
+
+	// 50 %
+	// 도망
+	if (0 <= iRand && iRand < 50) {
+		goto RETURN_RUN;
+	}
+	// 50 %
+	// 공격
+	else if (50 <= iRand && iRand < 100) {
+		// 다음 공격 대기 시간까지 기다렸는가
+		if (m_fNextAtkWait <= 0) {
+			// 플레이어가 가까이 근접해 있나
+			if (PlayerBeNear()) {
+				// 근접 공격
+				goto RETURN_MELEE;
+			}
+			else {
+				// 원거리 공격
+				goto RETURN_SHOOT;
+			}
+		}
+		else {
+			goto RETURN_RUN;
+		}
+	}
+
+RETURN_RUN:	// 도망
+	m_fpAction = &CBatGrey::Action_Run;
+	m_fCountdown = 3.f;		// 3초 도망
+	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyBack")) {
+		m_wstrTextureKey = L"Component_Texture_BatGreyBack";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 7;
+		m_fFrameSpeed = 10.f;
+	}
+	return;
+
+RETURN_MELEE:	// 근접 공격
+	m_fpAction = &CBatGrey::Action_Melee;
+	m_wstrTextureKey = L"Component_Texture_BatGreyAttack";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 4;
+	m_fFrameSpeed = 5.f;
+	return;
+
+RETURN_SHOOT:	// 원거리 공격
+	m_fpAction = &CBatGrey::Action_Shoot;
+	m_wstrTextureKey = L"Component_Texture_BatGreyShoot";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 5;
+	m_fFrameSpeed = 10.f;
+	// 목표 = 플레이어 위치 - 몬스터 위치
+	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	m_vAim.y = 0.f;
+	D3DXVec3Normalize(&m_vAim, &m_vAim);
+	return;
+
+RETURN_MOVE:	// 이동
+	m_fpAction = &CBatGrey::Action_Move;
+	m_fCountdown = 1.f;		// 1초 이동
 	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyFly")) {
 		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
 		m_fFrameCnt = 0;
@@ -379,6 +459,7 @@ void CBatGrey::AI_PassiveOffense()
 		m_fEndFrame = 8;
 		m_fFrameSpeed = 10.f;
 	}
+	return;
 }
 
 // 행동 대기
@@ -445,6 +526,8 @@ bool CBatGrey::Action_Shoot(float fDeltaTime)
 // 근접 공격
 bool CBatGrey::Action_Melee(float fDeltaTime)
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BATGRAY);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_attack_01.wav", CSoundMgr::BATGRAY);
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
 		return true;
@@ -470,6 +553,25 @@ bool CBatGrey::Action_Dead(float fDeltaTime)
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
 		return false;
+	}
+
+	return false;
+}
+
+// 도망
+bool CBatGrey::Action_Run(float fDeltaTime)
+{
+	// 방향
+	vec3 vDir = m_pTransformCom->m_TransformDesc.vPosition - m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+	// 포지션 이동
+	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
+
+	// 지정된 시간만큼 이동 후 정지
+	m_fCountdown -= fDeltaTime;
+	if (m_fCountdown <= 0) {
+		return true;
 	}
 
 	return false;

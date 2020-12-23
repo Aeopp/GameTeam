@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\GlacierParticle.h"
 
-
 CGlacierParticle::CGlacierParticle(LPDIRECT3DDEVICE9 pDevice)
 	:CEffect(pDevice)
 {
@@ -26,11 +25,17 @@ HRESULT CGlacierParticle::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	if (nullptr != pArg)
 	{
+		m_pTransformCom->m_TransformDesc.vPosition = *(_vector*)pArg;
 	}
 
 	//m_pTransformCom->m_TransformDesc.vPosition = { 10.f,10.f,20.f };
+	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
+	m_fJumpPower = 15.f;
 	m_pTransformCom->m_TransformDesc.vScale = { 0.5f,0.5f,0.5f };
+	int iRandomX = rand() % 10 - 5;
+	int iRandomZ = rand() % 10 - 5;
 
+	m_vLook = { (float)iRandomX,0.f,(float)iRandomZ };
 	m_fFrameCnt = rand() % 5;
 
 
@@ -39,7 +44,14 @@ HRESULT CGlacierParticle::ReadyGameObject(void * pArg /*= nullptr*/)
 
 _uint CGlacierParticle::UpdateGameObject(float fDeltaTime)
 {
+
+	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime;
+	m_pTransformCom->m_TransformDesc.vPosition.y = m_fStartY + (m_fJumpPower * m_fJumpTime - 9.8f * m_fJumpTime * m_fJumpTime);
+	m_fJumpTime += 0.03f;
 	CEffect::UpdateGameObject(fDeltaTime);
+
+	//_CollisionComp->bMapCollision = true;
+	_CollisionComp->Update(m_pTransformCom);
 	return _uint();
 }
 
@@ -47,8 +59,12 @@ _uint CGlacierParticle::LateUpdateGameObject(float fDeltaTime)
 {
 	CEffect::LateUpdateGameObject(fDeltaTime);
 
+	CEffect::IsBillboarding();
+
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
+
+
 
 	return _uint();
 }
@@ -66,7 +82,13 @@ HRESULT CGlacierParticle::RenderGameObject()
 
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
+
 	return S_OK;
+}
+
+void CGlacierParticle::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	int i = 0;
 }
 
 HRESULT CGlacierParticle::AddComponents()
@@ -83,6 +105,20 @@ HRESULT CGlacierParticle::AddComponents()
 		(CComponent**)&m_pTexture)))
 		return E_FAIL;
 #pragma endregion
+
+	CCollisionComponent::InitInfo _Info;
+	_Info.bCollision = true;
+	_Info.bMapBlock = true;
+	_Info.Radius = 2.5f;
+	_Info.Tag = CCollisionComponent::ETag::Particle;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = false;
+	_Info.Owner = this;
+	CGameObject::AddComponent(
+		static_cast<int32_t>(ESceneID::Static),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
+		(CComponent**)&_CollisionComp, &_Info);
 
 	return S_OK;
 }
@@ -104,7 +140,7 @@ CGlacierParticle * CGlacierParticle::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CGlacierParticle::Clone(void * pArg /*= nullptr*/)
 {
-	CGlacierParticle* pClone = new CGlacierParticle(*this); /* º¹»ç»ý¼ºÀÚ */
+	CGlacierParticle* pClone = new CGlacierParticle(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

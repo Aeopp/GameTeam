@@ -19,7 +19,7 @@ public:
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();
-	void	FrameMove_Fire(float fDeltaTime);
+	bool	FrameMove_Fire(float fDeltaTime);
 public:
 	static CFire* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;

@@ -24,7 +24,6 @@ public:
 	_uint UpdateEngine();
 	HRESULT RenderEngine(HWND hWnd = nullptr);
 	HRESULT ClearForScene(_int iSceneIndex);
-
 public:
 	/* For.GraphicDev */
 	LPDIRECT3DDEVICE9 GetDevice();
@@ -37,9 +36,10 @@ public:
 public: /* For.GameObjectManager */
 	CGameObject* GetGameObject(_int iSceneIndex, const wstring& LayerTag, _uint iIndex = 0);
 	CComponent* GetComponent(_int iSceneIndex, const wstring& LayerTag, const wstring& ComponentTag, _uint iIndex = 0);
+	FORCEINLINE _int GetCurrentSceneIndex()const& { return CurrentSceneIdx; };
 	std::list<class CGameObject*> GetGameObjects(_int iSceneIndex, const wstring& LayerTag);
 
-	HRESULT AddGameObjectPrototype(_int iSceneIndex, const wstring& GameObjectTag, CGameObject* pPrototype);
+	HRESULT AddGameObjectPrototype(_int iSceneIndex, wstring GameObjectTag, CGameObject* pPrototype);
 	HRESULT AddGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, _int iToSceneIndex, const wstring& LayerTag, CGameObject** ppGameObject = nullptr, void* pArg = nullptr);
 	// 2020.12.16 15:31 KMJ
 	// 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
@@ -54,6 +54,7 @@ public: /* For.Renderer */
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
 	D3DCAPS9 GetCaps() { return m_pRenderer->GetCaps(); };
+	void SetEffectRender(std::function<void()> _EffectRender) { m_pRenderer->_ParticleRender = std::move(_EffectRender); };
 public:
 	ID3DXLine& GetDXLine() { return m_pGraphic_Dev->GetLine(); };
 private:
@@ -65,6 +66,10 @@ public:
 	static void ReleaseEngine();
 	int32_t CurrentSceneIdx;
 	bool bDebug = false;
+	std::function<void(const float)> _ParticleUpdate;
+	std::function<void(const float)> _ParticleLateUpdate;
+	std::function<void()> _ParticleCollision;
+	std::function<void()> _ParticleRender;
 private:
 	CGraphic_Device*	m_pGraphic_Dev = nullptr;
 	CTime_Manager*		m_pTimeManager = nullptr;

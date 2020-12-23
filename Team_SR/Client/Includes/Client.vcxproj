@@ -123,7 +123,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -161,41 +161,71 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\BatGrey.h" />
     <ClInclude Include="..\Headers\BatSpit.h" />
+    <ClInclude Include="..\Headers\Blood.h" />
     <ClInclude Include="..\Headers\Bullet.h" />
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
+    <ClInclude Include="..\Headers\Decorator.h" />
     <ClInclude Include="..\Headers\DXWrapper.h" />
     <ClInclude Include="..\Headers\Client_Struct.h" />
     <ClInclude Include="..\Headers\Client_Typedef.h" />
+    <ClInclude Include="..\Headers\GameUI.h" />
     <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
     <ClInclude Include="..\Headers\Fire.h" />
-    <ClInclude Include="..\Headers\GameUI.h" />
+    <ClInclude Include="..\Headers\FloorBlood.h" />
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Headers\GlacierBullet.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
+    <ClInclude Include="..\Headers\Hangman.h" />
+    <ClInclude Include="..\Headers\HangmanBomb.h" />
+    <ClInclude Include="..\Headers\Hellhound.h" />
+    <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\MainCamera.h" />
     <ClInclude Include="..\Headers\Map1st.h" />
+    <ClInclude Include="..\Headers\Map2nd.h" />
+    <ClInclude Include="..\Headers\Map3rd.h" />
+    <ClInclude Include="..\Headers\Map4th.h" />
+    <ClInclude Include="..\Headers\Map5th.h" />
+    <ClInclude Include="..\Headers\Map6th.h" />
     <ClInclude Include="..\Headers\MapBase.h" />
+    <ClInclude Include="..\Headers\MapBoss.h" />
+    <ClInclude Include="..\Headers\MapMidBoss.h" />
     <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\NormalUVVertexBuffer.h" />
     <ClInclude Include="..\Headers\Package.h" />
+    <ClInclude Include="..\Headers\Particle.h" />
+    <ClInclude Include="..\Headers\ParticleSystem.h" />
     <ClInclude Include="..\Headers\Player.h" />
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
+    <ClInclude Include="..\Headers\Shark.h" />
+    <ClInclude Include="..\Headers\SharkBullet.h" />
+    <ClInclude Include="..\Headers\SoundMgr.h" />
+    <ClInclude Include="..\Headers\Spider.h" />
+    <ClInclude Include="..\Headers\SpiderBullet.h" />
+    <ClInclude Include="..\Headers\Terret.h" />
+    <ClInclude Include="..\Headers\Stage2nd.h" />
+    <ClInclude Include="..\Headers\Stage3rd.h" />
+    <ClInclude Include="..\Headers\Stage4th.h" />
+    <ClInclude Include="..\Headers\Stage5th.h" />
+    <ClInclude Include="..\Headers\Stage6th.h" />
+    <ClInclude Include="..\Headers\StageBoss.h" />
+    <ClInclude Include="..\Headers\StageMidBoss.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
-    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -214,38 +244,72 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
+    <ClCompile Include="..\Codes\Blood.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
+    <ClCompile Include="..\Codes\Decorator.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
+    <ClCompile Include="..\Codes\GameUI.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
-    <ClCompile Include="..\Codes\GameUI.cpp" />
+    <ClCompile Include="..\Codes\FloorBlood.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierBullet.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp" />
+    <ClCompile Include="..\Codes\Hangman.cpp" />
+    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
+    <ClCompile Include="..\Codes\Hellhound.cpp" />
+    <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\MainCamera.cpp" />
     <ClCompile Include="..\Codes\Map1st.cpp" />
+    <ClCompile Include="..\Codes\Map2nd.cpp" />
+    <ClCompile Include="..\Codes\Map3rd.cpp" />
+    <ClCompile Include="..\Codes\Map4th.cpp" />
+    <ClCompile Include="..\Codes\Map5th.cpp" />
+    <ClCompile Include="..\Codes\Map6th.cpp" />
     <ClCompile Include="..\Codes\MapBase.cpp" />
+    <ClCompile Include="..\Codes\MapBoss.cpp" />
+    <ClCompile Include="..\Codes\MapMidBoss.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
+    <ClCompile Include="..\Codes\NormalUVVertexBuffer.cpp" />
     <ClCompile Include="..\Codes\Package.cpp" />
+    <ClCompile Include="..\Codes\Particle.cpp" />
+    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\ShopUI.cpp" />
+    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
+    <ClCompile Include="..\Codes\Shark.cpp" />
+    <ClCompile Include="..\Codes\SharkBullet.cpp" />
+    <ClCompile Include="..\Codes\SoundMgr.cpp" />
+    <ClCompile Include="..\Codes\Spider.cpp" />
+    <ClCompile Include="..\Codes\SpiderBullet.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
+    <ClCompile Include="..\Codes\Terret.cpp" />
+    <ClCompile Include="..\Codes\Stage2nd.cpp" />
+    <ClCompile Include="..\Codes\Stage3rd.cpp" />
+    <ClCompile Include="..\Codes\Stage4th.cpp" />
+    <ClCompile Include="..\Codes\Stage5th.cpp" />
+    <ClCompile Include="..\Codes\Stage6th.cpp" />
+    <ClCompile Include="..\Codes\StageBoss.cpp" />
+    <ClCompile Include="..\Codes\StageMidBoss.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ComponentTemplate.md">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />

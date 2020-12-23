@@ -3,6 +3,7 @@
 #include "CollisionComponent.h"
 #include "Camera.h"
 #include "GlacierBullet.h"
+#include "GlacierParticle.h"
 CGlacier::CGlacier(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
 {
@@ -70,6 +71,9 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 	//if (GetAsyncKeyState('4') & 0x8000)
 	//	m_stStatus.fHP -= 1;
 
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+	CSoundMgr::Get_Instance()->PlaySound(L"vaseBreak.wav", CSoundMgr::GALICER);
+
 	
 	// 2020.12.17 10:06 KMJ
 	// 몬스터가 죽음, AI, 충돌처리 X
@@ -79,9 +83,6 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 
 	//테스트
 	Update_AI(fDeltaTime);
-
-	cout << m_stStatus.fHP << endl;
-
 
 	_CollisionComp->Update(m_pTransformCom);
 
@@ -120,14 +121,14 @@ HRESULT CGlacier::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
 
-	if (FAILED(Set_Texture()))
-		return E_FAIL;
+	//if (FAILED(Set_Texture()))
+	//	return E_FAIL;
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -145,6 +146,7 @@ void CGlacier::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 충돌 관련 정보
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
+	CreateParticle();
 }
 
 HRESULT CGlacier::AddComponents()
@@ -192,7 +194,8 @@ HRESULT CGlacier::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 2.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bMapCollision = true;
+	_Info.bFloorCollision = true;
+	_Info.bWallCollision = true;
 	_Info.Owner = this;
 
 	CGameObject::AddComponent(
@@ -223,37 +226,37 @@ HRESULT CGlacier::Set_Texture()
 
 void CGlacier::Update_AI(float fDeltaTime)
 {
-	if ((this->*m_fpAction)(fDeltaTime)) 
-	{
-		// 플레이어를 인식했는가?
-		if (PlayerAwareness()) {
-			m_eAwareness = AWARENESS::Yes;	
-		}
-		else {
-			m_eAwareness = AWARENESS::No;	
-		}
+	//if ((this->*m_fpAction)(fDeltaTime)) 
+	//{
+	//	// 플레이어를 인식했는가?
+	//	if (PlayerAwareness()) {
+	//		m_eAwareness = AWARENESS::Yes;	
+	//	}
+	//	else {
+	//		m_eAwareness = AWARENESS::No;	
+	//	}
 
 
-		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
-			m_ePhase = PHASE::HP_High;	
-		}
-		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
-			&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
-		{
-			m_ePhase = PHASE::HP_Half;	
-		}
-		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
-			&& m_stStatus.fHP > 0)
-		{
-			m_ePhase = PHASE::HP_Low;
-		}
-		else if (m_stStatus.fHP < 0)
-		{
-			m_ePhase = PHASE::HP_ZERO;
-		}
+	//	if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
+	//		m_ePhase = PHASE::HP_High;	
+	//	}
+	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
+	//		&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
+	//	{
+	//		m_ePhase = PHASE::HP_Half;	
+	//	}
+	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
+	//		&& m_stStatus.fHP > 0)
+	//	{
+	//		m_ePhase = PHASE::HP_Low;
+	//	}
+	//	else if (m_stStatus.fHP < 0)
+	//	{
+	//		m_ePhase = PHASE::HP_ZERO;
+	//	}
 
-		(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
-	}
+	//	(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
+	//}
 }
 
 void CGlacier::AI_NoAwareness()
@@ -381,11 +384,16 @@ bool CGlacier::Action_Death(float fDeltaTime)
 	if (m_bFrameLoopCheck)
 	{
 		// 2020.12.17 10:03 KMJ
-		m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		//m_bDead = true;
 		//m_fFrameCnt = 8.f;
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+
+		for (_uint i = 0; i < 10; ++i)
+			CreateParticle();
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+		CSoundMgr::Get_Instance()->PlaySound(L"ice_breaking_1.wav", CSoundMgr::GALICER);
 	}
 	return false;
 }
@@ -396,6 +404,8 @@ void CGlacier::CreateBullet()
 	// 예약된 생성은 아규먼트가 다음 예약처리 시점까지 메모리에 있어야 함
 	// 동적 생성해서 힙에 데이터를 남김
 	// 메모리 해제는 만들어지는 객체에서 아규먼트 데이터 처리후 해제
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::GALICER);
+	CSoundMgr::Get_Instance()->PlaySound(L"supersonicnew_new_rocket_shot_.wav", CSoundMgr::GALICER);
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	BulletBasicArgument* pArg = new BulletBasicArgument;
 	pArg->uiSize = sizeof(BulletBasicArgument);
@@ -406,6 +416,15 @@ void CGlacier::CreateBullet()
 		CGameObject::Tag + TYPE_NAME<CGlacierBullet>(),
 		L"Layer_" + TYPE_NAME<CGlacierBullet>(),
 		nullptr, (void*)pArg);
+}
+
+void CGlacier::CreateParticle()
+{
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGlacierParticle>(),
+		L"Layer_" + TYPE_NAME<CGlacierParticle>(),
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 

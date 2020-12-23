@@ -3,7 +3,7 @@
 #ifndef __PLAYERINFOUI_H__
 #include "..\Headers\GameUI.h"
 
-//UI´Â TransformÀ» ¾²Áö ¸»°í »õ·Î ÇÒ°Í
+//UIï¿½ï¿½ Transformï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½
 
 
 USING(Engine)
@@ -14,17 +14,17 @@ private:
 	virtual ~CPlyerInfoUI() = default;
 
 public:
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
-public:	//»óÈ£ÀÛ¿ë°ü·Ã
+public:	//ï¿½ï¿½È£ï¿½Û¿ï¿½ï¿½ï¿½ï¿½
 
 
-private:	//³»ºÎ¸Ş¼­µå°ü·Ã
+private:	//ï¿½ï¿½ï¿½Î¸Ş¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	HRESULT	AddComponent();
 
 public:
@@ -32,9 +32,12 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
+
+private:	//ì»´í¬ë„ŒíŠ¸
+	class CVIBuffer* m_pVIBufferCom = nullptr; 
+	class CTexture* m_pTextureCom = nullptr;	//ì¼ë‹¨ ë‚˜ì¤‘ì—
+
 private:
-
-
 };
 
 #define __PLAYERINFOUI_H__
