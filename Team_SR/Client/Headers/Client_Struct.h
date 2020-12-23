@@ -27,6 +27,19 @@ struct ItemInfo {
 	int iAmount;			// 해당 아이템 효과의 양? tag = HP, iAmout = 50 이면 HP 50회복 이런식?
 };
 
+// 장식 정보
+struct DecoratorInfo {
+	DECO eType;				// 장식 종류
+	float fHP;				// 해당 장식이 파괴되는 물체면 HP값 셋팅
+};
+
+// 장식 다음 프레임 정보 구조체
+struct DecoNextFrameInfo {
+	float fStartFrame;		// 프레임 시작
+	float fEndFrame;		// 프레임 끝
+	float fTriggerHP;		// 다음 프레임 구간으로 넘어갈 체력 : 값이 -1.f 이면 마지막 프레임
+};
+
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
@@ -45,6 +58,24 @@ struct ItemBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
 	vec3 vPosition;				// 위치 정보
 	ITEM etype;					// 아이템 종류
+	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
+};
+
+// 이펙트 생성시 기본 전달 인자
+struct EffectBasicArgument {
+	_uint uiSize;				// 구조체 사이즈
+	vec3 vPosition;				// 위치 정보
+	EFFECT eType;				// 이펙트 종류
+};
+
+// 장식 생성시 기본 전달 인자
+struct DecoratorBasicArgument {
+	DecoratorBasicArgument()
+		:uiSize(sizeof(DecoratorBasicArgument)), vPosition{0.f,0.f,0.f}, eType(DECO::End), bDeleteFlag(false)
+	{}
+	_uint uiSize;				// 구조체 사이즈
+	vec3 vPosition;				// 위치 정보
+	DECO eType;					// 장식 종류
 	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
 

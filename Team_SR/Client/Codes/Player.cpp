@@ -534,9 +534,96 @@ void CPlayer::ShotGunShot()
 {
 	AnimationTextures::NotifyType _Notify;
 
-	_Notify[2ul] = [this]()
+
+	POINT _Pt;
+	GetCursorPos(&_Pt);
+	ScreenToClient(g_hWnd, &_Pt);
+	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
+	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
+	//	_Ray.Start = m_pTransformCom->GetLocation();
+
+	_Notify[1ul] = [this, _Ray]()
+	{
+
+		{
+			const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+
+			std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+			for (const auto& _CurPlane : _CurMap)
+			{
+				vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+				Normal = MATH::Normalize(Normal);
+				if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+				float t = 0;
+				vec3 IntersectPoint{ 0,0,0 };
+
+				if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+				{
+					const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+					_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+				}
+			}
+
+			auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+				const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+					return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+				});
+
+			if (find_iter != std::end(_IntersectInfo))
+			{
+				for (size_t i = 0; i < 12; ++i)
+				{
+					vec3 Point = std::get<0>(*find_iter);
+					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
+				};
+			}
+		}
+
+		{
+			const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+			std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
+
+			for (const auto& _CurPlane : _CurMap)
+			{
+				vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
+				Normal = MATH::Normalize(Normal);
+				if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
+				float t = 0;
+				vec3 IntersectPoint{ 0,0,0 };
+
+				if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
+				{
+					const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
+					_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
+				}
+			}
+
+			auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
+				const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
+					return std::get<2>(_Lhs) < std::get<2>(_Rhs);
+				});
+
+			if (find_iter != std::end(_IntersectInfo))
+			{
+
+				for (size_t i = 0; i < 12; ++i)
+				{
+					vec3 Point = std::get<0>(*find_iter);
+					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
+				};
+
+			}
+		}
+	};
+
+	_Notify[2ul] = [this, _Ray]()
 	{
 		ShotGunReload();
+
 
 		/*AnimationTextures::NotifyType _Notify;
 		_Notify[14ul] = [this]()
@@ -548,13 +635,6 @@ void CPlayer::ShotGunShot()
 
 	_AnimationTextures.ChangeAnim(L"ShotGun_Shot", 0.1f, 2ul,
 		false, std::move(_Notify));
-
-	POINT _Pt;
-	GetCursorPos(&_Pt);
-	ScreenToClient(g_hWnd, &_Pt);
-	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
-	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-//	_Ray.Start = m_pTransformCom->GetLocation();
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -586,79 +666,6 @@ void CPlayer::ShotGunShot()
 
 	
 
-	{
-		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
-
-		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
-
-		for (const auto& _CurPlane : _CurMap)
-		{
-			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
-			Normal = MATH::Normalize(Normal);
-			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
-			float t = 0;
-			vec3 IntersectPoint{ 0,0,0 };
-
-			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
-			{
-				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
-				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
-			}
-		}
-
-		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
-			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
-				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
-			});
-
-		if (find_iter != std::end(_IntersectInfo))
-		{
-			for (size_t i = 0; i < 12; ++i)
-			{
-				vec3 Point = std::get<0>(*find_iter);
-				Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
-				PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
-			};
-		}
-	}
-
-	{
-		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
-
-		std::vector<std::tuple<vec3, vec3, float>> _IntersectInfo;
-
-		for (const auto& _CurPlane : _CurMap)
-		{
-			vec3 Normal{ _CurPlane._Plane.a, _CurPlane._Plane.b, _CurPlane._Plane.c };
-			Normal = MATH::Normalize(Normal);
-			if (MATH::Dot(Normal, _Ray.Direction) > 0)continue;
-			float t = 0;
-			vec3 IntersectPoint{ 0,0,0 };
-
-			if (Collision::IsTriangleToRay(_CurPlane, _Ray, t, IntersectPoint))
-			{
-				const vec3 Normal{ _CurPlane._Plane.a , _CurPlane._Plane.b, _CurPlane._Plane.c };
-				_IntersectInfo.push_back({ IntersectPoint, Normal ,t });
-			}
-		}
-
-		auto find_iter = std::min_element(std::begin(_IntersectInfo), std::end(_IntersectInfo), [](
-			const std::tuple < vec3, vec3, float>& _Lhs, const std::tuple < vec3, vec3, float>& _Rhs) {
-				return std::get<2>(_Lhs) < std::get<2>(_Rhs);
-			});
-
-		if (find_iter != std::end(_IntersectInfo))
-		{
-
-			for (size_t i = 0; i < 12; ++i)
-			{
-				vec3 Point = std::get<0>(*find_iter);
-				Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
-				PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
-			};
-		
-		}
-	}
 }
 
 void CPlayer::ShotGunReload()

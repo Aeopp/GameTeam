@@ -197,6 +197,17 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
 	
+	// 이펙트
+	EffectBasicArgument* pArg = new EffectBasicArgument;
+	pArg->uiSize = sizeof(EffectBasicArgument);
+	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	pArg->eType = EFFECT::BloodHit_Big;
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_Particle",
+		L"Layer_Particle",
+		nullptr, (void*)pArg);
+
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
@@ -376,14 +387,14 @@ void CBatGrey::AI_PassiveOffense()
 
 	int iRand = rand() % 100;
 
-	// 30 %
+	// 50 %
 	// 도망
-	if (0 <= iRand && iRand < 30) {
+	if (0 <= iRand && iRand < 50) {
 		goto RETURN_RUN;
 	}
-	// 40 %
+	// 50 %
 	// 공격
-	else if (30 <= iRand && iRand < 70) {
+	else if (50 <= iRand && iRand < 100) {
 		// 다음 공격 대기 시간까지 기다렸는가
 		if (m_fNextAtkWait <= 0) {
 			// 플레이어가 가까이 근접해 있나
@@ -398,14 +409,6 @@ void CBatGrey::AI_PassiveOffense()
 		}
 		else {
 			goto RETURN_RUN;
-		}
-	}
-	// 30 %
-	// 이동
-	else if (70 <= iRand && iRand < 100) {
-		// 플레이어가 멀리 있나
-		if (!PlayerBeNear()) {
-			goto RETURN_MOVE;
 		}
 	}
 

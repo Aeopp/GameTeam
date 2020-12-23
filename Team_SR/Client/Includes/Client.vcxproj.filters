@@ -91,6 +91,9 @@
     <Filter Include="02.GameObject\02.Monster\07.Hellhound">
       <UniqueIdentifier>{bceefafb-65cd-4150-9a7a-1102d880cc71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\08.Decorator">
+      <UniqueIdentifier>{b784e838-9699-4b0f-b100-f57df68a00ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -209,12 +212,10 @@
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="..\Headers\BatSpit.h" />
     <ClInclude Include="..\Headers\Bullet.h" />
-    <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
     <ClInclude Include="..\Headers\Fire.h" />
     <ClInclude Include="..\Headers\GlacierBullet.h" />
-    <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\NormalUVVertexBuffer.h">
       <Filter>03.Component</Filter>
     </ClInclude>
@@ -260,12 +261,16 @@
     <ClInclude Include="..\Headers\Stage6th.h">
       <Filter>01.Scene\01.Stage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UIManager.h" />
+    <ClInclude Include="..\Headers\ParticleSystem.h" />
+    <ClInclude Include="..\Headers\Decorator.h" />
+    <ClInclude Include="..\Headers\Effect.h" />
+    <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\Item.h" />
-    <ClInclude Include="..\Headers\UIManager.h" />
-    <ClInclude Include="..\Headers\ParticleSystem.h" />
+    <ClInclude Include="..\Headers\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -354,19 +359,14 @@
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
-    <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
     <ClCompile Include="..\Codes\GlacierBullet.cpp" />
-    <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\NormalUVVertexBuffer.cpp">
       <Filter>03.Component</Filter>
     </ClCompile>
     <ClCompile Include="ComponentTemplate.md" />
-    <ClCompile Include="..\Codes\Glacier.cpp">
-      <Filter>02.GameObject\02.Monster\02.BatGrey</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Map2nd.cpp">
       <Filter>02.GameObject\03.Map</Filter>
     </ClCompile>
@@ -409,12 +409,17 @@
     <ClCompile Include="..\Codes\Stage6th.cpp">
       <Filter>01.Scene\01.Stage</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UIManager.cpp" />
+    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
+    <ClCompile Include="..\Codes\Decorator.cpp" />
+    <ClCompile Include="..\Codes\Effect.cpp" />
+    <ClCompile Include="..\Codes\Glacier.cpp" />
+    <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
-    <ClCompile Include="..\Codes\UIManager.cpp" />
-    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
+    <ClCompile Include="..\Codes\Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
