@@ -514,15 +514,15 @@ void CPlayer::Free()
 static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 Normal ,float Scale)
 {
 	Particle _Particle;
-	_Particle.StartLocation = IntersectPoint + Normal * 0.1f;
-	_Particle.Location = IntersectPoint + Normal * 0.1f;
+	Normal = MATH::Normalize(Normal);
+	_Particle.StartLocation = IntersectPoint + (Normal * 0.0001f);
+	_Particle.Location = IntersectPoint + (Normal * 0.0001f);
 	_Particle.Delta = FLT_MAX;
 	_Particle.Durtaion = 1000.f;
 	_Particle.EndFrame = 1ul;
 	_Particle.Name = L"BulletHole" + std::to_wstring(MATH::RandInt({ 0,3 }));
 	_Particle.Scale = { Scale,Scale,Scale };
-
-	Normal = MATH::Normalize(Normal);
+	
 	const vec3 Axis = MATH::Cross({ 0,0,-1 }, Normal);
 	float Degree = MATH::ToDegree(std::acosf(MATH::Dot(Normal, vec3{ 0,0,-1 })));
 	//if (MATH::almost_equal(Axis.y, 1.f) || MATH::almost_equal(Axis.y, 0.0f))
