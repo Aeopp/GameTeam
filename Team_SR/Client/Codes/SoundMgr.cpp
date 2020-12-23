@@ -17,7 +17,7 @@ void CSoundMgr::Initialize()
 {
 	FMOD_System_Create(&m_pSystem);
 	
-	// 1. ½Ã½ºÅÛ Æ÷ÀÎÅÍ, 2. »ç¿ëÇÒ °¡»óÃ¤³Î ¼ö , ÃÊ±âÈ­ ¹æ½Ä) 
+	// 1. ì‹œìŠ¤í…œ í¬ì¸í„°, 2. ì‚¬ìš©í•  ê°€ìƒì±„ë„ ìˆ˜ , ì´ˆê¸°í™” ë°©ì‹) 
 	FMOD_System_Init(m_pSystem, 32, FMOD_INIT_NORMAL, NULL);
 
 	LoadSoundFile(); 

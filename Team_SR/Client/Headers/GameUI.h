@@ -14,10 +14,13 @@ public:
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) PURE;
 	virtual _uint UpdateGameObject(float fDeltaTime) PURE;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) PURE;
-	virtual HRESULT RenderGameObject() override;
+	virtual HRESULT RenderGameObject() override PURE;
 
 private:
 	HRESULT	AddComponent();
+
+protected:
+	_uint SetupUIMatrix(UI_DESC& _desc);
 
 public:
 	virtual CGameObject * Clone(void * pArg = nullptr) PURE;

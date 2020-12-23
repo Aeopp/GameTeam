@@ -3,6 +3,7 @@
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "Layer.h"
+#include "VIBuffer_UITexture.h"
 
 CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameUI(pDevice)
@@ -26,13 +27,15 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	if (FAILED(AddComponent()))
 		return E_FAIL;
 	
-	m_UIDesc.vUISize.x = WINCX / 7.f;
-	m_UIDesc.vUISize.y = WINCY / 7.f;
+	m_UIDesc.vUISize.x = WINCX / 3.f;
+	m_UIDesc.vUISize.y = WINCY / 2.f;
 	m_UIDesc.vUISize.z = 0;
 
-	m_UIDesc.vUIPos.x = -(WINCX / 2) + m_UIDesc.vUISize.x;
-	m_UIDesc.vUIPos.y = -(WINCY / 2) + m_UIDesc.vUISize.y + 10.f;
-	m_UIDesc.vUIPos.z = 0.f;
+	m_UIDesc.vUIPos.x = -(WINCX / 2);
+	m_UIDesc.vUIPos.y = -(WINCY / 2);
+	m_UIDesc.vUIPos.z = 2.f;
+
+	m_UIDesc.vCenter = _vector(-1.f, -1.f, 0.f);
 
 	return S_OK;
 }
@@ -69,7 +72,8 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CPlyerInfoUI::RenderGameObject()
 {
-	//CGameUI::RenderGameObject();
+	if (FAILED(CGameUI::RenderGameObject()))
+		return E_FAIL;
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
 	//	return E_FAIL;
@@ -80,7 +84,7 @@ HRESULT CPlyerInfoUI::RenderGameObject()
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
 	//	return E_FAIL;
 
-	//if (FAILED(CGameObject::RenderGameObject()))
+	//if (FAILED(CGameUI::RenderGameObject()))
 	//	return E_FAIL;
 
 	//if (FAILED(m_pTextureCom->Set_Texture(0)))
