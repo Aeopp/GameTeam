@@ -211,7 +211,7 @@ HRESULT CHangman::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;
