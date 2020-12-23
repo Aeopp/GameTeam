@@ -332,6 +332,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 }
 void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
 {
+	// 박쥐
 	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
 	{
 		using SpawnType = CEyebat;
@@ -345,9 +346,10 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<SpawnType>(),
 			(int)CurrentSceneID,
-			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
 	}
 
+	// 글레이서
 	if (ObjectName.find(L"Glacier") != std::wstring::npos)
 	{
 		using SpawnType = CGlacier;
@@ -361,7 +363,7 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<SpawnType>(),
 			(int)CurrentSceneID,
-			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
 	}
 
 	// 행맨
@@ -378,7 +380,7 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<SpawnType>(),
 			(int)CurrentSceneID,
-			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
 	}
 
 	// 헬 하운드
@@ -395,7 +397,58 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<SpawnType>(),
 			(int)CurrentSceneID,
-			CLayer::Tag + TYPE_NAME<SpawnType>(), nullptr, &_MonsterBasicArgument);
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
+	}
+
+	// 스파이더
+	if (ObjectName.find(L"Spider") != std::wstring::npos)
+	{
+		using SpawnType = CHellhound;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
+	}
+
+	// 눈깔 박쥐
+	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
+	{
+		using SpawnType = CHellhound;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
+	}
+
+	// 보스 샤크
+	if (ObjectName.find(L"Shark") != std::wstring::npos)
+	{
+		using SpawnType = CHellhound;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
 	}
 
 	

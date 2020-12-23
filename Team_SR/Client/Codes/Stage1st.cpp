@@ -41,17 +41,17 @@ HRESULT CStage1st::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 		return E_FAIL;
 	{
-		MonsterBasicArgument stArg;
-		stArg.uiSize = sizeof(MonsterBasicArgument);
-		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 0.f, 10.f, 20.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Shark",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Monster",
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+		//MonsterBasicArgument stArg;
+		//stArg.uiSize = sizeof(MonsterBasicArgument);
+		//stArg.pPlayer = m_pPlayer;
+		//stArg.vPosition = { 0.f, 10.f, 20.f };
+		//if (FAILED(m_pManagement->AddGameObjectInLayer(
+		//	(_int)ESceneID::Static,
+		//	CGameObject::Tag + L"Hangman",
+		//	(_int)CurrentSceneID,
+		//	CLayer::Tag + L"Monster",
+		//	nullptr, static_cast<void*>(&stArg))))
+		//	return E_FAIL;
 
 		//MonsterBasicArgument stArg;
 		//stArg.uiSize = sizeof(MonsterBasicArgument);
@@ -188,27 +188,29 @@ HRESULT CStage1st::ReadyScene()
 */
 	}
 
-	SpawnObjectFromName(L"Torch", { -10.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Candle", { -9.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Barrel", { -7.f, 10.f, 10.f });
-	SpawnObjectFromName(L"BarrelBomb", { -5.f, 10.f, 10.f });
-	SpawnObjectFromName(L"BarrelWaste", { -3.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Box1", { -10.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Box2", { -8.f, 10.f, 14.f });
-	SpawnObjectFromName(L"BoxSteel1", { -6.f, 10.f, 14.f });
-	SpawnObjectFromName(L"BoxSteel2", { -4.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Headstone1", { 0.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Headstone2", { 4.f, 10.f, 10.f });
-	SpawnObjectFromName(L"Headstone3", { 8.f, 10.f, 10.f });
-	SpawnObjectFromName(L"ThornyVine", { 0.f, 10.f, 14.f });
-	SpawnObjectFromName(L"TreeBlight", { 3.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Tree1", { 10.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Tree2", { 15.f, 10.f, 14.f });
-	SpawnObjectFromName(L"Dead_Caleb", { -20.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Doomguy", { -14.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Duke", { -8.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Sam", { 0.f, 10.f, 16.f });
-	SpawnObjectFromName(L"Dead_Wang", { 6.f, 10.f, 16.f });
+	//SpawnObjectFromName(L"Torch", { -10.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"Candle", { -9.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"Barrel", { -7.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"BarrelBomb", { -5.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"BarrelWaste", { -3.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"Box1", { -10.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"Box2", { -8.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"BoxSteel1", { -6.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"BoxSteel2", { -4.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"Headstone1", { 0.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"Headstone2", { 4.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"Headstone3", { 8.f, 10.f, 10.f });
+	//SpawnObjectFromName(L"ThornyVine", { 0.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"TreeBlight", { 3.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"Tree1", { 10.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"Tree2", { 15.f, 10.f, 14.f });
+	//SpawnObjectFromName(L"Dead_Caleb", { -20.f, 10.f, 16.f });
+	//SpawnObjectFromName(L"Dead_Doomguy", { -14.f, 10.f, 16.f });
+	//SpawnObjectFromName(L"Dead_Duke", { -8.f, 10.f, 16.f });
+	//SpawnObjectFromName(L"Dead_Sam", { 0.f, 10.f, 16.f });
+	//SpawnObjectFromName(L"Dead_Wang", { 6.f, 10.f, 16.f });
+
+	//SpawnObjectFromName(L"Hangman", { 0.f, 10.f, 16.f });
 
 	//LoadObjects();
 
