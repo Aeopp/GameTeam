@@ -248,6 +248,8 @@ void CPlayer::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _Collis
 
 void CPlayer::MoveForward(const float DeltaTime)&
 {
+	PlayStepSound();
+
 	auto& Desc = m_pTransformCom->m_TransformDesc;
 	const mat world = Desc.matWorld;
 	vec3 Forward{ world._31,0.f,world._33 };
@@ -258,6 +260,7 @@ void CPlayer::MoveForward(const float DeltaTime)&
 
 void CPlayer::MoveRight(const float DeltaTime)&
 {
+	PlayStepSound();
 	auto& Desc = m_pTransformCom->m_TransformDesc;
 	const mat world = Desc.matWorld;
 	vec3 Right{ world._11,0.f,world._13 };
@@ -532,6 +535,8 @@ static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 N
 
 void CPlayer::ShotGunShot()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
 
@@ -670,6 +675,13 @@ void CPlayer::ShotGunShot()
 
 void CPlayer::ShotGunReload()
 {
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_pumpin.wav", CSoundMgr::PLAYER_WEAPON);
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::TANP);
+	CSoundMgr::Get_Instance()->PlaySound(L"TanP.wav", CSoundMgr::TANP);
+
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[3ul] = [this]()
@@ -725,6 +737,11 @@ void CPlayer::ShotGunReload()
 
 void CPlayer::DaggerStab()
 {
+	int iRandomIndex = rand() % 2 + 1;
+	TCHAR szSoundKey[64] = L"";
+	swprintf_s(szSoundKey, L"dagger_metal_swing_%d.wav", iRandomIndex);
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(szSoundKey, CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[4ul] = [this]()
@@ -769,6 +786,9 @@ void CPlayer::DaggerStab()
 
 void CPlayer::DaggerThrow()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"knife_throw.wav", CSoundMgr::PLAYER_WEAPON);
+
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[12ul] = [this]()
@@ -812,6 +832,8 @@ void CPlayer::DaggerThrow()
 
 void CPlayer::AkimboFire()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"pistol_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[4ul] = [this]()
@@ -955,6 +977,9 @@ void CPlayer::AkimboFire()
 
 void CPlayer::MagnumFire()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"harvester_shot.wav", CSoundMgr::PLAYER_WEAPON);
+
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[4ul] = [this]()
@@ -1096,6 +1121,8 @@ void CPlayer::MagnumFire()
 
 void CPlayer::StaffFire()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"Staff_Shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
@@ -1111,6 +1138,8 @@ void CPlayer::StaffFire()
 
 void CPlayer::StaffCharge()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
@@ -1143,6 +1172,8 @@ void CPlayer::StaffRelease()
 
 void CPlayer::StaffLoop()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav", CSoundMgr::PLAYER_WEAPON);
 	_AnimationTextures.ChangeAnim(L"Staff_Loop", 0.07f, 10, true);
 	// 공격 키 눌렀을때 웨폰 상태가 스태프라면 Fire 하고 난 다음에 
 	// bStaffLoop =false 로 만들기
@@ -1238,4 +1269,15 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		PRINT_LOG(L"Warning!", L"Not Valid Player Lighting Name!");
 	}
 #endif 
+}
+
+void CPlayer::PlayStepSound()
+{
+	++m_iStepIndex;
+	if (m_iStepIndex > 3)
+		m_iStepIndex = 0;
+	TCHAR szSoundKey_Step[64] = L"";
+	swprintf_s(szSoundKey_Step, L"Step%d.wav", m_iStepIndex);
+
+	CSoundMgr::Get_Instance()->PlaySound(szSoundKey_Step, CSoundMgr::PLAYER_STEP);
 }

@@ -83,6 +83,9 @@ private:
 		{L"StaffCharge",0.f},
 		{L"StaffRelease",0.f}
 	};
+	void PlayStepSound();
+private:
+	int	m_iStepIndex = 0;
 };
 
 #define __PLAYER_H__

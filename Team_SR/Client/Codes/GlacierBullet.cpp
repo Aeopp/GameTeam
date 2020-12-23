@@ -30,7 +30,7 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 100.f;
 	m_stOriginStatus.fATK = 7.f;
-	m_stOriginStatus.fSpeed = 15.f;
+	m_stOriginStatus.fSpeed = 5.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;

@@ -43,6 +43,7 @@ public:
 		Item,
 		Decorator,
 		DestroyDecorator,
+		Particle,
 	};
 public:
 	struct InitInfo

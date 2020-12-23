@@ -18,18 +18,21 @@ public:
 	virtual HRESULT RenderGameObject() = 0;
 protected:
 	virtual HRESULT AddComponents();
+	HRESULT IsBillboarding();
 protected:
-	void Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
+	bool Frame_Move(float fDeltaTime);		// �ؽ�ó ������ �̵�
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-	CTexture* m_pTexture;	// 텍스처
-	float m_fFrameCnt;		// 프레임 번호
-	float m_fStartFrame;	// 프레임 시작
-	float m_fEndFrame;		// 프레임 끝
+	CTexture* m_pTexture;	// �ؽ�ó
+	float m_fFrameCnt;		// ������ ��ȣ
+	float m_fStartFrame;	// ������ ����
+	float m_fEndFrame;		// ������ ��
+	float m_fFrameSpeed;					// ������ �ӵ�
+	bool m_bFrameLoopCheck;					// ������ ����
 };
 
 #endif // Effect_h__

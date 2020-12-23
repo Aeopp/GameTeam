@@ -31,6 +31,8 @@ protected:
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
 	bool PlayerBeNear();					// 플레이어가 가까이 근접해 있으면 true, 아니면 false
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
+	void CreateBlood();
+	void CreateFloorBlood();
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;

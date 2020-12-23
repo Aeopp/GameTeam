@@ -234,7 +234,8 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 	}
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
-
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::HELLGROUND);
+	CSoundMgr::Get_Instance()->PlaySound(L"hangman_pain1.wav", CSoundMgr::HELLGROUND);
 	// 체력이 없음
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
@@ -499,7 +500,7 @@ bool CHellhound::Action_Hit(float fDeltaTime)
 bool CHellhound::Action_Dead(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
-		m_byMonsterFlag != static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
 		return false;

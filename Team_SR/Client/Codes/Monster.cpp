@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
+#include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
@@ -48,7 +49,7 @@ _uint CMonster::UpdateGameObject(float fDeltaTime)
 
 	// 2020.12.17 11:08 KMJ
 	// 충돌 이동
-	CollisionMovement(fDeltaTime);
+	//CollisionMovement(fDeltaTime);
 
 	return _uint();
 }
@@ -132,7 +133,6 @@ HRESULT CMonster::RenderGameObject()
 	_VertexBuffer->Render();
 
 
-
 	return S_OK;
 }
 
@@ -206,6 +206,31 @@ void CMonster::CollisionMovement(float fDeltaTime)
 	if (m_fCrossValue < 0.f)
 		m_fCrossValue = 0.f;
 	m_pTransformCom->m_TransformDesc.vPosition += m_vCollisionDir * m_fCrossValue * fDeltaTime;
+}
+
+void CMonster::CreateBlood()
+{
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Blood",
+		L"Layer_Blood",
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
+}
+
+void CMonster::CreateFloorBlood()
+{
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		(_int)ESceneID::Stage1st,
+		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
+		return;
+
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 void CMonster::Free()

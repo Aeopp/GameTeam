@@ -11,12 +11,17 @@
 #include "DXWrapper.h"
 #include "PlyerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
+
+#include "Terret.h"
+#include "Blood.h"
+#include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
 #include "NormalUVVertexBuffer.h"
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
+#include "FloorBlood.h"
 #include "UIManager.h"	// UI 매니저
 #include "Item.h"		// 아이템
 #include "Hangman.h"	// 행맨
@@ -26,6 +31,8 @@
 
 #include "Particle.h"	// 파티클
 #include "Decorator.h"	// 장식품
+#include "Shark.h"
+#include "SharkBullet.h"
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -75,6 +82,8 @@ HRESULT CMainApp::ReadyMainApp()
 	}
 
 	srand(0);	// 랜덤 시드값
+
+	CSoundMgr::Get_Instance()->Initialize();
 
 	return S_OK;
 }
@@ -210,7 +219,45 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region GameObject_Spider
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CSpider>(),
+			CSpider::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_Blood
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CBlood>(),
+			CBlood::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_FloorBlood
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
+			CFloorBlood::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region GameObject_Terret
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CTerret>(),
+			CTerret::Create(m_pDevice))))
+			return E_FAIL;
 	// 아이템 오브젝트
+#pragma endregion
+#pragma region GameObject_Shark
+		if (FAILED(m_pManagement->AddGameObjectPrototype(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<CShark>(),
+			CShark::Create(m_pDevice))))
+			return E_FAIL;
+#pragma endregion
 #pragma region GameObject_Fire
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
@@ -218,6 +265,8 @@ HRESULT CMainApp::ReadyStaticResources()
 		CItem::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	
 
 	// 행맨 오브젝트
 #pragma region GameObject_Hangman
@@ -253,6 +302,7 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+
 	// 장식품 오브젝트
 #pragma region GameObject_Decorator
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -261,6 +311,16 @@ HRESULT CMainApp::ReadyStaticResources()
 		CDecorator::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+#pragma region GameObject_Sharkicile
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
+		CSharkBullet::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+
 		
 
 	/* For.Component */
@@ -346,6 +406,14 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		wstrTextureGlacier + L"Bullet",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Bullet/Bullet%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Particle
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureGlacier + L"Particle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Glacier/Particle/Particle%d.png", 5))))
 		return E_FAIL;
 #pragma endregion
 
@@ -477,6 +545,75 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region Component_Texutre_Spider
+#pragma region Spider_Attack
+	wstring wstrTextureSpider = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CSpider>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Attack/Attack%d.png", 14))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Death
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Death/Death%d.png", 14))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Hit
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Hit/Hit%d.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Walk
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Walk/Walk%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Spider_Wep
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureSpider + L"Wep",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Wep/Wep%d.png", 1))))
+		return E_FAIL;
+#pragma endregion
+#pragma endregion
+
+#pragma region Component_Texture_Blood
+	wstring wstrTextureBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CBlood>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureBlood,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Blood/Blood%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_FloorBlood
+	wstring wstrTextureFloorBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFloorBlood>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureFloorBlood,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/FloorBlood/FloorBlood%d.png", 4))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_Terret
+	wstring wstrTextureTerret = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CTerret>();
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrTextureTerret,
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Terret/Fire/Fire%d.png", 8))))
+		return E_FAIL;
+#pragma endregion
 	// 아이템 텍스처들
 #pragma region Component_Texture_Item
 	// 겁나큰 체력 포션
@@ -893,6 +1030,105 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Decorator/dead_wang.png", 1))))
 		return E_FAIL;
 #pragma endregion	// Component_Texture_Decorator
+#pragma region Component_Texutre_Shark
+
+	wstring wstrShark = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CShark>();
+	wstring wstrIcicle =CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CSharkBullet>();
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Death/Death%d.png", 13))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Howling",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Howling/Howling%d.png", 10))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleA",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleA/icicleA%d.png", 18))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleB",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleB/icicleB%d.png", 16))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrIcicle + L"icicleC",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/icicleC/icicleC%d.png", 18))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"LoseBothArm",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/LoseBothArm/LoseBothArm%d.png", 7))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"LoseRightArm",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/LoseRightArm/LoseRightArm%d.png", 6))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Melee",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Melee/Melee%d.png", 11))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Melee_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Melee_1Phase/Melee_1Phase%d.png", 14))))
+		return E_FAIL;
+	
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Particle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Particle/Particle%d.png", 4))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"RangeAttack_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/RangeAttack_1Phase/RangeAttack_1Phase%d.png", 12))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"RangeAttack_2Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/RangeAttack_2Phase/RangeAttack_2Phase%d.png", 11))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_1Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_1Phase/Walk_1Phase%d.png", 8))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_2Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_2Phase/Walk_2Phase%d.png", 8))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		wstrShark + L"Walk_3Phase",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Shark/Walk_3Phase/Walk_3Phase%d.png", 9))))
+		return E_FAIL;
+
+
+#pragma endregion Component_Texutre_Shark
+
 
 	return S_OK;
 }
@@ -926,4 +1162,7 @@ void CMainApp::Free()
 	CKeyMgr::Destroy_Instance();
 	ParticleSystem::Release();
 	CManagement::ReleaseEngine();
+	CSoundMgr::Get_Instance()->Release();
+	CSoundMgr::Destroy_Instance();
+
 }

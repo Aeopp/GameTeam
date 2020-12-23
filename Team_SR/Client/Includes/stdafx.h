@@ -36,6 +36,13 @@ dx9
 #include "Management.h"
 #include "Engine_Include.h"
 
+/**********************************************************/
+#include <io.h>
+#include "fmod.h"
+#pragma comment (lib, "fmodex_vc.lib")
+#include "SoundMgr.h"
+/**********************************************************/
+
 #ifdef _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 
 #endif
