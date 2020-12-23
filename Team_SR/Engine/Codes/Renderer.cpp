@@ -135,7 +135,7 @@ HRESULT CRenderer::RenderAlpha()
 	*/
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	/*
 	D3DRS_SRCBLEND: 이제 그려져야될 픽셀의 ARGB
@@ -167,7 +167,7 @@ HRESULT CRenderer::RenderAlpha()
 	m_GameObjects[(_int)ERenderID::Alpha].clear();
 
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }
@@ -239,10 +239,12 @@ HRESULT CRenderer::RenderParticleAfterAlpha()
 
 HRESULT CRenderer::RenderUI()
 {
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	mat PrevView, PrevProjection;
-	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
-	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
+
+	if (HRESULT(m_pDevice->GetTransform(D3DTS_VIEW, &PrevView)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection)))
+		return E_FAIL;
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
@@ -259,6 +261,11 @@ HRESULT CRenderer::RenderUI()
 	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
 	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
 	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
+
+	if (HRESULT(m_pDevice->SetTransform(D3DTS_VIEW, &PrevView)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection)))
+		return E_FAIL;
 
 	return S_OK;
 }

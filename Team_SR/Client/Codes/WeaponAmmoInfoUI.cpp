@@ -3,6 +3,7 @@
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "Layer.h"
+#include "VIBuffer_UITexture.h"
 
 CWeaponAmmoInfoUI::CWeaponAmmoInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameUI(pDevice)
@@ -26,13 +27,18 @@ HRESULT CWeaponAmmoInfoUI::ReadyGameObject(void* pArg)
 	if (FAILED(AddComponent()))
 		return E_FAIL;
 	
-	m_UIDesc.vUISize.x = WINCX / 7.f;
-	m_UIDesc.vUISize.y = WINCY / 7.f;
-	m_UIDesc.vUISize.z = 0;
+	m_UIDesc.vUISize.x = WINCX / 3.f;
+	m_UIDesc.vUISize.y = WINCY / 2.f;
+	//m_UIDesc.vUISize.y = WINCY / 1.f;
+	m_UIDesc.vUISize.z = 0.f;
 
-	m_UIDesc.vUIPos.x = (WINCX / 2) - m_UIDesc.vUISize.x;
-	m_UIDesc.vUIPos.y = -(WINCY / 2) + m_UIDesc.vUISize.y + 10.f;
-	m_UIDesc.vUIPos.z = 0.f;
+	m_UIDesc.vUIPos.x = WINCX / 2;
+	m_UIDesc.vUIPos.y = -(WINCY / 2);
+	m_UIDesc.vUIPos.z = 2.f;
+
+	m_UIDesc.vCenter = _vector(1.f, -1.f, 0.f);
+
+
 
 	return S_OK;
 }
@@ -44,13 +50,13 @@ _uint CWeaponAmmoInfoUI::UpdateGameObject(float fDeltaTime)
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Size",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vScale),
+		reinterpret_cast<float*>(&m_UIDesc.vUISize),
 		-1000.f, +1000.f, "%f");
 
 	ImGui::Separator();
 	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_pTransformCom->m_TransformDesc.vPosition),
-		-1000.f, +1000.f, "%f");
+		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
+		-1000.f, +2000.f, "%f");
 
 	ImGui::End();
 
@@ -69,8 +75,8 @@ _uint CWeaponAmmoInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 {
-	//CGameUI::RenderGameObject();
-
+	if (FAILED(CGameUI::RenderGameObject()))
+		return E_FAIL;
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
 	//	return E_FAIL;
@@ -81,7 +87,7 @@ HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
 	//	return E_FAIL;
 
-	//if (FAILED(CGameObject::RenderGameObject()))
+	//if (FAILED(CGameUI::RenderGameObject()))
 	//	return E_FAIL;
 
 	//if (FAILED(m_pTextureCom->Set_Texture(0)))
@@ -110,8 +116,6 @@ HRESULT CWeaponAmmoInfoUI::AddComponent()
 	return S_OK;
 }
 
-
-
 CWeaponAmmoInfoUI * CWeaponAmmoInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
@@ -120,7 +124,7 @@ CWeaponAmmoInfoUI * CWeaponAmmoInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 	CWeaponAmmoInfoUI* pInstance = new CWeaponAmmoInfoUI(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create PlyerInfoUI");
+		PRINT_LOG(L"Warning", L"Failed To Create CWeaponAmmoInfoUI");
 		SafeRelease(pInstance);
 	}
 
@@ -129,11 +133,11 @@ CWeaponAmmoInfoUI * CWeaponAmmoInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CWeaponAmmoInfoUI::Clone(void * pArg)
 {
-	CWeaponAmmoInfoUI* pClone = new CWeaponAmmoInfoUI(*this); /* ��������� */
+	CWeaponAmmoInfoUI* pClone = new CWeaponAmmoInfoUI(*this);
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone PlyerInfoUI");
+		PRINT_LOG(L"Warning", L"Failed To Clone CWeaponAmmoInfoUI");
 		SafeRelease(pClone);
 	}
 

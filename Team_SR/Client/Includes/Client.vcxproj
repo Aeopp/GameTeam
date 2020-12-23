@@ -184,8 +184,10 @@
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Loading.h" />
+    <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Logo.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\MainCamera.h" />
@@ -207,11 +209,13 @@
     <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
+    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\SpiderBullet.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\Terret.h" />
     <ClInclude Include="..\Headers\Stage2nd.h" />
     <ClInclude Include="..\Headers\Stage3rd.h" />
@@ -222,6 +226,7 @@
     <ClInclude Include="..\Headers\StageMidBoss.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
+    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -258,8 +263,10 @@
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
+    <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
+    <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\MainCamera.cpp" />
@@ -281,11 +288,13 @@
     <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Shark.cpp" />
     <ClCompile Include="..\Codes\SharkBullet.cpp" />
+    <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\Spider.cpp" />
     <ClCompile Include="..\Codes\SpiderBullet.cpp" />
     <ClCompile Include="..\Codes\Stage.cpp" />
     <ClCompile Include="..\Codes\Stage1st.cpp" />
+    <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\Terret.cpp" />
     <ClCompile Include="..\Codes\Stage2nd.cpp" />
     <ClCompile Include="..\Codes\Stage3rd.cpp" />
@@ -296,6 +305,7 @@
     <ClCompile Include="..\Codes\StageMidBoss.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
+    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ComponentTemplate.md">

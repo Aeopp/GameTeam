@@ -20,7 +20,7 @@ public:
 	// 벡터 4로 반환되며 기본값 사용시 방향 벡터로 간주
 	FORCEINLINE static vec4 ConvertVec4(const vec3& Lhs, const float w = 0)
 	{
-		return vec4{ Lhs.x, Lhs.y, Lhs.z, w };
+		return vec4{ Lhs.x, Lhs.y, Lhs.z, w }; 
 	};
 
 	static vec3 GetNormalFromFace(const vec3& p0,

@@ -26,7 +26,6 @@ enum class ETextureType
 	Cube
 };
 
-
 END
 
 #define __ENGINE_ENUM_H__

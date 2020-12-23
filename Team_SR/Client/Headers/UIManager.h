@@ -3,6 +3,17 @@
 
 #include "Base.h"
 
+namespace UI_AddTag
+{
+	typedef struct tagAddComUI
+	{
+		UI_DESC tUIDesc;
+		wstring wsPrototypeTag;
+		wstring wsComponentTag;
+		//	BOOL bReverse;
+	}UI_ADD_COMPONENT;
+}
+
 USING(Engine)
 class CUIManager final : public CBase
 {
@@ -33,8 +44,23 @@ public:
 	virtual void Free() override;
 
 private:
-	class CPlyerInfoUI* m_pPlayerInfoUI;
-	class CWeaponAmmoInfoUI* m_pWeaponAmmoInfoUI;
+	class CPlyerInfoUI* m_pPlayerInfoUI = nullptr;
+	class CWeaponAmmoInfoUI* m_pWeaponAmmoInfoUI = nullptr;
+	class CLoadingBar* m_pHUD_HpBar = nullptr;
+	class CLoadingBar* m_pHUD_ManaBar = nullptr;
+	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
+	class CHUDBossBar* m_pHUD_TopUIaBossBar = nullptr;
+
+public:
+
+
+private:
+#pragma region Test_Font
+	int m_iMax[3];
+	int m_iMin[3];
+#pragma endregion
+
+	LPDIRECT3DDEVICE9	m_pDevice;
 };
 
 #define __UIMANAGER_H__
