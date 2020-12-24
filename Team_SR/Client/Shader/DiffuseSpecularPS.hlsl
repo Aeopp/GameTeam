@@ -26,6 +26,7 @@ int bSpecularSamplerBind;
 int bNormalSamplerBind;
 float AlphaLerp;
 int LightNum;
+int bUI;
 
 float Shine;
 float FogEnd;
@@ -34,6 +35,13 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
+   if (bUI)
+   {
+       float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+       return DiffuseTexColor;
+   };
+   
+    
     Input.Normal = normalize(Input.Normal);
     Input.Tangent = normalize(Input.Tangent);
     Input.BiNormal = normalize(Input.BiNormal);

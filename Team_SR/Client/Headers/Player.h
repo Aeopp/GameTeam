@@ -56,7 +56,8 @@ public:
 private:
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
-
+	vec3 PrevLocation{ 0 , 0 , 0 };
+	float T = 0.0f;
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
 	bool bStaffLoop = false;
 private:

@@ -11,6 +11,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
 	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
+	bGravity = true;
 }
 
 HRESULT CMonster::ReadyGameObjectPrototype()
@@ -86,8 +87,6 @@ HRESULT CMonster::IsBillboarding()
 	D3DXMatrixInverse(&matBillboardY, 0, &matBillboardY);
 
 	m_pTransformCom->m_TransformDesc.matWorld *= matBillboardY;*/
-
-
 
 	return S_OK;
 }

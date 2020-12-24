@@ -11,11 +11,9 @@
 #include "Map2nd.h"
 #include "Stage3rd.h"
 
-
 CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
-
 
 
 HRESULT CStage2nd::ReadyScene()

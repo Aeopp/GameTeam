@@ -92,8 +92,6 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 			m_pDevice, L"..\\Resources\\Player\\Staff\\ChargeFire\\", 5);
 	}
 
-
-
 	return S_OK;
 }
 
@@ -174,6 +172,8 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		Effect::RegistLight(std::move(_Light));
 	}
 
+	T += fDeltaTime;
+	
 	return _uint();
 }
 
@@ -185,6 +185,19 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 		, this)))
 		return 0;
 
+	if (PrevLocation!= m_pTransformCom->GetLocation())
+	{
+		T += fDeltaTime * 7.f;
+	}
+	else
+	{
+		T =0.0f;
+	};
+
+	if (T < 0.0f)T = 0.0f;
+
+	PrevLocation = m_pTransformCom->GetLocation();
+
 	return _uint();
 }
 
@@ -193,29 +206,45 @@ HRESULT CPlayer::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
+	float X = std::cosf(T) * 20.f;
+	float Y = std::sinf(T) * 40.f;
+
+	mat PrevView, PrevProjection , ViewIdentity, Ortho;
+
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
-	/*m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); 
-	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);*/
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
-	vec3 GunLocation = _Camera->GetCameraDesc().vEye +  (_Camera->GetTransform()->GetLook() *1.55f);
-	GunLocation.y -= 0.25f;
-	vec3 GunScale = m_pTransformCom->GetScale();
-	vec3 GunRotation = m_pTransformCom->GetRotation();
 
-	//GunRotation.y +=180.f;
-
-	mat GunWorld = MATH::WorldMatrix(GunScale, GunRotation, GunLocation);
-	_Effect.SetVSConstantData(m_pDevice, "World", GunWorld);
+	D3DXMatrixOrthoLH(&Ortho, WINCX, WINCY, _Camera->GetCameraDesc().fNear, _Camera->GetCameraDesc().fFar);
 
 	const auto& TextureTuple = _AnimationTextures.GetCurrentTexture();
+
+	D3DSURFACE_DESC _Desc;
+	std::get<0>(TextureTuple)->GetLevelDesc(0, &_Desc);
+
+	const float 	Bottom =      -(WINCY / 2.f);
+	const float XSize = (float)_Desc.Width * 4.f;
+	const float YSize = (float)_Desc.Height * 4.f;
+	mat GunUI = MATH::WorldMatrix({ XSize,YSize,0 }, { 0,0,0 }, { 0+X,Bottom+ (YSize /2.f) + Y -40.f ,_Camera->GetCameraDesc().fNear });
+
+	//D3DXMatrixScaling(&GunUI,1.f, 1.f, 1.f);
+	D3DXMatrixIdentity(&ViewIdentity);
+
+	_Effect.SetVSConstantData(m_pDevice, "bUI", 1l);
+	_Effect.SetVSConstantData(m_pDevice, "World", GunUI);
+	_Effect.SetVSConstantData(m_pDevice, "View", ViewIdentity);
+	_Effect.SetVSConstantData(m_pDevice, "Projection", Ortho);
+	
 
 	m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),std::get<0> (TextureTuple));
 	m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
 	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
 	
+	_Effect.SetPSConstantData(m_pDevice, "bUI", 1l);
 	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0 );
 	_Effect.SetPSConstantData(m_pDevice,"bNormalSamplerBind", 0);
 	_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
@@ -223,10 +252,12 @@ HRESULT CPlayer::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
-	
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
+	_Effect.SetPSConstantData(m_pDevice, "bUI", 0l);
+	_Effect.SetVSConstantData(m_pDevice, "bUI", 0l);
+	_Effect.SetVSConstantData(m_pDevice, "View", PrevView);
+	_Effect.SetVSConstantData(m_pDevice, "Projection", PrevProjection);
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_CollisionComp->DebugDraw();
 
 	return S_OK;
