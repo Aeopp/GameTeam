@@ -37,6 +37,8 @@ private:
 	list<DecoNextFrameInfo> m_listNextFrameInfo;	// 다음 프레임 구간 정보들
 	CTexture* m_pTexture;	// 텍스처
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
+
+	void UpdateFromMyDecoType();
 };
 
 #define  __DECORATOR_H__

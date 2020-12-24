@@ -4,7 +4,6 @@
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
 
-
 CDecorator::CDecorator(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stDecoratorInfo{}
@@ -51,6 +50,7 @@ _uint CDecorator::UpdateGameObject(float fDeltaTime)
 
 	_CollisionComp->Update(m_pTransformCom);
 
+	UpdateFromMyDecoType();
 
 	return _uint();
 }
@@ -647,7 +647,8 @@ void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 {
 	m_stDecoratorInfo.fHP -= 1.f;
 
-	if (m_fTriggerHP != -1.f) {
+	if (m_fTriggerHP != -1.f) 
+	{
 		while (m_stDecoratorInfo.fHP <= m_fTriggerHP && m_listNextFrameInfo.size() != 0) {
 			auto iter = m_listNextFrameInfo.begin();
 			m_fFrameCnt = iter->fStartFrame;
@@ -739,6 +740,24 @@ void CDecorator::Free()
 	SafeRelease(_VertexBuffer);
 	/// </summary>
 	CGameObject::Free();
+}
+
+void CDecorator::UpdateFromMyDecoType()
+{
+	MyLight _Light;
+	_Light.Diffuse = { 1,1,1,1 };
+	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
+	_Light.Priority = 2ul;
+	_Light.Radius = 20.f;
+
+	switch (m_stDecoratorInfo.eType)
+	{
+	case Decorator::Torch:
+		Effect::RegistLight(std::move(_Light));
+		break;
+	default:
+		break;
+	}
 }
 
 

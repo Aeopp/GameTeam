@@ -378,25 +378,49 @@ void ParticleSystem::Render()&
 	_Device->SetVertexShader(_Effect.VsShader);
 	_Device->SetPixelShader(_Effect.PsShader);
 
-	CCamera* pCamera = (CCamera*)_Management->GetGameObject((_int)-1, L"Layer_MainCamera");
-	/*const auto& _TransformDesc = m_pTransformCom->m_TransformDesc;
-	vec3 BillboardRotation = _TransformDesc.vRotation;
-	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
-	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);*/
+	mat View;
+	_Device->GetTransform(D3DTS_VIEW, &View);
+	View._43=View._42=View._41 = 0;
+	View =MATH::Inverse(View);
+
+	/*CCamera* pCamera = (CCamera*)_Management->GetGameObject((_int)-1, L"Layer_MainCamera");
+	if (pCamera)
+	{
+		D3DXMatrixRotationX(&CRotX, pCamera->GetTransform()->GetRotation().x);
+		D3DXMatrixRotationY(&CRotY, pCamera->GetTransform()->GetRotation().y);
+		D3DXMatrixRotationZ(&CRotZ, pCamera->GetTransform()->GetRotation().z);
+	}
+	mat CameraRotationMat = CRotX * CRotY * CRotZ;*/
 
 	for (auto& _Particle : _Particles)
 	{
-		vec3 BillboardRotation = _Particle.Rotation;
-		BillboardRotation  += pCamera->GetTransform()->GetRotation();
-		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
-		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+		mat _ParticleWorld;
+		mat _ParticleRotationMatrix;
 
-		if(_Particle.bRotationMatrix)
+		mat Scale, Rotation, RotX, RotY, RotZ, Translation;
+		D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
+		D3DXMatrixTranslation(&Translation, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
+
+		if (_Particle.bRotationMatrix)
 		{
-			mat Scale, Trans;
-			D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
-			D3DXMatrixTranslation(&Trans, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
-			_ParticleWorld =Scale* _Particle.RotationMatrix* Trans;
+			_ParticleRotationMatrix = _Particle.RotationMatrix;
+		}
+		else
+		{
+			mat RotX, RotY, RotZ ;
+			D3DXMatrixRotationX(&RotX, MATH::ToRadian(_Particle.Rotation.x ) );
+			D3DXMatrixRotationY(&RotY, MATH::ToRadian(_Particle.Rotation.y));
+			D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(_Particle.Rotation.z));
+			_ParticleRotationMatrix = RotX * RotY * RotZ;
+		}
+
+		if (_Particle.bBillboard)
+		{
+			_ParticleWorld = Scale * _ParticleRotationMatrix * View * Translation;
+		}
+		else
+		{
+			_ParticleWorld = Scale * _ParticleRotationMatrix  * Translation;
 		}
 
 		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
@@ -412,7 +436,6 @@ void ParticleSystem::Render()&
 
 		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
 
-
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
 		_Effect.SetPSConstantData(_Device, "AlphaLerp", _Particle.AlphaLerp);
@@ -422,17 +445,33 @@ void ParticleSystem::Render()&
 
 	for (auto& _Particle : _CollisionParticles)
 	{
-		vec3 BillboardRotation = _Particle.Rotation;
-	   BillboardRotation += pCamera->GetTransform()->GetRotation();
-		//BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
-		mat _ParticleWorld = MATH::WorldMatrix(_Particle.Scale, BillboardRotation, _Particle.Location);
+		mat _ParticleWorld;
+		mat _ParticleRotationMatrix;
+
+		mat Scale, Rotation, RotX, RotY, RotZ, Translation;
+		D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
+		D3DXMatrixTranslation(&Translation, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
 
 		if (_Particle.bRotationMatrix)
 		{
-			mat Scale, Trans;
-			D3DXMatrixScaling(&Scale, _Particle.Scale.x, _Particle.Scale.y, _Particle.Scale.z);
-			D3DXMatrixTranslation(&Trans, _Particle.Location.x, _Particle.Location.y, _Particle.Location.z);
-			_ParticleWorld = Scale * _Particle.RotationMatrix * Trans;
+			_ParticleRotationMatrix = _Particle.RotationMatrix;
+		}
+		else
+		{
+			mat RotX, RotY, RotZ;
+			D3DXMatrixRotationX(&RotX, MATH::ToRadian(_Particle.Rotation.x));
+			D3DXMatrixRotationY(&RotY, MATH::ToRadian(_Particle.Rotation.y));
+			D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(_Particle.Rotation.z));
+			_ParticleRotationMatrix = RotX * RotY * RotZ;
+		}
+
+		if (_Particle.bBillboard)
+		{
+			_ParticleWorld = Scale * _ParticleRotationMatrix * View * Translation;
+		}
+		else
+		{
+			_ParticleWorld = Scale * _ParticleRotationMatrix * Translation;
 		}
 
 		_Effect.SetVSConstantData(_Device, "World", _ParticleWorld);
@@ -487,7 +526,7 @@ void ParticleSystem::ParticleEventFromName( Particle& _Particle,
 {
 	if (_Particle.Name == L"DaggerThrow")
 	{
-		_Particle.Scale.x += 0.01f;
+	//	_Particle.Scale.x += 0.01f;
 	}
 
 	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell") 
@@ -519,8 +558,16 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell"  || _Particle.Name == L"MagnumShell")
 	{
 		_Particle.Dir = { 0,0,0 };
+		_Particle.bBillboard = true;
 		_Particle.bLoop = false;
-		_Particle.Rotation = { 0,0,MATH::RandReal({-360,360}) };
+		_Particle.bRotationMatrix = true;
+		mat RotX, RotY, RotZ, Rot ;
+		D3DXMatrixRotationX(&RotX, MATH::ToRadian(_Particle.Rotation.x));
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(_Particle.Rotation.y));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(_Particle.Rotation.z));
+		Rot = RotX * RotY * RotZ;
+		D3DXMatrixRotationX(&RotX, MATH::ToRadian(90.f));
+		_Particle.RotationMatrix = Rot; *RotX;
 		_Particle.bCollision = false;
 	}
 }

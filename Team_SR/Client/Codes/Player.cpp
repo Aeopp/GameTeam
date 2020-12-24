@@ -564,6 +564,7 @@ static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 N
 	mat Rot = MATH::RotationMatrixFromAxis(Axis, Degree);
 	_Particle.bRotationMatrix = true;
 	_Particle.RotationMatrix = Rot;
+	_Particle.bBillboard = false;
 	ParticleSystem::Instance().PushParticle(std::move(_Particle));
 };
 
@@ -695,7 +696,9 @@ void CPlayer::ShotGunShot()
 			if (IsCollision.first)
 			{
 				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 20.f;
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+
 			}
 		}
 	}
@@ -755,7 +758,7 @@ void CPlayer::ShotGunReload()
 		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
 		_CollisionParticle.Durtaion = 1000.f;
 		_CollisionParticle.Name = L"ShotGunShell";
-		_CollisionParticle.Radius = 0.2f;
+		_CollisionParticle.Radius = 0.3f;
 		_CollisionParticle.Speed = 10.f;
 		ParticleSystem::Instance().PushCollisionParticle
 		(std::move(_CollisionParticle));
@@ -812,6 +815,7 @@ void CPlayer::DaggerStab()
 			if (IsCollision.first)
 			{
 				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 10.f;
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
@@ -833,8 +837,10 @@ void CPlayer::DaggerThrow()
 	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.07f, 12ul, false,
 		std::move(_Notify));
 
+	auto _Camera=  m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0);
+	;
 
-	for (size_t i = 0; i < 100; ++i)
+	for (size_t i = 0; i < 1; ++i)
 	{
 		POINT _Pt;
 		GetCursorPos(&_Pt);
@@ -844,15 +850,73 @@ void CPlayer::DaggerThrow()
 	//	_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
 
 		Particle _Partice;
+		_Partice.bBillboard = false;
 		_Partice.Delta = 2;
-		_Partice.Durtaion = 2 * 1;
+		_Partice.Durtaion = 1000.f;
 		_Partice.EndFrame = 1;
-		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
-		_Partice.AlphaLerp = (i/1.f) / 100.f;
-		//_Partice.Rotation.y = 75.f;
-		//_Partice.Rotation.x = 80.f;
+		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction);
+	//	_Partice.AlphaLerp = (i/1.f) / 100.f;
+		_Partice.AlphaLerp = 1.f;
+		_Partice.bRotationMatrix = true;
 
-		_Partice.Scale = { 0.5f, 0.5f,0.5f };
+		/*vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, 90.f);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, 45.f);*/
+
+		const float AngleY = 90.f;
+		const float AngleZ = 45.f;
+
+		mat RotY, RotZ, Rot, RotAxis;
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
+		Rot = RotY * RotZ;
+		vec3 StandardY = { 0,1,0 };
+		vec3 StandardNormal= { 0,0,-1 };
+		StandardNormal  = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal  = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+
+		StandardY = MATH::RotationVec(StandardY, { 0,1,0 }, AngleY);
+		StandardY = MATH::RotationVec(StandardY, { 0,0,1 }, AngleZ);
+
+		vec3 RotationStandardNormal = StandardNormal;
+
+		RotationStandardNormal = MATH::RotationVec(RotationStandardNormal, MATH::AxisY, m_pTransformCom->GetRotation().y);
+		StandardY = MATH::RotationVec(StandardY, MATH::AxisY, m_pTransformCom->GetRotation().y);
+
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(m_pTransformCom->GetRotation().y));
+		Rot *= RotY;
+		D3DXMatrixRotationAxis(&RotAxis, &StandardY, MATH::ToRadian( (m_pTransformCom->GetRotation().x*-1.f)   - m_pTransformCom->GetRotation().x/4.5f));
+		Rot *= RotAxis;
+	/*	const vec3 Axis = MATH::Cross(RotationStandardNormal, StandardNormal);
+		const float Angle = std::acosf(MATH::Dot(RotationStandardNormal , StandardNormal));
+		mat RotAxis;
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, MATH::ToRadian(Angle));
+
+		Rot *= RotAxis;*/
+		
+
+
+		//mat RotX, RotY, RotZ, Rot;
+		//D3DXMatrixIdentity(&Rot);
+
+		//D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		//Rot *= RotY;
+		//D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
+		//Rot *= RotZ;
+
+		//D3DXMatrixRotationY(&RotY, MATH::ToRadian(m_pTransformCom->GetRotation().y));
+		//Rot *= RotY;
+		//mat AfterNormalRotAxisMat;
+		//D3DXMatrixRotationAxis(&AfterNormalRotAxisMat, &StandardNormal, MATH::ToRadian(m_pTransformCom->GetRotation().x));
+		//Rot *= AfterNormalRotAxisMat;
+
+		////Rot *= RotX;
+
+
+		
+		_Partice.RotationMatrix = Rot;
+
+		_Partice.Scale = { 1,1,1 };
 		_Partice.Name = L"DaggerThrow";
 
 		_Partice.Dir = _Ray.Direction;
@@ -886,7 +950,6 @@ void CPlayer::AkimboFire()
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
-
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
@@ -907,10 +970,38 @@ void CPlayer::AkimboFire()
 			if (IsCollision.first)
 			{
 				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 2.f;
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
 	}
+
+	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+	for (auto& _CurrentDecorator : _DecoratorList)
+	{
+		auto _Component = _CurrentDecorator->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
+
+
 
 	CollisionParticle _CollisionParticle;
 	_CollisionParticle.Delta = 10000.f;
@@ -937,13 +1028,12 @@ void CPlayer::AkimboFire()
 	_CollisionParticle.Dir = vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) };
 	_CollisionParticle.Angle = MATH::RandReal({ 90,130});
 	_CollisionParticle.Speed = MATH::RandReal({ 50,150});
-	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
+	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-180,180}) };
 	_CollisionParticle.Durtaion = 1000.f;
 	_CollisionParticle.Name = L"BulletShell";
-	_CollisionParticle.Radius = 0.1f;
+	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
 	ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
-
 
 	{
 		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
@@ -1051,6 +1141,7 @@ void CPlayer::MagnumFire()
 			if (IsCollision.first)
 			{
 				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 15.f;
 				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
 			}
 		}
@@ -1084,7 +1175,7 @@ void CPlayer::MagnumFire()
 	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
 	_CollisionParticle.Durtaion = 1000.f;
 	_CollisionParticle.Name = L"MagnumShell";
-	_CollisionParticle.Radius = 0.2f;
+	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
 	ParticleSystem::Instance().PushCollisionParticle
 	(std::move(_CollisionParticle));

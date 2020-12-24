@@ -20,6 +20,7 @@ struct Particle
 	float Gravity = 0.0f;
 	vec3 StartLocation{ 0,0,0 };
 	
+	bool bBillboard = true;
 	bool bLoop = true;
 	float Durtaion = 0.1f;
 	float AlphaLerp = 1.f;

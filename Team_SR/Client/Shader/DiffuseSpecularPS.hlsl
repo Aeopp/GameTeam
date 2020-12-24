@@ -63,17 +63,14 @@ float4 main(PS_INPUT Input) : COLOR
     {
         Normal = Input.Normal;
     }
-   
  
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
     float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
-
     
     if (bSpecularSamplerBind == 0)
     {
         SpecularTexColor = DiffuseTexColor;
     }
-   
     
     float3 OutputColor = float3(0.0f, 0.0f, 0.0f);
     
