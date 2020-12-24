@@ -6,7 +6,7 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "Eyebat.h"
 #include "Map2nd.h"
 #include "Stage3rd.h"

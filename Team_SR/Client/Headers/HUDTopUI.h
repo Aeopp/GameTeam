@@ -20,8 +20,6 @@ private:	//내부메서드관련
 	HRESULT	AddComponent();
 
 public:
-	void SetShownBarUI() { m_bShown = true; }//ui나타내기
-	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
 	void SetMaxHPAndHP(int* _piMaxValue, int* _piValue);
 public:
 	static CHUDTopUI* Create(LPDIRECT3DDEVICE9 pDevice);

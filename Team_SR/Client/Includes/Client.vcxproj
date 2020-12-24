@@ -206,7 +206,7 @@
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\ParticleSystem.h" />
     <ClInclude Include="..\Headers\Player.h" />
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\PlayerInfoUI.h" />
     <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
@@ -284,7 +284,7 @@
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
     <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
     <ClCompile Include="..\Codes\Shark.cpp" />

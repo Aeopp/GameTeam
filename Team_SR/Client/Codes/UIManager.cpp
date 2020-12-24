@@ -2,6 +2,7 @@
 #include "..\Headers\UIManager.h"
 #include "Management.h"
 #include "VIBuffer_UITexture.h"
+#include "PlayerInfoUI.h"
 #include "LoadingBar.h"
 #include "HUDTopUI.h"
 
@@ -218,6 +219,11 @@ HRESULT CUIManager::ReadyUI()
 
 void CUIManager::OnAllUI()
 {
+	//m_pPlayerInfoUI
+	//m_pWeaponAmmoInfoUI = nullptr;
+	//m_pHUD_HpBar = nullptr;
+	//m_pHUD_ManaBar = nullptr;
+	//m_pHUD_AmmoBar = nullptr;
 }
 
 void CUIManager::OffAllUI()

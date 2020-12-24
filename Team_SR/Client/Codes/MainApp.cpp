@@ -526,8 +526,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Fire/Fire%d.png", 22))))
 		return E_FAIL;
 #pragma endregion
-<<<<<<< HEAD
-=======
 
 	// 플레이어 UI 텍스처
 #pragma region Component_Texture_PlayerInfoUI
@@ -1131,8 +1129,6 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion Component_Texutre_Shark
 
-
->>>>>>> origin/main
 	return S_OK;
 }
 

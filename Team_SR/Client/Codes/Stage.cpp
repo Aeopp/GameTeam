@@ -47,21 +47,21 @@ HRESULT CStage::ReadyScene()
 		(CGameObject**)&m_pPlayer, nullptr)))
 		return E_FAIL;
 
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
+	//if (FAILED(m_pManagement->AddGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
+	//	(_int)CurrentSceneID,
+	//	CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
+	//	nullptr, nullptr)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
+	//if (FAILED(m_pManagement->AddGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+	//	(_int)CurrentSceneID,
+	//	CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
+	//	nullptr, nullptr)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -236,12 +236,8 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->_2ButtonEvent();
 	}
-<<<<<<< HEAD
 
-	if (m_pKeyMgr->Key_Pressing('Z'))
-=======
 	 if (m_pKeyMgr->Key_Down('3'))
->>>>>>> origin/main
 	{
 		m_pPlayer->_3ButtonEvent();
 	}

@@ -97,6 +97,5 @@ struct DecoratorBasicArgument {
 	DECO eType;					// 장식 종류
 	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
->>>>>>> origin/main
 
 #endif // !__CLIENT_STRUCT_H__
