@@ -54,24 +54,6 @@ struct BulletBasicArgument {
 	vec3 vDir;					// 방향
 };
 
-//UI
-typedef struct tagUIDesc
-{
-	tagUIDesc()
-	{
-		ZeroMemory(this, sizeof(tagUIDesc));
-		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixIdentity(&matView);
-		D3DXMatrixIdentity(&matWorld);
-	}
-	_vector	vUIPos;
-	_vector	vUISize;
-	_vector vCenter; //각 축당 -1 ~ 1
-
-	_matrix matWorld;
-	_matrix matView;
-	_matrix matOrthographic;
-}UI_DESC;
 // 아이템 생성시 기본 전달 인자
 struct ItemBasicArgument {
 	_uint uiSize;				// 구조체 사이즈
@@ -97,5 +79,23 @@ struct DecoratorBasicArgument {
 	DECO eType;					// 장식 종류
 	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
+//UI
+typedef struct tagUIDesc
+{
+	tagUIDesc()
+	{
+		ZeroMemory(this, sizeof(tagUIDesc));
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matView);
+		D3DXMatrixIdentity(&matWorld);
+	}
+	_vector	vUIPos;
+	_vector	vUISize;
+	_vector vCenter; //각 축당 -1 ~ 1
+
+	_matrix matWorld;
+	_matrix matView;
+	_matrix matOrthographic;
+}UI_DESC;
 
 #endif // !__CLIENT_STRUCT_H__

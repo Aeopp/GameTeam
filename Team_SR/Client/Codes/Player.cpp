@@ -7,6 +7,8 @@
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
+#include "MainCamera.h"
+
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -191,13 +193,14 @@ HRESULT CPlayer::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 	/*m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); 
 	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);*/
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
+	
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
-	vec3 GunLocation = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetLook() *1.7f);
+	vec3 GunLocation = _Camera->GetCameraDesc().vEye +  (_Camera->GetTransform()->GetLook() *1.55f);
 	GunLocation.y -= 0.25f;
 	vec3 GunScale = m_pTransformCom->GetScale();
 	vec3 GunRotation = m_pTransformCom->GetRotation();
@@ -511,15 +514,15 @@ void CPlayer::Free()
 static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 Normal ,float Scale)
 {
 	Particle _Particle;
-	_Particle.StartLocation = IntersectPoint + Normal * 0.1f;
-	_Particle.Location = IntersectPoint + Normal * 0.1f;
+	Normal = MATH::Normalize(Normal);
+	_Particle.StartLocation = IntersectPoint + (Normal * 0.0001f);
+	_Particle.Location = IntersectPoint + (Normal * 0.0001f);
 	_Particle.Delta = FLT_MAX;
 	_Particle.Durtaion = 1000.f;
 	_Particle.EndFrame = 1ul;
 	_Particle.Name = L"BulletHole" + std::to_wstring(MATH::RandInt({ 0,3 }));
 	_Particle.Scale = { Scale,Scale,Scale };
-
-	Normal = MATH::Normalize(Normal);
+	
 	const vec3 Axis = MATH::Cross({ 0,0,-1 }, Normal);
 	float Degree = MATH::ToDegree(std::acosf(MATH::Dot(Normal, vec3{ 0,0,-1 })));
 	//if (MATH::almost_equal(Axis.y, 1.f) || MATH::almost_equal(Axis.y, 0.0f))

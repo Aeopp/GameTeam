@@ -25,9 +25,6 @@
     <Filter Include="01.Scene\99.Loading">
       <UniqueIdentifier>{877afc48-eb1c-401b-a0c7-05b132d2944f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\01.Terrain">
-      <UniqueIdentifier>{cae464e5-613c-4b5a-a3a4-bde8ff8cf440}</UniqueIdentifier>
-    </Filter>
     <Filter Include=".ImGui">
       <UniqueIdentifier>{afcc7edc-5160-4cc5-9a03-9133f2202f29}</UniqueIdentifier>
     </Filter>
@@ -429,6 +426,16 @@
     <ClInclude Include="..\Headers\GameUI.h">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BatSpit.h" />
+    <ClInclude Include="..\Headers\LoadingBar.h" />
+    <ClInclude Include="..\Headers\Package.h" />
+    <ClInclude Include="..\Headers\Shark.h" />
+    <ClInclude Include="..\Headers\SharkBullet.h" />
+    <ClInclude Include="..\Headers\SoundMgr.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h" />
+    <ClInclude Include="..\Headers\ShopUI.h" />
+    <ClInclude Include="..\Headers\StateBar.h" />
+    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -688,6 +695,17 @@
     <ClCompile Include="..\Codes\GameUI.cpp">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\LoadingBar.cpp" />
+    <ClCompile Include="..\Codes\Shark.cpp" />
+    <ClCompile Include="..\Codes\SharkBullet.cpp" />
+    <ClCompile Include="..\Codes\SoundMgr.cpp" />
+    <ClCompile Include="..\Codes\UIManager.cpp" />
+    <ClCompile Include="..\Codes\Vertexs.cpp" />
+    <ClCompile Include="ComponentTemplate.md" />
+    <ClCompile Include="..\Codes\HUDTopUI.cpp" />
+    <ClCompile Include="..\Codes\ShopUI.cpp" />
+    <ClCompile Include="..\Codes\StateBar.cpp" />
+    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -703,11 +721,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl">
-      <Filter>97.Others</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl">
-      <Filter>97.Others</Filter>
-    </FxCompile>
+    <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
+    <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
   </ItemGroup>
 </Project>

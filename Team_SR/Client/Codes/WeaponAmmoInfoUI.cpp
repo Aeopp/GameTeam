@@ -88,12 +88,8 @@ HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 	if (FAILED(m_pTextureCom->Set_Texture(0)))
 		return E_FAIL;
 
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
-
-	//m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	return S_OK;
 }

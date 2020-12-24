@@ -43,7 +43,7 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	LoadObjects(L"..\\Resources\\Map\\2\\Object.obj", vec3{ 5,5,5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 5,5,5 });
 	
 
 

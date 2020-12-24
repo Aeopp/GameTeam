@@ -92,6 +92,23 @@ typedef struct tagTransformDesc
 	float fRotatePerSec = 0.f;
 }TRANSFORM_DESC;
 
+//typedef struct tagUIDesc
+//{
+//	tagUIDesc()
+//	{
+//		ZeroMemory(this, sizeof(tagUIDesc));
+//		D3DXMatrixIdentity(&matWorld);
+//		D3DXMatrixIdentity(&matView);
+//		D3DXMatrixIdentity(&matOrthographic);
+//	}
+//	_matrix matOrthographic;
+//	_matrix matWorld;
+//	_matrix matView;
+//
+//	_vector vUISize;
+//	_vector vUIPos;
+//}UI_DESC;
+
 typedef struct tagCameraDesc
 {
 	tagCameraDesc()
