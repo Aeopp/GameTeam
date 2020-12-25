@@ -122,6 +122,13 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"BulletHole3"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\BulletHole\\3\\", 1);
+
+
+	_ParticleTextureTable._TextureMap[L"ArrowBack"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ArrowBack\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"ArrowX"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ArrowX\\", 1);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&

@@ -267,8 +267,8 @@ void CStage::Free()
 
 
 
-void CStage::LoadObjects(const std::wstring& FilePath ,
-	 const vec3 WorldScale) & noexcept
+void CStage::LoadObjects(const std::wstring& FilePath,
+	const vec3 WorldScale) & noexcept
 {
 	struct ObjectSpawnInfo
 	{
@@ -300,7 +300,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 			InputStream >> LocalPoint.z;
 
 			const vec3 WorldPoint =
-			{   LocalPoint.x * WorldScale.x ,
+			{ LocalPoint.x * WorldScale.x ,
 				LocalPoint.y * WorldScale.y ,
 				LocalPoint.z * WorldScale.z };
 
@@ -329,7 +329,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 	{
 		SpawnObjectFromName(_CurrentObjectSpawnInfo.Name, _CurrentObjectSpawnInfo.Location);
 	}
-}
+};
 void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
 {
 	// 박쥐
