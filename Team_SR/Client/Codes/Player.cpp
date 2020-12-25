@@ -572,6 +572,19 @@ void CPlayer::Free()
 	CGameObject::Free();
 }
 
+static auto  PlayBulletHitParticle = [](const vec3 Dir, const vec3 IntersectPoint)
+{
+	Particle _Particle;
+	_Particle.bBillboard = true;
+	_Particle.Delta = 0.07f;
+	_Particle.Durtaion = _Particle.Delta * 4.0f;
+	_Particle.EndFrame = 4ul;
+	_Particle.Location = IntersectPoint + (Dir * 2.f);
+	_Particle.Name = L"BulletHit" + std::to_wstring(MATH::RandInt({ 0,3 }));
+	_Particle.Scale = { 0.7f,0.7f,0.7f };
+	ParticleSystem::Instance().PushParticle(_Particle);
+};
+
 static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 Normal ,float Scale)
 {
 	Particle _Particle;
@@ -596,7 +609,11 @@ static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 N
 	_Particle.RotationMatrix = Rot;
 	_Particle.bBillboard = false;
 	ParticleSystem::Instance().PushParticle(std::move(_Particle));
+
+	PlayBulletHitParticle(Normal, IntersectPoint);
 };
+
+
 
 void CPlayer::ShotGunShot()
 {
@@ -645,6 +662,7 @@ void CPlayer::ShotGunShot()
 				{
 					vec3 Point = std::get<0>(*find_iter);
 					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+
 					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
 				};
 			}
@@ -682,6 +700,8 @@ void CPlayer::ShotGunShot()
 				{
 					vec3 Point = std::get<0>(*find_iter);
 					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+
+
 					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
 				};
 
@@ -698,8 +718,8 @@ void CPlayer::ShotGunShot()
 		false, std::move(_Notify));
 
 	this->CurrentAttack = 20.f;
-
-	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
+	//  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info, vec3>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -720,22 +740,30 @@ void CPlayer::ShotGunShot()
 
 			if (IsCollision.first)
 			{
-				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster,t0,IsCollision.second } );
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>{ _CurrentMonster, t0, IsCollision.second, IntersectPoint });
 			}
 		}
 	}
 
-	auto find_iter= std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos), 
-	[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-	   const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
-			 return std::get<1>(Lhs) < std::get<1>(Rhs); 
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
 		});
 
 	if (find_iter != std::end(_CollisionInfos))
 	{
-		CGameObject* _Target = std::get<0>(   *find_iter);
-		_Target->Hit(this,(std::get<2>(*find_iter)));
-	}; 
+		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter);
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
+
+		for (size_t i = 0; i < 8; ++i)
+		{
+			const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.25,1 });
+			PlayBulletHitParticle(Dir, RandPoint);
+		};
+	};
 
 	_CollisionInfos.clear();
 
@@ -759,28 +787,35 @@ void CPlayer::ShotGunShot()
 
 				if (IsCollision.first)
 				{
-					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3 >{ _CurrentDecorator, t0, IsCollision.second, IntersectPoint});
 				}
 			}
 		}
 
 		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
-			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
 					return std::get<1>(Lhs) < std::get<1>(Rhs);
 			});
 
 
 		if (find_iter != std::end(_CollisionInfos))
 		{
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
 			CGameObject* _Target = std::get<0>(*find_iter);
 			_Target->Hit(this, (std::get<2>(*find_iter)));
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+
+			for (size_t i = 0; i < 8; ++i)
+			{
+				const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.25,1 });
+				PlayBulletHitParticle(Dir, RandPoint);
+			};
 		};
 
 		_CollisionInfos.clear();
-
 	}
-	
+
 
 
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
@@ -1036,8 +1071,8 @@ void CPlayer::AkimboFire()
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
 	this->CurrentAttack = 1.5f;
-
-	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
+	                                                         //  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info,vec3>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -1058,20 +1093,23 @@ void CPlayer::AkimboFire()
 
 			if (IsCollision.first)
 			{
-				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster, t0, IsCollision.second });
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>{ _CurrentMonster, t0, IsCollision.second ,IntersectPoint });
 			}
 		}
 	}
 
 	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
-		[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-			const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
 				return std::get<1>(Lhs) < std::get<1>(Rhs);
 		});
 
 	if (find_iter != std::end(_CollisionInfos))
 	{
 		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter); 
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		PlayBulletHitParticle(Dir, IntersectPoint);
 		_Target->Hit(this, (std::get<2>(*find_iter)));
 	};
 
@@ -1097,14 +1135,14 @@ void CPlayer::AkimboFire()
 
 				if (IsCollision.first)
 				{
-					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info , vec3 >{ _CurrentDecorator, t0, IsCollision.second , IntersectPoint});
 				}
 			}
 		}
 
 		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
-			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
 					return std::get<1>(Lhs) < std::get<1>(Rhs);
 			});
 
@@ -1112,11 +1150,13 @@ void CPlayer::AkimboFire()
 		if (find_iter != std::end(_CollisionInfos))
 		{
 			CGameObject* _Target = std::get<0>(*find_iter);
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+			PlayBulletHitParticle(Dir, IntersectPoint);
 			_Target->Hit(this, (std::get<2>(*find_iter)));
 		};
 
 		_CollisionInfos.clear();
-
 	}
 
 
@@ -1181,6 +1221,7 @@ void CPlayer::AkimboFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+		
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
@@ -1212,6 +1253,7 @@ void CPlayer::AkimboFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+			
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
@@ -1240,8 +1282,8 @@ void CPlayer::MagnumFire()
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
 	this->CurrentAttack = 15.f;
-
-	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
+	//  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info, vec3>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -1262,20 +1304,23 @@ void CPlayer::MagnumFire()
 
 			if (IsCollision.first)
 			{
-				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster, t0, IsCollision.second });
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>{ _CurrentMonster, t0, IsCollision.second, IntersectPoint });
 			}
 		}
 	}
 
 	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
-		[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-			const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
 				return std::get<1>(Lhs) < std::get<1>(Rhs);
 		});
 
 	if (find_iter != std::end(_CollisionInfos))
 	{
 		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter);
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		PlayBulletHitParticle(Dir, IntersectPoint);
 		_Target->Hit(this, (std::get<2>(*find_iter)));
 	};
 
@@ -1301,14 +1346,14 @@ void CPlayer::MagnumFire()
 
 				if (IsCollision.first)
 				{
-					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3 >{ _CurrentDecorator, t0, IsCollision.second, IntersectPoint});
 				}
 			}
 		}
 
 		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
-			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
-				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
 					return std::get<1>(Lhs) < std::get<1>(Rhs);
 			});
 
@@ -1316,12 +1361,15 @@ void CPlayer::MagnumFire()
 		if (find_iter != std::end(_CollisionInfos))
 		{
 			CGameObject* _Target = std::get<0>(*find_iter);
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+			PlayBulletHitParticle(Dir, IntersectPoint);
 			_Target->Hit(this, (std::get<2>(*find_iter)));
 		};
 
 		_CollisionInfos.clear();
-
 	}
+
 
 
 
@@ -1386,6 +1434,7 @@ void CPlayer::MagnumFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+			
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
@@ -1417,6 +1466,7 @@ void CPlayer::MagnumFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+		
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
@@ -1438,76 +1488,76 @@ void CPlayer::StaffFire()
 
 	LightingDurationTable[L"StaffFire"] = 0.15f;
 
-	//auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 
-	//for (size_t i = 0; i < 1; ++i)
-	//{
-	//	CollisionParticle _Particle;
-	//	_Particle.bBillboard = false;
-	//	_Particle.Delta = 2;
-	//	_Particle.Durtaion = 100.f;
-	//	_Particle.EndFrame = 1;
-	//	m_pTransformCom->GetRight() * 0.5f;
+	for (size_t i = 0; i < 1; ++i)
+	{
+		CollisionParticle _Particle;
+		_Particle.bBillboard = false;
+		_Particle.Delta = 2;
+		_Particle.Durtaion = 100.f;
+		_Particle.EndFrame = 1;
+		m_pTransformCom->GetRight() * 0.5f;
 
-	//	_Particle.Location = m_pTransformCom->GetLocation() + m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() * 0.25f;
-	//	const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
-	//	_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
-	//	_Particle.bUVAlphaLerp = 1l;
-	//	_Particle.bRotationMatrix = true;
-	//	_Particle.bWallCollision = true;
-	//	_Particle.bFloorCollision = true;
-	//	_Particle.bCollision = true;
-	//	_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
-	//	_Particle.CurrentAttack = 15.f;
+		_Particle.Location = m_pTransformCom->GetLocation() + m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() * 0.25f;
+		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+		_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+		_Particle.bUVAlphaLerp = 1l;
+		_Particle.bRotationMatrix = true;
+		_Particle.bWallCollision = true;
+		_Particle.bFloorCollision = true;
+		_Particle.bCollision = true;
+		_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+		_Particle.CurrentAttack = 15.f;
 
-	//	const float AngleY = -89.f;
-	//	const float AngleZ = -40.f;
-	//	vec3 StandardNormal = { 0,0,-1 };
-	//	StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
-	//	StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
-	//	mat RotY, RotZ;
-	//	D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
-	//	D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
+		const float AngleY = -89.f;
+		const float AngleZ = -40.f;
+		vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+		mat RotY, RotZ;
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
 
-	//	vec3 CameraLook = { 0,0,1 };
-	//	vec3 Dir = MATH::Normalize(_Particle.Dir);
-	//	vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir));
-	//	float Angle = std::acosf(MATH::Dot(Dir, CameraLook));
-	//	mat RotAxis;
-	//	D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
-	//	mat Rot = RotY * RotZ * RotAxis;
-	//	/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
-	//	Rot *= RotAxis;*/
+		vec3 CameraLook = { 0,0,1 };
+		vec3 Dir = MATH::Normalize(_Particle.Dir);
+		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir));
+		float Angle = std::acosf(MATH::Dot(Dir, CameraLook));
+		mat RotAxis;
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+		mat Rot = RotY * RotZ * RotAxis;
+		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
+		Rot *= RotAxis;*/
 
-	//	_Particle.RotationMatrix = Rot;
-	//	_Particle.Radius = 1.f;
+		_Particle.RotationMatrix = Rot;
+		_Particle.Radius = 1.f;
 
-	//	_Particle.Scale = { 2.f,0.5f,0.f };
-	//	_Particle.Name = L"DaggerThrow";
+		_Particle.Scale = { 2.f,0.5f,0.f };
+		_Particle.Name = L"DaggerThrow";
 
-	//	_Particle.Speed = 40.f;
+		_Particle.Speed = 40.f;
 
-	//	ParticleSystem::Instance().PushCollisionParticle(_Particle);
+		ParticleSystem::Instance().PushCollisionParticle(_Particle);
 
-	//	for (size_t i = 0; i < 2; ++i)
-	//	{
-	//		CollisionParticle _ArrowParticle = _Particle;
-	//		_ArrowParticle.Speed *= 1.5f;
-	//		_ArrowParticle.Scale.y = 1.f;
-	//		_ArrowParticle.Scale.x = -13.f;
-	//		_ArrowParticle.Name = L"ArrowX";
-	//		_ArrowParticle.bWallCollision = false;
-	//		_ArrowParticle.bFloorCollision = false;
-	//		_ArrowParticle.bCollision = false;
-	//		_ArrowParticle.Location += _ArrowParticle.Dir * _Particle.Scale.x;
-	//		_ArrowParticle.bUVAlphaLerp = 0l;
+		for (size_t i = 0; i < 2; ++i)
+		{
+			CollisionParticle _ArrowParticle = _Particle;
+			_ArrowParticle.Speed *= 1.5f;
+			_ArrowParticle.Scale.y = 1.f;
+			_ArrowParticle.Scale.x = -13.f;
+			_ArrowParticle.Name = L"ArrowX";
+			_ArrowParticle.bWallCollision = false;
+			_ArrowParticle.bFloorCollision = false;
+			_ArrowParticle.bCollision = false;
+			_ArrowParticle.Location += _ArrowParticle.Dir * _Particle.Scale.x;
+			_ArrowParticle.bUVAlphaLerp = 0l;
 
-	//		mat RotDirAxis;
-	//		D3DXMatrixRotationAxis(&RotDirAxis, &_ArrowParticle.Dir, MATH::ToRadian(90.f * i));
-	//		_ArrowParticle.RotationMatrix *= RotDirAxis;
-	//		ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
-	//	};
-	//}
+			mat RotDirAxis;
+			D3DXMatrixRotationAxis(&RotDirAxis, &_ArrowParticle.Dir, MATH::ToRadian(90.f * i));
+			_ArrowParticle.RotationMatrix *= RotDirAxis;
+			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
+		};
+	}
 }
 
 void CPlayer::StaffCharge()

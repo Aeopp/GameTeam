@@ -155,7 +155,7 @@ HRESULT CMonster::AddComponents()
 void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
 	CGameObject::Hit(_Target, _CollisionInfo);
-
+	
 	// 2020.12.17 10:44 KMJ
 	// 공평회에서는 일단 고정임d
 	//m_stStatus.fHP -= fDemage;

@@ -142,6 +142,18 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"FloorBlood"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\FloorBlood\\", 4);
+
+	_ParticleTextureTable._TextureMap[L"BulletHit0"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHit0\\", 4);
+
+	_ParticleTextureTable._TextureMap[L"BulletHit1"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHit1\\", 4);
+
+	_ParticleTextureTable._TextureMap[L"BulletHit2"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHit2\\", 4);
+
+	_ParticleTextureTable._TextureMap[L"BulletHit3"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BulletHit3\\", 4);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
