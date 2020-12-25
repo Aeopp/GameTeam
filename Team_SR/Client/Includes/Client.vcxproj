@@ -186,6 +186,7 @@
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Item.h" />
+    <ClInclude Include="..\Headers\JumpPointSearch.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Logo.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
+    <ClCompile Include="..\Codes\JumpPointSearch.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />

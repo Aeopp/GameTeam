@@ -53,167 +53,58 @@ HRESULT CStage1st::ReadyScene()
 			nullptr, static_cast<void*>(&stArg))))
 			return E_FAIL;
 
-		//MonsterBasicArgument stArg;
-		//stArg.uiSize = sizeof(MonsterBasicArgument);
-		//stArg.pPlayer = m_pPlayer;
-		//stArg.vPosition = { 0.f, 10.f, 20.f };
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + L"BatGrey",
-		//	(_int)CurrentSceneID,
-		//	CLayer::Tag + L"Monster",
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
-		/*
-#pragma region ������ ���� �ڵ��
-		// �̳�ū ü�� ����
-		ItemBasicArgument stItemArg;
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 0.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthBig;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
+		// 맵 정보
+		BYTE byMap[45][45] = {
+		//	  1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 1
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 2
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 3
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 4
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 5
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 6
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 7
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 8
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 9
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 10
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 11
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 12
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 13
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 14
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 15
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 16
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 17
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 18
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 19
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 20
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 21
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 22
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 23
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 24
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 25
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 26
+			{ 1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1 },	// 27
+			{ 1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },	// 28
+			{ 1,1,1,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1 },	// 29
+			{ 1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1 },	// 30
+			{ 1,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1 },	// 31
+			{ 1,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1 },	// 32
+			{ 1,1,1,1,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1 },	// 33
+			{ 1,1,1,1,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1 },	// 34
+			{ 1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1 },	// 35
+			{ 1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1 },	// 36
+			{ 1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1 },	// 37
+			{ 1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1 },	// 38
+			{ 1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1 },	// 39
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 40
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 41
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 42
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 43
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1 },	// 44
+			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }	// 45
+		};
 
-		// ���� ü�� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 1.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-
-		// �̳�ū ���� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 2.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaBig;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���� ���� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 3.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// �Ѿ� �ڽ�
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 4.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Ammo;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// �Ķ� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 5.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyBlue;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 6.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyRed;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ��� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 7.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyYellow;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���׷��̵� ��ȭ
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 8.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Upgrade;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-#pragma endregion
-*/
+		//JumpPointSearch::Get_Instance()->ReadyMap();
 	}
-
-	//SpawnObjectFromName(L"Torch", { -10.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Candle", { -9.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Barrel", { -7.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"BarrelBomb", { -5.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"BarrelWaste", { -3.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Box1", { -10.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Box2", { -8.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"BoxSteel1", { -6.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"BoxSteel2", { -4.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Headstone1", { 0.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Headstone2", { 4.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Headstone3", { 8.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"ThornyVine", { 0.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"TreeBlight", { 3.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Tree1", { 10.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Tree2", { 15.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Dead_Caleb", { -20.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Doomguy", { -14.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Duke", { -8.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Sam", { 0.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Wang", { 6.f, 10.f, 16.f });
-
-	//SpawnObjectFromName(L"Hangman", { 0.f, 10.f, 16.f });
-
-	//LoadObjects();
-
 	
 	return S_OK;
 }
