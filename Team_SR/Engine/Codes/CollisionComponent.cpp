@@ -19,7 +19,8 @@ std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollis
 {
 	{ MonsterAttack, { Player } },
 	{ PlayerAttack, {  Monster} },
-	{Item,{Player} }
+	{Item,{Player} }  ,
+	{PlayerAttackParticle , {Monster } },
 };
 
 CCollisionComponent::CCollisionComponent(LPDIRECT3DDEVICE9 pDevice)

@@ -106,8 +106,6 @@ HRESULT CDecorator::RenderGameObject()
 
 HRESULT CDecorator::AddComponents()
 {
-
-
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
 		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
@@ -753,6 +751,9 @@ void CDecorator::UpdateFromMyDecoType()
 	switch (m_stDecoratorInfo.eType)
 	{
 	case Decorator::Torch:
+		Effect::RegistLight(std::move(_Light));
+		break;
+	case Decorator::Candle:
 		Effect::RegistLight(std::move(_Light));
 		break;
 	default:

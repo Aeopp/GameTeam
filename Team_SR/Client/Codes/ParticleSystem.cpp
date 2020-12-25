@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\ParticleSystem.h"
 #include "Camera.h"
+#include "Player.h"
+
 
 
 std::shared_ptr<ParticleSystem>ParticleSystem::_Instance{nullptr};
@@ -123,12 +125,20 @@ void ParticleSystem::InitializeTextures() & noexcept
 	_ParticleTextureTable._TextureMap[L"BulletHole3"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\BulletHole\\3\\", 1);
 
-
 	_ParticleTextureTable._TextureMap[L"ArrowBack"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\ArrowBack\\", 1);
 
 	_ParticleTextureTable._TextureMap[L"ArrowX"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\ArrowX\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"Blood"] = CreateTexturesSpecularNormal(
+			_Device, L"..\\Resources\\Effect\\Blood\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"BloodBigHit1"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BloodBigHit1\\", 8);
+
+	_ParticleTextureTable._TextureMap[L"FloorBlood"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\FloorBlood\\", 4);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -242,7 +252,6 @@ void ParticleSystem::Collision()&
 				vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
 				const float Distance = MATH::Length(ToPlaneCenter);
 				if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
-			
 
 				auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
 				const bool bCurCollision = CheckInfo.first;
@@ -543,12 +552,16 @@ void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 		}
 
 		_CollisionParticle.Correction = _CollisionParticle.Dir * (_CollisionParticle.Scale.x / 2.f);
-		MyLight _Light;
-		_Light.Diffuse = { 1,0,1,1 };
-		_Light.Location = MATH::ConvertVec4(vec3{ _CollisionParticle.Correction + _CollisionParticle.Location } , 1.f);
-		_Light.Priority = 1ul;
-		_Light.Radius = 10.f;
-		Effect::RegistLight(std::move(_Light));
+
+		//if (!_CollisionParticle.bCollision)
+		{
+			MyLight _Light;
+			_Light.Diffuse = { 1,0,1,1 };
+			_Light.Location = MATH::ConvertVec4(vec3{ _CollisionParticle.Correction + _CollisionParticle.Location }, 1.f);
+			_Light.Priority = 1ul;
+			_Light.Radius = 20.f;
+			Effect::RegistLight(std::move(_Light));
+		}
 	}
 
 	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell") 
@@ -585,7 +598,9 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 
 void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle)
 {
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell")
+	if (_Particle.Name == L"BulletShell"  || 
+		_Particle.Name == L"ShotGunShell" || 
+		_Particle.Name == L"MagnumShell")
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bBillboard = true;
@@ -601,10 +616,10 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bCollision = false;
 	};
 
+	
 	if (_Particle.Name == L"DaggerThrow")
 	{
-		static constexpr float Duration = 5.f;
-
+		static constexpr float Duration = 5.0f;
 
 		_Particle.bCollision = false;
 		_Particle.Durtaion = Duration;
@@ -630,6 +645,9 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 			ParticleSystem::PushParticle(_SpawnParticle);
 		}
 
+		//CPlayer* _Player = dynamic_cast<CPlayer*>(CManagement::Get_Instance()->GetGameObject(-1, L"Layer_Player", 0));
+		//_Player->CurrentAttack = 15.f;
+		//_Target->Hit(_Player, _CollisionInfo);
 	}
 }
 

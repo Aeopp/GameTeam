@@ -157,7 +157,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
-	_Light.Radius = 60.f;
+	_Light.Radius = 30.f;
 	_Light.Priority = 0l;
 	Effect::RegistLight(std::move(_Light));
 
@@ -166,7 +166,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		MyLight _Light{};
 		_Light.Location =
 			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Diffuse = { 0,0,1,1 };
 		_Light.Priority = 1l;
 		_Light.Radius = 200.f;
 		Effect::RegistLight(std::move(_Light));
@@ -181,8 +181,7 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::ParticleAfterAlpha
-		, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
 
 	if (PrevLocation!= m_pTransformCom->GetLocation())
@@ -252,6 +251,8 @@ HRESULT CPlayer::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
 	_Effect.SetPSConstantData(m_pDevice, "bUI", 0l);
 	_Effect.SetVSConstantData(m_pDevice, "bUI", 0l);
@@ -259,6 +260,7 @@ HRESULT CPlayer::RenderGameObject()
 	_Effect.SetVSConstantData(m_pDevice, "Projection", PrevProjection);
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_CollisionComp->DebugDraw();
+
 
 	return S_OK;
 }
@@ -291,7 +293,6 @@ void CPlayer::MoveForward(const float DeltaTime)&
 	const float Speed = Desc.fSpeedPerSec;
 	Desc.vPosition += Forward * Speed * DeltaTime;
 };
-
 void CPlayer::MoveRight(const float DeltaTime)&
 {
 	PlayStepSound();
@@ -368,7 +369,6 @@ void CPlayer::MouseRightUp()&
 		break;
 	}
 };
-
 void CPlayer::MouseLeft()&
 {
 	switch (_CurrentWeaponState)
@@ -422,7 +422,6 @@ void CPlayer::MouseLeftPressing()&
 		break;
 	};
 };
-
 void CPlayer::RButtonEvent()&
 {
 	switch (_CurrentWeaponState)
@@ -442,32 +441,27 @@ void CPlayer::RButtonEvent()&
 		break;
 	}
 }
-
 void CPlayer::_1ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dagger;
 	_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 
 }
-
 void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ShotGun;
 	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_3ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Akimbo;
 	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_4ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Magnum;
 	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
@@ -503,7 +497,6 @@ HRESULT CPlayer::AddStaticComponents()
 	return S_OK;
 }
 
- 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
@@ -704,10 +697,6 @@ void CPlayer::ShotGunShot()
 	}
 
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
-
-
-	
-
 }
 
 void CPlayer::ShotGunReload()
@@ -841,21 +830,23 @@ void CPlayer::DaggerThrow()
 
 	for (size_t i = 0; i < 1; ++i)
 	{
-		CollisionParticle _Partice;
-		_Partice.bBillboard = false;
-		_Partice.Delta = 2;
-		_Partice.Durtaion = 1000.f;
-		_Partice.EndFrame = 1;
+		CollisionParticle _Particle;
+		_Particle.bBillboard = false;
+		_Particle.Delta = 2;
+		_Particle.Durtaion = 1000.f;
+		_Particle.EndFrame = 1;
 		m_pTransformCom->GetRight() * 0.5f;
 		 
-		_Partice.Location = m_pTransformCom->GetLocation()+ m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() *0.25f;
+		_Particle.Location = m_pTransformCom->GetLocation()+ m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() *0.25f;
 		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
-		_Partice.Dir = MATH::Normalize(WorldGoal - _Partice.Location);
-		_Partice.bUVAlphaLerp = 1l;
-		_Partice.bRotationMatrix = true;
-		_Partice.bWallCollision = true;
-		_Partice.bFloorCollision = true;
-		_Partice.bCollision = true;
+		_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+		_Particle.bUVAlphaLerp = 1l;
+		_Particle.bRotationMatrix = true;
+		_Particle.bWallCollision = true;
+		_Particle.bFloorCollision = true;
+		_Particle.bCollision = true;
+		_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+		_Particle.CurrentAttack = 15.f;
 
 		const float AngleY = -89.f;
 		const float AngleZ = -40.f;
@@ -867,7 +858,7 @@ void CPlayer::DaggerThrow()
 		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
 
 		vec3 CameraLook = { 0,0,1 };
-		vec3 Dir = MATH::Normalize(_Partice.Dir);
+		vec3 Dir = MATH::Normalize(_Particle.Dir);
 		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir ));
 		float Angle = std::acosf(MATH::Dot(Dir , CameraLook ));
 		mat RotAxis;
@@ -876,19 +867,19 @@ void CPlayer::DaggerThrow()
 		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
 		Rot *= RotAxis;*/
 		
-		_Partice.RotationMatrix = Rot;
-		_Partice.Radius = 1.f;
+		_Particle.RotationMatrix = Rot;
+		_Particle.Radius = 1.f;
 
-		_Partice.Scale = { 2.f,1.f,0.f };
-		_Partice.Name = L"DaggerThrow";
+		_Particle.Scale = { 2.f,0.5f,0.f };
+		_Particle.Name = L"DaggerThrow";
 
-		_Partice.Speed = 40.f;
+		_Particle.Speed = 40.f;
 
-		ParticleSystem::Instance().PushCollisionParticle(_Partice);
+		ParticleSystem::Instance().PushCollisionParticle(_Particle);
 
 		for (size_t i = 0; i < 2; ++i)
 		{
-			CollisionParticle _ArrowParticle = _Partice;
+			CollisionParticle _ArrowParticle = _Particle;
 			_ArrowParticle.Speed *= 1.5f;
 			_ArrowParticle.Scale.y = 1.f;
 			_ArrowParticle.Scale.x = -13.f;
@@ -896,7 +887,7 @@ void CPlayer::DaggerThrow()
 			_ArrowParticle.bWallCollision = false;
 			_ArrowParticle.bFloorCollision = false;
 			_ArrowParticle.bCollision = false;
-			_ArrowParticle.Location += _ArrowParticle.Dir * _Partice.Scale.x;
+			_ArrowParticle.Location += _ArrowParticle.Dir * _Particle.Scale.x;
 			_ArrowParticle.	bUVAlphaLerp = 0l;
 
 			mat RotDirAxis;
@@ -905,18 +896,7 @@ void CPlayer::DaggerThrow()
 			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
 		};
 
-		//CollisionParticle _ArrowBackParticle = _Partice;
-		//_ArrowBackParticle.Speed *= 1.5f;
-		//_ArrowBackParticle.Scale.x *= -0.05f;
-		//_ArrowBackParticle.Name = L"ArrowBack";
-		//_ArrowBackParticle.bWallCollision = false;
-		//_ArrowBackParticle.bFloorCollision = false;
-		//_ArrowBackParticle.bCollision = false;
-		//_ArrowBackParticle.Location += _ArrowBackParticle.Dir * _Partice.Scale.x;
-		//_ArrowBackParticle.bUVAlphaLerp = 0l;
-		//_ArrowBackParticle.bRotationMatrix = false;
-		//_ArrowBackParticle.bBillboard = true;
-		//ParticleSystem::Instance().PushCollisionParticle(_ArrowBackParticle);
+
 	}
 }
 
@@ -1088,7 +1068,6 @@ void CPlayer::AkimboFire()
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
-
 }
 
 void CPlayer::MagnumFire()

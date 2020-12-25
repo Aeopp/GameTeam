@@ -45,6 +45,7 @@ struct CollisionParticle : public Particle
 	bool bWallCollision = false;
 	bool bFloorCollision = false;
 	bool bCollision = false;
+	float CurrentAttack = 1.f;
 	// Lhs->Particle Tag            Rhs->Object Tag
 	CCollisionComponent::ETag _Tag;
 };

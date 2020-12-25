@@ -65,12 +65,10 @@ HRESULT CGameObject::RenderGameObject()
 
 void CGameObject::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-
 }
 
 void CGameObject::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
 {
-
 }
 
 void CGameObject::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)

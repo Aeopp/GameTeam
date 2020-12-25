@@ -1,4 +1,4 @@
-#define MAX_LIGHT_NUM 16
+#define MAX_LIGHT_NUM 8
 
 struct PS_INPUT
 {

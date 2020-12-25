@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
+#include "ParticleSystem.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -154,9 +155,32 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	CGameObject::Hit(_Target, _CollisionInfo);
 
 	// 2020.12.17 10:44 KMJ
-	// 공평회에서는 일단 고정임
+	// 공평회에서는 일단 고정임d
 	//m_stStatus.fHP -= fDemage;
-	m_stStatus.fHP -= 20.f;
+	 m_stStatus.fHP-=_Target->CurrentAttack;
+	 DeadHitBlood();
+	 if (m_stStatus.fHP < 0.f)
+	 {
+		
+	 }
+
+}
+
+void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	CGameObject::ParticleHit(_Particle, _CollisionInfo);
+
+	if (_Particle)
+	{
+		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
+
+		if (_ParticlePtr->Name == L"DaggerThrow")
+		{
+			
+		}
+
+		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
+	}
 }
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
@@ -232,6 +256,174 @@ void CMonster::CreateFloorBlood()
 	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
+
+static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
+{
+	const vec3 Normal = { 0,0,-1 };
+
+	vec3 PlaneNormal = 
+	{
+	_PlaneInfo._Plane.a,
+	_PlaneInfo._Plane.b,
+	_PlaneInfo._Plane.c
+	};
+
+	PlaneNormal = MATH::Normalize(PlaneNormal);
+
+	const vec3 Axis = MATH::Normalize(MATH::Cross(Normal, PlaneNormal));
+	const float Radian = std::acosf(MATH::Dot(Normal, PlaneNormal));
+	mat RotAxis;
+	D3DXMatrixRotationAxis(&RotAxis, &Axis, Radian);
+
+	Particle _Particle;
+	_Particle.bBillboard = false;
+	_Particle.bLoop = false;
+	_Particle.bMove = false;
+	_Particle.bRotationMatrix = true;
+	_Particle.RotationMatrix = RotAxis;
+	_Particle.bUVAlphaLerp = false;
+	int32_t Frame = MATH::RandInt({ 0,3 }); 
+	_Particle.CurrentFrame = Frame; 
+	_Particle.CurrentT = static_cast<float>(Frame); 
+	_Particle.Delta = FLT_MAX;
+	_Particle.Durtaion = 2000.f;
+	_Particle.EndFrame = Frame;
+	_Particle.StartLocation =   _Particle.Location = IntersectPoint + PlaneNormal * 0.01f;
+	_Particle.Scale = { 1.3,1.3,1.3 };
+	_Particle.Name = L"FloorBlood";
+
+	ParticleSystem::Instance().PushParticle(std::move(_Particle)  );
+};
+
+void CMonster::DeadHitBlood()
+{
+	Particle _Particle;
+	_Particle.bBillboard = true;
+	_Particle.bLoop = false;
+	_Particle.bMove = false;
+	_Particle.Delta = 0.08f;
+	_Particle.Durtaion = 8.f * _Particle.Delta;
+	_Particle.EndFrame = 8ul;
+	_Particle.Scale = { 1.5f,1.5f,1.5f };
+
+	_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f;
+	_Particle.Name = L"BloodBigHit1";
+	ParticleSystem::Instance().PushParticle(_Particle);
+
+	for (size_t i = 0; i < 8; ++i)
+	{
+		Particle _Particle;
+		_Particle.bBillboard = true;
+		_Particle.bLoop = false;
+		_Particle.bMove = true;
+		_Particle.Delta = FLT_MAX;
+		const float Speed = MATH::RandReal({ 2,4 });
+		const vec3 Dir = MATH::Normalize(MATH::RandVec());
+		_Particle.Dir = Dir;
+		_Particle.Durtaion = 0.05f * 8.f;
+		_Particle.EndFrame = 1ul;
+		_Particle.Scale = { 0.15f,0.15f,0.15f };
+		_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f + Dir * Speed * 0.01f;
+		_Particle.Name = L"Blood";
+		_Particle.Speed = Speed;
+		ParticleSystem::Instance().PushParticle(_Particle);
+	}
+
+	
+	Sphere _Sphere = _CollisionComp->_Sphere;
+	_Sphere.Radius *= 2.f;
+	{
+		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
+			const float Distance = MATH::Length(ToPlaneCenter);
+			if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+
+			auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+			const bool bCurCollision = CheckInfo.first;
+			auto& CollisionInfo = CheckInfo.second;
+
+			// 평면과는 일단 충돌한다.
+			if (bCurCollision)
+			{
+				const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+				// 평면과 일단 충돌한 상태에서
+				// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+				if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+				{
+					CollisionInfo.IntersectPoint = ProjPt;
+					FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+					continue;
+				}
+				// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+				std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+				for (const auto& _CurSegment : _Segments)
+				{
+					float t0 = 0;
+					float t1 = 0;
+					vec3 IntersectPoint;
+					auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+					if (IsCollision.first)
+					{
+						CollisionInfo.IntersectPoint = IntersectPoint;
+						FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+						continue;
+					}
+				}
+			}
+		};
+	}
+
+	{
+		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+		for (const auto& _CurPlane : _CurMap)
+		{
+			vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
+			const float Distance = MATH::Length(ToPlaneCenter);
+			if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+
+			auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+			const bool bCurCollision = CheckInfo.first;
+			auto& CollisionInfo = CheckInfo.second;
+
+			// 평면과는 일단 충돌한다.
+			if (bCurCollision)
+			{
+				const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+				// 평면과 일단 충돌한 상태에서
+				// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+				if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+				{
+					CollisionInfo.IntersectPoint = ProjPt;
+					FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+					continue;
+				}
+				// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+				std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+				for (const auto& _CurSegment : _Segments)
+				{
+					float t0 = 0;
+					float t1 = 0;
+					vec3 IntersectPoint;
+					auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+					if (IsCollision.first)
+					{
+						CollisionInfo.IntersectPoint = IntersectPoint;
+						FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+						continue;
+					}
+				}
+			}
+		};
+	}
+	
+
+
+}
+
 void CMonster::Free()
 {
 	/// <summary> 2020 12 20 이호준
@@ -245,5 +437,3 @@ void CMonster::Free()
 
 	CGameObject::Free();
 }
-
-

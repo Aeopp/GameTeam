@@ -12,7 +12,7 @@ private:
 	virtual ~CSharkBullet() = default;
 
 public:
-	// CMonsterÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CMonsterì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;

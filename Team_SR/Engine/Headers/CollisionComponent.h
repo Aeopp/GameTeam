@@ -44,6 +44,7 @@ public:
 		Decorator,
 		DestroyDecorator,
 		Particle,
+		PlayerAttackParticle,
 	};
 public:
 	struct InitInfo
