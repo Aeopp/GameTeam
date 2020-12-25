@@ -567,7 +567,6 @@ void CPlayer::ShotGunShot()
 	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
-
 	POINT _Pt;
 	GetCursorPos(&_Pt);
 	ScreenToClient(g_hWnd, &_Pt);
@@ -669,6 +668,10 @@ void CPlayer::ShotGunShot()
 	_AnimationTextures.ChangeAnim(L"ShotGun_Shot", 0.1f, 2ul,
 		false, std::move(_Notify));
 
+	this->CurrentAttack = 20.f;
+
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
+
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
@@ -688,39 +691,67 @@ void CPlayer::ShotGunShot()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				this->CurrentAttack = 20.f;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
-
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster,t0,IsCollision.second } );
 			}
 		}
 	}
 
-	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+	auto find_iter= std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos), 
+	[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+	   const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+			 return std::get<1>(Lhs) < std::get<1>(Rhs); 
+		});
 
-	for (auto& _CurrentDecorator : _DecoratorList)
+	if (find_iter != std::end(_CollisionInfos))
 	{
-		auto _Component = _CurrentDecorator->GetComponent
-		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+		CGameObject* _Target = std::get<0>(   *find_iter);
+		_Target->Hit(this,(std::get<2>(*find_iter)));
+	}; 
 
-		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
-		if (_CollisionComp)
+	_CollisionInfos.clear();
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
 		{
-			float t0 = 0;
-			float t1 = 0;
-			vec3 IntersectPoint;
-			std::pair<bool, Engine::Collision::Info>
-				IsCollision = Collision::IsRayToSphere(_Ray,
-					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
-			if (IsCollision.first)
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				this->CurrentAttack = 20.f;
-				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+				}
 			}
 		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			CGameObject* _Target = std::get<0>(*find_iter);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+		};
+
+		_CollisionInfos.clear();
+
 	}
+	
 
 
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
@@ -941,13 +972,16 @@ void CPlayer::AkimboFire()
 	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.025f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"AkimboFire"] = 0.2f;
-
 	
 	POINT _Pt;
 	GetCursorPos(&_Pt);
 	ScreenToClient(g_hWnd, &_Pt);
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
+
+	this->CurrentAttack = 1.5f;
+
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -968,37 +1002,67 @@ void CPlayer::AkimboFire()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				this->CurrentAttack = 2.f;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster, t0, IsCollision.second });
 			}
 		}
 	}
 
-	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
+		});
 
-	for (auto& _CurrentDecorator : _DecoratorList)
+	if (find_iter != std::end(_CollisionInfos))
 	{
-		auto _Component = _CurrentDecorator->GetComponent
-		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+		CGameObject* _Target = std::get<0>(*find_iter);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
+	};
 
-		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
-		if (_CollisionComp)
+	_CollisionInfos.clear();
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
 		{
-			float t0 = 0;
-			float t1 = 0;
-			vec3 IntersectPoint;
-			std::pair<bool, Engine::Collision::Info>
-				IsCollision = Collision::IsRayToSphere(_Ray,
-					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
-			if (IsCollision.first)
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+				}
 			}
 		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			CGameObject* _Target = std::get<0>(*find_iter);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+		};
+
+		_CollisionInfos.clear();
+
 	}
+
 
 
 
@@ -1119,6 +1183,10 @@ void CPlayer::MagnumFire()
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
+	this->CurrentAttack = 15.f;
+
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info>  > _CollisionInfos;
+
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
@@ -1138,37 +1206,65 @@ void CPlayer::MagnumFire()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				this->CurrentAttack = 15.f;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentMonster, t0, IsCollision.second });
 			}
 		}
+	}
+
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
+		});
+
+	if (find_iter != std::end(_CollisionInfos))
+	{
+		CGameObject* _Target = std::get<0>(*find_iter);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
 	};
 
-	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+	_CollisionInfos.clear();
 
-	for (auto& _CurrentDecorator : _DecoratorList)
 	{
-		auto _Component = _CurrentDecorator->GetComponent
-		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
 
-		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
-		if (_CollisionComp)
+		for (auto& _CurrentDecorator : _DecoratorList)
 		{
-			float t0 = 0;
-			float t1 = 0;
-			vec3 IntersectPoint;
-			std::pair<bool, Engine::Collision::Info>
-				IsCollision = Collision::IsRayToSphere(_Ray,
-					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
-			if (IsCollision.first)
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				this->CurrentAttack = 15.f;
-				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info>{ _CurrentDecorator, t0, IsCollision.second });
+				}
 			}
 		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			CGameObject* _Target = std::get<0>(*find_iter);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+		};
+
+		_CollisionInfos.clear();
+
 	}
 
 
