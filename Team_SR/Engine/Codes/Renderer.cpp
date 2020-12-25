@@ -239,6 +239,9 @@ HRESULT CRenderer::RenderAlpha()
 HRESULT CRenderer::RenderUI()
 {
 	mat PrevView, PrevProjection;
+	
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 

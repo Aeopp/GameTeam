@@ -112,7 +112,7 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"MagnumShell"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\MagnumShell\\", 1);
-
+	
 	_ParticleTextureTable._TextureMap[L"BulletHole0"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\BulletHole\\0\\", 1);
 
@@ -240,6 +240,7 @@ void ParticleSystem::Collision()&
 		{
 			continue;
 		}
+
 		Sphere _Sphere;
 		_Sphere.Center = _Particle.Location + _Particle.Correction;
 		_Sphere.Radius = _Particle.Radius;
@@ -397,6 +398,7 @@ void ParticleSystem::Collision()&
 
 void ParticleSystem::Render()&
 {
+	_Device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE );
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	_Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -509,6 +511,7 @@ void ParticleSystem::Render()&
 		ParticleRenderSetFromName(_Particle, _Effect);
 		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
 	}
+
 	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
@@ -584,12 +587,26 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);	
 		return;
 	}
-
 	if (_Particle.Name == L"DaggerThrowParticle")
 	{
 		_Effect.SetPSConstantData(_Device, "ColorLerpT", (1.0f - (_Particle.Durtaion / _Particle.MaxDuration)));
 		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 		_Effect.SetPSConstantData(_Device, "ColorLerpT", 0.0f);
+		return;
+	}
+	if(_Particle.Name == L"BulletHole0" || 
+		_Particle.Name == L"BulletHole1" || 
+		_Particle.Name == L"BulletHole2" || 
+		_Particle.Name == L"BulletHole3" || 
+		_Particle.Name == L"FloorBlood")
+	{
+		_Device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		_Device->SetRenderState(D3DRS_STENCILREF, 0x1);
+		_Device->SetRenderState(D3DRS_STENCILFUNC, D3DCMPFUNC::D3DCMP_EQUAL);
+		_Device->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_ZERO);
+		_Device->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+		_Device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 		return;
 	}
 

@@ -54,6 +54,7 @@ public:
 		bool bFloorCollision = false;
 		bool bCollision = true;
 		bool bMapBlock = false;
+		bool bPush = false;
 		ETag Tag = ETag::None;
 		class CGameObject* Owner = nullptr;
 		// 버텍스 정보로 계산하고 싶다면 세팅
@@ -65,6 +66,7 @@ public:
 	bool bFloorCollision = false;
 	bool bMapBlock = false;
 	bool bCollision = true;
+	bool bPush=false ;
 	class CGameObject* Owner = nullptr;
 
 	ID3DXMesh* _SphereMesh = nullptr;

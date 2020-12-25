@@ -696,6 +696,33 @@ void CPlayer::ShotGunShot()
 		}
 	}
 
+	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+	for (auto& _CurrentDecorator : _DecoratorList)
+	{
+		auto _Component = _CurrentDecorator->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 20.f;
+				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
+
+
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
 }
 
@@ -1117,6 +1144,34 @@ void CPlayer::MagnumFire()
 			}
 		}
 	};
+
+	auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+	for (auto& _CurrentDecorator : _DecoratorList)
+	{
+		auto _Component = _CurrentDecorator->GetComponent
+		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (_CollisionComp)
+		{
+			float t0 = 0;
+			float t1 = 0;
+			vec3 IntersectPoint;
+			std::pair<bool, Engine::Collision::Info>
+				IsCollision = Collision::IsRayToSphere(_Ray,
+					_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+			if (IsCollision.first)
+			{
+				Collision::Info _CollisionInfo = IsCollision.second;
+				this->CurrentAttack = 15.f;
+				_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+			}
+		}
+	}
+
+
 
 	CollisionParticle _CollisionParticle;
 	_CollisionParticle.Delta = 10000.f;

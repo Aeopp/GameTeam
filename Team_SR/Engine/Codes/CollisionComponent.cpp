@@ -17,10 +17,10 @@ std::vector<PlaneInfo> CCollisionComponent::_MapFloorInfo{};
 
 std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollisionComponent::_TagBind
 {
-	{ MonsterAttack, { Player } },
-	{ PlayerAttack, {  Monster} },
-	{Item,{Player} }  ,
-	{PlayerAttackParticle , {Monster } },
+	{MonsterAttack, { Player }},
+	{PlayerAttack,  { Monster}},
+	{Item,{Player} },
+	{PlayerAttackParticle , {Monster  ,Decorator} },
 };
 
 CCollisionComponent::CCollisionComponent(LPDIRECT3DDEVICE9 pDevice)
@@ -60,6 +60,8 @@ HRESULT CCollisionComponent::ReadyComponent(void* pArg)
 	_Sphere.Radius = _Info.Radius;
 	_Tag = _Info.Tag;
 	Owner = _Info.Owner;
+	bPush = _Info.bPush;
+
 	if (_Info.Vertex)
 	{
 		D3DXComputeBoundingSphere(
@@ -234,7 +236,10 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 		{
 			auto* _LhsOwner = this->Owner;
 			auto* _RhsOwner = _Comp->Owner;
-
+			if (this->bPush)
+			{
+				_RhsOwner->GetTransform()->m_TransformDesc.vPosition += (IsCollision.second.Dir * IsCollision.second.CrossValue);
+			};
 			_LhsOwner->Hit(_RhsOwner, IsCollision.second);
 			_RhsOwner->Hit(_LhsOwner, IsCollision.second);
 			 //PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");

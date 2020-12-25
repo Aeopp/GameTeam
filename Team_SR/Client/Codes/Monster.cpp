@@ -62,6 +62,8 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 	IsBillboarding();
 
+	FloorBloodCurrentCoolTime -= fDeltaTime;
+
 	return _uint();
 }
 
@@ -163,12 +165,13 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 {
 		
 	 }
-
 }
 
 void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
+
+	DeadHitBlood();
 
 	if (_Particle)
 	{
@@ -270,7 +273,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 
 	PlaneNormal = MATH::Normalize(PlaneNormal);
 
-	const vec3 Axis = MATH::Normalize(MATH::Cross(Normal, PlaneNormal));
+	const vec3 Axis = (MATH::Cross(Normal, PlaneNormal));
 	const float Radian = std::acosf(MATH::Dot(Normal, PlaneNormal));
 	mat RotAxis;
 	D3DXMatrixRotationAxis(&RotAxis, &Axis, Radian);
@@ -286,7 +289,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	_Particle.CurrentFrame = Frame; 
 	_Particle.CurrentT = static_cast<float>(Frame); 
 	_Particle.Delta = FLT_MAX;
-	_Particle.Durtaion = 2000.f;
+	_Particle.Durtaion = 60.f;
 	_Particle.EndFrame = Frame;
 	_Particle.StartLocation =   _Particle.Location = IntersectPoint + PlaneNormal * 0.01f;
 	_Particle.Scale = { 1.3,1.3,1.3 };
@@ -317,111 +320,112 @@ void CMonster::DeadHitBlood()
 		_Particle.bLoop = false;
 		_Particle.bMove = true;
 		_Particle.Delta = FLT_MAX;
-		const float Speed = MATH::RandReal({ 2,4 });
+		const float Speed = MATH::RandReal({ 3,6 });
 		const vec3 Dir = MATH::Normalize(MATH::RandVec());
 		_Particle.Dir = Dir;
-		_Particle.Durtaion = 0.05f * 8.f;
+		_Particle.Durtaion =  2.f;
 		_Particle.EndFrame = 1ul;
 		_Particle.Scale = { 0.15f,0.15f,0.15f };
-		_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f + Dir * Speed * 0.01f;
+		_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f + Dir * Speed * 0.1f;
 		_Particle.Name = L"Blood";
 		_Particle.Speed = Speed;
 		ParticleSystem::Instance().PushParticle(_Particle);
 	}
-
 	
-	Sphere _Sphere = _CollisionComp->_Sphere;
-	_Sphere.Radius *= 2.f;
+	if (FloorBloodCurrentCoolTime < 0.f)
 	{
-		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
+		FloorBloodCurrentCoolTime = FloorBloodCoolTime;
 
-		for (const auto& _CurPlane : _CurMap)
+		Sphere _Sphere = _CollisionComp->_Sphere;
+		_Sphere.Radius *= 1.5f;
 		{
-			vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
-			const float Distance = MATH::Length(ToPlaneCenter);
-			if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+			const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
-			auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
-			const bool bCurCollision = CheckInfo.first;
-			auto& CollisionInfo = CheckInfo.second;
-
-			// 평면과는 일단 충돌한다.
-			if (bCurCollision)
+			for (const auto& _CurPlane : _CurMap)
 			{
-				const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
-				// 평면과 일단 충돌한 상태에서
-				// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
-				if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+				vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
+				const float Distance = MATH::Length(ToPlaneCenter);
+				if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+
+				auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+				const bool bCurCollision = CheckInfo.first;
+				auto& CollisionInfo = CheckInfo.second;
+
+				// 평면과는 일단 충돌한다.
+				if (bCurCollision)
 				{
-					CollisionInfo.IntersectPoint = ProjPt;
-					FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
-					continue;
-				}
-				// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
-				std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
-				for (const auto& _CurSegment : _Segments)
-				{
-					float t0 = 0;
-					float t1 = 0;
-					vec3 IntersectPoint;
-					auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
-					if (IsCollision.first)
+					const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+					// 평면과 일단 충돌한 상태에서
+					// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+					if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
 					{
-						CollisionInfo.IntersectPoint = IntersectPoint;
+						CollisionInfo.IntersectPoint = ProjPt;
 						FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
 						continue;
 					}
-				}
-			}
-		};
-	}
-
-	{
-		const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
-
-		for (const auto& _CurPlane : _CurMap)
-		{
-			vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
-			const float Distance = MATH::Length(ToPlaneCenter);
-			if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
-
-			auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
-			const bool bCurCollision = CheckInfo.first;
-			auto& CollisionInfo = CheckInfo.second;
-
-			// 평면과는 일단 충돌한다.
-			if (bCurCollision)
-			{
-				const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
-				// 평면과 일단 충돌한 상태에서
-				// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
-				if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
-				{
-					CollisionInfo.IntersectPoint = ProjPt;
-					FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
-					continue;
-				}
-				// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
-				std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
-				for (const auto& _CurSegment : _Segments)
-				{
-					float t0 = 0;
-					float t1 = 0;
-					vec3 IntersectPoint;
-					auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
-					if (IsCollision.first)
+					// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+					std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+					for (const auto& _CurSegment : _Segments)
 					{
-						CollisionInfo.IntersectPoint = IntersectPoint;
+						float t0 = 0;
+						float t1 = 0;
+						vec3 IntersectPoint;
+						auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+						if (IsCollision.first)
+						{
+							CollisionInfo.IntersectPoint = IntersectPoint;
+							FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+							continue;
+						}
+					}
+				}
+			};
+		}
+
+		{
+			const auto& _CurMap = CCollisionComponent::_MapFloorInfo;
+
+			for (const auto& _CurPlane : _CurMap)
+			{
+				vec3 ToPlaneCenter = _CurPlane.Center - _Sphere.Center;
+				const float Distance = MATH::Length(ToPlaneCenter);
+				if (Distance > CCollisionComponent::MapCollisionCheckDistanceMin)continue;
+
+				auto CheckInfo = Collision::IsPlaneToSphere(_CurPlane, _Sphere);
+				const bool bCurCollision = CheckInfo.first;
+				auto& CollisionInfo = CheckInfo.second;
+
+				// 평면과는 일단 충돌한다.
+				if (bCurCollision)
+				{
+					const vec3 ProjPt = MATH::ProjectionPointFromFace(_CurPlane._Plane, _Sphere.Center);
+					// 평면과 일단 충돌한 상태에서
+					// 구체의 중심을 평면에 투영한 이후의 점이 평면의 내부에 있다면 충돌.
+					if (MATH::InnerPointFromFace(ProjPt, _CurPlane.Face))
+					{
+						CollisionInfo.IntersectPoint = ProjPt;
 						FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
 						continue;
 					}
+					// 삼각형으로 선분 3개를 정의한 이후에 선분과 구의 충돌을 검사한다.
+					std::array<Segment, 3ul> _Segments = MATH::MakeSegmentFromFace(_CurPlane.Face);
+					for (const auto& _CurSegment : _Segments)
+					{
+						float t0 = 0;
+						float t1 = 0;
+						vec3 IntersectPoint;
+						auto IsCollision = Collision::IsSegmentToSphere(_CurSegment, _Sphere, t0, t1, IntersectPoint);
+						if (IsCollision.first)
+						{
+							CollisionInfo.IntersectPoint = IntersectPoint;
+							FloorBlood(_CurPlane, CollisionInfo.IntersectPoint);
+							continue;
+						}
+					}
 				}
-			}
-		};
+			};
+		}
 	}
-	
-
-
 }
 
 void CMonster::Free()

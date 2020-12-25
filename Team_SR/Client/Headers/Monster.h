@@ -63,6 +63,8 @@ protected:
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 
+	const float FloorBloodCoolTime = 1.f;
+	float FloorBloodCurrentCoolTime = FloorBloodCoolTime;
 public:
 /// 조명 하이라이팅이 강해짐.
 	float Shine = 20.f;

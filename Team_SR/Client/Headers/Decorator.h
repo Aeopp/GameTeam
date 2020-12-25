@@ -20,7 +20,7 @@ private:
 
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 장식이 피해를 받음
-
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 private:
 	void Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
 	HRESULT IsBillboarding();	// 빌보드
