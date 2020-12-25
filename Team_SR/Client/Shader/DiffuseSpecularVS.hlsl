@@ -60,10 +60,11 @@ VS_OUTPUT main(VS_INPUT Input)
     Output.Normal = normalize(WorldNormal);
 
     Output.UV = Input.UV;
+    // Y Inverse
     if (UVFlag == 2)
     {
         Output.UV.y *= -1.f;
-    }
+    };
     float3 WorldTangent = mul(Input.Tangent, (float3x3) World);
     Output.Tangent = normalize(WorldTangent);
     float3 WorldBiNormal  = mul(Input.BiNormal, (float3x3) World);

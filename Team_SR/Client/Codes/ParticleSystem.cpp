@@ -105,6 +105,9 @@ void ParticleSystem::InitializeTextures() & noexcept
 	_ParticleTextureTable._TextureMap[L"DaggerThrow"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\DaggerThrow\\", 1);
 
+	_ParticleTextureTable._TextureMap[L"DaggerThrowParticle"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\DaggerThrowParticle\\", 1);
+
 	_ParticleTextureTable._TextureMap[L"MagnumShell"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\MagnumShell\\", 1);
 
@@ -149,7 +152,11 @@ void ParticleSystem::Update(const float DeltaTime)&
 			}
 			_Particle.Dir += _Particle.DeltaVector *DeltaTime;
 			_Particle.Dir = MATH::Normalize(_Particle.Dir);
-			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			if (_Particle.bMove)
+			{
+				_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			}
+			
 		//	_Particle.Location.y = MATH::Parabolic(_Particle.StartLocation.y, _Particle.Speed, _Particle.Angle, _Particle.T, _Particle.Gravity);
 
 			ParticleEventFromName(_Particle, DeltaTime);
@@ -186,7 +193,10 @@ void ParticleSystem::Update(const float DeltaTime)&
 			}
 			_Particle.Dir += _Particle.DeltaVector * DeltaTime;
 			_Particle.Dir = MATH::Normalize(_Particle.Dir);
-			_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			if (_Particle.bMove)
+			{
+				_Particle.Location += _Particle.Dir * DeltaTime * _Particle.Speed;
+			}
 		//	_Particle.Location.y = MATH::Parabolic(_Particle.StartLocation.y, _Particle.Speed, _Particle.Angle, _Particle.T, _Particle.Gravity);
 
 			ParticleEventFromName(_Particle, DeltaTime);
@@ -214,7 +224,7 @@ void ParticleSystem::Collision()&
 			continue;
 		}
 		Sphere _Sphere;
-		_Sphere.Center = _Particle.Location;
+		_Sphere.Center = _Particle.Location + _Particle.Correction;
 		_Sphere.Radius = _Particle.Radius;
 		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
@@ -381,16 +391,7 @@ void ParticleSystem::Render()&
 	mat View;
 	_Device->GetTransform(D3DTS_VIEW, &View);
 	View._43=View._42=View._41 = 0;
-	View =MATH::Inverse(View);
-
-	/*CCamera* pCamera = (CCamera*)_Management->GetGameObject((_int)-1, L"Layer_MainCamera");
-	if (pCamera)
-	{
-		D3DXMatrixRotationX(&CRotX, pCamera->GetTransform()->GetRotation().x);
-		D3DXMatrixRotationY(&CRotY, pCamera->GetTransform()->GetRotation().y);
-		D3DXMatrixRotationZ(&CRotZ, pCamera->GetTransform()->GetRotation().z);
-	}
-	mat CameraRotationMat = CRotX * CRotY * CRotZ;*/
+	View = MATH::Inverse(View);
 
 	for (auto& _Particle : _Particles)
 	{
@@ -438,9 +439,9 @@ void ParticleSystem::Render()&
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "AlphaLerp", _Particle.AlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
 		ParticleRenderSetFromName(_Particle, _Effect);
-		_Effect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
 	}
 
 	for (auto& _Particle : _CollisionParticles)
@@ -488,9 +489,9 @@ void ParticleSystem::Render()&
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "AlphaLerp", _Particle.AlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
 		ParticleRenderSetFromName(_Particle, _Effect);
-		_Effect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
 	}
 	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
@@ -521,12 +522,26 @@ void ParticleSystem::ClearParticle() & noexcept
 	_CollisionParticles.clear();
 }
 
-void ParticleSystem::ParticleEventFromName( Particle& _Particle,
+void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 	const float DeltaTime)
 {
 	if (_Particle.Name == L"DaggerThrow")
 	{
-	//	_Particle.Scale.x += 0.01f;
+		CollisionParticle& _CollisionParticle = static_cast<CollisionParticle&>(_Particle);
+		float ScaleFactor = _CollisionParticle.bCollision ? 1.f : -1.f;
+		_CollisionParticle.Scale.x +=  (_CollisionParticle.Speed*DeltaTime*ScaleFactor);
+		if (_CollisionParticle.Scale.x < 0.0f)
+		{
+			_CollisionParticle.Scale.x = 0.0f;
+		}
+
+		_CollisionParticle.Correction = _CollisionParticle.Dir * (_CollisionParticle.Scale.x / 2.f);
+		MyLight _Light;
+		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Location = MATH::ConvertVec4(vec3{ _CollisionParticle.Correction + _CollisionParticle.Location } , 1.f);
+		_Light.Priority = 1ul;
+		_Light.Radius = 10.f;
+		Effect::RegistLight(std::move(_Light));
 	}
 
 	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell") 
@@ -550,18 +565,26 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 		return;
 	}
 
+	if (_Particle.Name == L"DaggerThrowParticle")
+	{
+		_Effect.SetPSConstantData(_Device, "ColorLerpT", (1.0f - (_Particle.Durtaion / _Particle.MaxDuration)));
+		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+		_Effect.SetPSConstantData(_Device, "ColorLerpT", 0.0f);
+		return;
+	}
+
 	_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 }
 
 void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle)
 {
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell"  || _Particle.Name == L"MagnumShell")
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell")
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bBillboard = true;
 		_Particle.bLoop = false;
 		_Particle.bRotationMatrix = true;
-		mat RotX, RotY, RotZ, Rot ;
+		mat RotX, RotY, RotZ, Rot;
 		D3DXMatrixRotationX(&RotX, MATH::ToRadian(_Particle.Rotation.x));
 		D3DXMatrixRotationY(&RotY, MATH::ToRadian(_Particle.Rotation.y));
 		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(_Particle.Rotation.z));
@@ -569,17 +592,52 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		D3DXMatrixRotationX(&RotX, MATH::ToRadian(90.f));
 		_Particle.RotationMatrix = Rot; *RotX;
 		_Particle.bCollision = false;
+	};
+
+	if (_Particle.Name == L"DaggerThrow")
+	{
+		static constexpr float Duration = 5.f;
+
+
+		_Particle.bCollision = false;
+		_Particle.Durtaion = Duration;
+		_Particle.bMove = false;
+
+		for (size_t i = 0; i < 13; ++i)
+		{
+			Particle _SpawnParticle;
+			_SpawnParticle.Scale = { 0.25f,0.25f,0.25f };
+			_SpawnParticle.bBillboard = true;
+			_SpawnParticle.bLoop = true;
+			_SpawnParticle.bRotationMatrix = false;
+			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.Delta = FLT_MAX;
+			const vec3 Dir = MATH::RandVec();
+			const float Speed = MATH::RandReal({ 1,2 });  
+			_SpawnParticle.Dir = Dir;
+			_SpawnParticle.MaxDuration= 			_SpawnParticle.Durtaion = Duration;
+			_SpawnParticle.Location = _Particle.Location  + _Particle.Correction + -_Particle.Dir * (_Particle.Speed *0.1f) + Dir * Speed;
+			_SpawnParticle.Name = L"DaggerThrowParticle";
+			_SpawnParticle.Speed = Speed; 
+			_SpawnParticle.StartLocation = _SpawnParticle.Location;
+			ParticleSystem::PushParticle(_SpawnParticle);
+		}
+
 	}
 }
 
-void ParticleSystem::PushParticle(Particle _Particle)
+void ParticleSystem::PushParticle(const Particle& _Particle)
 {
-	_Particles.emplace_back(std::move(_Particle));
+	static_assert(std::is_same<Particle, std::decay_t<decltype(_Particle)>>::value,"");
+
+	_Particles.emplace_back((_Particle));
 }
 
-void ParticleSystem::PushCollisionParticle(CollisionParticle _Particle)
+void ParticleSystem::PushCollisionParticle(const CollisionParticle& _Particle)
 {
-	_CollisionParticles.emplace_back(std::move(_Particle));
+	static_assert(std::is_same<CollisionParticle, std::decay_t<decltype(_Particle)>>::value, "");
+
+	_CollisionParticles.emplace_back((_Particle));
 }
 
 

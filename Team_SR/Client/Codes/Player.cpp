@@ -837,8 +837,7 @@ void CPlayer::DaggerThrow()
 	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.07f, 12ul, false,
 		std::move(_Notify));
 
-	auto _Camera=  m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0);
-	;
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 
 	for (size_t i = 0; i < 1; ++i)
 	{
@@ -847,83 +846,52 @@ void CPlayer::DaggerThrow()
 		ScreenToClient(g_hWnd, &_Pt);
 		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-	//	_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
-
-		Particle _Partice;
+		_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
+		
+		CollisionParticle _Partice;
 		_Partice.bBillboard = false;
 		_Partice.Delta = 2;
 		_Partice.Durtaion = 1000.f;
 		_Partice.EndFrame = 1;
-		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction);
-	//	_Partice.AlphaLerp = (i/1.f) / 100.f;
-		_Partice.AlphaLerp = 1.f;
+		m_pTransformCom->GetRight() * 0.5f;
+		 // _Camera->GetCameraDesc().vAt;
+		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction )*1.f + m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() *0.25f;
+		_Partice.bUVAlphaLerp = 1l;
 		_Partice.bRotationMatrix = true;
+		_Partice.bWallCollision = true;
+		_Partice.bFloorCollision = true;
+		_Partice.bCollision = true;
 
-		/*vec3 StandardNormal = { 0,0,-1 };
-		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, 90.f);
-		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, 45.f);*/
-
-		const float AngleY = 90.f;
-		const float AngleZ = 45.f;
-
-		mat RotY, RotZ, Rot, RotAxis;
+		const float AngleY = -90.f;
+		const float AngleZ = -45.f;
+		vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+		mat RotY, RotZ;
 		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
 		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
-		Rot = RotY * RotZ;
-		vec3 StandardY = { 0,1,0 };
-		vec3 StandardNormal= { 0,0,-1 };
-		StandardNormal  = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
-		StandardNormal  = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
 
-		StandardY = MATH::RotationVec(StandardY, { 0,1,0 }, AngleY);
-		StandardY = MATH::RotationVec(StandardY, { 0,0,1 }, AngleZ);
-
-		vec3 RotationStandardNormal = StandardNormal;
-
-		RotationStandardNormal = MATH::RotationVec(RotationStandardNormal, MATH::AxisY, m_pTransformCom->GetRotation().y);
-		StandardY = MATH::RotationVec(StandardY, MATH::AxisY, m_pTransformCom->GetRotation().y);
-
-		D3DXMatrixRotationY(&RotY, MATH::ToRadian(m_pTransformCom->GetRotation().y));
-		Rot *= RotY;
-		D3DXMatrixRotationAxis(&RotAxis, &StandardY, MATH::ToRadian( (m_pTransformCom->GetRotation().x*-1.f)   - m_pTransformCom->GetRotation().x/4.5f));
-		Rot *= RotAxis;
-	/*	const vec3 Axis = MATH::Cross(RotationStandardNormal, StandardNormal);
-		const float Angle = std::acosf(MATH::Dot(RotationStandardNormal , StandardNormal));
+		vec3 CameraLook = { 0,0,1 };
+		vec3 Dir = MATH::Normalize(_Ray.Direction);
+		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir ));
+		float Angle = std::acosf(MATH::Dot(Dir , CameraLook ));
 		mat RotAxis;
-		D3DXMatrixRotationAxis(&RotAxis, &Axis, MATH::ToRadian(Angle));
-
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+		mat Rot = RotY * RotZ * RotAxis;
+		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
 		Rot *= RotAxis;*/
 		
-
-
-		//mat RotX, RotY, RotZ, Rot;
-		//D3DXMatrixIdentity(&Rot);
-
-		//D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
-		//Rot *= RotY;
-		//D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
-		//Rot *= RotZ;
-
-		//D3DXMatrixRotationY(&RotY, MATH::ToRadian(m_pTransformCom->GetRotation().y));
-		//Rot *= RotY;
-		//mat AfterNormalRotAxisMat;
-		//D3DXMatrixRotationAxis(&AfterNormalRotAxisMat, &StandardNormal, MATH::ToRadian(m_pTransformCom->GetRotation().x));
-		//Rot *= AfterNormalRotAxisMat;
-
-		////Rot *= RotX;
-
-
-		
 		_Partice.RotationMatrix = Rot;
+		_Partice.Radius = 1.f;
 
-		_Partice.Scale = { 1,1,1 };
+		_Partice.Scale = { 1,0.5f,0.f };
 		_Partice.Name = L"DaggerThrow";
 
 		_Partice.Dir = _Ray.Direction;
 
-		_Partice.Speed = 10.f;
+		_Partice.Speed = 40.f;
 
-		ParticleSystem::Instance().PushParticle(_Partice);
+		ParticleSystem::Instance().PushCollisionParticle(_Partice);
 	}
 
 }

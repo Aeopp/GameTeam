@@ -20,10 +20,12 @@ struct Particle
 	float Gravity = 0.0f;
 	vec3 StartLocation{ 0,0,0 };
 	
+	bool bMove = true;
 	bool bBillboard = true;
 	bool bLoop = true;
+	float MaxDuration = 0.1f;
 	float Durtaion = 0.1f;
-	float AlphaLerp = 1.f;
+	int bUVAlphaLerp = 0;
 	float Speed = 10.f;
 	float Delta = 0.01f;
 	float CurrentT = 0.0f;
@@ -37,6 +39,7 @@ struct Particle
 
 struct CollisionParticle : public Particle
 {
+	vec3 Correction{ 0,0,0 };
 	float Radius = 1.f;
 	bool bMapBlock = false;
 	bool bWallCollision = false;
@@ -84,11 +87,11 @@ public:
 	void Render()&;
 	void ClearParticle()& noexcept;
 	void ParticleEventFromName(Particle& _Particle, const float DeltaTime);
-	void ParticleRenderSetFromName( Particle& _Particle, Effect::Info& _Effect);
+	void ParticleRenderSetFromName(Particle& _Particle, Effect::Info& _Effect);
 	void ParticleCollisionEventFromName(CollisionParticle& _Particle);
 public:
-	void PushParticle(Particle _Particle);
-	void PushCollisionParticle(CollisionParticle _Particle);
+	void PushParticle(const Particle& _Particle);
+	void PushCollisionParticle(const CollisionParticle& _Particle);
 };
 
 #endif // ParticleSystem_H

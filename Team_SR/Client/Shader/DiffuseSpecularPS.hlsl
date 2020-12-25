@@ -27,6 +27,8 @@ int bNormalSamplerBind;
 float AlphaLerp;
 int LightNum;
 int bUI;
+int bUVAlphaLerp;
+float ColorLerpT;
 
 float Shine;
 float FogEnd;
@@ -122,8 +124,15 @@ float4 main(PS_INPUT Input) : COLOR
     
     float OutAlpha = DiffuseTexColor.a;
     
-    OutAlpha *= AlphaLerp;
     
+    if (bUVAlphaLerp==1)
+    {
+        OutAlpha *= (1.5f - (1.0f - Input.UV.x));
+    }
+    
+    float CurrentColorLerpT  = saturate(ColorLerpT);
+    
+    OutputColor.rgb = (float3(1, 1, 1) * CurrentColorLerpT) + (OutputColor.rgb * (1.f-CurrentColorLerpT));
     
     return float4(OutputColor.rgb, OutAlpha);
 };
