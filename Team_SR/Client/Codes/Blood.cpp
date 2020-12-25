@@ -26,7 +26,7 @@ HRESULT CBlood::ReadyGameObject(void * pArg /*= nullptr*/)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = *(_vector*)pArg;
 	}
-	//Å×½ºÆ®
+	//í…ŒìŠ¤íŠ¸
 	m_pTransformCom->m_TransformDesc.vPosition.x += (rand() % 3 - 1)/5.f;
 	m_pTransformCom->m_TransformDesc.vPosition.y += (rand() % 3 - 1) / 5.f;
 	m_pTransformCom->m_TransformDesc.vPosition.z -= 1;
@@ -94,7 +94,7 @@ CBlood * CBlood::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CBlood::Clone(void * pArg /*= nullptr*/)
 {
-	CBlood* pClone = new CBlood(*this); /* º¹»ç»ý¼ºÀÚ */
+	CBlood* pClone = new CBlood(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

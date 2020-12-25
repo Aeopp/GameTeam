@@ -137,6 +137,9 @@ void ParticleSystem::InitializeTextures() & noexcept
 	_ParticleTextureTable._TextureMap[L"BloodBigHit1"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\BloodBigHit1\\", 8);
 
+	_ParticleTextureTable._TextureMap[L"BloodBigHit2"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\BloodBigHit2\\", 8);
+
 	_ParticleTextureTable._TextureMap[L"FloorBlood"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\FloorBlood\\", 4);
 }

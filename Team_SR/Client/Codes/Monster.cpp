@@ -171,7 +171,7 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
 
-	DeadHitBlood();
+	
 
 	if (_Particle)
 	{
@@ -183,6 +183,7 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 		}
 
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
+		DeadHitBlood();
 	}
 }
 
@@ -305,12 +306,27 @@ void CMonster::DeadHitBlood()
 	_Particle.bLoop = false;
 	_Particle.bMove = false;
 	_Particle.Delta = 0.08f;
-	_Particle.Durtaion = 8.f * _Particle.Delta;
-	_Particle.EndFrame = 8ul;
-	_Particle.Scale = { 1.5f,1.5f,1.5f };
 
+	uint32_t EndFrame{ 0ul };  
+	std::wstring Name{}; 
+
+	if (m_stStatus.fHP <= 0.f)
+	{
+		EndFrame = 18ul;
+		Name = L"OverKill";
+	}
+	else
+	{
+		int TextNumber = MATH::RandInt({ 1,2 });
+		Name = L"BloodBigHit" + std::to_wstring(TextNumber);
+		EndFrame = 8ul;
+	};
+
+	_Particle.Name = std::move(Name);
+	_Particle.EndFrame = EndFrame;
+	_Particle.Durtaion = static_cast<float> (EndFrame) * _Particle.Delta;
+	_Particle.Scale = { 1.5f,1.5f,1.5f };
 	_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f;
-	_Particle.Name = L"BloodBigHit1";
 	ParticleSystem::Instance().PushParticle(_Particle);
 
 	for (size_t i = 0; i < 8; ++i)
