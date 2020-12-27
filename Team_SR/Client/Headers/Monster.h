@@ -26,6 +26,7 @@ private:
 	HRESULT IsBillboarding();
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
@@ -33,6 +34,7 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
+	void DeadHitBlood();
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -61,6 +63,8 @@ protected:
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 
+	const float FloorBloodCoolTime = 1.f;
+	float FloorBloodCurrentCoolTime = FloorBloodCoolTime;
 public:
 /// 조명 하이라이팅이 강해짐.
 	float Shine = 20.f;

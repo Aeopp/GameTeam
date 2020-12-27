@@ -157,7 +157,7 @@ HRESULT CSharkBullet::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆìž„ í…ìŠ¤ì²˜ ìž¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -180,7 +180,7 @@ CSharkBullet * CSharkBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CSharkBullet::Clone(void * pArg /*= nullptr*/)
 {
-	CSharkBullet* pClone = new CSharkBullet(*this); /* º¹»ç»ý¼ºÀÚ */
+	CSharkBullet* pClone = new CSharkBullet(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

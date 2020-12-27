@@ -40,7 +40,7 @@ HRESULT CStage3rd::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 		return E_FAIL;
 
-	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 5,5,5 });
+	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

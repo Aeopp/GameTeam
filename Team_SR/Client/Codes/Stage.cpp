@@ -54,9 +54,9 @@ HRESULT CStage::ReadyScene()
 
 _uint CStage::UpdateScene(float fDeltaTime)
 {
-	CScene::UpdateScene(fDeltaTime);
+	KeyProcess(fDeltaTime);
 	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav", CSoundMgr::BGM);
-	return KeyProcess(fDeltaTime); 
+	return 	CScene::UpdateScene(fDeltaTime);
 }
 
 _uint CStage::LateUpdateScene()
@@ -78,6 +78,9 @@ _uint CStage::LateUpdateScene()
 
 _uint CStage::KeyProcess(float fDeltaTime)
 {
+	PlayerKeyProcess(m_pPlayer, fDeltaTime);
+
+
 
 	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
 	{
@@ -100,9 +103,6 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	{
 		_Camera->bThirdPerson = !_Camera->bThirdPerson;
 	}
-
-	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
-
 
 
 	return _uint();
@@ -253,8 +253,8 @@ void CStage::Free()
 
 
 
-void CStage::LoadObjects(const std::wstring& FilePath ,
-	 const vec3 WorldScale) & noexcept
+void CStage::LoadObjects(const std::wstring& FilePath,
+	const vec3 WorldScale) & noexcept
 {
 	struct ObjectSpawnInfo
 	{
@@ -286,7 +286,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 			InputStream >> LocalPoint.z;
 
 			const vec3 WorldPoint =
-			{   LocalPoint.x * WorldScale.x ,
+			{ LocalPoint.x * WorldScale.x ,
 				LocalPoint.y * WorldScale.y ,
 				LocalPoint.z * WorldScale.z };
 
@@ -315,7 +315,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 	{
 		SpawnObjectFromName(_CurrentObjectSpawnInfo.Name, _CurrentObjectSpawnInfo.Location);
 	}
-}
+};
 void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
 {
 	// 박쥐

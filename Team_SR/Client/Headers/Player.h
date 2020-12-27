@@ -51,14 +51,22 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
+	bool bUpgrade = false; 
+	bool bKeyBlue = false;
+	bool bKeyYellow = false;
+	bool bKeyRed = false;
+	int32_t Ammo = 100l;
 	float HP = 100.f;
 	float MP = 100.f;
 private:
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
-
+	vec3 PrevLocation{ 0 , 0 , 0 };
+	float T = 0.0f;
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
 	bool bStaffLoop = false;
+	float StaffChargeT = 0.0f;
+	const float StaffAttack = 15.f;
 private:
 	const float WeaponAnimDelta = 0.07f;
 	void ShotGunShot();

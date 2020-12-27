@@ -57,7 +57,11 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CMapBase::RenderGameObject()
 {
+
+	
+
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	
 	CubeMapRender();
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
@@ -68,13 +72,19 @@ HRESULT CMapBase::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 
+	m_pDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+	m_pDevice->SetRenderState(D3DRS_STENCILREF, 0x1);
+	m_pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
 	FloorRender();
 	WallRender();
 	BarRender();
+	m_pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
 
+	
 	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
 
 	return S_OK;

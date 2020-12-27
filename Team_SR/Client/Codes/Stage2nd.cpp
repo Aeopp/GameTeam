@@ -11,11 +11,9 @@
 #include "Map2nd.h"
 #include "Stage3rd.h"
 
-
 CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
-
 
 
 HRESULT CStage2nd::ReadyScene()
@@ -43,7 +41,7 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 5,5,5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 	
 
 

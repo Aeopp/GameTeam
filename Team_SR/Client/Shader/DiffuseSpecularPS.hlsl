@@ -26,6 +26,9 @@ int bSpecularSamplerBind;
 int bNormalSamplerBind;
 float AlphaLerp;
 int LightNum;
+int bUI;
+int bUVAlphaLerp;
+float ColorLerpT;
 
 float Shine;
 float FogEnd;
@@ -34,6 +37,13 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
+   if (bUI)
+   {
+       float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+       return DiffuseTexColor;
+   };
+   
+    
     Input.Normal = normalize(Input.Normal);
     Input.Tangent = normalize(Input.Tangent);
     Input.BiNormal = normalize(Input.BiNormal);
@@ -55,17 +65,14 @@ float4 main(PS_INPUT Input) : COLOR
     {
         Normal = Input.Normal;
     }
-   
  
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
     float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
-
     
     if (bSpecularSamplerBind == 0)
     {
         SpecularTexColor = DiffuseTexColor;
     }
-   
     
     float3 OutputColor = float3(0.0f, 0.0f, 0.0f);
     
@@ -102,7 +109,7 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.49f);
+        CurrentColor.rgb += (Environment * 0.30f);
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }
@@ -117,8 +124,15 @@ float4 main(PS_INPUT Input) : COLOR
     
     float OutAlpha = DiffuseTexColor.a;
     
-    OutAlpha *= AlphaLerp;
     
+    if (bUVAlphaLerp==1)
+    {
+        OutAlpha *= (1.25f - (1.0f - Input.UV.x));
+    }
+    
+    float CurrentColorLerpT  = saturate(ColorLerpT);
+    
+    OutputColor.rgb = (float3(1, 1, 1) * CurrentColorLerpT) + (OutputColor.rgb * (1.f-CurrentColorLerpT));
     
     return float4(OutputColor.rgb, OutAlpha);
 };

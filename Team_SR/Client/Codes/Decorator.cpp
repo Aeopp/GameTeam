@@ -3,7 +3,7 @@
 #include "MainCamera.h"
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
-
+#include "ParticleSystem.h"
 
 CDecorator::CDecorator(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -32,6 +32,14 @@ HRESULT CDecorator::ReadyGameObject(void* pArg /*= nullptr*/)
 			DecoratorBasicArgument* pArgument = static_cast<DecoratorBasicArgument*>(pArg);
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
 			m_stDecoratorInfo.eType = pArgument->eType;
+			switch (m_stDecoratorInfo.eType)
+			{
+			case DECO::Torch:
+				bGravity = false;
+				break; 
+			default:
+				break;
+			}
 			// 동적 생성된 거임
 			if (pArgument->bDeleteFlag) {
 				delete pArg;
@@ -49,8 +57,12 @@ _uint CDecorator::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
 
-	_CollisionComp->Update(m_pTransformCom);
+	if (_CollisionComp)
+	{
+		_CollisionComp->Update(m_pTransformCom);
+	}
 
+	UpdateFromMyDecoType();
 
 	return _uint();
 }
@@ -101,13 +113,16 @@ HRESULT CDecorator::RenderGameObject()
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
 
+	if (_CollisionComp)
+	{
+		_CollisionComp->DebugDraw();
+	}
+
 	return S_OK;
 }
 
 HRESULT CDecorator::AddComponents()
 {
-
-
 	if (FAILED(CGameObject::AddComponent(
 		(_uint)ESceneID::Static,
 		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
@@ -122,9 +137,11 @@ HRESULT CDecorator::AddComponents()
 	_Info.Tag = CCollisionComponent::ETag::Decorator;
 	_Info.bWallCollision = false;
 	_Info.bFloorCollision = true;
+	_Info.bPush = true;
 	_Info.bMapBlock = true;
 	_Info.Owner = this;
 	
+
 	DecoNextFrameInfo NextFrameInfo;
 
 #pragma region Item_Texture
@@ -645,9 +662,12 @@ HRESULT CDecorator::AddComponents()
 // 장식이 피해를 받음
 void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
-	m_stDecoratorInfo.fHP -= 1.f;
+	CGameObject::Hit(_Target, _CollisionInfo);
 
-	if (m_fTriggerHP != -1.f) {
+	m_stDecoratorInfo.fHP -= _Target->CurrentAttack;
+
+	if (m_fTriggerHP != -1.f) 
+	{
 		while (m_stDecoratorInfo.fHP <= m_fTriggerHP && m_listNextFrameInfo.size() != 0) {
 			auto iter = m_listNextFrameInfo.begin();
 			m_fFrameCnt = iter->fStartFrame;
@@ -655,6 +675,35 @@ void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 			m_fEndFrame = iter->fEndFrame;
 			m_fTriggerHP = iter->fTriggerHP;
 			m_listNextFrameInfo.erase(iter);
+		}
+	}
+}
+
+void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	CGameObject::ParticleHit(_Particle, _CollisionInfo);
+
+	if (_Particle)
+	{
+		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
+
+		if (_ParticlePtr->Name == L"DaggerThrow")
+		{
+			
+		}
+
+		m_stDecoratorInfo.fHP -= _ParticlePtr->CurrentAttack;
+
+		if (m_fTriggerHP != -1.f)
+		{
+			while (m_stDecoratorInfo.fHP <= m_fTriggerHP && m_listNextFrameInfo.size() != 0) {
+				auto iter = m_listNextFrameInfo.begin();
+				m_fFrameCnt = iter->fStartFrame;
+				m_fStartFrame = iter->fStartFrame;
+				m_fEndFrame = iter->fEndFrame;
+				m_fTriggerHP = iter->fTriggerHP;
+				m_listNextFrameInfo.erase(iter);
+			}
 		}
 	}
 }
@@ -739,6 +788,27 @@ void CDecorator::Free()
 	SafeRelease(_VertexBuffer);
 	/// </summary>
 	CGameObject::Free();
+}
+
+void CDecorator::UpdateFromMyDecoType()
+{
+	MyLight _Light;
+	_Light.Diffuse = { 1,1,1,1 };
+	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
+	_Light.Priority = 2ul;
+	_Light.Radius = 20.f;
+
+	switch (m_stDecoratorInfo.eType)
+	{
+	case Decorator::Torch:
+		Effect::RegistLight(std::move(_Light));
+		break;
+	case Decorator::Candle:
+		Effect::RegistLight(std::move(_Light));
+		break;
+	default:
+		break;
+	}
 }
 
 

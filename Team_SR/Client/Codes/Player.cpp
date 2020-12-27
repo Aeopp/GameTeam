@@ -8,6 +8,7 @@
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "MainCamera.h"
+#include "Item.h"
 
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
@@ -92,8 +93,6 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 			m_pDevice, L"..\\Resources\\Player\\Staff\\ChargeFire\\", 5);
 	}
 
-
-
 	return S_OK;
 }
 
@@ -159,20 +158,24 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	MyLight _Light;
 	_Light.Diffuse = { 1,1,1,1 };
 	_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation(), 1.f);
-	_Light.Radius = 60.f;
+	_Light.Radius = 30.f;
 	_Light.Priority = 0l;
 	Effect::RegistLight(std::move(_Light));
 
 	if (_AnimationTextures.GetAnimationKey() == L"Staff_Loop")
 	{
+		StaffChargeT += fDeltaTime;
+
 		MyLight _Light{};
 		_Light.Location =
 			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Diffuse = { 0,0,0.0f + (StaffChargeT *0.5f),1 };
 		_Light.Priority = 1l;
-		_Light.Radius = 200.f;
+		_Light.Radius =  (StaffChargeT * 100.f);
 		Effect::RegistLight(std::move(_Light));
 	}
+
+	T += fDeltaTime;
 
 	return _uint();
 }
@@ -181,9 +184,21 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::ParticleAfterAlpha
-		, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
+
+	if (PrevLocation!= m_pTransformCom->GetLocation())
+	{
+		T += fDeltaTime * 7.f;
+	}
+	else
+	{
+		T =0.0f;
+	};
+
+	if (T < 0.0f)T = 0.0f;
+
+	PrevLocation = m_pTransformCom->GetLocation();
 
 	return _uint();
 }
@@ -193,29 +208,45 @@ HRESULT CPlayer::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
+	float X = std::cosf(T) * 20.f;
+	float Y = std::sinf(T) * 40.f;
+
+	mat PrevView, PrevProjection , ViewIdentity, Ortho;
+
+	m_pDevice->GetTransform(D3DTS_VIEW, &PrevView);
+	m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection);
+
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
-	/*m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pDevice->SetRenderState(D3DRS_ALPHAREF, 1); 
-	m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);*/
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
-	vec3 GunLocation = _Camera->GetCameraDesc().vEye +  (_Camera->GetTransform()->GetLook() *1.55f);
-	GunLocation.y -= 0.25f;
-	vec3 GunScale = m_pTransformCom->GetScale();
-	vec3 GunRotation = m_pTransformCom->GetRotation();
 
-	//GunRotation.y +=180.f;
-
-	mat GunWorld = MATH::WorldMatrix(GunScale, GunRotation, GunLocation);
-	_Effect.SetVSConstantData(m_pDevice, "World", GunWorld);
+	D3DXMatrixOrthoLH(&Ortho, WINCX, WINCY, _Camera->GetCameraDesc().fNear, _Camera->GetCameraDesc().fFar);
 
 	const auto& TextureTuple = _AnimationTextures.GetCurrentTexture();
+
+	D3DSURFACE_DESC _Desc;
+	std::get<0>(TextureTuple)->GetLevelDesc(0, &_Desc);
+
+	const float 	Bottom =      -(WINCY / 2.f);
+	const float XSize = (float)_Desc.Width * 4.f;
+	const float YSize = (float)_Desc.Height * 4.f;
+	mat GunUI = MATH::WorldMatrix({ XSize,YSize,0 }, { 0,0,0 }, { 0+X,Bottom+ (YSize /2.f) + Y -40.f ,_Camera->GetCameraDesc().fNear });
+
+	//D3DXMatrixScaling(&GunUI,1.f, 1.f, 1.f);
+	D3DXMatrixIdentity(&ViewIdentity);
+
+	_Effect.SetVSConstantData(m_pDevice, "bUI", 1l);
+	_Effect.SetVSConstantData(m_pDevice, "World", GunUI);
+	_Effect.SetVSConstantData(m_pDevice, "View", ViewIdentity);
+	_Effect.SetVSConstantData(m_pDevice, "Projection", Ortho);
+	
 
 	m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),std::get<0> (TextureTuple));
 	m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
 	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
 	
+	_Effect.SetPSConstantData(m_pDevice, "bUI", 1l);
 	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0 );
 	_Effect.SetPSConstantData(m_pDevice,"bNormalSamplerBind", 0);
 	_Effect.SetPSConstantData(m_pDevice, "Shine", 20.f);
@@ -223,10 +254,14 @@ HRESULT CPlayer::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
-	
-	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	//m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
 
+	_Effect.SetPSConstantData(m_pDevice, "bUI", 0l);
+	_Effect.SetVSConstantData(m_pDevice, "bUI", 0l);
+	_Effect.SetVSConstantData(m_pDevice, "View", PrevView);
+	_Effect.SetVSConstantData(m_pDevice, "Projection", PrevProjection);
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_CollisionComp->DebugDraw();
 
 	return S_OK;
@@ -234,7 +269,44 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	HP -= 1.f;
+	HP -= _Target->CurrentAttack;
+
+	auto* _Item = dynamic_cast<CItem*>(_Target);
+	if (_Item)
+	{
+		switch (_Item->GetItemInfo().etype)
+		{
+		case Item::HealthBig:
+			HP += 10.f;
+			break;
+		case Item::HealthSmall:
+			HP += 5.f;
+			break;
+		case Item::ManaBig:
+			MP += 10.f ;
+			break;
+		case Item::ManaSmall:
+			MP += 5.f;
+			break;
+		case Item::Ammo:
+			Ammo += 20l;
+			break;
+		case Item::KeyBlue:
+			bKeyBlue = true;
+			break;
+		case Item::KeyRed:
+			bKeyRed= true;
+			break;
+		case Item::KeyYellow:
+			bKeyYellow = true;
+			break;
+		case Item::Upgrade:
+			bUpgrade = true;
+			break;
+		default:
+			break;
+		}
+	};
 }
 
 void CPlayer::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
@@ -260,7 +332,6 @@ void CPlayer::MoveForward(const float DeltaTime)&
 	const float Speed = Desc.fSpeedPerSec;
 	Desc.vPosition += Forward * Speed * DeltaTime;
 };
-
 void CPlayer::MoveRight(const float DeltaTime)&
 {
 	PlayStepSound();
@@ -337,7 +408,6 @@ void CPlayer::MouseRightUp()&
 		break;
 	}
 };
-
 void CPlayer::MouseLeft()&
 {
 	switch (_CurrentWeaponState)
@@ -391,7 +461,6 @@ void CPlayer::MouseLeftPressing()&
 		break;
 	};
 };
-
 void CPlayer::RButtonEvent()&
 {
 	switch (_CurrentWeaponState)
@@ -411,32 +480,27 @@ void CPlayer::RButtonEvent()&
 		break;
 	}
 }
-
 void CPlayer::_1ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dagger;
 	_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
 
 }
-
 void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ShotGun;
 	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_3ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Akimbo;
 	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_4ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Magnum;
 	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
 }
-
 void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
@@ -472,7 +536,6 @@ HRESULT CPlayer::AddStaticComponents()
 	return S_OK;
 }
 
- 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
@@ -511,6 +574,19 @@ void CPlayer::Free()
 	CGameObject::Free();
 }
 
+static auto  PlayBulletHitParticle = [](const vec3 Dir, const vec3 IntersectPoint)
+{
+	Particle _Particle;
+	_Particle.bBillboard = true;
+	_Particle.Delta = 0.07f;
+	_Particle.Durtaion = _Particle.Delta * 4.0f;
+	_Particle.EndFrame = 4ul;
+	_Particle.Location = IntersectPoint + (Dir * 2.f);
+	_Particle.Name = L"BulletHit" + std::to_wstring(MATH::RandInt({ 0,3 }));
+	_Particle.Scale = { 0.7f,0.7f,0.7f };
+	ParticleSystem::Instance().PushParticle(_Particle);
+};
+
 static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 Normal ,float Scale)
 {
 	Particle _Particle;
@@ -533,15 +609,19 @@ static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 N
 	mat Rot = MATH::RotationMatrixFromAxis(Axis, Degree);
 	_Particle.bRotationMatrix = true;
 	_Particle.RotationMatrix = Rot;
+	_Particle.bBillboard = false;
 	ParticleSystem::Instance().PushParticle(std::move(_Particle));
+
+	PlayBulletHitParticle(Normal, IntersectPoint);
 };
+
+
 
 void CPlayer::ShotGunShot()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
 	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
-
 
 	POINT _Pt;
 	GetCursorPos(&_Pt);
@@ -584,6 +664,7 @@ void CPlayer::ShotGunShot()
 				{
 					vec3 Point = std::get<0>(*find_iter);
 					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+
 					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
 				};
 			}
@@ -621,6 +702,8 @@ void CPlayer::ShotGunShot()
 				{
 					vec3 Point = std::get<0>(*find_iter);
 					Point += MATH::RandVec() * MATH::RandReal({ 1,2 });
+
+
 					PlaneEffect(*this, Point, std::get<1>(*find_iter), 0.9f);
 				};
 
@@ -631,18 +714,14 @@ void CPlayer::ShotGunShot()
 	_Notify[2ul] = [this, _Ray]()
 	{
 		ShotGunReload();
-
-
-		/*AnimationTextures::NotifyType _Notify;
-		_Notify[14ul] = [this]()
-		{
-			_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1ul);
-		};
-		_AnimationTextures.ChangeAnim(L"ShotGun_Reload", 0.07f, 14ul, false, std::move(_Notify));*/
 	};
 
 	_AnimationTextures.ChangeAnim(L"ShotGun_Shot", 0.1f, 2ul,
 		false, std::move(_Notify));
+
+	this->CurrentAttack = 20.f;
+	//  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info, vec3>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -663,17 +742,86 @@ void CPlayer::ShotGunShot()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>
+				{ _CurrentMonster, t0, IsCollision.second, IntersectPoint });
 			}
 		}
 	}
 
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
+		});
+
+	if (find_iter != std::end(_CollisionInfos))
+	{
+		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter);
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
+
+		for (size_t i = 0; i < 8; ++i)
+		{
+			const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.25,1 });
+			PlayBulletHitParticle(Dir, RandPoint);
+		};
+	};
+
+	_CollisionInfos.clear();
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
+		{
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3 >{ _CurrentDecorator, t0, IsCollision.second, IntersectPoint});
+				}
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
+			CGameObject* _Target = std::get<0>(*find_iter);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+
+			for (size_t i = 0; i < 8; ++i)
+			{
+				const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.25,1 });
+				PlayBulletHitParticle(Dir, RandPoint);
+			};
+		};
+
+		_CollisionInfos.clear();
+	}
+
+
+
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
-
-
-	
-
 }
 
 void CPlayer::ShotGunReload()
@@ -703,6 +851,8 @@ void CPlayer::ShotGunReload()
 		_CollisionParticle.bWallCollision = false;
 		_CollisionParticle.bMapBlock = true;
 		_CollisionParticle.Gravity = 5.f;
+		_CollisionParticle.bMove = true;
+
 		vec3 SpawnLocation = (m_pTransformCom->GetLocation() + _Ray.Direction * 1.4f);
 
 		if (MATH::RandInt({ 0,1 }))
@@ -724,7 +874,7 @@ void CPlayer::ShotGunReload()
 		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
 		_CollisionParticle.Durtaion = 1000.f;
 		_CollisionParticle.Name = L"ShotGunShell";
-		_CollisionParticle.Radius = 0.2f;
+		_CollisionParticle.Radius = 0.3f;
 		_CollisionParticle.Speed = 10.f;
 		ParticleSystem::Instance().PushCollisionParticle
 		(std::move(_CollisionParticle));
@@ -761,6 +911,7 @@ void CPlayer::DaggerStab()
 	_Sphere.Center = m_pTransformCom->GetLocation() + (m_pTransformCom->GetLook() * DaggerRich);
 	_Sphere.Radius = DaggerRange;
 
+	this->CurrentAttack = 10.f;
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
@@ -785,6 +936,33 @@ void CPlayer::DaggerStab()
 			}
 		}
 	}
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
+		{
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsSphereToSphere(_Sphere, _CollisionComp->_Sphere);
+
+				if (IsCollision.first)
+				{
+					Collision::Info _CollisionInfo = IsCollision.second;
+					_CurrentDecorator->Hit(this, std::move(_CollisionInfo));
+				}
+			}
+		}
+	};
 }
 
 void CPlayer::DaggerThrow()
@@ -802,35 +980,76 @@ void CPlayer::DaggerThrow()
 	_AnimationTextures.ChangeAnim(L"Dagger_Throw", 0.07f, 12ul, false,
 		std::move(_Notify));
 
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 
-	for (size_t i = 0; i < 100; ++i)
+	for (size_t i = 0; i < 1; ++i)
 	{
-		POINT _Pt;
-		GetCursorPos(&_Pt);
-		ScreenToClient(g_hWnd, &_Pt);
-		vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
-		Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
-	//	_Ray.Start = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
+		CollisionParticle _Particle;
+		_Particle.bBillboard = false;
+		_Particle.Delta = 2;
+		_Particle.Durtaion = 1000.f;
+		_Particle.EndFrame = 1;
+		m_pTransformCom->GetRight() * 0.5f;
+		 
+		_Particle.Location = m_pTransformCom->GetLocation()+ m_pTransformCom->GetRight() * 0.25f + m_pTransformCom->GetUp() *0.25f;
+		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+		_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+		_Particle.bUVAlphaLerp = 1l;
+		_Particle.bRotationMatrix = true;
+		_Particle.bWallCollision = true;
+		_Particle.bFloorCollision = true;
+		_Particle.bCollision = true;
+		_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+		_Particle.CurrentAttack = 15.f;
 
-		Particle _Partice;
-		_Partice.Delta = 2;
-		_Partice.Durtaion = 2 * 1;
-		_Partice.EndFrame = 1;
-		_Partice.Location = m_pTransformCom->GetLocation() + (_Ray.Direction * i);
-		_Partice.AlphaLerp = (i/1.f) / 100.f;
-		//_Partice.Rotation.y = 75.f;
-		//_Partice.Rotation.x = 80.f;
+		const float AngleY = -89.f;
+		const float AngleZ = -40.f;
+		vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+		mat RotY, RotZ;
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
 
-		_Partice.Scale = { 0.5f, 0.5f,0.5f };
-		_Partice.Name = L"DaggerThrow";
+		vec3 CameraLook = { 0,0,1 };
+		vec3 Dir = MATH::Normalize(_Particle.Dir);
+		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir ));
+		float Angle = std::acosf(MATH::Dot(Dir , CameraLook ));
+		mat RotAxis;
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+		mat Rot = RotY * RotZ * RotAxis;
+		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
+		Rot *= RotAxis;*/
+		
+		_Particle.RotationMatrix = Rot;
+		_Particle.Radius = 1.f;
 
-		_Partice.Dir = _Ray.Direction;
+		_Particle.Scale = { 2.f,0.5f,0.f };
+		_Particle.Name = L"DaggerThrow";
 
-		_Partice.Speed = 10.f;
+		_Particle.Speed = 40.f;
 
-		ParticleSystem::Instance().PushParticle(_Partice);
+		ParticleSystem::Instance().PushCollisionParticle(_Particle);
+
+		for (size_t i = 0; i < 2; ++i)
+		{
+			CollisionParticle _ArrowParticle = _Particle;
+			_ArrowParticle.Speed *= 2.0f;
+			_ArrowParticle.Scale.y = 1.f;
+			_ArrowParticle.Scale.x = -13.f;
+			_ArrowParticle.Name = L"ArrowX";
+			_ArrowParticle.bWallCollision = false;
+			_ArrowParticle.bFloorCollision = false;
+			_ArrowParticle.bCollision = false;
+			_ArrowParticle.Location += _ArrowParticle.Dir * _Particle.Scale.x;
+			_ArrowParticle.	bUVAlphaLerp = 0l;
+			
+			mat RotDirAxis;
+			D3DXMatrixRotationAxis(&RotDirAxis, &_ArrowParticle.Dir, MATH::ToRadian(90.f* i));
+			_ArrowParticle.RotationMatrix *= RotDirAxis;
+			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
+		};
 	}
-
 }
 
 void CPlayer::AkimboFire()
@@ -847,7 +1066,6 @@ void CPlayer::AkimboFire()
 	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.025f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"AkimboFire"] = 0.2f;
-
 	
 	POINT _Pt;
 	GetCursorPos(&_Pt);
@@ -855,6 +1073,9 @@ void CPlayer::AkimboFire()
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
+	this->CurrentAttack = 1.5f;
+	                                                         //  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info,vec3>  > _CollisionInfos;
 
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
@@ -875,11 +1096,74 @@ void CPlayer::AkimboFire()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>{ _CurrentMonster, t0, IsCollision.second ,IntersectPoint });
 			}
 		}
 	}
+
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
+		});
+
+	if (find_iter != std::end(_CollisionInfos))
+	{
+		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter); 
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		PlayBulletHitParticle(Dir, IntersectPoint);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
+	};
+
+	_CollisionInfos.clear();
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
+		{
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info , vec3 >{ _CurrentDecorator, t0, IsCollision.second , IntersectPoint});
+				}
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			CGameObject* _Target = std::get<0>(*find_iter);
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+			PlayBulletHitParticle(Dir, IntersectPoint);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+		};
+
+		_CollisionInfos.clear();
+	}
+
+
+
 
 	CollisionParticle _CollisionParticle;
 	_CollisionParticle.Delta = 10000.f;
@@ -906,13 +1190,12 @@ void CPlayer::AkimboFire()
 	_CollisionParticle.Dir = vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) };
 	_CollisionParticle.Angle = MATH::RandReal({ 90,130});
 	_CollisionParticle.Speed = MATH::RandReal({ 50,150});
-	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
+	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-180,180}) };
 	_CollisionParticle.Durtaion = 1000.f;
 	_CollisionParticle.Name = L"BulletShell";
-	_CollisionParticle.Radius = 0.1f;
+	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
 	ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
-
 
 	{
 		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
@@ -941,6 +1224,7 @@ void CPlayer::AkimboFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+		
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
@@ -972,10 +1256,10 @@ void CPlayer::AkimboFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+			
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
-
 }
 
 void CPlayer::MagnumFire()
@@ -1000,6 +1284,10 @@ void CPlayer::MagnumFire()
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
+	this->CurrentAttack = 15.f;
+	//  IntersectPoint
+	std::vector< std::tuple<CGameObject*, const float, Collision::Info, vec3>  > _CollisionInfos;
+
 	auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
 
 	for (auto& _CurrentMonster : _MonsterList)
@@ -1019,11 +1307,74 @@ void CPlayer::MagnumFire()
 
 			if (IsCollision.first)
 			{
-				Collision::Info _CollisionInfo = IsCollision.second;
-				_CurrentMonster->Hit(this, std::move(_CollisionInfo));
+				_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3>{ _CurrentMonster, t0, IsCollision.second, IntersectPoint });
 			}
 		}
+	}
+
+	auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+		[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+			const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+				return std::get<1>(Lhs) < std::get<1>(Rhs);
+		});
+
+	if (find_iter != std::end(_CollisionInfos))
+	{
+		CGameObject* _Target = std::get<0>(*find_iter);
+		const vec3 IntersectPoint = std::get<3>(*find_iter);
+		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+		PlayBulletHitParticle(Dir, IntersectPoint);
+		_Target->Hit(this, (std::get<2>(*find_iter)));
 	};
+
+	_CollisionInfos.clear();
+
+	{
+		auto _DecoratorList = m_pManagement->GetGameObjects(-1, L"Layer_Decorator");
+
+		for (auto& _CurrentDecorator : _DecoratorList)
+		{
+			auto _Component = _CurrentDecorator->GetComponent
+			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>
+					IsCollision = Collision::IsRayToSphere(_Ray,
+						_CollisionComp->_Sphere, t0, t1, IntersectPoint);
+
+				if (IsCollision.first)
+				{
+					_CollisionInfos.emplace_back(std::tuple<CGameObject*, const float, Collision::Info, vec3 >{ _CurrentDecorator, t0, IsCollision.second, IntersectPoint});
+				}
+			}
+		}
+
+		auto find_iter = std::min_element(std::begin(_CollisionInfos), std::end(_CollisionInfos),
+			[](const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Lhs,
+				const std::tuple<CGameObject*, const float, Collision::Info, vec3>& Rhs) {
+					return std::get<1>(Lhs) < std::get<1>(Rhs);
+			});
+
+
+		if (find_iter != std::end(_CollisionInfos))
+		{
+			CGameObject* _Target = std::get<0>(*find_iter);
+			const vec3 IntersectPoint = std::get<3>(*find_iter);
+			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
+			PlayBulletHitParticle(Dir, IntersectPoint);
+			_Target->Hit(this, (std::get<2>(*find_iter)));
+		};
+
+		_CollisionInfos.clear();
+	}
+
+
+
 
 	CollisionParticle _CollisionParticle;
 	_CollisionParticle.Delta = 10000.f;
@@ -1053,7 +1404,7 @@ void CPlayer::MagnumFire()
 	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
 	_CollisionParticle.Durtaion = 1000.f;
 	_CollisionParticle.Name = L"MagnumShell";
-	_CollisionParticle.Radius = 0.2f;
+	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
 	ParticleSystem::Instance().PushCollisionParticle
 	(std::move(_CollisionParticle));
@@ -1086,6 +1437,7 @@ void CPlayer::MagnumFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+			
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
@@ -1117,6 +1469,7 @@ void CPlayer::MagnumFire()
 
 		if (find_iter != std::end(_IntersectInfo))
 		{
+		
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
@@ -1137,6 +1490,79 @@ void CPlayer::StaffFire()
 	_AnimationTextures.ChangeAnim(L"Staff_Fire", 0.07f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"StaffFire"] = 0.15f;
+
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+
+	for (size_t i = 0; i < 1; ++i)
+	{
+		CollisionParticle _Particle;
+		_Particle.bBillboard = false;
+		_Particle.Delta = 2;
+		_Particle.Durtaion = 1000.f;
+		_Particle.EndFrame = 1;
+
+		_Particle.Location = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetUp() * -0.25f );
+		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+		_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+		_Particle.bUVAlphaLerp = 1l;
+		_Particle.bRotationMatrix = true;
+		_Particle.bWallCollision = true;
+		_Particle.bFloorCollision = true;
+		_Particle.bCollision = true;
+		_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+		_Particle.CurrentAttack = StaffAttack;
+
+		const float AngleY = -90.f;
+		const float AngleZ = -90.f;
+		vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+		mat RotY, RotZ;
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
+
+		vec3 CameraLook = { 0,0,1 };
+		vec3 Dir = MATH::Normalize(_Particle.Dir);
+		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir));
+		float Angle = std::acosf(MATH::Dot(Dir, CameraLook));
+		mat RotAxis;
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+		mat Rot = RotY * RotZ * RotAxis;
+		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
+		Rot *= RotAxis;*/
+
+		_Particle.RotationMatrix = Rot;
+		_Particle.Radius = 1.f;
+
+		_Particle.Scale = { 3.f,0.5f,0.f };
+		_Particle.Name = L"StaffFire";
+
+		_Particle.Speed = 40.f;
+
+		ParticleSystem::Instance().PushCollisionParticle(_Particle);
+
+		{
+			
+		Particle _BlastParticle;
+		_BlastParticle.bBillboard = true;
+		_BlastParticle.Delta = 0.1f;
+		_BlastParticle.Durtaion = 10.f;
+		_BlastParticle.EndFrame = 7ul;
+
+		_BlastParticle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
+		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+		_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
+		_BlastParticle.bUVAlphaLerp = 1l;
+
+		_BlastParticle.Scale = { 0.7f ,0.7f,0.7f };
+		_BlastParticle.Name = L"WandProjectile";
+
+		_BlastParticle.Speed = 100.0f;
+
+		ParticleSystem::Instance().PushParticle(_BlastParticle);
+		};
+
+	}
 }
 
 void CPlayer::StaffCharge()
@@ -1145,6 +1571,8 @@ void CPlayer::StaffCharge()
 	CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
+
+	StaffChargeT = T;
 
 	_Notify[16ul] = [this]()
 	{
@@ -1171,6 +1599,88 @@ void CPlayer::StaffRelease()
 		false, std::move(_Notify));
 
 	LightingDurationTable[L"StaffRelease"] = 0.2f;
+	
+	const float CurrentStaffAttack = (StaffChargeT * StaffAttack) + StaffAttack;
+	StaffChargeT = 0.0f;
+
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+
+	for (size_t i = 0; i < 1; ++i)
+	{
+		CollisionParticle _Particle;
+		_Particle.bBillboard = false;
+		_Particle.Delta = 2;
+		_Particle.Durtaion = 1000.f;
+		_Particle.EndFrame = 1;
+
+		_Particle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
+		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+		_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+		_Particle.bUVAlphaLerp = 1l;
+		_Particle.bRotationMatrix = true;
+		_Particle.bWallCollision = true;
+		_Particle.bFloorCollision = true;
+		_Particle.bCollision = true;
+		_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+		_Particle.CurrentAttack = CurrentStaffAttack;
+
+		const float AngleY = -90.f;
+		const float AngleZ = -90.f;
+		vec3 StandardNormal = { 0,0,-1 };
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,1,0 }, AngleY);
+		StandardNormal = MATH::RotationVec(StandardNormal, { 0,0,1 }, AngleZ);
+		mat RotY, RotZ;
+		D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+		D3DXMatrixRotationZ(&RotZ, MATH::ToRadian(AngleZ));
+
+		vec3 CameraLook = { 0,0,1 };
+		vec3 Dir = MATH::Normalize(_Particle.Dir);
+		vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, Dir));
+		float Angle = std::acosf(MATH::Dot(Dir, CameraLook));
+		mat RotAxis;
+		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+		mat Rot = RotY * RotZ * RotAxis;
+		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
+		Rot *= RotAxis;*/
+
+		_Particle.RotationMatrix = Rot;
+		_Particle.Radius = 1.f;
+
+		_Particle.Scale = { 3.f,0.5f,0.f };
+		_Particle.Name = L"StaffFire";
+
+		_Particle.Speed = 40.f;
+
+		ParticleSystem::Instance().PushCollisionParticle(_Particle);
+
+		{
+
+			Particle _BlastParticle;
+			_BlastParticle.bBillboard = true;
+			_BlastParticle.Delta = 0.1f;
+			_BlastParticle.Durtaion = 10.f;
+			_BlastParticle.EndFrame = 7ul;
+
+			_BlastParticle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
+			const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+			_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
+			_BlastParticle.bUVAlphaLerp = 1l;
+
+			_BlastParticle.Scale = { 0.7f ,0.7f,0.7f };
+			_BlastParticle.Name = L"WandProjectile";
+
+			_BlastParticle.Speed = 100.0f;
+
+			ParticleSystem::Instance().PushParticle(_BlastParticle);
+		};
+
+	}
+
+
+
+
+
+
 }
 
 void CPlayer::StaffLoop()
@@ -1182,7 +1692,6 @@ void CPlayer::StaffLoop()
 	// bStaffLoop =false 로 만들기
 	// Key Up 일때 Loop 였다면 bStaffLoop = false 하고 Release 호출
 	bStaffLoop = true;
-
 }
 
 void CPlayer::PushLightFromName(const std::wstring& LightName)&
@@ -1227,9 +1736,9 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		MyLight _Light{};
 		_Light.Location =
 			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Diffuse = { 0,0,1,1 };
 		_Light.Priority = 1l;
-		_Light.Radius = 200.f;
+		_Light.Radius = 400.f;
 		Effect::RegistLight(std::move(_Light));
 	}
 	if (LightName == L"StaffCharge")
@@ -1238,7 +1747,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		MyLight _Light{};
 		_Light.Location =
 			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Diffuse = { 0,0,1,1 };
 		_Light.Priority = 1l;
 		_Light.Radius = 400.f;
 		Effect::RegistLight(std::move(_Light));
@@ -1249,7 +1758,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		MyLight _Light{};
 		_Light.Location =
 			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-		_Light.Diffuse = { 1,0,1,1 };
+		_Light.Diffuse = { 0,0,0,1 };
 		_Light.Priority = 1l;
 		_Light.Radius = 400.f;
 		Effect::RegistLight(std::move(_Light));

@@ -14,7 +14,6 @@ protected:
 
 public:
 	class CComponent* GetComponent(const wstring & ComponentTag);
-
 public:
 	virtual HRESULT ReadyGameObjectPrototype() = 0;	/* 프로토타입 초기화 */
 	virtual HRESULT ReadyGameObject(void* pArg = nullptr) = 0; /* 클론 초기화 */
@@ -34,7 +33,7 @@ public:
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
-
+	float CurrentAttack = 0.0f;
 protected:
 	HRESULT AddComponent(
 		_int iSceneIndex,

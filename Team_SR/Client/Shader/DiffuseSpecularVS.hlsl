@@ -4,6 +4,8 @@ matrix Projection;
 float4 WorldCameraLocation;
 int UVFlag;
 
+int bUI;
+
 struct VS_INPUT
 {
     float4 Location : POSITION;
@@ -27,10 +29,21 @@ struct VS_OUTPUT
 
 VS_OUTPUT main(VS_INPUT Input)
 {
-    VS_OUTPUT Output;
-	
+    VS_OUTPUT Output = (VS_OUTPUT) 0;
+    
+    if (bUI)
+    {
+        Output.Location = mul(Input.Location, World);
+        Output.Location = mul(Output.Location, View);
+        Output.Location = mul(Output.Location, Projection);
+        Output.UV = Input.UV;
+      
+        return Output;
+    }
+    
+    
 	// Vertex Location : Local Coord -> World Coord 
-    Output.Location = mul(Input.Location, World);
+        Output.Location = mul(Input.Location, World);
     Output.WorldLocation = Output.Location;
     
 	// WorldViewDirection Calc
@@ -47,14 +60,17 @@ VS_OUTPUT main(VS_INPUT Input)
     Output.Normal = normalize(WorldNormal);
 
     Output.UV = Input.UV;
+    // Y Inverse
     if (UVFlag == 2)
     {
         Output.UV.y *= -1.f;
-    }
+    };
     float3 WorldTangent = mul(Input.Tangent, (float3x3) World);
     Output.Tangent = normalize(WorldTangent);
     float3 WorldBiNormal  = mul(Input.BiNormal, (float3x3) World);
     Output.BiNormal = normalize(WorldBiNormal);
 
     return Output;
+    
+
 };

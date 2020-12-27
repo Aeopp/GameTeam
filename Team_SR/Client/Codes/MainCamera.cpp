@@ -78,7 +78,6 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		POINT ScreenCenterPT = { static_cast<LONG>(ScreenCenter.x) , static_cast<LONG>(ScreenCenter.y) };
 		ClientToScreen(g_hWnd, &ScreenCenterPT);
 		SetCursorPos(ScreenCenterPT.x, ScreenCenterPT.y);
-
 		
 		_vector Look{ 0,0,1 };
 

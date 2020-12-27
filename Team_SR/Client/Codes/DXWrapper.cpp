@@ -196,7 +196,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"View",
 				"Projection",
 				"WorldCameraLocation",
-			    "UVFlag"
+			    "UVFlag",
+				"bUI"
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
@@ -210,10 +211,12 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"LightDiffuse",
 				"bSpecularSamplerBind",
 				"bNormalSamplerBind",
-				"AlphaLerp",
+				"bUVAlphaLerp",
 				 "FogEnd",
 				 "FogStart",
-				 "FogColor"
+				 "FogColor",
+				"bUI",
+				"ColorLerpT"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -269,7 +272,8 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
 		CurEffect.SetVSConstantData(_Device, "UVFlag", int32_t(0l));
-		
+		CurEffect.SetVSConstantData(_Device, "bUI", 0l);
+
 		// 다중 조명시 수정 해야함...
 		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
 		const vec4 FogColor = { 0.7f,0.7f,0.7f,        1.f };
@@ -277,7 +281,10 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
 		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);
 		CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
-		CurEffect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+		CurEffect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+		CurEffect.SetPSConstantData(_Device, "bUI", 0l);
+		CurEffect.SetPSConstantData(_Device, "ColorLerpT", 0.0f);
+		
 
 		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());
