@@ -380,6 +380,12 @@ RETURN_MOVE:	// 이동
 		m_fEndFrame = 8;
 		m_fFrameSpeed = 10.f;
 	}
+
+	// 길찾기
+	m_pJumpPointSearch->Start(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
+	m_listMovePos.clear();
+	m_pJumpPointSearch->Finish(m_listMovePos);
+
 	return;
 }
 
@@ -459,6 +465,12 @@ RETURN_MOVE:	// 이동
 		m_fEndFrame = 8;
 		m_fFrameSpeed = 10.f;
 	}
+
+	// 길찾기
+	m_pJumpPointSearch->Start(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
+	m_listMovePos.clear();
+	m_pJumpPointSearch->Finish(m_listMovePos);
+
 	return;
 }
 
@@ -476,9 +488,27 @@ bool CBatGrey::Action_Idle(float fDeltaTime)
 // 이동
 bool CBatGrey::Action_Move(float fDeltaTime)
 {
+	// 더 이상 이동할 좌표가 없으면 이동을 끝냄
+	if (m_listMovePos.size() == 0) {
+		return true;
+	}
+
+	// 리스트에 저장된 이동 좌표 하나 꺼냄
+	list<vec3>::iterator iter = m_listMovePos.begin();
+	vec3 vDestPos = *iter;
+
 	// 방향
-	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	vec3 vDir = vDestPos - m_pTransformCom->m_TransformDesc.vPosition;
 	vDir.y = 0.f;
+	// 길이
+	float fLength = D3DXVec3Length(&vDir);
+	// 리스트에서 꺼낸 좌표 까지 가까이 왔으면
+	if (m_stStatus.fSpeed > fLength) {
+		// 현재 좌표는 리스트에서 지움
+		m_listMovePos.erase(iter);
+	}
+
+
 	D3DXVec3Normalize(&vDir, &vDir);
 	// 포지션 이동
 	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;

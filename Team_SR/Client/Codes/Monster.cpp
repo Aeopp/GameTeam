@@ -8,7 +8,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
 	, m_fCrossValue(0.f), m_vCollisionDir{0.f, 0.f, 0.f}, m_vAim {0.f, 0.f, 0.f}
-	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}, m_wstrTextureKey(L""), m_pJumpPointSearch(JumpPointSearch::Get_Instance())
 	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
 }

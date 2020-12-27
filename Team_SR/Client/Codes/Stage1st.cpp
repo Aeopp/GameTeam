@@ -41,18 +41,6 @@ HRESULT CStage1st::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 		return E_FAIL;
 	{
-		MonsterBasicArgument stArg;
-		stArg.uiSize = sizeof(MonsterBasicArgument);
-		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 0.f, 10.f, 20.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Shark",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Monster",
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
-
 		// 맵 정보
 		BYTE byMap[45][45] = {
 		//	  1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5
@@ -103,7 +91,19 @@ HRESULT CStage1st::ReadyScene()
 			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }	// 45
 		};
 
-		//JumpPointSearch::Get_Instance()->ReadyMap();
+		JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 45, 45, 31, 38, 5.f, 5);
+
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 10.f, 20.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"BatGrey",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 	}
 	
 	return S_OK;

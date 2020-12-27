@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "DXWrapper.h"
 #include "Vertexs.h"
+#include "JumpPointSearch.h"
 
 
 
@@ -58,6 +59,8 @@ protected:
 	MonsterStatus m_stStatus;				// 몬스터 스텟
 	wstring m_wstrTextureKey;				// 텍스처 키
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
+	list<vec3> m_listMovePos;				// 이동 좌표 리스트
+	JumpPointSearch* m_pJumpPointSearch;	// 길찾기
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 
