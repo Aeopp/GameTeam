@@ -7,11 +7,11 @@
 
 
 USING(Engine)
-class CPlyerInfoUI final : public CGameUI
+class CPlayerInfoUI final : public CGameUI
 {
 private:
-	explicit CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CPlyerInfoUI() = default;
+	explicit CPlayerInfoUI(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CPlayerInfoUI() = default;
 
 public:
 	// CGameObject을(를) 통해 상속됨
@@ -28,7 +28,7 @@ private:	//���θ޼������
 	HRESULT	AddComponent();
 
 public:
-	static CPlyerInfoUI* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CPlayerInfoUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 

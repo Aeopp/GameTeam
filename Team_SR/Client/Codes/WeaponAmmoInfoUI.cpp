@@ -73,6 +73,9 @@ _uint CWeaponAmmoInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CWeaponAmmoInfoUI::RenderGameObject()
 {
+	if (!m_bShown)
+		return S_OK;
+
 	if (FAILED(CGameUI::RenderGameObject()))
 		return E_FAIL;
 

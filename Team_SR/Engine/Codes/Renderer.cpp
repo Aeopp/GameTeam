@@ -246,6 +246,15 @@ HRESULT CRenderer::RenderUI()
 	if (HRESULT(m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection)))
 		return E_FAIL;
 
+	//Alpa Setting
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0x00000088)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER)))
+		return E_FAIL;
+
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))
@@ -255,12 +264,12 @@ HRESULT CRenderer::RenderUI()
 	}
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
-	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	//m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	
 	// 2020 12 17 이호준
 	// 미리 저장했던 뷰와 투영으로 렌더링 파이프라인에 다시 설정
-	m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
-	m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
+	//m_pDevice->SetTransform(D3DTS_VIEW, &PrevView);
+	//m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection);
 
 	if (HRESULT(m_pDevice->SetTransform(D3DTS_VIEW, &PrevView)))
 		return E_FAIL;

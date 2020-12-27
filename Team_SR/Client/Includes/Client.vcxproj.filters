@@ -139,8 +139,14 @@
     <Filter Include="01.Scene\Stages">
       <UniqueIdentifier>{4809b0e9-db87-4f46-94be-58a687ea6d73}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\03.ShopUI">
+    <Filter Include="02.GameObject\05.GameUI\00.Object\04.ShopUI">
       <UniqueIdentifier>{b6ce902b-365c-49cc-9b87-6f7a9a4591da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\03.HUDTopUI">
+      <UniqueIdentifier>{5b0dd413-524a-44ae-a2fe-14db4518db8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture">
+      <UniqueIdentifier>{43827cb1-9c1e-4fb5-91b7-febff7bb0966}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -276,10 +282,6 @@
     <ClInclude Include="..\Headers\Vertexs.h">
       <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\HUDTopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.HUDBossBar</Filter>
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Effect.h">
       <Filter>02.GameObject\05.Effect</Filter>
     </ClInclude>
@@ -324,9 +326,6 @@
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Particle.h" />
-    <ClInclude Include="..\Headers\PlyerInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
@@ -335,9 +334,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\LoadingBar.h">
       <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\VIBuffer_UITexture.h">
-      <Filter>02.GameObject\05.GameUI\01.Component</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Stage2nd.h">
       <Filter>01.Scene\Stages</Filter>
@@ -359,9 +355,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\StageMidBoss.h">
       <Filter>01.Scene\Stages</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\ShopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\03.ShopUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Decorator.h">
       <Filter>97.Others</Filter>
@@ -432,10 +425,51 @@
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
-    <ClInclude Include="..\Headers\HUDTopUI.h" />
-    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\StateBar.h" />
-    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\VIBuffer_UITexture.h">
+      <Filter>02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\VIBuffer_UITexture.h">
+      <Filter>02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\HUDTopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -543,10 +577,6 @@
     <ClCompile Include="..\Codes\Vertexs.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\HUDTopUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.HUDBossBar</Filter>
-      <Filter>02.GameObject\06.Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
       <Filter>02.GameObject\05.Effect</Filter>
     </ClCompile>
@@ -593,9 +623,6 @@
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="ComponentTemplate.md" />
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClCompile>
@@ -604,9 +631,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\LoadingBar.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp">
-      <Filter>02.GameObject\05.GameUI\01.Component</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Stage2nd.cpp">
       <Filter>01.Scene\Stages</Filter>
@@ -628,9 +652,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StageMidBoss.cpp">
       <Filter>01.Scene\Stages</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\ShopUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\03.ShopUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Decorator.cpp">
       <Filter>97.Others</Filter>
@@ -702,10 +723,37 @@
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="ComponentTemplate.md" />
-    <ClCompile Include="..\Codes\HUDTopUI.cpp" />
-    <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\StateBar.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp">
+      <Filter>02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp">
+      <Filter>02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HUDTopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

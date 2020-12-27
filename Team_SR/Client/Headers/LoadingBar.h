@@ -19,7 +19,10 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxHPAndHP(int* _piMaxValue, int* _piValue);
+	void SetMaxValueAndMinValue(_uint* _piMaxValue, _uint* _piValue);
+
+	int GetMaxValue();
+	int	GetMinValue();
 
 
 private://내부메서드관련
@@ -40,8 +43,8 @@ private:
 	float m_fMaxSize;
 	wstring m_wsObjectName;
 
-	int* m_piMaxValue;
-	int* m_piMinValue;
+	_uint* m_piMaxValue;
+	_uint* m_piMinValue;
 };
 
 #define __LOADINGBAR_H__

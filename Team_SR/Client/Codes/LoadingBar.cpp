@@ -105,6 +105,8 @@ _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 		0, 1000, "%d");
 	ImGui::End();
 
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
+		return S_OK;
 	m_UIDesc.vUISize.x = m_fMaxSize * m_fRatio;
 
 
@@ -113,6 +115,8 @@ _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 
 _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 {
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
+		return S_OK;
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
 	if (m_piMinValue && m_piMaxValue)
@@ -130,7 +134,7 @@ _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CLoadingBar::RenderGameObject()
 {
-	if (!m_bShown)
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
 		return S_OK;
 
 	if (FAILED(CGameUI::RenderGameObject()))
@@ -164,24 +168,38 @@ HRESULT CLoadingBar::RenderGameObject()
 	D3DXMATRIX matWorld, matScale, matTrans;
 	D3DXMatrixScaling(&matScale, 10.f, 10.f, 0.f);
 	D3DXMatrixTranslation(&matTrans, 0.f, 0.f, 0.f);
-	//D3DXMatrixTranslation(&matTrans, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
+//	D3DXMatrixTranslation(&matTrans, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
 	matWorld = matScale * matTrans;
 
 	m_pSprite->SetTransform(&matWorld);
-	//m_pFont->DrawTextW(m_pSprite, szRenderLife, lstrlen(szRenderLife),
-	//	nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
 	m_pFont->DrawTextW(m_pSprite, szRenderLife, lstrlen(szRenderLife),
 		nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+	//m_pFont->DrawTextW(m_pSprite, szRenderLife, lstrlen(szRenderLife),
+	//	nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
 
-	
 	return S_OK;
 }
 
-void CLoadingBar::SetMaxHPAndHP(int* _piMaxValue, int* _piValue)
+void CLoadingBar::SetMaxValueAndMinValue(_uint* _piMaxValue, _uint* _piValue)
 {
 	m_piMaxValue = _piMaxValue;
 	m_piMinValue = _piValue;
 }
+
+int CLoadingBar::GetMaxValue()
+{
+	if (!m_piMaxValue)
+		return 0;
+	return *m_piMaxValue;
+}
+
+int CLoadingBar::GetMinValue()
+{
+	if (!m_piMinValue)
+		return 0;
+	return *m_piMinValue;
+}
+
 
 HRESULT CLoadingBar::AddComponent(wstring _PrototypeTag, wstring _ComponentTag)
 {
@@ -231,3 +249,4 @@ void CLoadingBar::Free()
 	//m_pFont->Release();
 	CGameUI::Free();
 }
+

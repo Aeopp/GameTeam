@@ -32,32 +32,41 @@ public:
 
 public:
 	// 플레이어 정보 - 체력바, 마나, 초상화
-	void OnPlayerInfo();
+	void OnPlayerInfo(PLAYER_INFO* _pPlayerDesc);
 	void OffPlayerInfo();
 
 public:
 	// 무기 탄약 - 무기 탄약
-	void OnWeaponAmmom();
+	void OnWeaponAmmom(WEAPON_INFO* _pWeaponDesc);
 	void OffWeaponAmmom();
+
+public:
+	//몬스터의 체력
+	void OnMonsterBar(_uint* _iMaxHP, _uint* _iMinHP);
 
 public:
 	virtual void Free() override;
 
 private:
-	class CPlyerInfoUI* m_pPlayerInfoUI = nullptr;
+	class CPlayerInfoUI* m_pPlayerInfoUI = nullptr;
 	class CWeaponAmmoInfoUI* m_pWeaponAmmoInfoUI = nullptr;
 	class CLoadingBar* m_pHUD_HpBar = nullptr;
 	class CLoadingBar* m_pHUD_ManaBar = nullptr;
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
-	class CHUDBossBar* m_pHUD_TopUIaBossBar = nullptr;
+	class CHUDTopUI* m_pHUD_TopUI = nullptr;
 
 public:
 
 
 private:
-#pragma region Test_Font
-	int m_iMax[3];
-	int m_iMin[3];
+#pragma region Test_Player
+	_uint m_iMaxs[3];
+	_uint m_iMins[3];
+#pragma endregion
+
+#pragma region Test_MonsterHP
+	_uint m_iMax;
+	_uint m_iMin;
 #pragma endregion
 
 	LPDIRECT3DDEVICE9	m_pDevice;

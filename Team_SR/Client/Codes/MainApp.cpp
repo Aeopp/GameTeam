@@ -9,7 +9,7 @@
 #include "GlacierParticle.h"
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 
 #include "Terret.h"
@@ -140,8 +140,8 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_PlayerInfoUI
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		CPlyerInfoUI::Create(m_pDevice))))
+		CGameObject::Tag + TYPE_NAME<CPlayerInfoUI>(),
+		CPlayerInfoUI::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 

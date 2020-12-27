@@ -181,7 +181,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\GlacierBullet.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
-    <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
@@ -211,11 +210,8 @@
     <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
-    <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
-    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\SpiderBullet.h" />
@@ -266,7 +262,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\GlacierBullet.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
-    <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
@@ -293,9 +288,6 @@
     <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
-    <ClCompile Include="..\Codes\ShopUI.cpp" />
-    <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
     <ClCompile Include="..\Codes\Shark.cpp" />
     <ClCompile Include="..\Codes\SharkBullet.cpp" />
     <ClCompile Include="..\Codes\ShopUI.cpp" />

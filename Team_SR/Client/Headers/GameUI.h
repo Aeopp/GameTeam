@@ -36,6 +36,6 @@ protected:
 
 protected:
 	UI_DESC m_UIDesc;
-	bool m_bShown = true;
+	bool m_bShown = false;
 };
 
