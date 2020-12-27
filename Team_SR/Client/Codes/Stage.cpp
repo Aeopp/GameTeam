@@ -68,9 +68,9 @@ HRESULT CStage::ReadyScene()
 
 _uint CStage::UpdateScene(float fDeltaTime)
 {
-	CScene::UpdateScene(fDeltaTime);
+	KeyProcess(fDeltaTime);
 	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav", CSoundMgr::BGM);
-	return KeyProcess(fDeltaTime); 
+	return 	CScene::UpdateScene(fDeltaTime);
 }
 
 _uint CStage::LateUpdateScene()
@@ -92,6 +92,9 @@ _uint CStage::LateUpdateScene()
 
 _uint CStage::KeyProcess(float fDeltaTime)
 {
+	PlayerKeyProcess(m_pPlayer, fDeltaTime);
+
+
 
 	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
 	{
@@ -114,9 +117,6 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	{
 		_Camera->bThirdPerson = !_Camera->bThirdPerson;
 	}
-
-	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
-
 
 
 	return _uint();

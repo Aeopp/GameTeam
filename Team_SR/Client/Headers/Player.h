@@ -65,6 +65,8 @@ private:
 	float T = 0.0f;
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
 	bool bStaffLoop = false;
+	float StaffChargeT = 0.0f;
+	const float StaffAttack = 15.f;
 private:
 	const float WeaponAnimDelta = 0.07f;
 	void ShotGunShot();

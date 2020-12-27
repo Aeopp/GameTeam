@@ -1,4 +1,4 @@
-#define MAX_LIGHT_NUM 8
+#define MAX_LIGHT_NUM 16
 
 struct PS_INPUT
 {
@@ -109,7 +109,7 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.49f);
+        CurrentColor.rgb += (Environment * 0.30f);
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }
@@ -127,7 +127,7 @@ float4 main(PS_INPUT Input) : COLOR
     
     if (bUVAlphaLerp==1)
     {
-        OutAlpha *= (1.5f - (1.0f - Input.UV.x));
+        OutAlpha *= (1.25f - (1.0f - Input.UV.x));
     }
     
     float CurrentColorLerpT  = saturate(ColorLerpT);

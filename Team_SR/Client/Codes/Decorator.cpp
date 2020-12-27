@@ -57,7 +57,10 @@ _uint CDecorator::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
 
-	_CollisionComp->Update(m_pTransformCom);
+	if (_CollisionComp)
+	{
+		_CollisionComp->Update(m_pTransformCom);
+	}
 
 	UpdateFromMyDecoType();
 
@@ -109,6 +112,11 @@ HRESULT CDecorator::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
+
+	if (_CollisionComp)
+	{
+		_CollisionComp->DebugDraw();
+	}
 
 	return S_OK;
 }
@@ -654,6 +662,8 @@ HRESULT CDecorator::AddComponents()
 // 장식이 피해를 받음
 void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo)
 {
+	CGameObject::Hit(_Target, _CollisionInfo);
+
 	m_stDecoratorInfo.fHP -= _Target->CurrentAttack;
 
 	if (m_fTriggerHP != -1.f) 
@@ -679,7 +689,7 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 
 		if (_ParticlePtr->Name == L"DaggerThrow")
 		{
-
+			
 		}
 
 		m_stDecoratorInfo.fHP -= _ParticlePtr->CurrentAttack;
@@ -695,8 +705,6 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 				m_listNextFrameInfo.erase(iter);
 			}
 		}
-
-
 	}
 }
 

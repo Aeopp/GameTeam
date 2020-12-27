@@ -171,8 +171,6 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
 
-	
-
 	if (_Particle)
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
@@ -237,11 +235,11 @@ void CMonster::CollisionMovement(float fDeltaTime)
 
 void CMonster::CreateBlood()
 {
-	m_pManagement->AddScheduledGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + L"Blood",
-		L"Layer_Blood",
-		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + L"Blood",
+	//	L"Layer_Blood",
+	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 void CMonster::CreateFloorBlood()
@@ -333,16 +331,20 @@ void CMonster::DeadHitBlood()
 	{
 		Particle _Particle;
 		_Particle.bBillboard = true;
-		_Particle.bLoop = false;
+		_Particle.bLoop = true;
 		_Particle.bMove = true;
 		_Particle.Delta = FLT_MAX;
-		const float Speed = MATH::RandReal({ 3,6 });
-		const vec3 Dir = MATH::Normalize(MATH::RandVec());
-		_Particle.Dir = Dir;
-		_Particle.Durtaion =  2.f;
+		_Particle.Gravity = 5.f;
+
+		const float Speed = MATH::RandReal({ 5,10 });
+		_Particle.Dir = MATH::RandVec();
+		_Particle.Durtaion =  4.f;
+		_Particle.Angle = MATH::RandReal({ 90,130});
+		_Particle.Durtaion = 2.f;
 		_Particle.EndFrame = 1ul;
 		_Particle.Scale = { 0.15f,0.15f,0.15f };
-		_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f + Dir * Speed * 0.1f;
+		_Particle.Location = m_pTransformCom->GetLocation();
+		_Particle.StartLocation = m_pTransformCom->GetLocation();
 		_Particle.Name = L"Blood";
 		_Particle.Speed = Speed;
 		ParticleSystem::Instance().PushParticle(_Particle);

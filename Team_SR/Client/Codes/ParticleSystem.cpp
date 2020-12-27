@@ -154,6 +154,18 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"BulletHit3"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\BulletHit3\\", 4);
+
+	_ParticleTextureTable._TextureMap[L"MagicBoom"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\MagicBoom\\", 7);
+
+	_ParticleTextureTable._TextureMap[L"MagicBlast"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\MagicBlast\\", 7);
+
+	_ParticleTextureTable._TextureMap[L"WandProjectile"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\WandProjectile\\", 7);
+
+	_ParticleTextureTable._TextureMap[L"StaffFire"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\StaffFire\\", 1);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -179,6 +191,10 @@ void ParticleSystem::Update(const float DeltaTime)&
 					if (_Particle.bLoop)
 					{
 						_Particle.CurrentFrame = 0ul;
+					}
+					else
+					{
+						_Particle.CurrentFrame = (_Particle.EndFrame - 1);
 					}
 				}
 			}
@@ -221,6 +237,10 @@ void ParticleSystem::Update(const float DeltaTime)&
 					{
 						_Particle.CurrentFrame = 0ul;
 					}
+					else
+					{
+						_Particle.CurrentFrame = (_Particle.EndFrame - 1);
+					}
 				}
 			}
 			_Particle.Dir += _Particle.DeltaVector * DeltaTime;
@@ -255,10 +275,39 @@ void ParticleSystem::Collision()&
 		{
 			continue;
 		}
-
+		
 		Sphere _Sphere;
 		_Sphere.Center = _Particle.Location + _Particle.Correction;
 		_Sphere.Radius = _Particle.Radius;
+
+		for (auto& _Comp : CCollisionComponent::_Comps)
+		{
+			if (!_Comp->bCollision)continue;
+#pragma region MatchingCheck
+			auto iter = CCollisionComponent::_TagBind.find(_Particle._Tag);
+			if (iter == std::end(CCollisionComponent::_TagBind))continue;
+			if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+			vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+			// 거리검사
+			if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
+			// ....
+			auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+			// 충돌함.
+			if (IsCollision.first)
+			{
+				ParticleCollisionEventFromName(_Particle);
+				_Comp->Owner->ParticleHit(&_Particle, IsCollision.second);
+				/*_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+				_RhsOwner->Hit(_LhsOwner, IsCollision.second);*/
+				//PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+			}
+			else
+			{
+				// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
+			}
+		}
+
 		const auto& _CurMap = CCollisionComponent::_MapPlaneInfo;
 
 		if (_Particle.bWallCollision)
@@ -382,32 +431,7 @@ void ParticleSystem::Collision()&
 		}
 
 		// 충돌체 끼리의 충돌
-		for (auto& _Comp : CCollisionComponent::_Comps)
-		{
-#pragma region MatchingCheck
-			auto iter = CCollisionComponent::_TagBind.find(_Particle._Tag);
-			if (iter == std::end(CCollisionComponent::_TagBind))continue;
-			if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
-			vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
-#pragma endregion
-			// 거리검사
-			if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
-			// ....
-			auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
-			// 충돌함.
-			if (IsCollision.first)
-			{
-				ParticleCollisionEventFromName(_Particle);
-				_Comp->Owner->ParticleHit(&_Particle, IsCollision.second);
-				/*_LhsOwner->Hit(_RhsOwner, IsCollision.second);
-				_RhsOwner->Hit(_LhsOwner, IsCollision.second);*/
-				//PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
-			}
-			else
-			{
-				// PRINT_LOG(L"충돌체끼리 충돌하지않음!!", L"충돌체끼리 충돌하지않음!!");
-			}
-		}
+		
 	}
 }
 
@@ -531,23 +555,6 @@ void ParticleSystem::Render()&
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-	/*if (!CManagement::Get_Instance()->bDebug)return;
-
-	DWORD _AlphaValue;
-	_Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
-	if (_AlphaValue == TRUE)
-		_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-
-	_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	_Device->SetVertexShader(nullptr);
-	_Device->SetPixelShader(nullptr);
-	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
-	_Device->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
-	CCollisionComponent::_SphereMesh->DrawSubset(0);
-	_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-
-	if (_AlphaValue == TRUE)
-		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);*/
 }
 
 void ParticleSystem::ClearParticle() & noexcept
@@ -562,27 +569,56 @@ void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		CollisionParticle& _CollisionParticle = static_cast<CollisionParticle&>(_Particle);
-		float ScaleFactor = _CollisionParticle.bCollision ? 1.f : -1.f;
+		float ScaleFactor = _CollisionParticle.bCollision ? 2.f : -2.f;
 		_CollisionParticle.Scale.x +=  (_CollisionParticle.Speed*DeltaTime*ScaleFactor);
 		if (_CollisionParticle.Scale.x < 0.0f)
 		{
 			_CollisionParticle.Scale.x = 0.0f;
 		}
-
-		_CollisionParticle.Correction = _CollisionParticle.Dir * (_CollisionParticle.Scale.x / 2.f);
-
+		if (_CollisionParticle.bCollision)
+		{
+			_CollisionParticle.Correction = _CollisionParticle.Dir * (_CollisionParticle.Scale.x / 2.f);
+		};
 		//if (!_CollisionParticle.bCollision)
 		{
 			MyLight _Light;
-			_Light.Diffuse = { 1,0,1,1 };
+			_Light.Diffuse = { 2,0,2,1 };
 			_Light.Location = MATH::ConvertVec4(vec3{ _CollisionParticle.Correction + _CollisionParticle.Location }, 1.f);
-			_Light.Priority = 1ul;
+			_Light.Priority = 0ul;
 			_Light.Radius = 20.f;
 			Effect::RegistLight(std::move(_Light));
 		}
 	}
 
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell") 
+	if (_Particle.Name == L"StaffFire")
+	{
+		CollisionParticle& _CollisionParticle = static_cast<CollisionParticle&>(_Particle);
+		float ScaleFactor = _CollisionParticle.bCollision ? 3.f : -3.f;
+		_CollisionParticle.Scale.x += (_CollisionParticle.Speed * DeltaTime * ScaleFactor);
+
+		if (_CollisionParticle.Scale.x < 0.0f)
+		{
+			_CollisionParticle.Scale.x = 0.0f;
+		}
+		if (_CollisionParticle.bCollision)
+		{
+			_CollisionParticle.Correction = _CollisionParticle.Dir * (_CollisionParticle.Scale.x / 2.f);
+		}
+		
+
+		//if (!_CollisionParticle.bCollision)
+		{
+			MyLight _Light;
+			_Light.Diffuse = { 0,0,(_CollisionParticle.CurrentAttack / 15.0f),1 };
+			_Light.Location = MATH::ConvertVec4(vec3{ _CollisionParticle.Correction + _CollisionParticle.Location }, 1.f);
+			_Light.Priority = 0ul;
+			_Light.Radius = (_CollisionParticle.CurrentAttack / 15.0f) * 20.f;
+			Effect::RegistLight(std::move(_Light));
+		}
+	}
+
+	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell" ||
+		_Particle.Name == L"Blood") 
 	{
 		if (_Particle.bLoop)
 		{		
@@ -646,6 +682,8 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		D3DXMatrixRotationX(&RotX, MATH::ToRadian(90.f));
 		_Particle.RotationMatrix = Rot; *RotX;
 		_Particle.bCollision = false;
+		_Particle.bMove = false;
+		_Particle.bFloorCollision = false;
 	};
 
 	
@@ -657,7 +695,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;
 
-		for (size_t i = 0; i < 13; ++i)
+		for (size_t i = 0; i < 99; ++i)
 		{
 			Particle _SpawnParticle;
 			_SpawnParticle.Scale = { 0.25f,0.25f,0.25f };
@@ -667,19 +705,82 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 			_SpawnParticle.bUVAlphaLerp = 0ul;
 			_SpawnParticle.Delta = FLT_MAX;
 			const vec3 Dir = MATH::RandVec();
-			const float Speed = MATH::RandReal({ 1,2 });  
+			const float Speed = MATH::RandReal({ 2.0f,4.0f });  
 			_SpawnParticle.Dir = Dir;
 			_SpawnParticle.MaxDuration= 			_SpawnParticle.Durtaion = Duration;
-			_SpawnParticle.Location = _Particle.Location  + _Particle.Correction + -_Particle.Dir * (_Particle.Speed *0.1f) + Dir * Speed;
+			_SpawnParticle.Location = _Particle.Location  + 
+				_Particle.Correction /*+ -_Particle.Dir * (_Particle.Speed *0.1f) + Dir * Speed*/;
 			_SpawnParticle.Name = L"DaggerThrowParticle";
 			_SpawnParticle.Speed = Speed; 
 			_SpawnParticle.StartLocation = _SpawnParticle.Location;
 			ParticleSystem::PushParticle(_SpawnParticle);
 		}
 
+		Particle _MagicBoom;
+		_MagicBoom.Scale = { 1.f,1.f,1.f };
+		_MagicBoom.bBillboard = true;
+		_MagicBoom.bLoop = false;
+		_MagicBoom.bRotationMatrix = false;
+		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.Delta = 0.1f;
+		_MagicBoom.bMove = false;
+		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
+		_MagicBoom.EndFrame = 7ul;
+		_MagicBoom.Name = L"MagicBoom";
+		_MagicBoom.Location = _Particle.Location + _Particle.Correction;
+		_MagicBoom.StartLocation = _MagicBoom.Location;
+		ParticleSystem::PushParticle(_MagicBoom);
+
 		//CPlayer* _Player = dynamic_cast<CPlayer*>(CManagement::Get_Instance()->GetGameObject(-1, L"Layer_Player", 0));
 		//_Player->CurrentAttack = 15.f;
 		//_Target->Hit(_Player, _CollisionInfo);
+	}
+
+	if (_Particle.Name == L"StaffFire")
+	{
+		static constexpr float Duration = 5.0f;
+
+		_Particle.bCollision = false;
+		_Particle.Durtaion = Duration;
+		_Particle.bMove = false;
+
+		for (size_t i = 0; i < (_Particle.CurrentAttack / 15.0f) * 13; ++i)
+		{
+			Particle _SpawnParticle;
+			_SpawnParticle.Scale = { 0.45f,0.45f,0.45f };
+			_SpawnParticle.bBillboard = true;
+			_SpawnParticle.bLoop = true;
+			_SpawnParticle.bRotationMatrix = false;
+			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.Delta = 0.12f;
+			_SpawnParticle.EndFrame = 7ul;
+			const vec3 Dir = MATH::RandVec();
+			const float Speed = MATH::RandReal({ 1.0f,1.5f });
+			_SpawnParticle.Dir = Dir;
+			_SpawnParticle.MaxDuration = _SpawnParticle.Durtaion = Duration;
+			_SpawnParticle.Location = _Particle.Location +
+				_Particle.Correction /*+ -_Particle.Dir * (_Particle.Speed * 0.01f) + Dir * Speed*/;
+			_SpawnParticle.Name = L"MagicBlast";
+			_SpawnParticle.Speed = Speed;
+			_SpawnParticle.StartLocation = _SpawnParticle.Location;
+			ParticleSystem::PushParticle(_SpawnParticle);
+		}
+
+		Particle _MagicBoom;
+		_MagicBoom.Scale = { 1.f,1.f,1.f };
+		_MagicBoom.bBillboard = true;
+		_MagicBoom.bLoop = false;
+		_MagicBoom.bRotationMatrix = false;
+		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.Delta = 0.1f;
+		_MagicBoom.bMove = false;
+		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
+		_MagicBoom.EndFrame = 7ul;
+
+		_MagicBoom.Name = L"MagicBoom";
+		_MagicBoom.Location = _Particle.Location + _Particle.Correction;
+		_MagicBoom.StartLocation = _MagicBoom.Location;
+		ParticleSystem::PushParticle(_MagicBoom);
 	}
 }
 

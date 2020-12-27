@@ -8,8 +8,8 @@
 
 USING(Engine)
 
-float  CCollisionComponent::MapCollisionCheckDistanceMin= 60.f;
-float  CCollisionComponent::CollisionCheckDistanceMin = 60.f;
+float  CCollisionComponent::MapCollisionCheckDistanceMin= 10.f;
+float  CCollisionComponent::CollisionCheckDistanceMin = 10.f;
 std::vector<CCollisionComponent*> CCollisionComponent::_Comps{};
 int32_t CCollisionComponent::CurrentID{ 0 };
 std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
@@ -20,7 +20,7 @@ std::map<CCollisionComponent::ETag, std::set<CCollisionComponent::ETag>> CCollis
 	{MonsterAttack, { Player }},
 	{PlayerAttack,  { Monster}},
 	{Item,{Player} },
-	{PlayerAttackParticle , {Monster  ,Decorator} },
+	{PlayerAttackParticle , {Monster  ,DestroyDecorator} },
 };
 
 CCollisionComponent::CCollisionComponent(LPDIRECT3DDEVICE9 pDevice)
