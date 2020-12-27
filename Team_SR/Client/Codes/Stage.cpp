@@ -248,6 +248,10 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->_5ButtonEvent();
 	}
+	 if (m_pKeyMgr->Key_Down('6'))
+	 {
+		 m_pPlayer->_6ButtonEvent();
+	 }
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();

@@ -34,6 +34,7 @@ public:
 	void _3ButtonEvent()&;
 	void _4ButtonEvent()&;
 	void _5ButtonEvent()&;
+	void _6ButtonEvent()&;
 private:
 	HRESULT AddStaticComponents()override;
 	enum class EWeaponState : uint8_t
@@ -43,6 +44,7 @@ private:
 		Akimbo,
 		Magnum,
 		Staff,
+		Dynamite,
 	};
 public:
 	FORCEINLINE CPlayer::EWeaponState GetWeaponState()const& { return _CurrentWeaponState; };
@@ -79,6 +81,7 @@ private:
 	void StaffCharge();
 	void StaffRelease();
 	void StaffLoop();
+	void DynamiteThrow();
 
 	void PushLightFromName(const std::wstring& LightName)&;
 

@@ -93,6 +93,14 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 			m_pDevice, L"..\\Resources\\Player\\Staff\\ChargeFire\\", 5);
 	}
 
+	{
+		_AnimationTextures._TextureMap[L"Dynamite_Idle"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Dynamite\\Idle\\", 1);
+
+		_AnimationTextures._TextureMap[L"Dynamite_Throw"] = CreateTexturesSpecularNormal(
+			m_pDevice, L"..\\Resources\\Player\\Dynamite\\Throw\\", 15ul);
+	};
+
 	return S_OK;
 }
 
@@ -435,6 +443,9 @@ void CPlayer::MouseLeft()&
 			StaffFire();
 		}
 		break;
+	case CPlayer::EWeaponState::Dynamite:
+		DynamiteThrow();
+		break;
 	default:
 		break;
 	}
@@ -505,6 +516,12 @@ void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
 	_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
+}
+
+void CPlayer::_6ButtonEvent()&
+{
+	_CurrentWeaponState = EWeaponState::Dynamite;
+	_AnimationTextures.ChangeAnim(L"Dynamite_Idle", FLT_MAX, 1);
 }
 
 HRESULT CPlayer::AddStaticComponents()
@@ -1692,6 +1709,59 @@ void CPlayer::StaffLoop()
 	// bStaffLoop =false 로 만들기
 	// Key Up 일때 Loop 였다면 bStaffLoop = false 하고 Release 호출
 	bStaffLoop = true;
+}
+
+void CPlayer::DynamiteThrow()
+{
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+//	CSoundMgr::Get_Instance()->PlaySound(L"harvester_shot.wav", CSoundMgr::PLAYER_WEAPON);
+
+	AnimationTextures::NotifyType _Notify;
+	_Notify[9ul] = [this]()
+	{
+		auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+		const vec3 CameraLook = _Camera->GetTransform()->GetLook();
+		
+		{
+			CollisionParticle _Particle;
+			_Particle.bBillboard = true;
+			_Particle.Delta = 2;
+			_Particle.Durtaion = 1000.f;
+			_Particle.Gravity = 1.5f;
+			_Particle.EndFrame = 1;
+			_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + m_pTransformCom->GetUp() * -0.25f +  (CameraLook * 2.f);
+
+			const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+			{
+				const vec3 CameraLook_X = MATH::Normalize({ 0.f,CameraLook.y,CameraLook.z });
+				_Particle.Angle = 70.0f;
+				_Particle.Dir = MATH::Normalize(WorldGoal - _Particle.Location);
+				_Particle.Speed = 130.f;/* _Particle.Angle /45.f *10.f;*/
+			}
+
+			_Particle.bWallCollision = true;
+			_Particle.bFloorCollision = true;
+			_Particle.bCollision = true;
+			_Particle._Tag = CCollisionComponent::ETag::PlayerAttackParticle;
+			_Particle.CurrentAttack = 100.f;
+			_Particle.bLoop = true;
+			_Particle.Radius = 1.f;
+			_Particle.Scale = { 0.5f,0.5f,0.5f };
+			_Particle.Name = L"Dynamite";
+
+			ParticleSystem::Instance().PushCollisionParticle(_Particle);
+		}
+	};
+
+	_Notify[15ul] = [this]()
+	{
+		_AnimationTextures.ChangeAnim(L"Dynamite_Idle", FLT_MAX, 1);
+	};
+
+	_AnimationTextures.ChangeAnim(L"Dynamite_Throw", WeaponAnimDelta, 
+		15ul, false, std::move(_Notify));
+
+
 }
 
 void CPlayer::PushLightFromName(const std::wstring& LightName)&

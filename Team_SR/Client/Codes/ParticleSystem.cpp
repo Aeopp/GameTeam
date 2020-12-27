@@ -166,6 +166,18 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"StaffFire"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\StaffFire\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"Explosion0"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion0\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Explosion1"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion1\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Explosion2"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion2\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Dynamite"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Dynamite\\", 1);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -566,6 +578,18 @@ void ParticleSystem::ClearParticle() & noexcept
 void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 	const float DeltaTime)
 {
+	if (_Particle.Name.find(L"Explosion") != std::wstring::npos)
+	{
+		const float Factor = _Particle.MaxDuration / _Particle.Durtaion;
+		const float DiffuseScale = 100.f / Factor;
+		MyLight _Light;
+		_Light.Diffuse = { DiffuseScale ,DiffuseScale ,DiffuseScale ,1 };
+		_Light.Location = MATH::ConvertVec4(vec3{ _Particle.Location }, 1.f);
+		_Light.Priority = 0ul;
+		_Light.Radius = 10000.f  / Factor;
+		Effect::RegistLight(std::move(_Light));
+	}
+
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		CollisionParticle& _CollisionParticle = static_cast<CollisionParticle&>(_Particle);
@@ -618,7 +642,7 @@ void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 	}
 
 	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell" ||
-		_Particle.Name == L"Blood") 
+		_Particle.Name == L"Blood" ||  _Particle.Name ==L"Dynamite") 
 	{
 		if (_Particle.bLoop)
 		{		
@@ -686,7 +710,58 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bFloorCollision = false;
 	};
 
-	
+	if (_Particle.Name == L"Dynamite")
+	{
+		_Particle.Dir = { 0,0,0 };
+		_Particle.bBillboard = true;
+		_Particle.bLoop = false;
+		_Particle.bCollision = false;
+		_Particle.bMove = false;
+		_Particle.bFloorCollision = false;
+		_Particle.Durtaion = 0.0f;
+
+		 //  여기에 폭발 로직을 추가 한다 .
+		Particle _DynamiteExplosion;
+		_DynamiteExplosion.bBillboard = true;
+		_DynamiteExplosion.bMove = false;
+		_DynamiteExplosion.Delta = 0.10f;
+		_DynamiteExplosion.EndFrame = 13ul;
+		_DynamiteExplosion.MaxDuration = 		_DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
+		_DynamiteExplosion.Location = _Particle.Location;
+		_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 })); 
+		static constexpr float ExplosionScale = 6.5f;
+		_DynamiteExplosion.Scale = { ExplosionScale ,ExplosionScale ,ExplosionScale };
+		ParticleSystem::PushParticle(_DynamiteExplosion); 
+		
+		Sphere _Sphere;
+		_Sphere.Center = _Particle.Location + _Particle.Correction;
+		_Sphere.Radius = ExplosionScale;
+
+			for (auto& _Comp : CCollisionComponent::_Comps)
+			{
+				if (!_Comp->bCollision)continue;
+#pragma region MatchingCheck
+				auto iter = CCollisionComponent::_TagBind.find(_Particle._Tag);
+				if (iter == std::end(CCollisionComponent::_TagBind))continue;
+				if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+				vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+				// 거리검사
+				if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
+				// ....
+				auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+				// 충돌함.
+				if (IsCollision.first)
+				{
+					_Comp->Owner->ParticleHit(&_Particle, IsCollision.second);
+					/*_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+					_RhsOwner->Hit(_LhsOwner, IsCollision.second);*/
+					//PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+				}
+
+			}
+	};
+
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		static constexpr float Duration = 5.0f;
