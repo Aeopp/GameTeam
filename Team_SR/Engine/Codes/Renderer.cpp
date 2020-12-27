@@ -46,8 +46,8 @@ HRESULT CRenderer::Render(HWND hWnd)
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
 		/*m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);*/
-		
+		  m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);*/
+
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);

@@ -695,7 +695,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;
 
-		for (size_t i = 0; i < 99; ++i)
+		for (size_t i = 0; i < 49; ++i)
 		{
 			Particle _SpawnParticle;
 			_SpawnParticle.Scale = { 0.25f,0.25f,0.25f };
