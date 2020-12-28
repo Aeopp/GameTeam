@@ -238,15 +238,16 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 			std::vector<std::string>
 		{
 			"World",
-			"Projection"
+			"Projection",
+			
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
 			_EffectInfo.PsTable,
 			std::vector<std::string>
 		{
-
-
+			"PlayerScreenLocation",
+			"DistanceMin"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize

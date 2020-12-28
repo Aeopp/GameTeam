@@ -16,11 +16,14 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
+	
 public:
 	static CMiniMap* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 private:
+	static const vec2 MiniMapModeFirstScreenOffset;
+	static const vec2 MiniMapModeSecondScreenOffset;
 	vec3 MiniMapScale{ 1,1,1 };
 	uint32_t MiniMapVertexCount;
 	uint32_t MiniMapTriangleCount;
@@ -40,6 +43,9 @@ public:
 		std::vector<vec3> _Points;
 		mat MapWorld;
 	};
+private:
+	void MiniMapRenderModeFirst(mat MiniMapProjection);
+	void MiniMapRenderModeSecond(mat MiniMapProjection);
 };
 
 #define __CMiniMap_H__

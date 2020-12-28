@@ -1589,23 +1589,23 @@ void CPlayer::StaffFire()
 
 		{
 			
-		Particle _BlastParticle;
-		_BlastParticle.bBillboard = true;
-		_BlastParticle.Delta = 0.1f;
-		_BlastParticle.Durtaion = 10.f;
-		_BlastParticle.EndFrame = 7ul;
+			Particle _BlastParticle;
+			_BlastParticle.bBillboard = true;
+			_BlastParticle.Delta = 0.1f;
+			_BlastParticle.Durtaion = 10.f;
+			_BlastParticle.EndFrame = 7ul;
 
-		_BlastParticle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
-		const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
-		_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
-		_BlastParticle.bUVAlphaLerp = 1l;
+			_BlastParticle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
+			const vec3 WorldGoal = _Camera->GetCameraDesc().vAt;
+			_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
+			_BlastParticle.bUVAlphaLerp = 1l;
 
-		_BlastParticle.Scale = { 0.7f ,0.7f,0.7f };
-		_BlastParticle.Name = L"WandProjectile";
+			_BlastParticle.Scale = { 0.9f ,0.9f,0.9f };
+			_BlastParticle.Name = L"WandProjectile";
 
-		_BlastParticle.Speed = 100.0f;
+			_BlastParticle.Speed = 100.0f;
 
-		ParticleSystem::Instance().PushParticle(_BlastParticle);
+			ParticleSystem::Instance().PushParticle(_BlastParticle);
 		};
 
 	}
@@ -1715,7 +1715,7 @@ void CPlayer::StaffRelease()
 			_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
 			_BlastParticle.bUVAlphaLerp = 1l;
 
-			_BlastParticle.Scale = { 0.50f  * StaffChargeT,0.50f * StaffChargeT,0.50f * StaffChargeT };
+			_BlastParticle.Scale = { 0.65f * StaffChargeT,0.65f * StaffChargeT,0.65f * StaffChargeT };
 			_BlastParticle.Name = L"WandProjectile";
 
 			_BlastParticle.Speed = 100.0f;

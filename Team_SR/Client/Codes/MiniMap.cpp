@@ -3,8 +3,15 @@
 #include "DXWrapper.h"
 #include "MainCamera.h"
 #include "Vertexs.h"
-
-
+#include "Player.h"
+const vec2 CMiniMap::MiniMapModeFirstScreenOffset
+{
+	-750.0f ,+250.0f 
+};
+const vec2 CMiniMap::MiniMapModeSecondScreenOffset
+{
+	-825.0f ,-0.0f
+};
 CMiniMap::CMiniMap(LPDIRECT3DDEVICE9 pDevice)
 	:Super(pDevice)
 {}
@@ -18,7 +25,7 @@ HRESULT CMiniMap::ReadyGameObjectPrototype()
 		- 1.49000000953674, - 0.5 ,0.45900011062622			 ;
 		- 1.49000000953674, - 0.5 ,- 0.54099988937378		 ;
 		- 0.49000000953674, - 0.5 ,0.45900011062622			 ;
-	
+
 		 0.03, 0.03, 0.03          ;
 		 0.97, 0.97, 0.03		   ;
 		 0.97, 0.03, 0.03		   ;
@@ -26,23 +33,23 @@ HRESULT CMiniMap::ReadyGameObjectPrototype()
 
 	std::vector<Vertex::Location2DUV> _Vertexs(6);
 
-	_Vertexs[0].Location={ -1.49000000953674, -0.5 ,-0.54099988937378 };
-	_Vertexs[0].UV = { 0.97, 0.03 };
+	_Vertexs[0].Location = { -0.5f, -0.5f,0.0f};
+	_Vertexs[0].UV = { 0.03f, 0.97f };
 
-	_Vertexs[1].Location = { -1.49000000953674, -0.5 ,0.45900011062622 };
-	_Vertexs[1].UV = { 0.97, 0.97 };
+	_Vertexs[1].Location = { -0.5f, 0.5f ,0.0f };
+	_Vertexs[1].UV = { 0.03f, 0.03f };
 
-	_Vertexs[2].Location = { -0.49000000953674, -0.5 ,-0.54099988937378 };
-	_Vertexs[2].UV = { 0.03, 0.03 };
+	_Vertexs[2].Location = { +0.5f,0.5f,  0.0f };
+	_Vertexs[2].UV = { 0.97f, 0.03f };
 
-	_Vertexs[3].Location = { -0.49000000953674, -0.5 ,0.45900011062622 };
-	_Vertexs[3].UV = { 0.03, 0.97 };
+	_Vertexs[3].Location = { -0.5f, -0.5f, 0.0f };
+	_Vertexs[3].UV = { 0.03f, 0.97f };
 
-	_Vertexs[4].Location = { -0.49000000953674, -0.5 ,-0.54099988937378 };
-	_Vertexs[4].UV = { 0.03, 0.03 };
+	_Vertexs[4].Location = { +0.5f, +0.5f, 0.0f };
+	_Vertexs[4].UV = { 0.97f , 0.03f };
 
-	_Vertexs[5].Location = { -1.49000000953674, -0.5 ,0.45900011062622 };
-	_Vertexs[5].UV = { 0.97, 0.97 };
+	_Vertexs[5].Location = { +0.5f, -0.5f, 0.0f };
+	_Vertexs[5].UV = { 0.97f, 0.97f };
 
 	CreateVertex(m_pDevice, _Vertexs, PlayerMarkerVertexCount, PlayerMarkerTriangleCount,
 		PlayerMarkerVertexByteSize, PlayerMarkerVertexBuf, PlayerMarkerVertexDecl);
@@ -111,40 +118,14 @@ HRESULT CMiniMap::RenderGameObject()
 	D3DXMatrixOrthoLH(&MiniMapProjection, WINCX, WINCY, 0.0f, 10000.f);
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 
-	// MiniMap ShaderTest
+	// 1.
 	{
-		auto& _MiniMapEffect = Effect::GetEffectFromName(L"MiniMap");
-		mat MiniMapWorld;
-		MiniMapWorld = MATH::WorldMatrix(MiniMapScale*3.f, { 0,0,0 }, { -200,+200,2.0f });
-
-		_MiniMapEffect.SetVSConstantData(m_pDevice, "World", MiniMapWorld);
-		_MiniMapEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
-		m_pDevice->SetVertexShader(_MiniMapEffect.VsShader);
-		m_pDevice->SetPixelShader(_MiniMapEffect.PsShader);
-
-		m_pDevice->SetStreamSource(0, MiniMapVertexBuf.get(), 0, MiniMapVertexByteSize);
-		m_pDevice->SetVertexDeclaration(MiniMapVertexDecl.get());
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, MiniMapTriangleCount);
-
-	};
-
-	{
-		auto& _UITextureEffect = Effect::GetEffectFromName(L"UITexture");
-		mat PlayerMarkerWorld;
-		PlayerMarkerWorld = MATH::WorldMatrix({ 10,10,10}, { 0,0,0 }, { -200,+200,2.0f });
-
-		_UITextureEffect.SetVSConstantData(m_pDevice, "World", PlayerMarkerWorld);
-		_UITextureEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
-
-		m_pDevice->SetTexture(_UITextureEffect.GetTexIdx("DiffuseSampler"), PlayerMarkerTexture.get());
-		m_pDevice->SetVertexShader(_UITextureEffect.VsShader);
-		m_pDevice->SetPixelShader(_UITextureEffect.PsShader);
-
-		m_pDevice->SetStreamSource(0, PlayerMarkerVertexBuf.get(), 0, PlayerMarkerVertexByteSize);
-		m_pDevice->SetVertexDeclaration(PlayerMarkerVertexDecl.get());
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, PlayerMarkerTriangleCount);
+		MiniMapRenderModeFirst(MiniMapProjection);
 	}
-
+	// 2.
+	{
+		MiniMapRenderModeSecond(MiniMapProjection);
+	}
 
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
@@ -185,4 +166,107 @@ CGameObject* CMiniMap::Clone(void* pArg/* = nullptr*/)
 void CMiniMap::Free()
 {
 	Super::Free();
+}
+
+void CMiniMap::MiniMapRenderModeFirst(mat MiniMapProjection)
+{
+	static constexpr float  MiniMapScaleCorrection = 2.5f;
+	CPlayer* const _CurrentPlayer = dynamic_cast<CPlayer*>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	vec3 PlayerLocation = _CurrentPlayer->GetTransform()->GetLocation();
+	PlayerLocation *= MiniMapScaleCorrection;
+
+	float Yaw = _CurrentPlayer->GetTransform()->GetRotation().y;
+
+	// MiniMap ShaderTest
+	{
+		auto& _MiniMapEffect = Effect::GetEffectFromName(L"MiniMap");
+		mat MiniMapWorld;
+		MiniMapWorld = MATH::WorldMatrix(MiniMapScale* MiniMapScaleCorrection, { 0,0,0 }, { MiniMapModeFirstScreenOffset.x,MiniMapModeFirstScreenOffset.y,0.0f });
+
+		_MiniMapEffect.SetVSConstantData(m_pDevice, "World", MiniMapWorld);
+		_MiniMapEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
+		_MiniMapEffect.SetPSConstantData(m_pDevice, "PlayerScreenLocation", vec2{ 0,0 });
+		_MiniMapEffect.SetPSConstantData(m_pDevice, "DistanceMin", 1000.0f);
+		m_pDevice->SetVertexShader(_MiniMapEffect.VsShader);
+		m_pDevice->SetPixelShader(_MiniMapEffect.PsShader);
+
+		m_pDevice->SetStreamSource(0, MiniMapVertexBuf.get(), 0, MiniMapVertexByteSize);
+		m_pDevice->SetVertexDeclaration(MiniMapVertexDecl.get());
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, MiniMapTriangleCount);
+	};
+
+	
+	{
+		auto& _UITextureEffect = Effect::GetEffectFromName(L"UITexture");
+		mat PlayerMarkerWorld;
+		PlayerMarkerWorld = MATH::WorldMatrix({ 15,15,15 }, { 0,0,-Yaw }, { PlayerLocation.x + MiniMapModeFirstScreenOffset.x ,PlayerLocation.z + MiniMapModeFirstScreenOffset.y,0.0f });
+
+		_UITextureEffect.SetVSConstantData(m_pDevice, "World", PlayerMarkerWorld);
+		_UITextureEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
+
+		m_pDevice->SetTexture(_UITextureEffect.GetTexIdx("DiffuseSampler"), PlayerMarkerTexture.get());
+		m_pDevice->SetVertexShader(_UITextureEffect.VsShader);
+		m_pDevice->SetPixelShader(_UITextureEffect.PsShader);
+
+		m_pDevice->SetStreamSource(0, PlayerMarkerVertexBuf.get(), 0, PlayerMarkerVertexByteSize);
+		m_pDevice->SetVertexDeclaration(PlayerMarkerVertexDecl.get());
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, PlayerMarkerTriangleCount);
+	}
+}
+
+void CMiniMap::MiniMapRenderModeSecond(mat MiniMapProjection)
+{
+	CPlayer* const _CurrentPlayer = dynamic_cast<CPlayer*>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	vec3 PlayerLocation = _CurrentPlayer->GetTransform()->GetLocation();
+	float Yaw = _CurrentPlayer->GetTransform()->GetRotation().y;
+	static constexpr float MiniMapScaleCorrection = 5.0f;
+
+	   {
+			auto& _MiniMapEffect = Effect::GetEffectFromName(L"MiniMap");
+			mat MiniMapWorld;
+			MiniMapWorld = MATH::WorldMatrix(MiniMapScale * MiniMapScaleCorrection, { 0,0,0 }, { -PlayerLocation.x * MiniMapScaleCorrection,-PlayerLocation.z*MiniMapScaleCorrection,0.0f });
+			MiniMapWorld *= MATH::RotationMatrixFromAxis({ 0,0,1 }, Yaw);
+			MiniMapWorld._41 += MiniMapModeSecondScreenOffset.x;
+			MiniMapWorld._42 += MiniMapModeSecondScreenOffset.y;
+				
+			_MiniMapEffect.SetVSConstantData(m_pDevice, "World", MiniMapWorld);
+			_MiniMapEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
+
+			/* vec4 BindProjectionPlayerLocation = vec4 {  MiniMapScaleCorrection  ,
+																 MiniMapScaleCorrection  ,     0.0f,      1.0f};    
+			 D3DXVec4Transform(&BindProjectionPlayerLocation, &BindProjectionPlayerLocation, &MiniMapProjection);
+
+			 BindProjectionPlayerLocation.x /= BindProjectionPlayerLocation.w;
+			 BindProjectionPlayerLocation.y /= BindProjectionPlayerLocation.w;
+			 BindProjectionPlayerLocation.z /= BindProjectionPlayerLocation.w;*/
+
+			_MiniMapEffect.SetPSConstantData(m_pDevice, "PlayerScreenLocation", vec2{ MiniMapModeSecondScreenOffset.x ,MiniMapModeSecondScreenOffset.y });
+			_MiniMapEffect.SetPSConstantData(m_pDevice, "DistanceMin", 110.0f);
+
+			m_pDevice->SetVertexShader(_MiniMapEffect.VsShader);
+			m_pDevice->SetPixelShader(_MiniMapEffect.PsShader);
+
+			m_pDevice->SetStreamSource(0, MiniMapVertexBuf.get(), 0, MiniMapVertexByteSize);
+			m_pDevice->SetVertexDeclaration(MiniMapVertexDecl.get());
+			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, MiniMapTriangleCount);
+
+		};
+
+		{
+			auto& _UITextureEffect = Effect::GetEffectFromName(L"UITexture");
+			mat PlayerMarkerWorld;
+			PlayerMarkerWorld = MATH::WorldMatrix({ 20,20,20}, { 0,0,0 }, {  MiniMapModeSecondScreenOffset.x ,MiniMapModeSecondScreenOffset.y,0.0f });
+
+			_UITextureEffect.SetVSConstantData(m_pDevice, "World", PlayerMarkerWorld);
+			_UITextureEffect.SetVSConstantData(m_pDevice, "Projection", MiniMapProjection);
+
+			m_pDevice->SetTexture(_UITextureEffect.GetTexIdx("DiffuseSampler"), PlayerMarkerTexture.get());
+			m_pDevice->SetVertexShader(_UITextureEffect.VsShader);
+			m_pDevice->SetPixelShader(_UITextureEffect.PsShader);
+
+			m_pDevice->SetStreamSource(0, PlayerMarkerVertexBuf.get(), 0, PlayerMarkerVertexByteSize);
+			m_pDevice->SetVertexDeclaration(PlayerMarkerVertexDecl.get());
+			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, PlayerMarkerTriangleCount);
+		}
+
 }
