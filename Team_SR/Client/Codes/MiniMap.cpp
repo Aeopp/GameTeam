@@ -21,15 +21,6 @@ HRESULT CMiniMap::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	/*	- 0.49000000953674, - 0.5 ,- 0.54099988937378        ;
-		- 1.49000000953674, - 0.5 ,0.45900011062622			 ;
-		- 1.49000000953674, - 0.5 ,- 0.54099988937378		 ;
-		- 0.49000000953674, - 0.5 ,0.45900011062622			 ;
-
-		 0.03, 0.03, 0.03          ;
-		 0.97, 0.97, 0.03		   ;
-		 0.97, 0.03, 0.03		   ;
-		 0.03, 0.97, 0.03		   ;*/
 
 	std::vector<Vertex::Location2DUV> _Vertexs(6);
 

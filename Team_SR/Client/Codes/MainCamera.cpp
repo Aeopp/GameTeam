@@ -4,7 +4,6 @@
 #include "ImGuiHelper.h"
 #include "Layer.h"
 #include "Player.h"
-#include "boost/algorithm/algorithm.hpp"
 
 CMainCamera::CMainCamera(LPDIRECT3DDEVICE9 pDevice)
 	: CCamera(pDevice)

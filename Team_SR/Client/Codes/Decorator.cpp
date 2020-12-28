@@ -4,7 +4,6 @@
 #include "DXWrapper.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
-#include "boost/range/algorithm_ext/erase.hpp"
 
 
 static void DecoratorBomb(CDecorator* const _Target);
