@@ -1164,5 +1164,5 @@ void CMainApp::Free()
 	CManagement::ReleaseEngine();
 	CSoundMgr::Get_Instance()->Release();
 	CSoundMgr::Destroy_Instance();
-
+	JumpPointSearch::Destroy_Instance();
 }
