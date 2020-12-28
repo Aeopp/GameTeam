@@ -636,7 +636,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	const size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);

@@ -200,7 +200,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -727,7 +727,7 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -1153,7 +1153,7 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 		const std::wstring VN = L"vn";
 		const std::wstring F = L"f";
 		const std::wstring Mtl = L"usemtl";
-		const wchar_t FDelim = L'\/';
+		const wchar_t FDelim = L'/';
 		size_t VtxElementCount = 3;
 
 		std::wfstream _ObjStream(_ObjFileName);

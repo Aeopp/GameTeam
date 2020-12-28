@@ -111,7 +111,7 @@ float4 main(PS_INPUT Input) : COLOR
         
         CurrentColor.rgb += (Environment * 0.30f);
         CurrentColor.rgb *= factor;
-        OutputColor += CurrentColor;
+        OutputColor += CurrentColor.rgb;
     }
     
     float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);

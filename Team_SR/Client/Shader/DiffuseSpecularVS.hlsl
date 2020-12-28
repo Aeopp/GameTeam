@@ -44,7 +44,7 @@ VS_OUTPUT main(VS_INPUT Input)
     
 	// Vertex Location : Local Coord -> World Coord 
         Output.Location = mul(Input.Location, World);
-    Output.WorldLocation = Output.Location;
+    Output.WorldLocation = Output.Location.xyz;
     
 	// WorldViewDirection Calc
     float3 ViewDirection = normalize(Output.Location.xyz - WorldCameraLocation.xyz);
