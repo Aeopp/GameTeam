@@ -335,11 +335,11 @@ void CMonster::DeadHitBlood()
 	_Particle.Name = std::move(Name);
 	_Particle.EndFrame = EndFrame;
 	_Particle.Durtaion = static_cast<float> (EndFrame) * _Particle.Delta;
-	_Particle.Scale = { 1.5f,1.5f,1.5f };
+	_Particle.Scale = { 2.25f,2.25f,2.25f };
 	_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f;
 	ParticleSystem::Instance().PushParticle(_Particle);
 
-	for (size_t i = 0; i < 8; ++i)
+	for (size_t i = 0; i < 26; ++i)
 	{
 		Particle _Particle;
 		_Particle.bBillboard = true;
@@ -354,7 +354,7 @@ void CMonster::DeadHitBlood()
 		_Particle.Angle = MATH::RandReal({ 90,130});
 		_Particle.Durtaion = 2.f;
 		_Particle.EndFrame = 1ul;
-		_Particle.Scale = { 0.15f,0.15f,0.15f };
+		_Particle.Scale = { 0.21f,0.21f,0.21f };
 		_Particle.Location = m_pTransformCom->GetLocation();
 		_Particle.StartLocation = m_pTransformCom->GetLocation();
 		_Particle.Name = L"Blood";

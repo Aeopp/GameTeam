@@ -28,6 +28,7 @@
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
 #include "ParticleSystem.h"
+#include "MiniMap.h"
 
 #include "Particle.h"	// 파티클
 #include "Decorator.h"	// 장식품
@@ -114,11 +115,16 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		/*L"Layer_Player"*/
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMiniMap>(),
+		CMiniMap::Create(m_pDevice))))
+		return E_FAIL;
 
 	// 카메라
 	if (FAILED(m_pManagement->AddGameObjectPrototype(

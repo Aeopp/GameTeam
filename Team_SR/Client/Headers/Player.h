@@ -57,10 +57,20 @@ public:
 	bool bKeyBlue = false;
 	bool bKeyYellow = false;
 	bool bKeyRed = false;
-	int32_t Ammo = 100l;
-	float HP = 100.f;
-	float MP = 100.f;
+public:
+	struct PlayerInfo
+	{
+		const int32_t MaxAmmo = 100l;
+		const float MaxHP = 100.0f;
+		const float MaxMP = 100.f;
+		int32_t Ammo = 0l;
+		float HP = MaxHP;
+		float MP = MaxMP;
+	};
+public  :
+	FORCEINLINE const PlayerInfo& GetPlayerInfo()const& { return _CurrentInfo; };
 private:
+	PlayerInfo _CurrentInfo;
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
 	vec3 PrevLocation{ 0 , 0 , 0 };

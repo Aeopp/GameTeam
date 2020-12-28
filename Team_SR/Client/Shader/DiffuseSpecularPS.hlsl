@@ -37,41 +37,47 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
-   if (bUI)
-   {
-       float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
-       return DiffuseTexColor;
-   };
-   
-    
-    Input.Normal = normalize(Input.Normal);
-    Input.Tangent = normalize(Input.Tangent);
-    Input.BiNormal = normalize(Input.BiNormal);
+    if (bUI)
+    {
+        float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+        return DiffuseTexColor;
+    };
   
-    
-    float3 tangentNormal = tex2D(NormalSampler, Input.UV).xyz;
-    tangentNormal = normalize(tangentNormal * 2 - 1);
-   
-    float3x3 TBN = float3x3(normalize(Input.Tangent), 
-                            normalize(Input.BiNormal), 
-                            normalize(Input.Normal));
-    TBN = transpose(TBN);
-    float3 worldNormal = mul(TBN, tangentNormal);
-    
+    float3 Normal =float3(0, 0, 1);
     Input.ViewDirection = normalize(Input.ViewDirection);
-    float3 Normal = worldNormal;
     
     if (bNormalSamplerBind==0)
     {
         Normal = Input.Normal;
     }
+    else
+    {
+        Input.Normal = normalize(Input.Normal);
+        Input.Tangent = normalize(Input.Tangent);
+        Input.BiNormal = normalize(Input.BiNormal);
+    
+        float3 tangentNormal = tex2D(NormalSampler, Input.UV).xyz;
+        tangentNormal = normalize(tangentNormal * 2 - 1);
+   
+        float3x3 TBN = float3x3(normalize(Input.Tangent),
+                            normalize(Input.BiNormal),
+                            normalize(Input.Normal));
+        TBN = transpose(TBN);
+        float3 worldNormal = mul(TBN, tangentNormal);
+        
+        Normal = worldNormal;
+    }
  
     float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
-    float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
+    float4 SpecularTexColor = float4(1, 1, 1, 1); 
     
     if (bSpecularSamplerBind == 0)
     {
         SpecularTexColor = DiffuseTexColor;
+    }
+    else
+    {
+        SpecularTexColor = tex2D(SpecularSampler, Input.UV);
     }
     
     float3 OutputColor = float3(0.0f, 0.0f, 0.0f);
@@ -92,6 +98,7 @@ float4 main(PS_INPUT Input) : COLOR
        
         float3 Specular = 0;
         float3 Environment = float3(0, 0, 0);
+        
         if (Diffuse.x > 0)
         {
             Specular = saturate(dot(ReflectionVector, -Input.ViewDirection));
@@ -109,21 +116,18 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.30f);
+        CurrentColor.rgb += (Environment * 0.25f);
         CurrentColor.rgb *= factor;
-        OutputColor += CurrentColor.rgb;
+        OutputColor += CurrentColor;
     }
     
     float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);
-    //float Density = 1.0f;
-    //float FogFactorExp = 1.0f / exp(Input.ViewZ * Density);
     
     float FogFactor = FogFactorLinear;
     
     OutputColor.rgb = (FogColor.rgb * FogFactor) + (OutputColor.rgb * (1.0f - FogFactor));
     
     float OutAlpha = DiffuseTexColor.a;
-    
     
     if (bUVAlphaLerp==1)
     {

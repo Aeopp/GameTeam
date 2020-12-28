@@ -500,8 +500,8 @@ void ParticleSystem::Render()&
 		const auto& TextureTuple =_ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
 
 		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+		//_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		//_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
@@ -551,8 +551,8 @@ void ParticleSystem::Render()&
 		const auto& TextureTuple = _ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
 
 		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+	/*	_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));*/
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);

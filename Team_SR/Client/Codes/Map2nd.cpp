@@ -17,7 +17,6 @@ HRESULT CMap2nd::ReadyGameObjectPrototype()
 	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
 	LoadFloor(L"..\\Resources\\Map\\2\\");
 	LoadBars(L"..\\Resources\\Map\\2\\"); 
-	
 	LoadCubeMap(L"..\\Resources\\CubeMap\\Blue.dds");
 
 	return S_OK;
@@ -28,6 +27,7 @@ HRESULT CMap2nd::ReadyGameObject(void * pArg)
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	CreateMiniMap();
 
 	return S_OK;
 }

@@ -37,6 +37,7 @@ private:
 	CTexture* m_pTexture;	// 텍스처
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 
+	float CreateAfterTime = 0.0f;
 	void UpdateFromMyDecoType();
 };
 

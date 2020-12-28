@@ -167,7 +167,6 @@ typename Effect::Info& Effect::GetEffectFromName(const std::wstring& EffectName)
 		return _EffectInfoMap[EffectName];
 	}
 #endif
-
 	return _EffectInfoMap[EffectName];
 }
 
@@ -229,6 +228,66 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
 
+	{
+		// For MiniMap
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\MiniMap");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+			"World",
+			"Projection"
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+
+
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{ 
+			
+			});
+
+		_EffectInfoMap[L"MiniMap"] = std::move(_EffectInfo);
+	}
+
+
+
+	{
+		// 디퓨즈 + 스페큘러 ..........
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\UITexture");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+				"World",
+				"Projection",
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+				
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{ 
+			  "DiffuseSampler",
+			});
+
+		_EffectInfoMap[L"UITexture"] = std::move(_EffectInfo);
+	};
 }
 
 

@@ -292,6 +292,7 @@
     <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
+    <ClInclude Include="..\Headers\MiniMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -447,6 +448,7 @@
     <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
+    <ClCompile Include="..\Codes\MiniMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -464,5 +466,9 @@
   <ItemGroup>
     <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
     <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapPS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapVS.hlsl" />
+    <FxCompile Include="..\Shader\UITexturePS.hlsl" />
+    <FxCompile Include="..\Shader\UITextureVS.hlsl" />
   </ItemGroup>
 </Project>

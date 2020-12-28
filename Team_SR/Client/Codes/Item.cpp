@@ -67,6 +67,14 @@ _uint CItem::LateUpdateGameObject(float fDeltaTime)
 	Frame_Move(fDeltaTime);
 	IsBillboarding();
 
+	CreateAfterTime += fDeltaTime;
+	if (CreateAfterTime >= 10.0f)
+	{
+		bGravity = false;
+		_CollisionComp->bFloorCollision = false;
+		_CollisionComp->bWallCollision = false;
+	}
+
 	return _uint();
 }
 

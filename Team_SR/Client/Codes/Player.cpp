@@ -232,7 +232,8 @@ HRESULT CPlayer::RenderGameObject()
 	
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	D3DXMatrixOrthoLH(&Ortho, WINCX, WINCY, _Camera->GetCameraDesc().fNear, _Camera->GetCameraDesc().fFar);
+	D3DXMatrixOrthoLH(&Ortho, WINCX, WINCY, _Camera->GetCameraDesc().fNear, 
+		_Camera->GetCameraDesc().fFar);
 
 	const auto& TextureTuple = _AnimationTextures.GetCurrentTexture();
 
@@ -242,7 +243,9 @@ HRESULT CPlayer::RenderGameObject()
 	const float 	Bottom =      -(WINCY / 2.f);
 	const float XSize = (float)_Desc.Width * 4.f;
 	const float YSize = (float)_Desc.Height * 4.f;
-	mat GunUI = MATH::WorldMatrix({ XSize,YSize,0 }, { 0,0,0 }, { 0+X,Bottom+ (YSize /2.f) + Y -40.f ,_Camera->GetCameraDesc().fNear });
+	mat GunUI = MATH::WorldMatrix({ XSize,YSize,0 }, { 0,0,0 }, 
+		{ 0+X,Bottom+ (YSize /2.f) + Y -40.f ,
+		_Camera->GetCameraDesc().fNear });
 
 	//D3DXMatrixScaling(&GunUI,1.f, 1.f, 1.f);
 	D3DXMatrixIdentity(&ViewIdentity);
@@ -254,8 +257,8 @@ HRESULT CPlayer::RenderGameObject()
 	
 
 	m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),std::get<0> (TextureTuple));
-	m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
-	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+	/*m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+	m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));*/
 	
 	_Effect.SetPSConstantData(m_pDevice, "bUI", 1l);
 	_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0 );
@@ -280,7 +283,8 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	HP -= _Target->CurrentAttack;
+	
+		_CurrentInfo.HP -= _Target->CurrentAttack;
 
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 	_Camera->Shake(_Target->CurrentAttack /100.f, MATH::RandVec(), _Target->CurrentAttack/100.f);
@@ -291,19 +295,19 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
-			HP += 10.f;
+			_CurrentInfo.HP += 10.f;
 			break;
 		case Item::HealthSmall:
-			HP += 5.f;
+			_CurrentInfo.HP += 5.f;
 			break;
 		case Item::ManaBig:
-			MP += 10.f ;
+			_CurrentInfo.MP += 10.f ;
 			break;
 		case Item::ManaSmall:
-			MP += 5.f;
+			_CurrentInfo.MP += 5.f;
 			break;
 		case Item::Ammo:
-			Ammo += 20l;
+			_CurrentInfo.Ammo += 20l;
 			break;
 		case Item::KeyBlue:
 			bKeyBlue = true;

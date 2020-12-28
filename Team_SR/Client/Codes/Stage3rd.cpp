@@ -37,7 +37,7 @@ HRESULT CStage3rd::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
 
 	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });

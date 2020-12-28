@@ -82,6 +82,14 @@ _uint CDecorator::LateUpdateGameObject(float fDeltaTime)
 	Frame_Move(fDeltaTime);
 	IsBillboarding();
 
+	CreateAfterTime += fDeltaTime;
+	if (CreateAfterTime >= 10.0f)
+	{
+		bGravity = false;
+		_CollisionComp->bFloorCollision = false;
+		_CollisionComp->bWallCollision = false;
+	}
+
 	return _uint();
 }
 
@@ -101,8 +109,8 @@ HRESULT CDecorator::RenderGameObject()
 		}
 		// 1.       그냥 세팅을 안하거나
 		{
-			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", false);
-			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", false);
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0l);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0l);
 		}
 		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
 		{
@@ -145,7 +153,6 @@ HRESULT CDecorator::AddComponents()
 	_Info.bPush = true;
 	_Info.bMapBlock = true;
 	_Info.Owner = this;
-	
 
 	DecoNextFrameInfo NextFrameInfo;
 
@@ -829,6 +836,7 @@ void CDecorator::UpdateFromMyDecoType()
 	{
 	case Decorator::Torch:
 		Effect::RegistLight(std::move(_Light));
+		bGravity = false;
 		break;
 	case Decorator::Candle:
 		Effect::RegistLight(std::move(_Light));

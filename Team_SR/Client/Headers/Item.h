@@ -33,6 +33,8 @@ private:
 	CTexture* m_pTexture;	// 텍스처
 	ItemInfo m_stItemInfo;	// 아이템 정보
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
+
+	float CreateAfterTime = 0.0f;
 };
 
 #define  __ITEM_H__

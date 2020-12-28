@@ -19,6 +19,7 @@ HRESULT CMap6th::ReadyGameObjectPrototype()
 	LoadBars(L"..\\Resources\\Map\\6\\"); 
 	LoadCubeMap(L"..\\Resources\\CubeMap\\LightBlue.dds");
 
+
 	return S_OK;
 }
 
@@ -26,6 +27,7 @@ HRESULT CMap6th::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+	CreateMiniMap();
 
 	return S_OK;
 }
