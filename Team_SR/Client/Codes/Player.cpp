@@ -173,13 +173,16 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	if (_AnimationTextures.GetAnimationKey() == L"Staff_Loop")
 	{
 		StaffChargeT += fDeltaTime;
+		if (StaffChargeT >= 4.0f)
+		{
+			StaffChargeT = 4.0f;
+		};
 
 		MyLight _Light{};
-		_Light.Location =
-			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Location =MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
 		_Light.Diffuse = { 0,0,0.0f + (StaffChargeT *0.5f),1 };
 		_Light.Priority = 1l;
-		_Light.Radius =  (StaffChargeT * 100.f);
+		_Light.Radius =  (StaffChargeT * 50.0f);
 		Effect::RegistLight(std::move(_Light));
 	}
 
@@ -278,6 +281,9 @@ HRESULT CPlayer::RenderGameObject()
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
 	HP -= _Target->CurrentAttack;
+
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(_Target->CurrentAttack /100.f, MATH::RandVec(), _Target->CurrentAttack/100.f);
 
 	auto* _Item = dynamic_cast<CItem*>(_Target);
 	if (_Item)
@@ -640,6 +646,9 @@ void CPlayer::ShotGunShot()
 	CSoundMgr::Get_Instance()->PlaySound(L"shotgun_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(1.2f, MATH::RandVec(), 0.15f);
+
 	POINT _Pt;
 	GetCursorPos(&_Pt);
 	ScreenToClient(g_hWnd, &_Pt);
@@ -998,6 +1007,7 @@ void CPlayer::DaggerThrow()
 		std::move(_Notify));
 
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(0.30f, MATH::RandVec(), 0.30f );
 
 	for (size_t i = 0; i < 1; ++i)
 	{
@@ -1083,7 +1093,10 @@ void CPlayer::AkimboFire()
 	_AnimationTextures.ChangeAnim(L"Akimbo_Fire", 0.025f, 4ul, false, std::move(_Notify));
 
 	LightingDurationTable[L"AkimboFire"] = 0.2f;
-	
+
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(0.35f, MATH::RandVec(), 0.07f);
+
 	POINT _Pt;
 	GetCursorPos(&_Pt);
 	ScreenToClient(g_hWnd, &_Pt);
@@ -1292,8 +1305,10 @@ void CPlayer::MagnumFire()
 	};
 
 	_AnimationTextures.ChangeAnim(L"Magnum_Fire", 0.07f, 4ul, false, std::move(_Notify));
-
 	LightingDurationTable[L"MagnumFire"] = 0.2f;
+
+	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(0.7f, MATH::RandVec(), 0.15f);
 
 	POINT _Pt;
 	GetCursorPos(&_Pt);
@@ -1340,7 +1355,11 @@ void CPlayer::MagnumFire()
 		CGameObject* _Target = std::get<0>(*find_iter);
 		const vec3 IntersectPoint = std::get<3>(*find_iter);
 		const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
-		PlayBulletHitParticle(Dir, IntersectPoint);
+		for (size_t i = 0; i < 3; ++i)
+		{
+			const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.2,0.4f });
+			PlayBulletHitParticle(Dir, RandPoint);
+		}
 		_Target->Hit(this, (std::get<2>(*find_iter)));
 	};
 
@@ -1383,7 +1402,11 @@ void CPlayer::MagnumFire()
 			CGameObject* _Target = std::get<0>(*find_iter);
 			const vec3 IntersectPoint = std::get<3>(*find_iter);
 			const vec3 Dir = MATH::Normalize(m_pTransformCom->GetLocation() - IntersectPoint);
-			PlayBulletHitParticle(Dir, IntersectPoint);
+			for (size_t i = 0; i < 3; ++i)
+			{
+				const vec3 RandPoint = IntersectPoint + MATH::RandVec() * MATH::RandReal({ 0.2,0.4f });
+				PlayBulletHitParticle(Dir, RandPoint);
+			}
 			_Target->Hit(this, (std::get<2>(*find_iter)));
 		};
 
@@ -1499,6 +1522,7 @@ void CPlayer::StaffFire()
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
+
 	_Notify[4ul] = [this]()
 	{
 		_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
@@ -1509,6 +1533,7 @@ void CPlayer::StaffFire()
 	LightingDurationTable[L"StaffFire"] = 0.15f;
 
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(0.25f, MATH::RandVec(), 0.25f);
 
 	for (size_t i = 0; i < 1; ++i)
 	{
@@ -1589,7 +1614,8 @@ void CPlayer::StaffCharge()
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
-	StaffChargeT = T;
+	StaffChargeT = 0.0f;
+
 
 	_Notify[16ul] = [this]()
 	{
@@ -1598,7 +1624,7 @@ void CPlayer::StaffCharge()
 
 	_AnimationTextures.ChangeAnim(L"Staff_Charge", 0.07f, 16ul, false, std::move(_Notify));
 
-	LightingDurationTable[L"StaffCharge"] = 1.1f;
+	LightingDurationTable[L"StaffCharge"] = 0.0f;
 }
 
 void CPlayer::StaffRelease()
@@ -1618,9 +1644,11 @@ void CPlayer::StaffRelease()
 	LightingDurationTable[L"StaffRelease"] = 0.2f;
 	
 	const float CurrentStaffAttack = (StaffChargeT * StaffAttack) + StaffAttack;
-	StaffChargeT = 0.0f;
 
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(0.25f * StaffChargeT, MATH::RandVec(), 0.4f);
+
+
 
 	for (size_t i = 0; i < 1; ++i)
 	{
@@ -1661,9 +1689,9 @@ void CPlayer::StaffRelease()
 		Rot *= RotAxis;*/
 
 		_Particle.RotationMatrix = Rot;
-		_Particle.Radius = 1.f;
+		_Particle.Radius = 1.f ;
 
-		_Particle.Scale = { 3.f,0.5f,0.f };
+		_Particle.Scale = { 3.f ,0.5f* StaffChargeT,0.f };
 		_Particle.Name = L"StaffFire";
 
 		_Particle.Speed = 40.f;
@@ -1683,7 +1711,7 @@ void CPlayer::StaffRelease()
 			_BlastParticle.Dir = MATH::Normalize(WorldGoal - _BlastParticle.Location);
 			_BlastParticle.bUVAlphaLerp = 1l;
 
-			_BlastParticle.Scale = { 0.7f ,0.7f,0.7f };
+			_BlastParticle.Scale = { 0.50f  * StaffChargeT,0.50f * StaffChargeT,0.50f * StaffChargeT };
 			_BlastParticle.Name = L"WandProjectile";
 
 			_BlastParticle.Speed = 100.0f;
@@ -1693,11 +1721,7 @@ void CPlayer::StaffRelease()
 
 	}
 
-
-
-
-
-
+	StaffChargeT = 0.0f;
 }
 
 void CPlayer::StaffLoop()

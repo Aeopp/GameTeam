@@ -2,6 +2,8 @@
 #include "..\Headers\ParticleSystem.h"
 #include "Camera.h"
 #include "Player.h"
+#include "MainCamera.h"
+
 
 
 
@@ -720,7 +722,11 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bFloorCollision = false;
 		_Particle.Durtaion = 0.0f;
 
+
 		 //  여기에 폭발 로직을 추가 한다 .
+		auto _Camera = dynamic_cast<CMainCamera*>(_Management->GetGameObject(-1, L"Layer_MainCamera", 0));
+		_Camera->Shake(2.0f, MATH::RandVec(), 0.8f);
+
 		Particle _DynamiteExplosion;
 		_DynamiteExplosion.bBillboard = true;
 		_DynamiteExplosion.bMove = false;

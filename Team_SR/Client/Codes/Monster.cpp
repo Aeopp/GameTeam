@@ -163,7 +163,10 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 DeadHitBlood();
 	 if (m_stStatus.fHP < 0.f)
 	 {
-		
+		 // 체력 다하면 중력과 충돌 끄기
+		 // bGravity = false;
+		 //_CollisionComp->bCollision = false;
+		 // ! 원작 효과 고기,뼈 ?? 등등 떨구기
 	 }
 }
 
@@ -181,6 +184,15 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 		}
 
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
+
+		if (m_stStatus.fHP < 0.f)
+		{
+			// 체력 다하면 중력과 충돌 끄기
+			// bGravity = false;
+			//_CollisionComp->bCollision = false;
+			// ! 원작 효과 고기,뼈 ?? 등등 떨구기
+		}
+
 		DeadHitBlood();
 	}
 }

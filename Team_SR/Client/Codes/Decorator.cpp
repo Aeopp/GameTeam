@@ -5,6 +5,9 @@
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 
+
+static void DecoratorBomb(CDecorator* const _Target);
+
 CDecorator::CDecorator(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stDecoratorInfo{}
@@ -666,6 +669,20 @@ void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 
 	m_stDecoratorInfo.fHP -= _Target->CurrentAttack;
 
+
+	{
+		// 체력 다하면 중력과 충돌 끄기
+		// bGravity = false;
+		//_CollisionComp->bCollision = false;
+		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
+	}
+
+	if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
+	{
+		// TODO :: if( HP < 0.0f )
+		DecoratorBomb(this);
+	}
+
 	if (m_fTriggerHP != -1.f) 
 	{
 		while (m_stDecoratorInfo.fHP <= m_fTriggerHP && m_listNextFrameInfo.size() != 0) {
@@ -683,6 +700,8 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
 
+
+
 	if (_Particle)
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
@@ -693,6 +712,12 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 		}
 
 		m_stDecoratorInfo.fHP -= _ParticlePtr->CurrentAttack;
+		// 체력 다하면 중력과 충돌 끄기
+		// bGravity = false;
+		//_CollisionComp->bCollision = false;
+		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
+
+
 
 		if (m_fTriggerHP != -1.f)
 		{
@@ -812,3 +837,55 @@ void CDecorator::UpdateFromMyDecoType()
 }
 
 
+
+
+
+
+
+
+
+
+
+static void DecoratorBomb(CDecorator* const _Target)
+{
+	auto _Camera = dynamic_cast<CMainCamera*>(CManagement::Get_Instance()->GetGameObject(-1, L"Layer_MainCamera", 0));
+	_Camera->Shake(2.0f, MATH::RandVec(), 0.8f);
+
+	CollisionParticle _DynamiteExplosion;
+	_DynamiteExplosion.bBillboard = true;
+	_DynamiteExplosion.bCollision = false;
+	_DynamiteExplosion.bMove = false;
+	_DynamiteExplosion.Delta = 0.10f;
+	_DynamiteExplosion.EndFrame = 13ul;
+	_DynamiteExplosion.CurrentAttack = 120.0f;
+	_DynamiteExplosion.MaxDuration = _DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
+	_DynamiteExplosion.Location = _Target->GetTransform()->GetLocation();
+	_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 }));
+	static constexpr float ExplosionScale = 6.5f;
+	_DynamiteExplosion.Scale = { ExplosionScale ,ExplosionScale ,ExplosionScale };
+	ParticleSystem::Instance().PushParticle(_DynamiteExplosion);
+
+	Sphere _Sphere;
+	_Sphere.Center = _Target->GetTransform()->GetLocation();
+	_Sphere.Radius = ExplosionScale;
+
+	for (auto& _Comp : CCollisionComponent::_Comps)
+	{
+		if (!_Comp->bCollision)continue;
+#pragma region MatchingCheck
+		auto iter = CCollisionComponent::_TagBind.find(CCollisionComponent::ETag::PlayerAttackParticle);
+		if (iter == std::end(CCollisionComponent::_TagBind))continue;
+		if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+		vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+		// 거리검사
+		if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
+		// ....
+		auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+		// 충돌함.
+		if (IsCollision.first)
+		{
+			_Comp->Owner->ParticleHit(&_DynamiteExplosion, IsCollision.second);
+		}
+	}
+};

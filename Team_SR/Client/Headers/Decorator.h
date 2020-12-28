@@ -17,7 +17,6 @@ public:
 	virtual HRESULT RenderGameObject() override;
 private:
 	HRESULT AddComponents();
-
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 장식이 피해를 받음
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
