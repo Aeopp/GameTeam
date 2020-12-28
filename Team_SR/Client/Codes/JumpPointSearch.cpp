@@ -276,7 +276,8 @@ void JumpPointSearch::Finish(list<vec3>& listMovePos)
 {
 	// 길찾기를 완료했는데 피니쉬 노드가 nullptr 이면 심각한 상황
 	if (m_stpFinishNode == nullptr) {
-		throw;
+		//throw;
+		return;
 	}
 
 	float fTileCenter = m_fTileSize * 0.5f;
@@ -284,7 +285,8 @@ void JumpPointSearch::Finish(list<vec3>& listMovePos)
 
 	// 부모 노드가 nullptr 일 수 없음 최단 경로여도 부모노드 합쳐 2개의 노드가 필요
 	if (stpNode == nullptr) {
-		throw;
+		//throw;
+		return;
 	}
 
 	// 2020.12.27
