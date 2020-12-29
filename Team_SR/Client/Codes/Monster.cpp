@@ -216,6 +216,10 @@ bool CMonster::PlayerAwareness()
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
 	if (fDis <= m_stStatus.fDetectionRange) {
+		vec3 DirFromXZPlane = vDir;
+		DirFromXZPlane.y = 0.0f;
+		DirFromXZPlane = MATH::Normalize(DirFromXZPlane);
+		RotationXZPlane = MATH::ToDegree(std::acosf(MATH::Dot(DirFromXZPlane, vec3{ 0.0f,0.0f,1.0f })));
 		return true;
 	}
 	return false;
@@ -229,6 +233,10 @@ bool CMonster::PlayerBeNear()
 	// 플레이어가 범위 안에 있으면
 	if (fDis <= m_stStatus.fMeleeRange) 
 	{
+		vec3 DirFromXZPlane = vDir;
+		DirFromXZPlane.y = 0.0f;
+		DirFromXZPlane = MATH::Normalize(DirFromXZPlane);
+		RotationXZPlane = MATH::ToDegree(std::acosf(MATH::Dot(DirFromXZPlane, vec3{ 0.0f,0.0f,1.0f })));
 		return true;
 	}
 	return false;
@@ -300,7 +308,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	_Particle.CurrentFrame = Frame; 
 	_Particle.CurrentT = static_cast<float>(Frame); 
 	_Particle.Delta = FLT_MAX;
-	_Particle.Durtaion = 60.f;
+	_Particle.Durtaion = 180.0f;
 	_Particle.EndFrame = Frame;
 	_Particle.StartLocation =   _Particle.Location = IntersectPoint + PlaneNormal * 0.01f;
 	_Particle.Scale = { 1.3,1.3,1.3 };

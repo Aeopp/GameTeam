@@ -180,6 +180,10 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"Dynamite"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\Dynamite\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"ElectricBeam"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricBeam\\", 1);
+	
 }
 
 void ParticleSystem::Update(const float DeltaTime)&

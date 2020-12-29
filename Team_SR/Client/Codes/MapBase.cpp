@@ -948,7 +948,8 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 	_CubeTexture = std::shared_ptr<IDirect3DCubeTexture9>(_CubeTexturePtr,
 		[](IDirect3DCubeTexture9* const _Target)
 		{
-			_Target->Release();
+			if(_Target)
+				_Target->Release();
 		});
 
 	IDirect3DVertexBuffer9* _VertexBuf = nullptr;
@@ -982,7 +983,8 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 		(_VertexBuf,
 			[](IDirect3DVertexBuffer9* const _Target)
 			{
-				_Target->Release();
+				if (_Target)
+					_Target->Release();
 			});
 
 
@@ -1045,6 +1047,7 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 	_CubeIndexBuf = std::shared_ptr<IDirect3DIndexBuffer9>(
 			_IndexBuf, [](IDirect3DIndexBuffer9 * const _Target)
 			{
+			if(_Target)
 				_Target->Release();
 			} );
 }

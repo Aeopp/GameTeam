@@ -12,6 +12,7 @@
 #include "Eyebat.h"
 #include "Glacier.h"
 #include "ParticleSystem.h"
+#include "ScreenEffect.h"
 
 #include "Hangman.h"
 #include "Hellhound.h"
@@ -45,6 +46,13 @@ HRESULT CStage::ReadyScene()
 		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CPlayer>(),
 		(CGameObject**)&m_pPlayer, nullptr)))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CScreenEffect>(),
+		nullptr, nullptr)))
 		return E_FAIL;
 
 	if (FAILED(m_pManagement->AddGameObjectInLayer(

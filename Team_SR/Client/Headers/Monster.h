@@ -27,6 +27,8 @@ private:
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
+	FORCEINLINE bool IsDead()const& { 
+		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
@@ -70,7 +72,8 @@ public:
 	float Shine = 20.f;
 	//                   렌더링 컴포넌트
 	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
-/// 
+	      // Degree
+	float RotationXZPlane = 0.0f;
 };
 
 #define  __MONSTER_H__

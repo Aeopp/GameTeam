@@ -34,6 +34,8 @@
 #include "Decorator.h"	// 장식품
 #include "Shark.h"
 #include "SharkBullet.h"
+#include "ScreenEffect.h"
+
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -124,6 +126,12 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CMiniMap>(),
 		CMiniMap::Create(m_pDevice))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
+		CScreenEffect::Create(m_pDevice))))
 		return E_FAIL;
 
 	// 카메라

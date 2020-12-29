@@ -5,15 +5,11 @@
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 
-
 static void DecoratorBomb(CDecorator* const _Target);
 
 CDecorator::CDecorator(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stDecoratorInfo{}
-{
-
-}
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stDecoratorInfo{}{}
 
 HRESULT CDecorator::ReadyGameObjectPrototype()
 {

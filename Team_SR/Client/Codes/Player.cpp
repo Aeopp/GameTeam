@@ -9,6 +9,7 @@
 #include "ParticleSystem.h"
 #include "MainCamera.h"
 #include "Item.h"
+#include "ScreenEffect.h"
 
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
@@ -99,6 +100,14 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 
 		_AnimationTextures._TextureMap[L"Dynamite_Throw"] = CreateTexturesSpecularNormal(
 			m_pDevice, L"..\\Resources\\Player\\Dynamite\\Throw\\", 15ul);
+	};
+
+	{
+		_AnimationTextures._TextureMap[L"ElectricStaff_Idle"] = CreateTexturesSpecularNormal
+			(	m_pDevice, L"..\\Resources\\Player\\ElectricStaff\\Idle\\", 1);
+
+		_AnimationTextures._TextureMap[L"ElectricStaff_Fire"] = CreateTexturesSpecularNormal
+			(	m_pDevice, L"..\\Resources\\Player\\ElectricStaff\\Fire\\", 6ul);
 	};
 
 	return S_OK;
@@ -283,15 +292,25 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	
-		_CurrentInfo.HP -= _Target->CurrentAttack;
+	_CurrentInfo.HP -= _Target->CurrentAttack;
 
-	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
-	_Camera->Shake(_Target->CurrentAttack /100.f, MATH::RandVec(), _Target->CurrentAttack/100.f);
+	if (_Target->CurrentAttack > 0.0f)
+	{
+		auto* const _ScreenEffect =dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+		_ScreenEffect->BloodEffect();
+		auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+				_Camera->Shake(_Target->CurrentAttack / 15.0f, MATH::RandVec(), _Target->CurrentAttack / 15.0f);
+		return;
+	}
+
+	
 
 	auto* _Item = dynamic_cast<CItem*>(_Target);
 	if (_Item)
 	{
+		auto *const _ScreenEffect = dynamic_cast<CScreenEffect* const > (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+		_ScreenEffect->ItemInteractionEffect();
+
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
@@ -621,7 +640,7 @@ static auto PlaneEffect = [](CPlayer& _Player, const vec3 IntersectPoint, vec3 N
 	_Particle.StartLocation = IntersectPoint + (Normal * 0.0001f);
 	_Particle.Location = IntersectPoint + (Normal * 0.0001f);
 	_Particle.Delta = FLT_MAX;
-	_Particle.Durtaion = 1000.f;
+	_Particle.Durtaion = 180.0f;
 	_Particle.EndFrame = 1ul;
 	_Particle.Name = L"BulletHole" + std::to_wstring(MATH::RandInt({ 0,3 }));
 	_Particle.Scale = { Scale,Scale,Scale };
@@ -902,7 +921,7 @@ void CPlayer::ShotGunReload()
 		_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
 		_CollisionParticle.Speed = MATH::RandReal({ 50,150 });
 		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
-		_CollisionParticle.Durtaion = 1000.f;
+		_CollisionParticle.Durtaion = 180.0f;
 		_CollisionParticle.Name = L"ShotGunShell";
 		_CollisionParticle.Radius = 0.3f;
 		_CollisionParticle.Speed = 10.f;
@@ -1018,7 +1037,7 @@ void CPlayer::DaggerThrow()
 		CollisionParticle _Particle;
 		_Particle.bBillboard = false;
 		_Particle.Delta = 2;
-		_Particle.Durtaion = 1000.f;
+		_Particle.Durtaion = 10.0f;
 		_Particle.EndFrame = 1;
 		m_pTransformCom->GetRight() * 0.5f;
 		 
@@ -1066,8 +1085,8 @@ void CPlayer::DaggerThrow()
 		{
 			CollisionParticle _ArrowParticle = _Particle;
 			_ArrowParticle.Speed *= 2.0f;
-			_ArrowParticle.Scale.y = 1.f;
-			_ArrowParticle.Scale.x = -13.f;
+			_ArrowParticle.Scale.y = 2.0f;
+			_ArrowParticle.Scale.x = -20.f;
 			_ArrowParticle.Name = L"ArrowX";
 			_ArrowParticle.bWallCollision = false;
 			_ArrowParticle.bFloorCollision = false;
@@ -1225,7 +1244,7 @@ void CPlayer::AkimboFire()
 	_CollisionParticle.Angle = MATH::RandReal({ 90,130});
 	_CollisionParticle.Speed = MATH::RandReal({ 50,150});
 	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-180,180}) };
-	_CollisionParticle.Durtaion = 1000.f;
+	_CollisionParticle.Durtaion = 180.0f;
 	_CollisionParticle.Name = L"BulletShell";
 	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
@@ -1446,7 +1465,7 @@ void CPlayer::MagnumFire()
 	_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
 	_CollisionParticle.Speed = MATH::RandReal({ 50,150 });
 	_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-360,360}) };
-	_CollisionParticle.Durtaion = 1000.f;
+	_CollisionParticle.Durtaion = 180.0f;
 	_CollisionParticle.Name = L"MagnumShell";
 	_CollisionParticle.Radius = 0.3f;
 	_CollisionParticle.Speed = 10.f;
@@ -1544,7 +1563,7 @@ void CPlayer::StaffFire()
 		CollisionParticle _Particle;
 		_Particle.bBillboard = false;
 		_Particle.Delta = 2;
-		_Particle.Durtaion = 1000.f;
+		_Particle.Durtaion = 10.0f;
 		_Particle.EndFrame = 1;
 
 		_Particle.Location = m_pTransformCom->GetLocation() +  (m_pTransformCom->GetUp() * -0.25f );
@@ -1574,8 +1593,7 @@ void CPlayer::StaffFire()
 		mat RotAxis;
 		D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
 		mat Rot = RotY * RotZ * RotAxis;
-		/*D3DXMatrixRotationAxis(&RotAxis, &Dir, MATH::ToRadian(Angle));
-		Rot *= RotAxis;*/
+		
 
 		_Particle.RotationMatrix = Rot;
 		_Particle.Radius = 1.f;
@@ -1588,7 +1606,6 @@ void CPlayer::StaffFire()
 		ParticleSystem::Instance().PushCollisionParticle(_Particle);
 
 		{
-			
 			Particle _BlastParticle;
 			_BlastParticle.bBillboard = true;
 			_BlastParticle.Delta = 0.1f;
@@ -1659,7 +1676,7 @@ void CPlayer::StaffRelease()
 		CollisionParticle _Particle;
 		_Particle.bBillboard = false;
 		_Particle.Delta = 2;
-		_Particle.Durtaion = 1000.f;
+		_Particle.Durtaion = 10.0f;
 		_Particle.EndFrame = 1;
 
 		_Particle.Location = m_pTransformCom->GetLocation() + (m_pTransformCom->GetUp() * -0.25f);
@@ -1754,7 +1771,7 @@ void CPlayer::DynamiteThrow()
 			CollisionParticle _Particle;
 			_Particle.bBillboard = true;
 			_Particle.Delta = 2;
-			_Particle.Durtaion = 1000.f;
+			_Particle.Durtaion = 3.0f;
 			_Particle.Gravity = 1.5f;
 			_Particle.EndFrame = 1;
 			_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + m_pTransformCom->GetUp() * -0.25f +  (CameraLook * 2.f);
@@ -1861,17 +1878,6 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		_Light.Radius = 400.f;
 		Effect::RegistLight(std::move(_Light));
 	}
-	//if (LightName == L"StaffLoop")
-	//{
-	///*	bIsValidName = true;
-	//	MyLight _Light{};
-	//	_Light.Location =
-	//		MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
-	//	_Light.Diffuse = { 0.556862f,0.317f,1,1 };
-	//	_Light.Priority = 1l;
-	//	_Light.Radius = 150.f;
-	//	Effect::RegistLight(std::move(_Light));*/
-	//}
 
 #ifdef _DEBUG
 	if (!bIsValidName == true)

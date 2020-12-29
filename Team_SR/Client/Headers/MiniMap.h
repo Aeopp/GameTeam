@@ -2,6 +2,9 @@
 #ifndef __CMiniMap_H__
 
 #include "Bullet.h"
+#include "DXWrapper.h"
+
+
 USING(Engine)
 class CMiniMap final : public CGameObject
 {
@@ -44,8 +47,18 @@ public:
 		mat MapWorld;
 	};
 private:
+	struct MiniRenderInfo
+	{
+		vec3 Location;
+		float Rotation;
+		vec4 ColorCoefft;
+	};
 	void MiniMapRenderModeFirst(mat MiniMapProjection);
 	void MiniMapRenderModeSecond(mat MiniMapProjection);
+	void RenderInformationsFirst(const int32_t RenderFlag,const float MiniMapScaleCorrection, const vec2 OffSetXY, const vec3 RenderScale, std::vector<MiniRenderInfo>& _TargetLocations, typename Effect::Info& _CurrentRenderEffect)&;
+	void RenderInformationsSecond(const float WorldRelativeRotation,const vec3 WorldRelativeLocation,const int32_t RenderFlag, const float MiniMapScaleCorrection, const vec2 OffSetXY, const vec3 RenderScale, std::vector<MiniRenderInfo>& _TargetLocations, typename Effect::Info& _CurrentRenderEffect)&;
+	std::vector<MiniRenderInfo>  _MonsterLocations;
+	std::vector<MiniRenderInfo>    _ItemLocations;
 };
 
 #define __CMiniMap_H__

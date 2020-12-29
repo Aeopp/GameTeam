@@ -7,9 +7,7 @@
 
 CItem::CItem(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stItemInfo{}
-{
-}
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr), m_stItemInfo{}{}
 
 HRESULT CItem::ReadyGameObjectPrototype()
 {
@@ -52,7 +50,6 @@ _uint CItem::UpdateGameObject(float fDeltaTime)
 	CGameObject::UpdateGameObject(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);
-
 
 	return _uint();
 }
@@ -359,6 +356,17 @@ void CItem::Free()
 	SafeRelease(_VertexBuffer);
 	/// </summary>
 	CGameObject::Free();
+}
+
+void CItem::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
+{
+	bAcheive = true;
+	bGravity = false;
+	_CollisionComp->bCollision = false;
+	_CollisionComp->bFloorCollision = false;
+	_CollisionComp->bWallCollision = false;
+
+	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);
 }
 
 

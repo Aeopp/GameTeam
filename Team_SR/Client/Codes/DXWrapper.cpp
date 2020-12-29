@@ -247,13 +247,14 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 			std::vector<std::string>
 		{
 			"PlayerScreenLocation",
-			"DistanceMin"
+			"DistanceMin",
+			"Relative"
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
 		(_EffectInfo.PsTable,
 			{ 
-			
+			 
 			});
 
 		_EffectInfoMap[L"MiniMap"] = std::move(_EffectInfo);
@@ -262,7 +263,6 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 
 
 	{
-		// 디퓨즈 + 스페큘러 ..........
 		Effect::Info _EffectInfo = Effect::CompileAndCreate
 		(_Device, L"..\\Shader\\UITexture");
 
@@ -278,7 +278,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 			_EffectInfo.PsTable,
 			std::vector<std::string>
 		{
-				
+				"RenderFlag",
+				"ColorCoefft",
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -289,6 +290,36 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 
 		_EffectInfoMap[L"UITexture"] = std::move(_EffectInfo);
 	};
+
+	{
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\ScreenPostEffect");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+				"World",
+				"Projection",
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+			"AlphaCoefft" ,
+			
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{
+			  "DiffuseSampler",
+			});
+
+		_EffectInfoMap[L"ScreenPostEffect"] = std::move(_EffectInfo);
+	};
+
 }
 
 

@@ -38,12 +38,13 @@ void CreateVertex(
 		(_VertexType::GetVertexDecl(_Device),
 		[](std::shared_ptr<IDirect3DVertexDeclaration9>::element_type* Target)
 		{
-			Target->Release();
+				if(Target)
+					Target->Release();
 		});
 
 	OutVertexBuf = std::shared_ptr<IDirect3DVertexBuffer9>(_VertexBuffer,
 		[](std::shared_ptr<IDirect3DVertexBuffer9>::element_type* Target)
-		{
+		{if (Target)
 			Target->Release();
 		});
 }
