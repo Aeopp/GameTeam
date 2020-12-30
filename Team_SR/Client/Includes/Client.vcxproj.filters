@@ -115,6 +115,9 @@
     <Filter Include="04.JumpPointSearch">
       <UniqueIdentifier>{2a1462a1-3246-46f4-9fa9-fea13f73b647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\07.Ghoul">
+      <UniqueIdentifier>{aea0dc84-0d0c-412e-ba3f-ed0ad369c990}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -332,6 +335,9 @@
     <ClInclude Include="..\Headers\JumpPointSearch.h">
       <Filter>04.JumpPointSearch</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Ghoul.h">
+      <Filter>02.GameObject\02.Monster\07.Ghoul</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -523,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\JumpPointSearch.cpp">
       <Filter>04.JumpPointSearch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Ghoul.cpp">
+      <Filter>02.GameObject\02.Monster\07.Ghoul</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,6 @@ public:
 
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
-	HRESULT Set_Texture();					// 장치에 텍스처 셋
 
 	void AI_NoAwareness();					// 플레이어를 인식하지 못함
 	void AI_ActiveOffense();				// 적극적으로 공격
@@ -34,7 +33,6 @@ private:
 	bool Action_Melee(float fDeltaTime);	// 근접 공격
 	bool Action_Hit(float fDeltaTime);		// 공격받아서 경직
 	bool Action_Dead(float fDeltaTime);		// 죽음
-	bool Action_Run(float fDeltaTime);		// 도망
 
 public:
 	static CBatGrey* Create(LPDIRECT3DDEVICE9 pDevice);
@@ -49,8 +47,9 @@ private:
 	using ACTFunc = bool(CBatGrey::*)(float);	// 몬스터 행동 함수
 
 private:
-	float m_fCountdown;			// 카운트다운
+	float m_fCountdown;			// 행동 카운트
 	float m_fNextAtkWait;		// 다음 공격 대기
+	float m_fPlayerTrackCount;	// 플레이어 추적 카운트
 	ACTFunc m_fpAction;			// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
 	AWARENESS m_eAwareness;		// 인식
 	PHASE m_ePhase;				// 페이즈

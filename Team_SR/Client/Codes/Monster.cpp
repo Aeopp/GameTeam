@@ -233,6 +233,23 @@ void CMonster::CreateFloorBlood()
 	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
+// 길찾기
+// _vDepa : 출발지
+// _vDest : 도착지
+void CMonster::PathFinding(vec3 _vDepa, vec3 _vDest)
+{
+	// 길찾기 시작
+	while (!m_pJumpPointSearch->Start(_vDepa, _vDest)) {
+		// 탐색 실패시 목적지를 근처의 경로로 변경 후
+		// 다시 길찾기를 한다
+		JumpPointSearch::Get_Instance()->NearbyPath(_vDepa, _vDest);
+	}
+	// 길찾기 완료
+	// 이동 지점 리스트에 담기
+	m_listMovePos.clear();
+	m_pJumpPointSearch->Finish(m_listMovePos);
+}
+
 void CMonster::Free()
 {
 	/// <summary> 2020 12 20 이호준

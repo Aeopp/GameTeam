@@ -34,6 +34,7 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
+	void PathFinding(vec3 _vDepa, vec3 _vDest);	// 길찾기
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -43,8 +44,9 @@ protected:
 		HPLock				= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
 		Dead				= 1 << 1,		// 죽음
 		Shoot				= 1 << 2,		// 총쏨
-		TextureChangeLock	= 1 << 3		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
-		// ... 이 밑으로 5개 예약 가능!!
+		TextureChangeLock	= 1 << 3,		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
+		PlayerTracking		= 1 << 4		// 플레이어 추적
+		// ... 이 밑으로 3개 예약 가능!!
 	};
 protected:
 	float m_fFrameCnt;						// 프레임 번호

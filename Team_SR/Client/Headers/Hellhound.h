@@ -29,7 +29,6 @@ public:
 
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
-	HRESULT Set_Texture();					// 장치에 텍스처 셋
 
 	void AI_NoAwareness();					// 플레이어를 인식하지 못함
 	void AI_NormalPattern();				// 일반 패턴
@@ -56,13 +55,14 @@ private:
 	using ACTFunc = bool(CHellhound::*)(float);	// 몬스터 행동 함수
 
 private:
-	float m_fCountdown;			// 카운트다운
-	float m_fNextAtkWait;		// 다음 공격 대기
-	ACTFunc m_fpAction;			// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
-	AWARENESS m_eAwareness;		// 인식
-	PHASE m_ePhase;				// 페이즈
+	float m_fCountdown;				// 행동 카운트
+	float m_fNextAtkWait;			// 다음 공격 대기
+	float m_fPlayerTrackingCount;	// 플레이어 추적 카운트
+	ACTFunc m_fpAction;				// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
+	AWARENESS m_eAwareness;			// 인식
+	PHASE m_ePhase;					// 페이즈
 	AIFunc m_fpMonsterAI[(int)AWARENESS::End][(int)PHASE::End];	// AI 함수 배열
-	bool isDamaged;				// 텍스처 손상 전환용
+	bool isDamaged;					// 텍스처 손상 전환용
 };
 
 #define __HELLHOUND_H__

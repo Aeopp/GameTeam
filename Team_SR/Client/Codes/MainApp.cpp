@@ -33,6 +33,7 @@
 #include "Decorator.h"	// 장식품
 #include "Shark.h"
 #include "SharkBullet.h"
+#include "Ghoul.h"		// 구울
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -317,6 +318,15 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
 		CSharkBullet::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 구울 오브젝트
+#pragma region GameObject_Ghoul
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGhoul>(),
+		CGhoul::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1129,6 +1139,57 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion Component_Texutre_Shark
 
+	// 구울 텍스처들
+#pragma region Component_Texture_Ghoul
+	// 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Attack/Ghul_ATTACK%d.png", 15))))
+		return E_FAIL;
+
+	// 뒤돌아봄
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Back",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Back/Ghul_back.png", 1))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Death/Ghul_death%d.png", 12))))
+		return E_FAIL;
+
+	// 땅파기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_DigOut",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/DigOut/ghoul_digout%d.png", 16))))
+		return E_FAIL;
+
+	// 숨음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Hide",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Hide/ghoul_hide.png", 1))))
+		return E_FAIL;
+
+	// 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Hit/Ghul_hit.png", 1))))
+		return E_FAIL;
+
+	// 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Walk/Ghul_walk000%d.png", 6))))
+		return E_FAIL;
+#pragma endregion	// Component_Texture_Ghoul
 
 	return S_OK;
 }

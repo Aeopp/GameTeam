@@ -4,7 +4,7 @@
 
 CBatGrey::CBatGrey(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
-	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fpAction(nullptr)
+	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fPlayerTrackCount(0.f), m_fpAction(nullptr)
 	, m_eAwareness(AWARENESS::End), m_ePhase(PHASE::End)
 	, m_fpMonsterAI{}
 {
@@ -30,7 +30,7 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 30.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
@@ -93,15 +93,6 @@ HRESULT CBatGrey::RenderGameObject()
 {
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
-
-	/*if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
-
-	if (FAILED(Set_Texture()))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -173,7 +164,7 @@ HRESULT CBatGrey::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 0.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;
@@ -215,6 +206,7 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			m_fpAction = &CBatGrey::Action_Dead;
 			m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
 			m_fFrameCnt = 0;
@@ -225,6 +217,14 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		return;
 	}
 
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackCount = 10.f;
+
 	// 피해를 받아서 현제 행동 취소
 	// Hit 텍스처를 취함
 	m_fpAction = &CBatGrey::Action_Hit;
@@ -233,10 +233,6 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	m_fStartFrame = 0;
 	m_fEndFrame = 2;
 	m_fFrameSpeed = 5.f;
-
-	// 충돌 관련 정보
-	m_vCollisionDir = _CollisionInfo.Dir;
-	m_fCrossValue = _CollisionInfo.CrossValue;
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
@@ -244,14 +240,27 @@ void CBatGrey::Update_AI(float fDeltaTime)
 {
 	// 다음 공격 대기 시간 감소
 	m_fNextAtkWait -= fDeltaTime;
+	// 플레이어 추적 시간 감소
+	m_fPlayerTrackCount -= fDeltaTime;
+	if (m_fPlayerTrackCount <= 0.f) {
+		// 플레이어 추적 OFF
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	}
 
 	// 몬스터 행동
 	if (!(this->*m_fpAction)(fDeltaTime)) {
 		return;
 	}
 
-	// 플레이어를 인식했는가?
+	// 플레이어가 사정거리 안에 있는가?
 	if (PlayerAwareness()) {
+		// 플레이어 추적 ON
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+		m_fPlayerTrackCount = 5.f;
+	}
+
+	// 플레이어를 추적중인가?
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::PlayerTracking)) {
 		m_eAwareness = AWARENESS::Yes;	// 플레이어 발견
 	}
 	else {
@@ -268,20 +277,6 @@ void CBatGrey::Update_AI(float fDeltaTime)
 
 	// AI 처리
 	(this->*m_fpMonsterAI[(int)m_eAwareness][(int)m_ePhase])();
-}
-
-HRESULT CBatGrey::Set_Texture()
-{
-	// 텍스처 찾기
-	auto iter_find = m_mapTexture.find(m_wstrTextureKey);
-	if (m_mapTexture.end() == iter_find)
-		return E_FAIL;
-
-	CTexture* pTexture = (CTexture*)iter_find->second;
-	// 해당 프레임 텍스처 장치에 셋
-	pTexture->Set_Texture((_uint)m_fFrameCnt);
-
-	return S_OK;
 }
 
 // 플레이어를 인식하지 못함
@@ -382,9 +377,7 @@ RETURN_MOVE:	// 이동
 	}
 
 	// 길찾기
-	m_pJumpPointSearch->Start(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
-	m_listMovePos.clear();
-	m_pJumpPointSearch->Finish(m_listMovePos);
+	CMonster::PathFinding(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
 
 	return;
 }
@@ -422,7 +415,7 @@ void CBatGrey::AI_PassiveOffense()
 	}
 
 RETURN_RUN:	// 도망
-	m_fpAction = &CBatGrey::Action_Run;
+	m_fpAction = &CBatGrey::Action_Move;
 	m_fCountdown = 3.f;		// 3초 도망
 	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyBack")) {
 		m_wstrTextureKey = L"Component_Texture_BatGreyBack";
@@ -431,6 +424,18 @@ RETURN_RUN:	// 도망
 		m_fEndFrame = 7;
 		m_fFrameSpeed = 10.f;
 	}
+
+	{
+		// 도망 방향
+		vec3 vDestPos = m_pTransformCom->m_TransformDesc.vPosition - m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+		vDestPos.y = 0.f;
+		D3DXVec3Normalize(&vDestPos, &vDestPos);
+		vDestPos *= m_fCountdown * m_stStatus.fSpeed;
+
+		// 길찾기
+		CMonster::PathFinding(m_pTransformCom->m_TransformDesc.vPosition, vDestPos);
+	}
+
 	return;
 
 RETURN_MELEE:	// 근접 공격
@@ -453,24 +458,6 @@ RETURN_SHOOT:	// 원거리 공격
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	m_vAim.y = 0.f;
 	D3DXVec3Normalize(&m_vAim, &m_vAim);
-	return;
-
-RETURN_MOVE:	// 이동
-	m_fpAction = &CBatGrey::Action_Move;
-	m_fCountdown = 1.f;		// 1초 이동
-	if (m_wstrTextureKey.compare(L"Component_Texture_BatGreyFly")) {
-		m_wstrTextureKey = L"Component_Texture_BatGreyFly";
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 8;
-		m_fFrameSpeed = 10.f;
-	}
-
-	// 길찾기
-	m_pJumpPointSearch->Start(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
-	m_listMovePos.clear();
-	m_pJumpPointSearch->Finish(m_listMovePos);
-
 	return;
 }
 
@@ -583,25 +570,6 @@ bool CBatGrey::Action_Dead(float fDeltaTime)
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
 		return false;
-	}
-
-	return false;
-}
-
-// 도망
-bool CBatGrey::Action_Run(float fDeltaTime)
-{
-	// 방향
-	vec3 vDir = m_pTransformCom->m_TransformDesc.vPosition - m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
-	vDir.y = 0.f;
-	D3DXVec3Normalize(&vDir, &vDir);
-	// 포지션 이동
-	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
-
-	// 지정된 시간만큼 이동 후 정지
-	m_fCountdown -= fDeltaTime;
-	if (m_fCountdown <= 0) {
-		return true;
 	}
 
 	return false;
