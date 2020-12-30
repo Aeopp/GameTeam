@@ -56,6 +56,21 @@ HRESULT CScreenEffect::ReadyGameObjectPrototype()
 					_Target->Release();
 			});
 
+	for (size_t i = 0; i < 9; ++i)
+	{
+		const std::wstring Idx = std::to_wstring(i); 
+		const std::wstring TextureKey = L"Shield" + Idx;
+		Textures[TextureKey] = std::shared_ptr<IDirect3DTexture9>
+			(
+				LOAD_TEXTURE(m_pDevice, L"..\\Resources\\ScreenEffect\\Shield\\" + Idx + L".png"),
+				[](IDirect3DTexture9* const _Target)
+				{
+					if (_Target)
+						_Target->Release();
+				});
+	}
+
+
 	return S_OK;
 }
 
@@ -167,4 +182,9 @@ void CScreenEffect::ItemInteractionEffect()
 void CScreenEffect::BloodEffect()
 {
 	BloodEffectT = 1.0f;
+}
+
+void CScreenEffect::FreezeEffect()
+{
+
 }

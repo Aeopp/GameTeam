@@ -198,6 +198,9 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"Particle"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\Particle\\", 1ul);
+
+	_ParticleTextureTable._TextureMap[L"Snow"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Snow\\", 1ul);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
