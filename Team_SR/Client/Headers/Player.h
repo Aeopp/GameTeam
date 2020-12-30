@@ -50,6 +50,8 @@ public:
 	void _6ButtonEvent()&;
 	void _7ButtonEvent()&;
 	void _8ButtonEvent()&;
+	void SpellFreeze();
+	void SpellLight();
 private:
 	HRESULT AddStaticComponents()override;
 public:
@@ -102,6 +104,7 @@ private:
 	void FlakFire();
 	void FlakReload();
 	void ElectricStaffFire();
+
 
 	bool bWeaponEffectRender = false;
 	void WeaponEffectOrthoRender(Effect::Info& _Effect);

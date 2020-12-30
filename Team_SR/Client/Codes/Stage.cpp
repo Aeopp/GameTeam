@@ -273,6 +273,16 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		 m_pPlayer->_8ButtonEvent();
 	 }
 
+	 if (m_pKeyMgr->Key_Down('O'))
+	 {
+		 m_pPlayer->SpellFreeze();
+	 }
+
+	 if (m_pKeyMgr->Key_Down('P'))
+	 {
+		 m_pPlayer->SpellLight();
+	 }
+
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();

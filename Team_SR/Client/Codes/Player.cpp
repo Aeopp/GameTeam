@@ -123,6 +123,16 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 	};
 
 	{
+		_AnimationTextures._TextureMap[L"Light"] = CreateTexturesSpecularNormal
+		(m_pDevice, L"..\\Resources\\Player\\Light\\", 5ul);
+	};
+
+	{
+		_AnimationTextures._TextureMap[L"Freeze"] = CreateTexturesSpecularNormal
+		(m_pDevice, L"..\\Resources\\Player\\Freeze\\", 11ul);
+	};
+
+	{
 		_WeaponEffectAnimTextures._TextureMap[L"Electric_Heavy"] = CreateTexturesSpecularNormal
 		(m_pDevice, L"..\\Resources\\Effect\\ElectricHeavy\\", 9ul);
 
@@ -2170,6 +2180,16 @@ void CPlayer::ElectricStaffFire()
 			ParticleSystem::Instance().PushParticle(_Particle);
 		};
 	};
+};
+
+void CPlayer::SpellFreeze()
+{
+
+};
+
+void CPlayer::SpellLight()
+{
+
 };
 
 
