@@ -194,7 +194,6 @@ void CMainCamera::CameraEditProcess()&
 		static float Force = 1.f;
 		static float Vibration = 1.f;
 		static vec3 AxisScale{ 1,1,1 };
-
 	
 
 		ImGui::SliderFloat("Duration", &Duration, 0.1f, 10.f);

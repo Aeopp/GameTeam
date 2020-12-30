@@ -28,6 +28,7 @@ float AlphaLerp;
 int LightNum;
 int bUI;
 int bUVAlphaLerp;
+int LightCalcFlag;
 float ColorLerpT;
 
 float Shine;
@@ -37,6 +38,25 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
+    float CurrentColorLerpT = saturate(ColorLerpT);
+    float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+    float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);
+    float FogFactor = FogFactorLinear;
+    float OutAlpha = DiffuseTexColor.a;
+     
+    if (bUVAlphaLerp == 1)
+    {
+        OutAlpha *= (1.25f - (1.0f - Input.UV.x));
+    }
+    if (LightCalcFlag == 1)
+    {
+        float4 Color = tex2D(DiffuseSampler, Input.UV);
+        Color.rgb = (FogColor.rgb * FogFactor) + (Color.rgb * (1.0f - FogFactor));
+        Color.rgb = (float3(1.f, 1.f, 1.f) * CurrentColorLerpT) + (Color.rgb * (1.f - CurrentColorLerpT));
+
+        return float4(Color.rgb, OutAlpha);
+    }
+    
     if (bUI)
     {
         float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
@@ -68,7 +88,7 @@ float4 main(PS_INPUT Input) : COLOR
         Normal = worldNormal;
     }
  
-    float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+ 
     float4 SpecularTexColor = float4(1, 1, 1, 1); 
     
     if (bSpecularSamplerBind == 0)
@@ -120,23 +140,8 @@ float4 main(PS_INPUT Input) : COLOR
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }
-    
-    float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);
-    
-    float FogFactor = FogFactorLinear;
-    
     OutputColor.rgb = (FogColor.rgb * FogFactor) + (OutputColor.rgb * (1.0f - FogFactor));
+    OutputColor.rgb = (float3(1.0f, 1.0f, 1.0f) * CurrentColorLerpT) + (OutputColor.rgb * (1.f - CurrentColorLerpT));
     
-    float OutAlpha = DiffuseTexColor.a;
-    
-    if (bUVAlphaLerp==1)
-    {
-        OutAlpha *= (1.25f - (1.0f - Input.UV.x));
-    }
-    
-    float CurrentColorLerpT  = saturate(ColorLerpT);
-    
-    OutputColor.rgb = (float3(1, 1, 1) * CurrentColorLerpT) + (OutputColor.rgb * (1.f-CurrentColorLerpT));
-    
-    return float4(OutputColor.rgb, OutAlpha);
+   return float4(OutputColor.rgb, OutAlpha);
 };

@@ -4,6 +4,8 @@
 #include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
+#include "Player.h"
+
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -160,7 +162,15 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 공평회에서는 일단 고정임d
 	//m_stStatus.fHP -= fDemage;
 	 m_stStatus.fHP-=_Target->CurrentAttack;
-	 DeadHitBlood();
+	 auto _Player = dynamic_cast<const CPlayer* const>(_Target);
+	 const CPlayer::EWeaponState _WeaponState=_Player->GetWeaponState();
+
+	 if (false == (_WeaponState == CPlayer::EWeaponState::ElectricStaff ||
+					_WeaponState == CPlayer::EWeaponState::Flak))
+	 {
+		 DeadHitBlood();
+	 }
+		
 	 if (m_stStatus.fHP < 0.f)
 	 {
 		 // 체력 다하면 중력과 충돌 끄기
@@ -303,7 +313,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	_Particle.bMove = false;
 	_Particle.bRotationMatrix = true;
 	_Particle.RotationMatrix = RotAxis;
-	_Particle.bUVAlphaLerp = false;
+	_Particle.UVAlphaLerp = false;
 	int32_t Frame = MATH::RandInt({ 0,3 }); 
 	_Particle.CurrentFrame = Frame; 
 	_Particle.CurrentT = static_cast<float>(Frame); 

@@ -183,7 +183,21 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"ElectricBeam"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\ElectricBeam\\", 1);
-	
+
+	_ParticleTextureTable._TextureMap[L"ElectricLight"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricLight\\", 9ul);
+
+	_ParticleTextureTable._TextureMap[L"ElectricMedium"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricMedium\\", 9ul);
+
+	_ParticleTextureTable._TextureMap[L"ElectricHeavy"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricHeavy\\", 9ul);	
+
+	_ParticleTextureTable._TextureMap[L"ElectricBlast"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricBlast\\", 12ul);
+
+	_ParticleTextureTable._TextureMap[L"Particle"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Particle\\", 1ul);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -509,14 +523,15 @@ void ParticleSystem::Render()&
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
-
 		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.UVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "LightCalcFlag", _Particle.LightCalcFlag);
 		ParticleRenderSetFromName(_Particle, _Effect);
 		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+		_Effect.SetPSConstantData(_Device, "LightCalcFlag", 0l);
 	}
 
 	for (auto& _Particle : _CollisionParticles)
@@ -564,11 +579,14 @@ void ParticleSystem::Render()&
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.UVAlphaLerp);
 		ParticleRenderSetFromName(_Particle, _Effect);
 		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
 	}
 
+
+	_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+	_Effect.SetPSConstantData(_Device, "LightCalcFlag", 0l);
 	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
@@ -691,6 +709,12 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 		return;
 	}
 
+	if (_Particle.Name.find(L"Electric") !=std::wstring::npos)
+	{
+		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+		return;
+	}
+
 	_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 }
 
@@ -780,17 +804,17 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;
 
-		for (size_t i = 0; i < 49; ++i)
+		for (size_t i = 0; i < 40; ++i)
 		{
 			Particle _SpawnParticle;
-			_SpawnParticle.Scale = { 0.25f,0.25f,0.25f };
+			_SpawnParticle.Scale = { 0.20f,0.20f,0.20f };
 			_SpawnParticle.bBillboard = true;
 			_SpawnParticle.bLoop = true;
 			_SpawnParticle.bRotationMatrix = false;
-			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.UVAlphaLerp = 0ul;
 			_SpawnParticle.Delta = FLT_MAX;
 			const vec3 Dir = MATH::RandVec();
-			const float Speed = MATH::RandReal({ 2.0f,4.0f });  
+			const float Speed = MATH::RandReal({ 3.3f,5.5f });  
 			_SpawnParticle.Dir = Dir;
 			_SpawnParticle.MaxDuration= 			_SpawnParticle.Durtaion = Duration;
 			_SpawnParticle.Location = _Particle.Location  + 
@@ -806,7 +830,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.bBillboard = true;
 		_MagicBoom.bLoop = false;
 		_MagicBoom.bRotationMatrix = false;
-		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.UVAlphaLerp = 0ul;
 		_MagicBoom.Delta = 0.1f;
 		_MagicBoom.bMove = false;
 		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
@@ -832,15 +856,15 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		for (size_t i = 0; i < (_Particle.CurrentAttack / 15.0f) * 13; ++i)
 		{
 			Particle _SpawnParticle;
-			_SpawnParticle.Scale = { 0.45f,0.45f,0.45f };
+			_SpawnParticle.Scale = { 0.40f,0.40f,0.40f };
 			_SpawnParticle.bBillboard = true;
 			_SpawnParticle.bLoop = true;
 			_SpawnParticle.bRotationMatrix = false;
-			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.UVAlphaLerp = 0ul;
 			_SpawnParticle.Delta = 0.12f;
 			_SpawnParticle.EndFrame = 7ul;
 			const vec3 Dir = MATH::RandVec();
-			const float Speed = MATH::RandReal({ 1.0f,1.5f });
+			const float Speed = MATH::RandReal({ 1.8f,2.7f });
 			_SpawnParticle.Dir = Dir;
 			_SpawnParticle.MaxDuration = _SpawnParticle.Durtaion = Duration;
 			_SpawnParticle.Location = _Particle.Location +
@@ -856,7 +880,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.bBillboard = true;
 		_MagicBoom.bLoop = false;
 		_MagicBoom.bRotationMatrix = false;
-		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.UVAlphaLerp = 0ul;
 		_MagicBoom.Delta = 0.1f;
 		_MagicBoom.bMove = false;
 		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
@@ -867,6 +891,21 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.StartLocation = _MagicBoom.Location;
 		ParticleSystem::PushParticle(_MagicBoom);
 	}
+}
+
+boost::optional<Particle&> ParticleSystem::GetParticle(const std::wstring& Name)
+{
+	auto iter = std::find_if(std::begin(_Particles), std::end(_Particles), [Name](const auto& _CurParticle)
+		{
+			return _CurParticle.Name == Name;
+		});
+
+	if (iter != std::end(_Particles))
+	{
+		return  boost::optional<Particle&> {*iter}; 
+	}
+
+	return {};
 }
 
 void ParticleSystem::PushParticle(const Particle& _Particle)

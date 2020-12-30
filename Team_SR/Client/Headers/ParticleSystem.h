@@ -5,6 +5,8 @@
 #include "DXWrapper.h"
 #include "Vertexs.h"
 #include "CollisionComponent.h"
+#include "boost/optional.hpp"
+
 
 USING(Engine)
 
@@ -20,12 +22,13 @@ struct Particle
 	float Gravity = 0.0f;
 	vec3 StartLocation{ 0,0,0 };
 	
+	int32_t LightCalcFlag =0l;
 	bool bMove = true;
 	bool bBillboard = true;
 	bool bLoop = true;
 	float MaxDuration = 0.1f;
 	float Durtaion = 0.1f;
-	int bUVAlphaLerp = 0;
+	int UVAlphaLerp = 0;
 	float Speed = 10.f;
 	float Delta = 0.01f;
 	float CurrentT = 0.0f;
@@ -90,6 +93,7 @@ public:
 	void ParticleEventFromName(Particle& _Particle, const float DeltaTime);
 	void ParticleRenderSetFromName(Particle& _Particle, Effect::Info& _Effect);
 	void ParticleCollisionEventFromName(CollisionParticle& _Particle);
+	boost::optional<Particle&> GetParticle(const std::wstring& Name);
 public:
 	void PushParticle(const Particle& _Particle);
 	void PushCollisionParticle(const CollisionParticle& _Particle);

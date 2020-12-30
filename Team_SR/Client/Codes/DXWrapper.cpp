@@ -215,7 +215,9 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				 "FogStart",
 				 "FogColor",
 				"bUI",
-				"ColorLerpT"
+				"ColorLerpT",
+				"LightCalcFlag",
+
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize

@@ -236,6 +236,10 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->MouseRightUp();
 	}
+	 if (m_pKeyMgr->Key_Up(VK_LBUTTON))
+	 {
+		 m_pPlayer->MouseLeftUp();
+	 }
 	 if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
@@ -260,6 +264,15 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	 {
 		 m_pPlayer->_6ButtonEvent();
 	 }
+	 if (m_pKeyMgr->Key_Down('7'))
+	 {
+		 m_pPlayer->_7ButtonEvent();
+	 }
+	 if (m_pKeyMgr->Key_Down('8'))
+	 {
+		 m_pPlayer->_8ButtonEvent();
+	 }
+
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();

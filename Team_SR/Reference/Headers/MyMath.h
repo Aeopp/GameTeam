@@ -59,6 +59,8 @@ public:
 		return Lhs + t * (Rhs - Lhs);
 	}
 
+
+
 	FORCEINLINE static vec3 Normalize(const vec3& Lhs)
 	{
 		vec3 NormVec;

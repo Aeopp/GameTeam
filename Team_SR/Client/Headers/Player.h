@@ -12,6 +12,18 @@ private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CPlayer() = default;
 public:
+	enum class EWeaponState : uint8_t
+	{
+		Dagger,
+		ShotGun,
+		Akimbo,
+		Magnum,
+		Staff,
+		Dynamite,
+		ElectricStaff,
+		Flak,
+	};
+public:
 	using Super = CGameObject;
 	// CGameObject을(를) 통해 상속됨
 	virtual HRESULT ReadyGameObjectPrototype() override;
@@ -28,6 +40,7 @@ public:
 	void MouseRightUp()&;
 	void MouseLeft()&;
 	void MouseLeftPressing()&;
+	void MouseLeftUp()&;
 	void RButtonEvent()&;
 	void _1ButtonEvent()&;
 	void _2ButtonEvent()&;
@@ -35,17 +48,10 @@ public:
 	void _4ButtonEvent()&;
 	void _5ButtonEvent()&;
 	void _6ButtonEvent()&;
+	void _7ButtonEvent()&;
+	void _8ButtonEvent()&;
 private:
 	HRESULT AddStaticComponents()override;
-	enum class EWeaponState : uint8_t
-	{
-		Dagger,
-		ShotGun,
-		Akimbo,
-		Magnum,
-		Staff,
-		Dynamite,
-	};
 public:
 	FORCEINLINE CPlayer::EWeaponState GetWeaponState()const& { return _CurrentWeaponState; };
 	CCollisionComponent* _CollisionComp = nullptr;
@@ -73,6 +79,7 @@ private:
 	PlayerInfo _CurrentInfo;
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
+	AnimationTextures _WeaponEffectAnimTextures;
 	vec3 PrevLocation{ 0 , 0 , 0 };
 	float T = 0.0f;
 	EWeaponState _CurrentWeaponState = EWeaponState::Dagger;
@@ -92,7 +99,12 @@ private:
 	void StaffRelease();
 	void StaffLoop();
 	void DynamiteThrow();
+	void FlakFire();
+	void FlakReload();
+	void ElectricStaffFire();
 
+	bool bWeaponEffectRender = false;
+	void WeaponEffectOrthoRender(Effect::Info& _Effect);
 	void PushLightFromName(const std::wstring& LightName)&;
 
 	std::map<std::wstring, float> LightingDurationTable
@@ -102,11 +114,27 @@ private:
 		{L"MagnumFire",0.f},
 		{L"StaffFire",0.f},
 		{L"StaffCharge",0.f},
-		{L"StaffRelease",0.f}
+		{L"StaffRelease",0.f} ,
+		{L"ElectricStaffFire",0.f},
+		{L"FlagFire",0.f}
 	};
 	void PlayStepSound();
 private:
+	 float _DeltaTime = 0.0f;
+	const vec3 CalcElectricStaffGizmo()const&;
+	const float ElectricStaffFireRich = 13.f;
 	int	m_iStepIndex = 0;
+	float CurrentElectricStaffFireDamage = 1.0f;
+	float ElectricStaffReinForceTimeRequired = 5.0f;
+	const float ElectricStaffLightRadiusCoefft = 100.f;
+	const float ElectricStaffLightDiffuseCoefft = 1.f / 10.f;
+	// 1초당 데미지로 정의된 테이블.
+	std::vector<float> ElectricStaffDamageLimitTable
+	{
+		10.0f,
+		20.0f,
+		30.0f
+	};
 };
 
 #define __PLAYER_H__
