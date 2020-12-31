@@ -43,8 +43,10 @@ HRESULT CButtonUI::ReadyGameObject(void * pArg/* = nullptr*/)
 	vConvertUIPos.x += (float)(WINCX / 2);
 	vConvertUIPos.y += (float)(WINCY / 2);
 
-	m_tBoxRect = { vConvertUIPos.x - (m_UIDesc.vUISize.x / 2), vConvertUIPos.y - (m_UIDesc.vUISize.y / 2),
-		vConvertUIPos.x + (m_UIDesc.vUISize.x / 2), vConvertUIPos.y + (m_UIDesc.vUISize.y / 2) };
+	m_tBoxRect.left = vConvertUIPos.x - (m_UIDesc.vUISize.x / 2);
+	m_tBoxRect.top = vConvertUIPos.y - (m_UIDesc.vUISize.y / 2);
+	m_tBoxRect.right = vConvertUIPos.x + (m_UIDesc.vUISize.x / 2);
+	m_tBoxRect.bottom = vConvertUIPos.y + (m_UIDesc.vUISize.y / 2);
 
 	if (!m_function)
 		return E_FAIL;
