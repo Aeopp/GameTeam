@@ -19,12 +19,15 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxHPAndHP(int* _piMaxValue, int* _piValue);
-	void SetShownBarUI() { m_bShown = true; }//ui나타내기
-	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
+	void SetMaxValueAndMinValue(_int* _piMaxValue, _int* _piValue);
 
-protected://내부메서드관련
+	int GetMaxValue();
+	int	GetMinValue();
+
+
+private://내부메서드관련
 	HRESULT	AddComponent(wstring _PrototypeTag, wstring _ComponentTag);
+	HRESULT RenderText();
 
 public:
 	static CLoadingBar* Create(LPDIRECT3DDEVICE9 pDevice);
@@ -32,17 +35,17 @@ public:
 	virtual void Free() override;
 
 private:
-	D3DXFONT_DESCW m_tFontInfo;
 	LPD3DXSPRITE m_pSprite;
 	LPD3DXFONT m_pFont;
-	bool m_bShown = true;
+
 
 	float m_fRatio = 1.f;//Test
 	float m_fMaxSize;
+	bool m_bTextOut;
 	wstring m_wsObjectName;
 
-	int* m_piMaxValue;
-	int* m_piMinValue;
+	_int* m_piMaxValue;
+	_int* m_piMinValue;
 };
 
 #define __LOADINGBAR_H__

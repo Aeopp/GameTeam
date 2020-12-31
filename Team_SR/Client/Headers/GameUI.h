@@ -16,11 +16,16 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) PURE;
 	virtual HRESULT RenderGameObject() override PURE;
 
+public:
+	void SetShownBarUI() { m_bShown = true; }//ui나타내기
+	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
+
 private:
 	HRESULT	AddComponent();
 
 protected:
 	_uint SetupUIMatrix(UI_DESC& _desc);
+
 
 public:
 	virtual CGameObject * Clone(void * pArg = nullptr) PURE;
@@ -31,5 +36,6 @@ protected:
 
 protected:
 	UI_DESC m_UIDesc;
+	bool m_bShown = false;
 };
 

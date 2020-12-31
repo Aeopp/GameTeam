@@ -1,11 +1,11 @@
 #pragma once
-#include "Component.h"
 #ifndef __VIBUFFER_UITEXTURE_H__
+#include "VIBuffer.h"
 USING(Engine)
 class CVIBuffer_UITexture final : public CVIBuffer
 {
 private:
-	CVIBuffer_UITexture(LPDIRECT3DDEVICE9 pDevice);
+	explicit CVIBuffer_UITexture(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CVIBuffer_UITexture() = default;
 
 public:
@@ -19,10 +19,6 @@ public:
 	HRESULT ReverseSetDisUVposX(float _xUV);
 	HRESULT SetDisUVposY(float _yUV);
 	HRESULT ResetDisUVpos();
-
-private:
-	//HRESULT SetDisposVertex();
-
 
 public:
 	static CVIBuffer_UITexture* Create(LPDIRECT3DDEVICE9 pDevice);

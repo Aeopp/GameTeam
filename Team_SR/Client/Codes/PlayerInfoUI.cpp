@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "..\Headers\PlyerInfoUI.h"
+#include "..\Headers\PlayerInfoUI.h"
 #include "ImGuiHelper.h"
 #include "MainCamera.h"
 #include "Layer.h"
 #include "VIBuffer_UITexture.h"
 
-CPlyerInfoUI::CPlyerInfoUI(LPDIRECT3DDEVICE9 pDevice)
+CPlayerInfoUI::CPlayerInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameUI(pDevice)
 {
 	
 }
 
-HRESULT CPlyerInfoUI::ReadyGameObjectPrototype()
+HRESULT CPlayerInfoUI::ReadyGameObjectPrototype()
 {
 	if (FAILED(CGameUI::ReadyGameObjectPrototype()))
 		return E_FAIL;
@@ -19,14 +19,14 @@ HRESULT CPlyerInfoUI::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
+HRESULT CPlayerInfoUI::ReadyGameObject(void* pArg)
 {
 	if (FAILED(CGameUI::ReadyGameObject(pArg)))
 		return E_FAIL;
 
 	if (FAILED(AddComponent()))
 		return E_FAIL;
-	
+
 	m_UIDesc.vUISize.x = WINCX / 3.f;
 	m_UIDesc.vUISize.y = WINCY / 2.f;
 	m_UIDesc.vUISize.z = 0;
@@ -40,7 +40,7 @@ HRESULT CPlyerInfoUI::ReadyGameObject(void* pArg)
 	return S_OK;
 }
 
-_uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
+_uint CPlayerInfoUI::UpdateGameObject(float fDeltaTime)
 {
 	CGameUI::UpdateGameObject(fDeltaTime);
 	ImGui::Begin("PlayerInfoUI Edit");
@@ -60,8 +60,11 @@ _uint CPlyerInfoUI::UpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-_uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
+_uint CPlayerInfoUI::LateUpdateGameObject(float fDeltaTime)
 {
+	if (!m_bShown)
+		return S_OK;
+
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
@@ -70,37 +73,33 @@ _uint CPlyerInfoUI::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CPlyerInfoUI::RenderGameObject()
+HRESULT CPlayerInfoUI::RenderGameObject()
 {
+	if (!m_bShown)
+		return S_OK;
+
 	if (FAILED(CGameUI::RenderGameObject()))
 		return E_FAIL;
 
-	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
-	//	return E_FAIL;
+	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_UIDesc.matWorld)))
+		return E_FAIL;
 
-	//if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
-	//	return E_FAIL;
+	if (FAILED(m_pDevice->SetTransform(D3DTS_VIEW, &m_UIDesc.matView)))
+		return E_FAIL;
 
-	//if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
-	//	return E_FAIL;
+	if (FAILED(m_pDevice->SetTransform(D3DTS_PROJECTION, &m_UIDesc.matOrthographic)))
+		return E_FAIL;
 
-	//if (FAILED(CGameUI::RenderGameObject()))
-	//	return E_FAIL;
+	if (FAILED(m_pTextureCom->Set_Texture(0)))
+		return E_FAIL;
 
-	//if (FAILED(m_pTextureCom->Set_Texture(0)))
-	//	return E_FAIL;
-	//
-	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-	//	return E_FAIL;
-
-	////m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CPlyerInfoUI::AddComponent()
+HRESULT CPlayerInfoUI::AddComponent()
 {
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::AddComponent(
@@ -115,12 +114,12 @@ HRESULT CPlyerInfoUI::AddComponent()
 
 
 
-CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
+CPlayerInfoUI * CPlayerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CPlyerInfoUI* pInstance = new CPlyerInfoUI(pDevice);
+	CPlayerInfoUI* pInstance = new CPlayerInfoUI(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
 		PRINT_LOG(L"Warning", L"Failed To Create PlyerInfoUI");
@@ -130,9 +129,9 @@ CPlyerInfoUI * CPlyerInfoUI::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CGameObject * CPlyerInfoUI::Clone(void * pArg)
+CGameObject * CPlayerInfoUI::Clone(void * pArg)
 {
-	CPlyerInfoUI* pClone = new CPlyerInfoUI(*this); /* ��������� */
+	CPlayerInfoUI* pClone = new CPlayerInfoUI(*this); /* ��������� */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -143,7 +142,7 @@ CGameObject * CPlyerInfoUI::Clone(void * pArg)
 	return pClone;
 }
 
-void CPlyerInfoUI::Free()
+void CPlayerInfoUI::Free()
 {
 	CGameUI::Free();
 }

@@ -253,6 +253,15 @@ HRESULT CRenderer::RenderUI()
 	if (HRESULT(m_pDevice->GetTransform(D3DTS_PROJECTION, &PrevProjection)))
 		return E_FAIL;
 
+	//Alpa Setting
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0x00000088)))
+		return E_FAIL;
+	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER)))
+		return E_FAIL;
+
+
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
 	{
 		if (FAILED(pObject->RenderGameObject()))

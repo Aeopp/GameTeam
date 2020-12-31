@@ -6,7 +6,7 @@
 #include "Map1st.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 #include "UIManager.h"
 #include "Eyebat.h"
@@ -55,21 +55,7 @@ HRESULT CStage::ReadyScene()
 		nullptr, nullptr)))
 		return E_FAIL;
 
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
-
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
+	CUIManager::Get_Instance()->OnAllUI();
 
 	return S_OK;
 }

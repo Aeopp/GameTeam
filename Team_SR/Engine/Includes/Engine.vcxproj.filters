@@ -234,7 +234,7 @@
       <Filter>00.Systems\01.Time_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\VIBuffer_RectTexture.h">
-      <Filter>01.Utilities\05.Component\01.VIBuffer\02.VIBuffer_TerrainTexture</Filter>
+      <Filter>01.Utilities\05.Component\01.VIBuffer\01.VIBuffer_RectTexture</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

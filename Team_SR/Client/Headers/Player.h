@@ -61,6 +61,7 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
+public: //변수
 	bool bUpgrade = false; 
 	bool bKeyBlue = false;
 	bool bKeyYellow = false;
@@ -77,6 +78,17 @@ public:
 	};
 public:
 	FORCEINLINE const PlayerInfo& GetPlayerInfo()const& { return _CurrentInfo; };
+
+	WEAPON_INFO m_tWeaponInfo;
+	//int32_t mMaxAmmo = 100l;
+	//int32_t Ammo = 100l;
+
+	PLAYER_INFO m_tPlayerInfo;
+	//float mMaxHP = 100.f;
+	//float HP = 100.f;
+	//float mMaxMP = 100.f;
+	//float MP = 100.f;
+
 private:
 	PlayerInfo _CurrentInfo;
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };

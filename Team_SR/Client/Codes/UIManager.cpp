@@ -2,7 +2,10 @@
 #include "..\Headers\UIManager.h"
 #include "Management.h"
 #include "VIBuffer_UITexture.h"
+#include "PlayerInfoUI.h"
+#include "WeaponAmmoInfoUI.h"
 #include "LoadingBar.h"
+#include "HUDTopUI.h"
 #include "HUDTopUI.h"
 
 IMPLEMENT_SINGLETON(CUIManager)
@@ -110,9 +113,9 @@ HRESULT CUIManager::ReadyUI()
 	//플레이어 정보 - 체력, 마나, 초상화
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
-		L"GameObject_PlyerInfoUI",
-		(_int)ESceneID::Stage1st,
-		L"Layer_GameObject_PlyerInfoUI",
+		L"GameObject_PlayerInfoUI",
+		(_int)ESceneID::Static,
+		L"Layer_GameObject_PlayerInfoUI",
 		(CGameObject**)&m_pPlayerInfoUI, nullptr)))
 		return E_FAIL;
 
@@ -120,7 +123,7 @@ HRESULT CUIManager::ReadyUI()
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_WeaponAmmoInfoUI",
-		(_int)ESceneID::Stage1st,
+		(_int)ESceneID::Static,
 		L"Layer_WeaponAmmoInfoUI",
 		(CGameObject**)&m_pWeaponAmmoInfoUI, nullptr)))
 		return E_FAIL;
@@ -129,13 +132,13 @@ HRESULT CUIManager::ReadyUI()
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_HUDTopUI",
-		(_int)ESceneID::Stage1st,
+		(_int)ESceneID::Static,
 		L"Layer_HUDTopUI",
-		(CGameObject**)&m_pHUD_TopUIaBossBar, nullptr)))
+		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
 //------------------------------------------------------
-	UI_ADD_COMPONENT tagLayerCom;
+	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_HP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 312.f;
@@ -147,6 +150,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_HPbar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 
 	//HUD_HP_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
@@ -168,6 +172,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_Manabar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -177,6 +182,7 @@ HRESULT CUIManager::ReadyUI()
 		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom)))
 		return E_FAIL;
 #pragma endregion
+
 #pragma region HUD_Mana_Bar
 	//HUD_Ammo_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 535.f;
@@ -188,6 +194,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_AmmoBar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -199,45 +206,72 @@ HRESULT CUIManager::ReadyUI()
 #pragma endregion
 #pragma endregion
 
-#pragma region Test_Font
-
-	m_iMax[0] = 100;
-	m_iMax[1] = 200;
-	m_iMax[2] = 50;
-
-	m_iMin[0] = 100;
-	m_iMin[1] = 100;
-	m_iMin[2] = 100;
-
-	m_pHUD_HpBar->SetMaxHPAndHP(&m_iMax[0], &m_iMin[0]);
-	m_pHUD_ManaBar->SetMaxHPAndHP(&m_iMax[1], &m_iMin[1]);
-	m_pHUD_AmmoBar->SetMaxHPAndHP(&m_iMax[2], &m_iMin[2]);
-#pragma endregion
+//#pragma region Test_Player
+//
+//	m_iMaxs[0] = 100;
+//	m_iMaxs[1] = 200;
+//	m_iMaxs[2] = 50;
+//		  
+//	m_iMins[0] = 100;
+//	m_iMins[1] = 100;
+//	m_iMins[2] = 100;
+//
+//	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
+//	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
+//	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
+//#pragma endregion
+//#pragma region Test_MonsterHP
+//	m_iMax = 100;
+//	m_iMin = 100;
+//
+//	OnMonsterBar(&m_iMax, &m_iMin);
+//#pragma endregion
 	return S_OK;
 }
 
 void CUIManager::OnAllUI()
 {
+	m_pPlayerInfoUI->SetShownBarUI();
+	m_pWeaponAmmoInfoUI->SetShownBarUI();
+	m_pHUD_HpBar->SetShownBarUI();
+	m_pHUD_ManaBar->SetShownBarUI();
+	m_pHUD_AmmoBar->SetShownBarUI();
+	m_pHUD_TopUI->SetShownBarUI();
 }
 
 void CUIManager::OffAllUI()
 {
+	m_pPlayerInfoUI->SetInvisibleBarUI();
+	m_pWeaponAmmoInfoUI->SetInvisibleBarUI();
+	m_pHUD_HpBar->SetInvisibleBarUI();
+	m_pHUD_ManaBar->SetInvisibleBarUI();
+	m_pHUD_AmmoBar->SetInvisibleBarUI();
+	m_pHUD_TopUI->SetInvisibleBarUI();
 }
 
-void CUIManager::OnPlayerInfo()
+void CUIManager::OnPlayerInfo(PLAYER_INFO* _pPlayerDesc)
 {
+	m_pHUD_HpBar->SetMaxValueAndMinValue(&_pPlayerDesc->iMaxHP, &_pPlayerDesc->iMinHP);
+	
+	m_pHUD_ManaBar->SetMaxValueAndMinValue(&_pPlayerDesc->iMaxMana, &_pPlayerDesc->iMinMana);
 }
 
 void CUIManager::OffPlayerInfo()
 {
 }
 
-void CUIManager::OnWeaponAmmom()
+void CUIManager::OnWeaponAmmom(WEAPON_INFO* _pWeaponDesc)
 {
+	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&_pWeaponDesc->iMaxAmmo, &_pWeaponDesc->iMinAmmo);
 }
 
 void CUIManager::OffWeaponAmmom()
 {
+}
+
+void CUIManager::OnMonsterBar(_int* _iMaxHP, _int* _iMinHP)
+{
+	m_pHUD_TopUI->SetMaxHPAndHP(_iMaxHP, _iMinHP);
 }
 
 void CUIManager::Free()
