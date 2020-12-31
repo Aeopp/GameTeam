@@ -382,15 +382,14 @@ void CMonster::DeadHitBlood()
 		_Particle.Delta = FLT_MAX;
 		_Particle.Gravity = 5.f;
 
-		const float Speed = MATH::RandReal({ 5,10 });
+		const float Speed = MATH::RandReal({ 5,10});
 		_Particle.Dir = MATH::RandVec();
 		_Particle.Durtaion =  4.f;
 		_Particle.Angle = MATH::RandReal({ 90,130});
 		_Particle.Durtaion = 2.f;
 		_Particle.EndFrame = 1ul;
-		_Particle.Scale = { 0.21f,0.21f,0.21f };
-		_Particle.Location = m_pTransformCom->GetLocation();
-		_Particle.StartLocation = m_pTransformCom->GetLocation();
+		_Particle.Scale = { 0.15f,0.15f,0.15f };
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + MATH::RandVec() * MATH::RandReal({ 0.5f,1.f });
 		_Particle.Name = L"Blood";
 		_Particle.Speed = Speed;
 		ParticleSystem::Instance().PushParticle(_Particle);
