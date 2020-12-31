@@ -411,9 +411,6 @@
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PlayerInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\GameUI.h">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClInclude>
@@ -424,11 +421,12 @@
     <ClInclude Include="..\Headers\SharkBullet.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
-    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
     <ClInclude Include="..\Headers\MiniMap.h" />
     <ClInclude Include="..\Headers\ScreenEffect.h" />
+    <ClInclude Include="..\Headers\ButtonUI.h" />
+    <ClInclude Include="..\Headers\PlayerInfoUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -664,9 +662,6 @@
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\PlayerInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GameUI.cpp">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClCompile>
@@ -683,6 +678,8 @@
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
     <ClCompile Include="..\Codes\MiniMap.cpp" />
     <ClCompile Include="..\Codes\ScreenEffect.cpp" />
+    <ClCompile Include="..\Codes\ButtonUI.cpp" />
+    <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

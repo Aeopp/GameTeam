@@ -486,7 +486,7 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		}
 		else
 		{
-			_CurrentInfo.HP -= _Target->CurrentAttack;
+			m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
 
 			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 			_ScreenEffect->BloodEffect();
@@ -495,6 +495,7 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		}
 		return;
 	}
+
 	m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
 
 	auto* _Item = dynamic_cast<CItem*>(_Target);

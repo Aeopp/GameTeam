@@ -222,7 +222,7 @@
     <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\ParticleSystem.h" />
     <ClInclude Include="..\Headers\Player.h" />
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
+    <ClInclude Include="..\Headers\PlayerInfoUI.h" />
     <ClInclude Include="..\Headers\ScreenEffect.h" />
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
@@ -303,7 +303,7 @@
     <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
     <ClCompile Include="..\Codes\ScreenEffect.cpp" />
     <ClCompile Include="..\Codes\Shark.cpp" />
     <ClCompile Include="..\Codes\SharkBullet.cpp" />
