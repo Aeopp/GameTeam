@@ -50,7 +50,7 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 _uint CMonster::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
-
+	_CurrentDeltaTime = fDeltaTime;
 	// 2020.12.17 11:08 KMJ
 	// 충돌 이동
 	//CollisionMovement(fDeltaTime);
@@ -65,6 +65,7 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 	IsBillboarding();
 
 	FloorBloodCurrentCoolTime -= fDeltaTime;
+	LightHitTime -= fDeltaTime;
 
 	return _uint();
 }
@@ -190,7 +191,7 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 
 		if (_ParticlePtr->Name == L"DaggerThrow")
 		{
-			
+
 		}
 
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
@@ -204,6 +205,21 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 		}
 
 		DeadHitBlood();
+	}
+};
+
+void CMonster::FlashHit()&
+{
+	LightHitTime = 0.1f;
+}
+
+void CMonster::FreezeHit()&
+{
+	m_stStatus.fHP -=  ( FreezeHitDamage * _CurrentDeltaTime ) ;
+
+	if (m_stStatus.fHP <= 0.0f)
+	{
+
 	}
 }
 

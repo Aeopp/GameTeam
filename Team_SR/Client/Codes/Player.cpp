@@ -130,6 +130,8 @@ HRESULT CPlayer::ReadyGameObjectPrototype()
 	{
 		_AnimationTextures._TextureMap[L"Freeze"] = CreateTexturesSpecularNormal
 		(m_pDevice, L"..\\Resources\\Player\\Freeze\\", 11ul);
+
+
 	};
 
 	{
@@ -153,6 +155,20 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 {
 	if (FAILED(CGameObject::ReadyGameObject(pArg)))
 		return E_FAIL;
+
+	if (pArg)
+	{
+		ESceneID*  _SceneIDPtr = reinterpret_cast<ESceneID*>(pArg);
+		switch (*_SceneIDPtr)
+		{
+		case ESceneID::StageMidBoss:
+		case ESceneID::StageFinalBoss:
+			ShieldStart();
+			break;
+		default:
+			break;
+		}
+	};
 
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 23.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
@@ -207,7 +223,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		_Duration -= fDeltaTime;
 		if (_Duration > 0.0f)
 		{
-			PushLightFromName(_LightDurationPair.first);
+			PushLightFromName(_LightDurationPair.first ,_LightDurationPair.second);
 		}
 	};
 
@@ -233,6 +249,78 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		_Light.Radius =  (StaffChargeT * 50.0f);
 		Effect::RegistLight(std::move(_Light));
 	}
+
+	auto iter = LightingDurationTable.find(L"SpellLight");
+	if ( (iter != std::end(LightingDurationTable) ) && _AnimationTextures.GetAnimationKey() == L"Light"  &&  ( iter->second<=0.0f) )
+	{
+		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+		_ScreenEffect->Blur();
+
+		MyLight _Light{};
+		_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.0f, 1.f);
+		const vec4 Diffuse = MATH::ConvertVec4(vec3{ 2.f,2.f,2.f }, 1.f);
+		_Light.Diffuse = Diffuse;
+		_Light.Priority = 1l;
+		_Light.Radius = SpellLightRadius;
+		Effect::RegistLight(std::move(_Light));
+
+		auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+		Sphere LightHitSphere;
+		LightHitSphere.Center = m_pTransformCom->GetLocation();
+		LightHitSphere.Radius = SpellLightHitRadius;
+
+		for (auto& _CurrentMonster : _MonsterList)
+		{
+			auto _Component = _CurrentMonster->GetComponent(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>IsCollision = 
+					Collision::IsSphereToSphere(LightHitSphere, _CollisionComp->_Sphere);
+
+				if (IsCollision.first)
+				{
+					dynamic_cast<CMonster* const>(_CollisionComp->Owner)->FlashHit();
+				}
+			}
+		}
+	};
+
+	if (_AnimationTextures.GetAnimationKey() == L"Freeze")
+	{
+		FreezeParticlePush();
+		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+		_ScreenEffect->FreezeEffect();
+
+		auto _MonsterList = m_pManagement->GetGameObjects(-1, L"Layer_Monster");
+		Sphere FreezeHitSphere;
+		FreezeHitSphere.Center = m_pTransformCom->GetLocation();
+		FreezeHitSphere.Radius = SpellFreezeHitRadius;
+
+		for (auto& _CurrentMonster : _MonsterList)
+		{
+			auto _Component = _CurrentMonster->GetComponent(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
+			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp)
+			{
+				float t0 = 0;
+				float t1 = 0;
+				vec3 IntersectPoint;
+				std::pair<bool, Engine::Collision::Info>IsCollision =
+					Collision::IsSphereToSphere(FreezeHitSphere, _CollisionComp->_Sphere);
+
+				if (IsCollision.first)
+				{
+					this->CurrentAttack = 20.f * _DeltaTime;
+					dynamic_cast<CMonster* const>(_CollisionComp->Owner)->FreezeHit();
+				}
+			}
+		}
+	};
+
 
 	T += fDeltaTime;
 
@@ -278,6 +366,9 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 	{
 		CurrentElectricStaffFireDamage = 1.f;
 	}
+
+	auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+	_ScreenEffect->Shield(CalcShieldStep());
 
 	return _uint();
 }
@@ -350,25 +441,30 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	_CurrentInfo.HP -= _Target->CurrentAttack;
-
 	if (_Target->CurrentAttack > 0.0f)
 	{
-		auto* const _ScreenEffect =dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
-		_ScreenEffect->BloodEffect();
-		auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
-				_Camera->Shake(_Target->CurrentAttack / 15.0f, MATH::RandVec(), _Target->CurrentAttack / 15.0f);
+		if (RemainShield > 0.0f)
+		{
+			RemainShield -= _Target->CurrentAttack;
+		}
+		else
+		{
+			_CurrentInfo.HP -= _Target->CurrentAttack;
+
+			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+			_ScreenEffect->BloodEffect();
+			auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+			_Camera->Shake(_Target->CurrentAttack / 15.0f, MATH::RandVec(), _Target->CurrentAttack / 15.0f);
+		}
 		return;
 	}
-
-	
 
 	auto* _Item = dynamic_cast<CItem*>(_Target);
 	if (_Item)
 	{
 		auto *const _ScreenEffect = dynamic_cast<CScreenEffect* const > (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->ItemInteractionEffect();
-
+		_ScreenEffect->BloodEffect();
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
@@ -669,7 +765,7 @@ HRESULT CPlayer::AddStaticComponents()
 	_Info.bCollision = true;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;
-	_Info.Radius = 2.f;
+	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Player;
 	_Info.bMapBlock= true;
 	_Info.Owner = this;
@@ -2180,19 +2276,118 @@ void CPlayer::ElectricStaffFire()
 			ParticleSystem::Instance().PushParticle(_Particle);
 		};
 	};
-};
+}
+
+void CPlayer::FreezeParticlePush()&
+{
+	auto _Camera = dynamic_cast<CMainCamera* const>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+	const vec3 Look = MATH::Normalize(_Camera->GetTransform()->GetLook());
+	const vec3 Right = MATH::Normalize(_Camera->GetTransform()->GetRight());
+	const vec3 ParticleScale = { 0.025f,0.025f,0.025f };
+	const float Duration = 1.f;
+	const std::pair<float,float> SpeedRange = { 6.f,12.f};
+	const std::pair<float, float > GravityRange = { 10.f,20.f};
+	const float OffSetScale = 4.f;
+
+	for (size_t i = 0; i < 1000.f*_DeltaTime; ++i)
+	{
+		Particle _Particle;
+		_Particle.bBillboard = true;
+		_Particle.Angle = MATH::RandReal({ 45,90 });
+		_Particle.Dir = MATH::Normalize(MATH::RandVec());
+		_Particle.bMove = true;
+		_Particle.bLoop = false;
+		_Particle.Delta = FLT_MAX;
+		_Particle.Durtaion = Duration;
+		_Particle.EndFrame = 1ul;
+		_Particle.Gravity = MATH::RandReal(GravityRange);
+		_Particle.LightCalcFlag = 1l;
+		_Particle.Name = L"Snow";
+		_Particle.Scale = ParticleScale;
+		_Particle.Speed = MATH::RandReal(SpeedRange);
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation()  + Look * OffSetScale;
+		ParticleSystem::Instance().PushParticle(_Particle);
+	};
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		Particle _Particle;
+		_Particle.bBillboard = true;
+		_Particle.Angle = MATH::RandReal({ 45,90 });
+		_Particle.Dir = MATH::Normalize(MATH::RandVec());
+		_Particle.bMove = true;
+		_Particle.bLoop = false;
+		_Particle.Delta = FLT_MAX;
+		_Particle.Durtaion = Duration;
+		_Particle.EndFrame = 1ul;
+		_Particle.Gravity = MATH::RandReal(GravityRange);
+		_Particle.LightCalcFlag = 1l;
+		_Particle.Name = L"Snow";
+		_Particle.Scale = ParticleScale;
+		_Particle.Speed = MATH::RandReal(SpeedRange);
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + -Look * OffSetScale;
+		ParticleSystem::Instance().PushParticle(_Particle);
+	};
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		Particle _Particle;
+		_Particle.bBillboard = true;
+		_Particle.Angle = MATH::RandReal({ 45,90 });
+		_Particle.Dir = MATH::Normalize(MATH::RandVec());
+		_Particle.bMove = true;
+		_Particle.bLoop = false;
+		_Particle.Delta = FLT_MAX;
+		_Particle.Durtaion = Duration;
+		_Particle.EndFrame = 1ul;
+		_Particle.Gravity = MATH::RandReal(GravityRange);
+		_Particle.LightCalcFlag = 1l;
+		_Particle.Name = L"Snow";
+		_Particle.Scale = ParticleScale;
+		_Particle.Speed = MATH::RandReal(SpeedRange);
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + Right * OffSetScale;
+		ParticleSystem::Instance().PushParticle(_Particle);
+	};
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		Particle _Particle;
+		_Particle.bBillboard = true;
+		_Particle.Angle = MATH::RandReal({ 45,90 });
+		_Particle.Dir = MATH::Normalize(MATH::RandVec());
+		_Particle.bMove = true;
+		_Particle.bLoop = false;
+		_Particle.Delta = FLT_MAX;
+		_Particle.Durtaion = Duration;
+		_Particle.EndFrame = 1ul;
+		_Particle.Gravity = MATH::RandReal(GravityRange);
+		_Particle.LightCalcFlag = 1l;
+		_Particle.Name = L"Snow";
+		_Particle.Scale = ParticleScale;
+		_Particle.Speed = MATH::RandReal(SpeedRange);
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + -Right * OffSetScale;
+		ParticleSystem::Instance().PushParticle(_Particle);
+	};
+}
 
 void CPlayer::SpellFreeze()
 {
-
+	AnimationTextures::NotifyType _AnimNotify;
+	_AnimationTextures.ChangeAnim(L"Freeze", 0.08f, 11ul, true, std::move(_AnimNotify));
 };
 
 void CPlayer::SpellLight()
 {
+	AnimationTextures::NotifyType _AnimNotify;
 
+	/*_AnimNotify [5ul]= [this ,CurAnimInfo = _AnimationTextures.GetAnimInfo()]()
+	{
+		_AnimationTextures.ChangeAnim(CurAnimInfo.CurrentAnimKey, CurAnimInfo.AnimDelta, CurAnimInfo.ImgNum, CurAnimInfo.bLoop, CurAnimInfo.CurrentAnimNotify, 0.0f, 0ul);
+	};*/
+
+	LightingDurationTable[L"SpellLight"] = SpellLightDuration;
+	_AnimationTextures.ChangeAnim(L"Light", 0.08f, 5ul, true, std::move(_AnimNotify));
 };
-
-
 
 void CPlayer::WeaponEffectOrthoRender(Effect::Info& _Effect)
 {
@@ -2226,7 +2421,7 @@ void CPlayer::WeaponEffectOrthoRender(Effect::Info& _Effect)
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, ZWriteEnableFlag);
 }
 
-void CPlayer::PushLightFromName(const std::wstring& LightName)&
+void CPlayer::PushLightFromName(const std::wstring& LightName , const float Duration)&
 {
 	bool bIsValidName = false;
 
@@ -2234,8 +2429,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 	{
 		bIsValidName = true;
 		MyLight _Light{};
-		_Light.Location =
-			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Location =	MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
 		_Light.Diffuse = { 1,1,1,1 };
 		_Light.Priority = 1l;
 		_Light.Radius = 400.f;
@@ -2288,8 +2482,7 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 	{
 		bIsValidName = true;
 		MyLight _Light{};
-		_Light.Location =
-			MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
+		_Light.Location =	MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
 		_Light.Diffuse = { 0,0,0,1 };
 		_Light.Priority = 1l;
 		_Light.Radius = 400.f;
@@ -2344,6 +2537,18 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 		_Light.Radius = 400.f;
 		Effect::RegistLight(std::move(_Light));
 	}
+	if (LightName == L"SpellLight")
+	{
+		const float Coefft = 1.f - (Duration / SpellLightDuration);
+		bIsValidName = true;
+		MyLight _Light{};
+		_Light.Location = MATH::ConvertVec4(m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.0f, 1.f);
+		const vec4 Diffuse = MATH::ConvertVec4(vec3{ 2.f,2.f,2.f } *Coefft, 1.f);
+		_Light.Diffuse = Diffuse;
+		_Light.Priority = 1l;
+		_Light.Radius = SpellLightRadius * Coefft;
+		Effect::RegistLight(std::move(_Light));
+	}
 #ifdef _DEBUG
 	if (!bIsValidName == true)
 	{
@@ -2352,6 +2557,51 @@ void CPlayer::PushLightFromName(const std::wstring& LightName)&
 #endif 
 }
 
+void CPlayer::ShieldStart()&
+{
+	RemainShield = 100.0f;
+}
+uint8_t CPlayer::CalcShieldStep() const&
+{
+	if (RemainShield >= 60.0f) 
+	{
+		return 0;
+	}
+	else if (RemainShield >= 50.0f)
+	{
+		return 1;
+	}
+	else if (RemainShield >= 35.0f)
+	{
+		return 2;
+	}
+	else if (RemainShield >= 20.0f)
+	{
+		return 3;
+	}
+	else if (RemainShield >= 5.0f)
+	{
+		return 4;
+	}
+	else if (RemainShield >= 3.0f)
+	{
+		return 5;
+	}
+	else if (RemainShield >= 1.0f)
+	{
+		return 6;
+	}
+	else if (RemainShield > 0.0f)
+	{
+		return 7;
+	}
+	else
+	{
+		return 8u;
+	}
+
+	return 8u;
+}
 void CPlayer::PlayStepSound()
 {
 	++m_iStepIndex;
@@ -2362,7 +2612,6 @@ void CPlayer::PlayStepSound()
 
 	CSoundMgr::Get_Instance()->PlaySound(szSoundKey_Step, CSoundMgr::PLAYER_STEP);
 }
-
 const vec3 CPlayer::CalcElectricStaffGizmo() const&
 {
 	return m_pTransformCom->GetLocation()+ (m_pTransformCom->GetUp() * -0.18f) + (m_pTransformCom->GetRight() * 0.122f);

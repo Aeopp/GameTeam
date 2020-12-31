@@ -309,8 +309,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 			_EffectInfo.PsTable,
 			std::vector<std::string>
 		{
-			"AlphaCoefft" ,
-			
+			"AlphaCoefft",
+			"Flag",
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -995,6 +995,20 @@ void AnimationTextures::Update(const float DeltaTime)
 			}
 		}
 	}
+}
+
+typename AnimationTextures::AnimationInfo AnimationTextures::GetAnimInfo() const&
+{
+	AnimationInfo _Info;
+	_Info.CurrentAnimKey = CurrentAnimKey;
+	_Info.CurrentAnimNotify = CurrentAnimNotify;
+	_Info.AnimDelta = AnimDelta;
+	_Info.CurrentImgFrame = CurrentImgFrame;
+	_Info.CurrentT = CurrentT;
+	_Info.ImgNum = ImgNum;
+	_Info.bLoop = bLoop;
+
+	return _Info;
 }
 
 const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& AnimationTextures::GetCurrentTexture()

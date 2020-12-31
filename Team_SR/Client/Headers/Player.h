@@ -75,7 +75,7 @@ public:
 		float HP = MaxHP;
 		float MP = MaxMP;
 	};
-public  :
+public:
 	FORCEINLINE const PlayerInfo& GetPlayerInfo()const& { return _CurrentInfo; };
 private:
 	PlayerInfo _CurrentInfo;
@@ -104,12 +104,13 @@ private:
 	void FlakFire();
 	void FlakReload();
 	void ElectricStaffFire();
-
-
+	void FreezeParticlePush()&;
 	bool bWeaponEffectRender = false;
 	void WeaponEffectOrthoRender(Effect::Info& _Effect);
-	void PushLightFromName(const std::wstring& LightName)&;
+	void PushLightFromName(const std::wstring& LightName , const float Duration)&;
+	void ShieldStart()&;
 
+	uint8_t CalcShieldStep()const&;
 	std::map<std::wstring, float> LightingDurationTable
 	{
 		{L"ShotGunShot",0.f}, 
@@ -119,11 +120,13 @@ private:
 		{L"StaffCharge",0.f},
 		{L"StaffRelease",0.f} ,
 		{L"ElectricStaffFire",0.f},
-		{L"FlagFire",0.f}
+		{L"FlagFire",0.f} ,
+		{L"SpellLight",0.f}
 	};
 	void PlayStepSound();
 private:
-	 float _DeltaTime = 0.0f;
+	float RemainShield = 0.0f;
+	float _DeltaTime = 0.0f;
 	const vec3 CalcElectricStaffGizmo()const&;
 	const float ElectricStaffFireRich = 13.f;
 	int	m_iStepIndex = 0;
@@ -131,6 +134,10 @@ private:
 	float ElectricStaffReinForceTimeRequired = 5.0f;
 	const float ElectricStaffLightRadiusCoefft = 100.f;
 	const float ElectricStaffLightDiffuseCoefft = 1.f / 10.f;
+	const float SpellLightRadius = 500.0f;
+	const float SpellLightHitRadius = 50.0f;
+	const float SpellFreezeHitRadius = 50.0f;
+	static constexpr float SpellLightDuration = 2.f;
 	// 1초당 데미지로 정의된 테이블.
 	std::vector<float> ElectricStaffDamageLimitTable
 	{

@@ -22,7 +22,13 @@ public:
 	virtual void Free() override;
 	void ItemInteractionEffect();
 	void BloodEffect();
+	void FreezeEffect();
+	void Blur()&;
+	void Shield(const uint8_t ImgIdx)&;
 private:
+	uint8_t ShieldImgIdx{8l};
+	float FreezeTime = 0.0f;
+	float BlurTime = 0.0f;
 	float IteminteractionEffecT = 0.0f;
 	float BloodEffectT = 0.0f;
 	uint32_t VertexCount;

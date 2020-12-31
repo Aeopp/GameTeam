@@ -27,6 +27,8 @@ private:
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
+	void FlashHit()&;
+	void FreezeHit()&;
 	FORCEINLINE bool IsDead()const& { 
 		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
@@ -50,6 +52,9 @@ protected:
 		// ... 이 밑으로 5개 예약 가능!!
 	};
 protected:
+	float _CurrentDeltaTime = 0.0f;
+	float FreezeHitDamage = 30.0f;
+	float LightHitTime = 0.0f;
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝

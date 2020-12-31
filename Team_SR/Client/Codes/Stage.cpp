@@ -45,7 +45,7 @@ HRESULT CStage::ReadyScene()
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CPlayer>(),
-		(CGameObject**)&m_pPlayer, nullptr)))
+		(CGameObject**)&m_pPlayer, &CurrentSceneID)))
 		return E_FAIL;
 
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,

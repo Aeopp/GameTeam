@@ -80,6 +80,17 @@ std::vector<std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9
 struct AnimationTextures
 {
 	using NotifyType = std::map<uint32_t, std::function<void()> >;
+	struct AnimationInfo 
+	{
+		NotifyType  CurrentAnimNotify;
+		std::wstring CurrentAnimKey;
+		float AnimDelta = 0.1f;
+		float CurrentT = 0.0f;
+		size_t CurrentImgFrame = 0ul;
+		size_t ImgNum = 1ul;
+		bool bLoop = false;
+	};
+	
 	                                          // Diffuse                 // Specular           // Normal
 	std::map<std::wstring,std::vector<std::tuple<IDirect3DTexture9* , IDirect3DTexture9*, IDirect3DTexture9*> >> _TextureMap;
 	FORCEINLINE const std::wstring& GetAnimationKey() { return CurrentAnimKey;  };
@@ -90,6 +101,7 @@ struct AnimationTextures
 	void Release()& noexcept;
 	void AddRef()& noexcept;
 	void Update(const float DeltaTime);
+	typename AnimationTextures::AnimationInfo GetAnimInfo()const&;
 
 	void ChangeAnim(
 		std::wstring AnimKey, 

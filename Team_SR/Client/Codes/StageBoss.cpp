@@ -39,8 +39,6 @@ HRESULT CStageBoss::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
 
-
-
 	return S_OK;
 }
 

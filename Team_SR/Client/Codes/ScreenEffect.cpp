@@ -46,6 +46,15 @@ HRESULT CScreenEffect::ReadyGameObjectPrototype()
 				if(_Target)
 					_Target->Release();
 		});
+	
+		Textures[L"Freeze"] = std::shared_ptr<IDirect3DTexture9>
+		(
+			LOAD_TEXTURE(m_pDevice, L"..\\Resources\\ScreenEffect\\Freeze.png"),
+			[](IDirect3DTexture9* const _Target)
+			{
+				if (_Target)
+					_Target->Release();
+			});
 
 	Textures[L"Blood"] = std::shared_ptr<IDirect3DTexture9>
 		(
@@ -70,7 +79,6 @@ HRESULT CScreenEffect::ReadyGameObjectPrototype()
 				});
 	}
 
-
 	return S_OK;
 }
 
@@ -86,7 +94,8 @@ _uint CScreenEffect::UpdateGameObject(float fDeltaTime)
 {
 	IteminteractionEffecT -= fDeltaTime;
 	BloodEffectT -= fDeltaTime;
-
+	BlurTime -= fDeltaTime;
+	FreezeTime -= fDeltaTime;
 
 	return Super::UpdateGameObject(fDeltaTime);
 }
@@ -119,24 +128,48 @@ HRESULT CScreenEffect::RenderGameObject()
 
 		_ScreenPostEffect.SetVSConstantData(m_pDevice, "World", World);
 		_ScreenPostEffect.SetVSConstantData(m_pDevice, "Projection", proj);
+		_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0l);
 		m_pDevice->SetVertexShader(_ScreenPostEffect.VsShader);
 		m_pDevice->SetPixelShader(_ScreenPostEffect.PsShader);
 		m_pDevice->SetStreamSource(0, VertexBuf.get(), 0, VertexByteSize);
 		m_pDevice->SetVertexDeclaration(VertexDecl.get());
 		
-		if(IteminteractionEffecT>=0.0f)
+		if (FreezeTime >= 0.0f)
 		{
-			_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", IteminteractionEffecT);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", 1.0f);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 1l);
+			m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Freeze"].get());
+			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0l);
+		}
+		else if (BlurTime >=0.0f)
+		{
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", 1.0f);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0l);
+
 			m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Vignette"].get());
 			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
-		};
+		}
+		else if(IteminteractionEffecT>=0.0f)
+		{
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", IteminteractionEffecT);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0l);
+			m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Vignette"].get());
+			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+		}
 
 		if (BloodEffectT>= 0.0f)
 		{
 			_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft",  BloodEffectT * BloodEffectT);
+			_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0l);
 			m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Blood"].get());
 			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 		};
+
+		_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", 1.f);
+		_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0);
+		m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Shield" + std::to_wstring(ShieldImgIdx)].get());
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 
 	return S_OK;
 }
@@ -186,5 +219,15 @@ void CScreenEffect::BloodEffect()
 
 void CScreenEffect::FreezeEffect()
 {
+	FreezeTime = 0.1f;
+}
 
+void CScreenEffect::Blur()&
+{
+	BlurTime = 0.1f;
+}
+
+void CScreenEffect::Shield(const uint8_t ImgIdx)&
+{
+	ShieldImgIdx = ImgIdx;
 }
