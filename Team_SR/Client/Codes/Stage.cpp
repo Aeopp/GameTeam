@@ -13,6 +13,8 @@
 #include "Glacier.h"
 #include "ParticleSystem.h"
 #include "ScreenEffect.h"
+#include "MiniMap.h"
+
 
 #include "Hangman.h"
 #include "Hellhound.h"
@@ -176,6 +178,11 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		}
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
+
+	if (m_pKeyMgr->Key_Down('M'))
+	{
+		dynamic_cast<CMiniMap* const>(m_pManagement->GetGameObject(-1, L"Layer_MiniMap", 0))->MapOpenToggle();
+	};
 
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{

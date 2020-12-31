@@ -9,11 +9,11 @@
 
 const vec2 CMiniMap::MiniMapModeFirstScreenOffset
 {
-	-750.0f ,+250.0f 
+	+700.f,100.f
 };
 const vec2 CMiniMap::MiniMapModeSecondScreenOffset
 {
-	-750.0f ,-200.0f
+	-750.0f ,+100.0f
 };
 CMiniMap::CMiniMap(LPDIRECT3DDEVICE9 pDevice)
 	:Super(pDevice)
@@ -106,9 +106,41 @@ _uint CMiniMap::LateUpdateGameObject(float fDeltaTime)
 
 	for (auto& _CurrentElement : m_pManagement->GetGameObjects(-1, L"Layer_" + TYPE_NAME<CItem>()))
 	{
-		auto* const _CurrentItem= dynamic_cast<CItem* const>(_CurrentElement);
-		
-		const vec4 _CurItemColorCoefft = { MATH::RandReal({0.1f,1.f}),MATH::RandReal({0.1f,1.f}),MATH::RandReal({0.1f,1.f}),1.0f };
+		auto* const _CurrentItem = dynamic_cast<CItem* const>(_CurrentElement);
+		vec4 _CurItemColorCoefft;
+		switch (_CurrentItem->GetItemInfo().etype)
+		{
+		case Item::HealthBig:
+			_CurItemColorCoefft = { 0.f,1.f,0.f,1.f };
+			break;
+		case Item::HealthSmall:
+			_CurItemColorCoefft = { 99.f / 255.f,1.f,99.f / 255.f ,1.f };
+			break;
+		case Item::ManaBig:
+			_CurItemColorCoefft = { 0.f,0.f,255.f/ 255.f ,1.f };
+			break;
+		case Item::ManaSmall:
+			_CurItemColorCoefft = { 99.f / 255.f,205.f / 255.f,205.f / 255.f ,1.f };
+			break;
+		case Item::Ammo:
+			_CurItemColorCoefft = { 255.f/ 255.f,230.f/ 255.f,89.f/ 255.f ,1.f };
+			break;
+		case Item::KeyBlue:
+			_CurItemColorCoefft = { 123.f / 255.f,123.f / 255.f,123.f / 255.f ,1.f };
+			break;
+		case Item::KeyRed:
+			_CurItemColorCoefft = { 123.f / 255.f,123.f / 255.f,123.f / 255.f ,1.f };
+			break;
+		case Item::KeyYellow:
+			_CurItemColorCoefft = { 123.f / 255.f,123.f / 255.f,123.f / 255.f ,1.f };
+			break;
+		case Item::Upgrade:
+			_CurItemColorCoefft = { 0.f,0.f,0.f ,1.f };
+			break;
+		default:
+			break;
+		};
+		_CurItemColorCoefft.w = 1.f;
 		if (!_CurrentItem->IsAcheive())
 		{
 			_ItemLocations.push_back(MiniRenderInfo{ _CurrentItem->GetTransform()->GetLocation() ,  0.0f, _CurItemColorCoefft });
@@ -134,7 +166,7 @@ HRESULT CMiniMap::RenderGameObject()
 	D3DXMatrixOrthoLH(&MiniMapProjection, WINCX, WINCY, 0.0f, 10000.f);
 	auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
 
-	// 1.
+	if(bFirstModeOn)
 	{
 		MiniMapRenderModeFirst(MiniMapProjection);
 	}
@@ -191,7 +223,7 @@ void CMiniMap::Free()
 
 void CMiniMap::MiniMapRenderModeFirst(mat MiniMapProjection)
 {
-	static constexpr float  MiniMapScaleCorrection = 2.5f;
+	static constexpr float  MiniMapScaleCorrection = 2.f;
 	CPlayer* const _CurrentPlayer = dynamic_cast<CPlayer*>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
 	vec3 PlayerLocation = _CurrentPlayer->GetTransform()->GetLocation();
 	PlayerLocation *= MiniMapScaleCorrection;

@@ -19,7 +19,7 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
-	
+	FORCEINLINE void MapOpenToggle()& {bFirstModeOn = !bFirstModeOn;};
 public:
 	static CMiniMap* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
@@ -59,6 +59,7 @@ private:
 	void RenderInformationsSecond(const float WorldRelativeRotation,const vec3 WorldRelativeLocation,const int32_t RenderFlag, const float MiniMapScaleCorrection, const vec2 OffSetXY, const vec3 RenderScale, std::vector<MiniRenderInfo>& _TargetLocations, typename Effect::Info& _CurrentRenderEffect)&;
 	std::vector<MiniRenderInfo>  _MonsterLocations;
 	std::vector<MiniRenderInfo>    _ItemLocations;
+	bool bFirstModeOn = true;
 };
 
 #define __CMiniMap_H__
