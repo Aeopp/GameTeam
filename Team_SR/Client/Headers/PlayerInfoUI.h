@@ -32,10 +32,8 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-
-private:	//컴포넌트
-
 private:
+
 };
 
 #define __PLAYERINFOUI_H__

@@ -9,11 +9,15 @@
 #include "ParticleSystem.h"
 #include "MainCamera.h"
 #include "Item.h"
+#include "UIManager.h"
 
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
-{}
+{
+	ZeroMemory(&m_tPlayerInfo, sizeof(m_tPlayerInfo));
+	ZeroMemory(&m_tWeaponInfo, sizeof(m_tWeaponInfo));
+}
 
 HRESULT CPlayer::ReadyGameObjectPrototype()
 {
@@ -107,6 +111,18 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
 
+	m_tPlayerInfo.iMaxHP = 100;
+	m_tPlayerInfo.iMinHP = 100;
+	m_tPlayerInfo.iMaxMana = 100;
+	m_tPlayerInfo.iMinMana = 100;
+
+	m_tWeaponInfo.iMaxAmmo = 100l;
+	m_tWeaponInfo.iMinAmmo = 100l;
+
+	//Min_CW
+	CUIManager::Get_Instance()->OnPlayerInfo(&m_tPlayerInfo);
+	CUIManager::Get_Instance()->OnWeaponAmmom(&m_tWeaponInfo);
+
 	return S_OK;
 };
 
@@ -139,6 +155,27 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 		ImGui::Text("Collision");
 		ImGui::Checkbox("Collision?", &_CollisionComp->bCollision);
+
+		ImGui::Text("PlayerInfo");
+		ImGui::Separator();
+		ImGui::SliderInt(" MaxHP", reinterpret_cast<int*>(&m_tPlayerInfo.iMaxHP),
+			0, 1000, "%d");
+		ImGui::Separator();
+		ImGui::SliderInt(" MinHP",reinterpret_cast<int*>(&m_tPlayerInfo.iMinHP),
+			0, 1000, "%d");
+		ImGui::SliderInt(" MaxMana", reinterpret_cast<int*>(&m_tPlayerInfo.iMaxMana),
+			0, 1000, "%d");
+		ImGui::Separator();
+		ImGui::SliderInt(" MinMana", reinterpret_cast<int*>(&m_tPlayerInfo.iMinMana),
+			0, 1000, "%d");
+
+		ImGui::Text("PlayerInfo");
+		ImGui::Separator();
+		ImGui::SliderInt(" MaxAmmo", reinterpret_cast<int*>(&m_tWeaponInfo.iMaxAmmo),
+			0, 1000, "%d");
+		ImGui::Separator();
+		ImGui::SliderInt(" MinAmmo", reinterpret_cast<int*>(&m_tWeaponInfo.iMinAmmo),
+			0, 1000, "%d");
 
 		ImGui::End();
 	}
@@ -269,7 +306,7 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	HP -= _Target->CurrentAttack;
+	m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
 
 	auto* _Item = dynamic_cast<CItem*>(_Target);
 	if (_Item)
@@ -277,19 +314,19 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
-			HP += 10.f;
+			m_tPlayerInfo.iMinHP += 10.f;
 			break;
 		case Item::HealthSmall:
-			HP += 5.f;
+			m_tPlayerInfo.iMinHP += 5.f;
 			break;
 		case Item::ManaBig:
-			MP += 10.f ;
+			m_tPlayerInfo.iMinMana += 10.f ;
 			break;
 		case Item::ManaSmall:
-			MP += 5.f;
+			m_tPlayerInfo.iMinMana += 5.f;
 			break;
 		case Item::Ammo:
-			Ammo += 20l;
+			m_tWeaponInfo.iMinAmmo += 20l;
 			break;
 		case Item::KeyBlue:
 			bKeyBlue = true;

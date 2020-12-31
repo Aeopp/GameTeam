@@ -163,6 +163,7 @@
     <ClInclude Include="..\Headers\BatSpit.h" />
     <ClInclude Include="..\Headers\Blood.h" />
     <ClInclude Include="..\Headers\Bullet.h" />
+    <ClInclude Include="..\Headers\ButtonUI.h" />
     <ClInclude Include="..\Headers\Client_Define.h" />
     <ClInclude Include="..\Headers\Client_Enum.h" />
     <ClInclude Include="..\Headers\Client_Extern.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="..\Codes\BatSpit.cpp" />
     <ClCompile Include="..\Codes\Blood.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp" />
+    <ClCompile Include="..\Codes\ButtonUI.cpp" />
     <ClCompile Include="..\Codes\Decorator.cpp" />
     <ClCompile Include="..\Codes\DXWrapper.cpp" />
     <ClCompile Include="..\Codes\GameUI.cpp" />

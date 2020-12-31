@@ -138,7 +138,7 @@ HRESULT CUIManager::ReadyUI()
 		return E_FAIL;
 
 //------------------------------------------------------
-	UI_ADD_COMPONENT tagLayerCom;
+	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_HP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 312.f;
@@ -150,6 +150,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_HPbar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 
 	//HUD_HP_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
@@ -171,6 +172,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_Manabar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -180,6 +182,7 @@ HRESULT CUIManager::ReadyUI()
 		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom)))
 		return E_FAIL;
 #pragma endregion
+
 #pragma region HUD_Mana_Bar
 	//HUD_Ammo_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 535.f;
@@ -191,6 +194,7 @@ HRESULT CUIManager::ReadyUI()
 	tagLayerCom.tUIDesc.vCenter = _vector(1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_AmmoBar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -202,26 +206,26 @@ HRESULT CUIManager::ReadyUI()
 #pragma endregion
 #pragma endregion
 
-#pragma region Test_Player
-
-	m_iMaxs[0] = 100;
-	m_iMaxs[1] = 200;
-	m_iMaxs[2] = 50;
-		  
-	m_iMins[0] = 100;
-	m_iMins[1] = 100;
-	m_iMins[2] = 100;
-
-	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
-	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
-	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
-#pragma endregion
-#pragma region Test_MonsterHP
-	m_iMax = 100;
-	m_iMin = 100;
-
-	OnMonsterBar(&m_iMax, &m_iMin);
-#pragma endregion
+//#pragma region Test_Player
+//
+//	m_iMaxs[0] = 100;
+//	m_iMaxs[1] = 200;
+//	m_iMaxs[2] = 50;
+//		  
+//	m_iMins[0] = 100;
+//	m_iMins[1] = 100;
+//	m_iMins[2] = 100;
+//
+//	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
+//	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
+//	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
+//#pragma endregion
+//#pragma region Test_MonsterHP
+//	m_iMax = 100;
+//	m_iMin = 100;
+//
+//	OnMonsterBar(&m_iMax, &m_iMin);
+//#pragma endregion
 	return S_OK;
 }
 
@@ -265,7 +269,7 @@ void CUIManager::OffWeaponAmmom()
 {
 }
 
-void CUIManager::OnMonsterBar(_uint* _iMaxHP, _uint* _iMinHP)
+void CUIManager::OnMonsterBar(_int* _iMaxHP, _int* _iMinHP)
 {
 	m_pHUD_TopUI->SetMaxHPAndHP(_iMaxHP, _iMinHP);
 }

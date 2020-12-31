@@ -19,7 +19,7 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxValueAndMinValue(_uint* _piMaxValue, _uint* _piValue);
+	void SetMaxValueAndMinValue(_int* _piMaxValue, _int* _piValue);
 
 	int GetMaxValue();
 	int	GetMinValue();
@@ -27,6 +27,7 @@ public:
 
 private://내부메서드관련
 	HRESULT	AddComponent(wstring _PrototypeTag, wstring _ComponentTag);
+	HRESULT RenderText();
 
 public:
 	static CLoadingBar* Create(LPDIRECT3DDEVICE9 pDevice);
@@ -34,17 +35,17 @@ public:
 	virtual void Free() override;
 
 private:
-	D3DXFONT_DESCW m_tFontInfo;
 	LPD3DXSPRITE m_pSprite;
 	LPD3DXFONT m_pFont;
 
 
 	float m_fRatio = 1.f;//Test
 	float m_fMaxSize;
+	bool m_bTextOut;
 	wstring m_wsObjectName;
 
-	_uint* m_piMaxValue;
-	_uint* m_piMinValue;
+	_int* m_piMaxValue;
+	_int* m_piMinValue;
 };
 
 #define __LOADINGBAR_H__

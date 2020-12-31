@@ -38,7 +38,7 @@ HRESULT CHUDTopUI::ReadyGameObjectPrototype()
 
 
 #pragma endregion
-	UI_ADD_COMPONENT tagLayerCom;
+	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_BosHP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = WINCX - 500.f - 70.f;
@@ -50,6 +50,7 @@ HRESULT CHUDTopUI::ReadyGameObjectPrototype()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_HUDBossHPBar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = false;
 
 	//HUD_HP_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
@@ -96,7 +97,6 @@ HRESULT CHUDTopUI::ReadyGameObject(void * pArg/* = nullptr*/)
 	
 	m_tBossUIDesc.vCenter = _vector(0.f, 0.f, 0.f);
 
-
 	return S_OK;
 }
 
@@ -126,8 +126,12 @@ _uint CHUDTopUI::UpdateGameObject(float fDeltaTime)
 		reinterpret_cast<float*>(&m_tBossUIDesc.vUIPos),
 		-1000.f, +2000.f, "%f");
 	ImGui::Separator();
-	ImGui::SliderInt("BossUIDesc Shown",
+	
+	ImGui::SliderInt("TopUIDesc Shown",
 		reinterpret_cast<int*>(&m_bShown),
+		0, 1, "%f");
+	ImGui::SliderInt("BossUIDesc Shown",
+		reinterpret_cast<int*>(&m_bMonsterHPbarShown),
 		0, 1, "%f");
 
 	ImGui::End();
@@ -242,7 +246,7 @@ HRESULT CHUDTopUI::AddComponent()
 	return S_OK;
 }
 
-void CHUDTopUI::SetMaxHPAndHP(_uint * _piMaxValue, _uint * _piValue)
+void CHUDTopUI::SetMaxHPAndHP(_int * _piMaxValue, _int * _piValue)
 {
 	m_bMonsterHPbarShown = true;
 	m_pMonsterHPBar->SetMaxValueAndMinValue(_piMaxValue, _piValue);

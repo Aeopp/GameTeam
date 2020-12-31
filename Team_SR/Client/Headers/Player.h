@@ -51,13 +51,22 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
+public: //변수
 	bool bUpgrade = false; 
 	bool bKeyBlue = false;
 	bool bKeyYellow = false;
 	bool bKeyRed = false;
-	int32_t Ammo = 100l;
-	float HP = 100.f;
-	float MP = 100.f;
+
+	WEAPON_INFO m_tWeaponInfo;
+	//int32_t mMaxAmmo = 100l;
+	//int32_t Ammo = 100l;
+
+	PLAYER_INFO m_tPlayerInfo;
+	//float mMaxHP = 100.f;
+	//float HP = 100.f;
+	//float mMaxMP = 100.f;
+	//float MP = 100.f;
+
 private:
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;

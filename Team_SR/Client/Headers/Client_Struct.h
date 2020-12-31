@@ -4,22 +4,22 @@
 #ifndef __CLIENT_STRUCT_H__
 
 //Player Info
-typedef struct tagPlayerDesc
+typedef struct tagPlayerInfo
 {
 	//체력
-	_uint iMaxHP;
-	_uint iMinHP;
+	_int iMaxHP;
+	_int iMinHP;
 
 	//마나
-	_uint iMaxMana;
-	_uint iMinMana;
+	_int iMaxMana;
+	_int iMinMana;
 }PLAYER_INFO;
 
-typedef struct tagWeaponDesc
+typedef struct tagWeaponInfo
 {
 	//총알 수
-	_uint iMaxAmmo;
-	_uint iMinAmmo;
+	int32_t iMaxAmmo;
+	int32_t iMinAmmo;
 }WEAPON_INFO;
 
 // 몬스터 스텟

@@ -5,13 +5,28 @@
 
 namespace UI_AddTag
 {
-	typedef struct tagAddComUI
+	typedef struct tagAddComUIBar
 	{
 		UI_DESC tUIDesc;
 		wstring wsPrototypeTag;
 		wstring wsComponentTag;
 		//	BOOL bReverse;
-	}UI_ADD_COMPONENT;
+		bool bTextOut;
+	}UI_BAR_ADD_COMPONENT;
+
+	typedef struct tagAddComUIButton
+	{
+		UI_DESC tUIDesc;
+		wstring wsOffTexProtoTag;
+		wstring wsOffTexComTag;
+		wstring wsOnTexProtoTag;
+		wstring wsOnTexComTag;
+		wstring wsPushTexProtoTag;
+		wstring wsPushTexComTag;
+		void(*func)();
+
+		bool bTextOut;
+	}UI_BUTTON_ADD_COMPONENT;
 }
 
 USING(Engine)
@@ -33,6 +48,7 @@ public:
 public:
 	// 플레이어 정보 - 체력바, 마나, 초상화
 	void OnPlayerInfo(PLAYER_INFO* _pPlayerDesc);
+	//void OnPlayerInfo(PLAYER_INFO* _pPlayerDesc);
 	void OffPlayerInfo();
 
 public:
@@ -42,7 +58,7 @@ public:
 
 public:
 	//몬스터의 체력
-	void OnMonsterBar(_uint* _iMaxHP, _uint* _iMinHP);
+	void OnMonsterBar(_int* _iMaxHP, _int* _iMinHP);
 
 public:
 	virtual void Free() override;
@@ -59,15 +75,15 @@ public:
 
 
 private:
-#pragma region Test_Player
-	_uint m_iMaxs[3];
-	_uint m_iMins[3];
-#pragma endregion
-
-#pragma region Test_MonsterHP
-	_uint m_iMax;
-	_uint m_iMin;
-#pragma endregion
+//#pragma region Test_Player
+//	_uint m_iMaxs[3];
+//	_uint m_iMins[3];
+//#pragma endregion
+//
+//#pragma region Test_MonsterHP
+//	_uint m_iMax;
+//	_uint m_iMin;
+//#pragma endregion
 
 	LPDIRECT3DDEVICE9	m_pDevice;
 };

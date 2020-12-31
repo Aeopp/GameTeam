@@ -148,6 +148,9 @@
     <Filter Include="02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture">
       <UniqueIdentifier>{43827cb1-9c1e-4fb5-91b7-febff7bb0966}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\05.ButtonUI">
+      <UniqueIdentifier>{21a0e22f-0b32-432b-9ac0-7b4c2ba68fda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -321,11 +324,6 @@
     <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
-    <ClInclude Include="..\Headers\Hangman.h" />
-    <ClInclude Include="..\Headers\HangmanBomb.h" />
-    <ClInclude Include="..\Headers\Hellhound.h" />
-    <ClInclude Include="..\Headers\Item.h" />
-    <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
@@ -425,7 +423,6 @@
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
-    <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h">
@@ -469,6 +466,35 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ShopUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\ButtonUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\05.ButtonUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Hangman.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HangmanBomb.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Hellhound.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Item.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Particle.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage1st.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StateBar.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -617,11 +643,6 @@
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
-    <ClCompile Include="..\Codes\Hangman.cpp" />
-    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
-    <ClCompile Include="..\Codes\Hellhound.cpp" />
-    <ClCompile Include="..\Codes\Item.cpp" />
-    <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="ComponentTemplate.md" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
@@ -723,7 +744,6 @@
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="ComponentTemplate.md" />
-    <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
     </ClCompile>
@@ -753,6 +773,27 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ButtonUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\05.ButtonUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hangman.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HangmanBomb.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hellhound.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Item.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Particle.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StateBar.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
