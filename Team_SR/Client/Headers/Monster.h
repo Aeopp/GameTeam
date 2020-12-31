@@ -38,7 +38,8 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
-	void DeadHitBlood();
+	void BloodParticle();
+	void DeadProcess();
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -69,7 +70,7 @@ protected:
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
-
+	std::vector<size_t> GibTable;
 	const float FloorBloodCoolTime = 1.f;
 	float FloorBloodCurrentCoolTime = FloorBloodCoolTime;
 public:

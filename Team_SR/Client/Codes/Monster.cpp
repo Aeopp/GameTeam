@@ -44,6 +44,11 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 		}
 	}
 
+	for (size_t i = 0; i < 52u; ++i)
+	{
+		GibTable.push_back(i);
+	};
+
 	return S_OK;
 }
 
@@ -169,15 +174,12 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 if (false == (_WeaponState == CPlayer::EWeaponState::ElectricStaff ||
 					_WeaponState == CPlayer::EWeaponState::Flak))
 	 {
-		 DeadHitBlood();
+		 BloodParticle();
 	 }
 		
 	 if (m_stStatus.fHP < 0.f)
 	 {
-		 // 체력 다하면 중력과 충돌 끄기
-		 // bGravity = false;
-		 //_CollisionComp->bCollision = false;
-		 // ! 원작 효과 고기,뼈 ?? 등등 떨구기
+		 DeadProcess();
 	 }
 }
 
@@ -198,13 +200,10 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 
 		if (m_stStatus.fHP < 0.f)
 		{
-			// 체력 다하면 중력과 충돌 끄기
-			// bGravity = false;
-			//_CollisionComp->bCollision = false;
-			// ! 원작 효과 고기,뼈 ?? 등등 떨구기
+			DeadProcess();
 		}
 
-		DeadHitBlood();
+		BloodParticle();
 	}
 };
 
@@ -217,9 +216,9 @@ void CMonster::FreezeHit()&
 {
 	m_stStatus.fHP -=  ( FreezeHitDamage * _CurrentDeltaTime ) ;
 
-	if (m_stStatus.fHP <= 0.0f)
+	if (m_stStatus.fHP < 0.0f)
 	{
-
+		DeadProcess();
 	}
 }
 
@@ -343,7 +342,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	ParticleSystem::Instance().PushParticle(std::move(_Particle)  );
 };
 
-void CMonster::DeadHitBlood()
+void CMonster::BloodParticle()
 {
 	Particle _Particle;
 	_Particle.bBillboard = true;
@@ -488,6 +487,37 @@ void CMonster::DeadHitBlood()
 				}
 			};
 		}
+	}
+}
+
+void CMonster::DeadProcess()
+{
+	bGravity = false;
+	_CollisionComp->bCollision = false;
+	_CollisionComp->bWallCollision = false;
+	_CollisionComp->bFloorCollision = false;
+
+	for(const size_t GibIdx : GibTable)
+	{
+		CollisionParticle _CollisionParticle;
+		_CollisionParticle.Delta = 10000.f;
+		_CollisionParticle.bCollision = true;
+		_CollisionParticle.bFloorCollision = true;
+		_CollisionParticle.bWallCollision = false;
+		_CollisionParticle.bMapBlock = true;
+		_CollisionParticle.Gravity = MATH::RandReal({20.f,30.f});
+		vec3 SpawnLocation = m_pTransformCom->GetLocation() + MATH::Normalize(MATH::RandVec()) * MATH::RandReal({0.f,2.f});
+		_CollisionParticle.Scale = { 0.5f,0.5f,0.5f };
+		_CollisionParticle.Location  = _CollisionParticle.StartLocation = SpawnLocation;
+		_CollisionParticle.Dir = MATH::Normalize(vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) }); 
+		_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
+		_CollisionParticle.Speed = MATH::RandReal({ 10,20});
+		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-180,180}) };
+		_CollisionParticle.Durtaion = 180.0f;
+		_CollisionParticle.Name = L"Gib";
+		_CollisionParticle.CurrentFrame = _CollisionParticle.EndFrame = GibIdx;
+		_CollisionParticle.Radius = 0.3f;
+		ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
 	}
 }
 

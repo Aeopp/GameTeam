@@ -201,6 +201,9 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"Snow"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\Snow\\", 1ul);
+
+	_ParticleTextureTable._TextureMap[L"Gib"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Gib\\", 52ul);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -668,8 +671,12 @@ void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 		}
 	}
 
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell" ||
-		_Particle.Name == L"Blood" ||  _Particle.Name ==L"Dynamite") 
+	if (_Particle.Name == L"BulletShell" || 
+		_Particle.Name == L"ShotGunShell" || 
+		_Particle.Name == L"MagnumShell" ||
+		_Particle.Name == L"Blood" ||  
+		_Particle.Name ==L"Dynamite" || 
+		_Particle.Name == L"Gib")
 	{
 		if (_Particle.bLoop)
 		{		
@@ -725,7 +732,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 {
 	if (_Particle.Name == L"BulletShell"  || 
 		_Particle.Name == L"ShotGunShell" || 
-		_Particle.Name == L"MagnumShell")
+		_Particle.Name == L"MagnumShell"  )
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bBillboard = true;
@@ -741,6 +748,17 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bCollision = false;
 		_Particle.bMove = false;
 		_Particle.bFloorCollision = false;
+	};
+
+	if (_Particle.Name == L"Gib")
+	{
+		_Particle.bMove = false;
+		_Particle.bLoop = false;
+		_Particle.bCollision = false;
+		_Particle.bWallCollision = false;
+		_Particle.bFloorCollision = false;
+		_Particle.bBillboard = true;
+		_Particle.Rotation.z = MATH::RandReal({ -180,+180 });
 	};
 
 	if (_Particle.Name == L"Dynamite")
