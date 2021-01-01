@@ -4,7 +4,8 @@
 #include "VIBuffer_UITexture.h"
 #include "UIManager.h"
 
-using namespace UI_AddTag;
+USING(UI_AddTag)
+LPD3DXFONT CLoadingBar::s_pFont = nullptr;
 CLoadingBar::CLoadingBar(LPDIRECT3DDEVICE9 pDevice)
 	: CGameUI(pDevice), m_fMaxSize(0.f)
 {
@@ -16,6 +17,14 @@ HRESULT CLoadingBar::ReadyGameObjectPrototype()
 {
 	if (FAILED(CGameUI::ReadyGameObjectPrototype()))
 		return E_FAIL;
+
+	//Font
+	if (FAILED(D3DXCreateFont(m_pDevice, 20, 20, 1000, 1, false,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, 0, L"신명조", &s_pFont)))
+	{
+		PRINT_LOG(L"Warning", L"폰트불러오기 실패");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -39,20 +48,6 @@ HRESULT CLoadingBar::ReadyGameObject(void * pArg/* = nullptr*/)
 	m_UIDesc.vUIPos = tagInput.tUIDesc.vUIPos;
 	m_UIDesc.vCenter = tagInput.tUIDesc.vCenter;
 	m_bTextOut = tagInput.bTextOut;
-
-	if (FAILED(D3DXCreateSprite(m_pDevice, &m_pSprite)))
-	{
-		PRINT_LOG(L"Warning", L"Sprite Createing Failed! - CGraphic_Device.cpp");
-		return E_FAIL;
-	}
-
-	//Font
-	if (FAILED(D3DXCreateFont(m_pDevice, 20, 20, 1000, 1, false,
-		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, 0, L"신명조", &m_pFont)))
-	{
-		PRINT_LOG(L"Warning", L"폰트불러오기 실패");
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -227,7 +222,7 @@ HRESULT CLoadingBar::RenderText()
 
 	RECT rc = { vConvertUIPos.x - (vTextSize.x / 2), vConvertUIPos.y - (vTextSize.y / 2),
 		vConvertUIPos.x + (vTextSize.x / 2), vConvertUIPos.y + (vTextSize.y / 2) };
-	m_pFont->DrawText(NULL, szRenderLife, -1, &rc, DT_LEFT | DT_NOCLIP, 0xffffff00);
+	s_pFont->DrawText(NULL, szRenderLife, -1, &rc, DT_LEFT | DT_NOCLIP, 0xffffff00);
 
 	return S_OK;
 }

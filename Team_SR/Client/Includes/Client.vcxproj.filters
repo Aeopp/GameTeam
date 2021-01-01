@@ -151,6 +151,12 @@
     <Filter Include="02.GameObject\05.GameUI\00.Object\05.ButtonUI">
       <UniqueIdentifier>{21a0e22f-0b32-432b-9ac0-7b4c2ba68fda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI">
+      <UniqueIdentifier>{21cc32e8-6bb3-4249-b629-38cba0d8a914}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI">
+      <UniqueIdentifier>{61edeb6b-79ec-4d15-b8d6-31eb896ec9cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -496,6 +502,14 @@
     <ClInclude Include="..\Headers\StateBar.h">
       <Filter>97.Others</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Stage.h" />
+    <ClInclude Include="..\Headers\Stage1st.h" />
+    <ClInclude Include="..\Headers\WeaponUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponInfoUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -794,6 +808,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StateBar.cpp">
       <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponInfoUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
