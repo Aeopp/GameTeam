@@ -6,9 +6,8 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "Spider.h"
-
 #include "Eyebat.h"
 #include "Stage2nd.h"
 #include "Map2nd.h"
@@ -25,12 +24,24 @@ HRESULT CStage1st::ReadyScene()
 
 	Super::ReadyScene();
 
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { 20,5,4 };
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
+
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)CurrentSceneID,
 		GameObjTag,
-		MapType::Create(m_pDevice))))
+		MapType::Create(m_pDevice)  )))
 		return E_FAIL;
+
 
 	const std::wstring LayerTag = CLayer::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
@@ -38,7 +49,7 @@ HRESULT CStage1st::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID )))
 		return E_FAIL;
 	{
 		// 맵 정보
@@ -91,12 +102,12 @@ HRESULT CStage1st::ReadyScene()
 			{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }	// 45
 		};
 
-		JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 45, 45, 31, 38, 5.f, 5);
+		JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 45, 45, 31, 38, 2.5f, 5);
 
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 0.f, 10.f, 20.f };
+		stArg.vPosition = { 22.5f, 10.f, 15.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + L"HellBoss",

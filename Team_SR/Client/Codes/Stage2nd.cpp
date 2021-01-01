@@ -6,16 +6,14 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "Eyebat.h"
 #include "Map2nd.h"
 #include "Stage3rd.h"
 
-
 CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
-
 
 
 HRESULT CStage2nd::ReadyScene()
@@ -25,6 +23,17 @@ HRESULT CStage2nd::ReadyScene()
 	using MapType = CMap2nd;
 
 	Super::ReadyScene();
+
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { 5,5,9};
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
 
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -39,7 +48,7 @@ HRESULT CStage2nd::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
 
 	// 맵 정보
@@ -91,21 +100,9 @@ HRESULT CStage2nd::ReadyScene()
 		{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 }		// 44
 	};
 
-	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 44, 44, 18, 7, 5.f, 5);
+	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 44, 44, 18, 7, 2.5f, 5);
 
-	MonsterBasicArgument stArg;
-	stArg.uiSize = sizeof(MonsterBasicArgument);
-	stArg.pPlayer = m_pPlayer;
-	stArg.vPosition = { 0.f, 10.f, 20.f };
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + L"BatGrey",
-		(_int)CurrentSceneID,
-		CLayer::Tag + L"Monster",
-		nullptr, static_cast<void*>(&stArg))))
-		return E_FAIL;
-
-	//LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 5,5,5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 	
 
 

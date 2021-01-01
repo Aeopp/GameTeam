@@ -27,7 +27,7 @@ HRESULT CHellBoss::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 5.f,5.f,5.f };
 
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 100.f;//500.f;
@@ -313,7 +313,7 @@ HRESULT CHellBoss::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 0.5f;
+	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 1.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -351,7 +351,7 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			m_fFrameSpeed = 10.f;
 
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			m_ePhase = PHASE::TurboSatan;	// 페이즈 전환
 			m_stOriginStatus.fSpeed = 8.f;
 			m_stOriginStatus.fMeleeRange = 8.f;
@@ -368,7 +368,7 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			m_fFrameSpeed = 10.f;
 
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			m_ePhase = PHASE::InjuredTurboSatan;	// 페이즈 전환
 			m_stStatus.fHP = m_stOriginStatus.fHP;	// 체력 회복
 			break;
@@ -382,7 +382,7 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			m_fFrameSpeed = 10.f;
 
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			//->bCollision = false;		// 충돌 처리 OFF
 			m_ePhase = PHASE::CacoDevil;	// 페이즈 전환
 			m_stOriginStatus.fSpeed = 9.f;
 			m_stOriginStatus.fMeleeRange = 10.f;
@@ -400,7 +400,7 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			m_fFrameSpeed = 10.f;
 
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			m_ePhase = PHASE::FallenLord;	// 페이즈 전환
 			m_stOriginStatus.fSpeed = 9.f;
 			m_stOriginStatus.fMeleeRange = 50.f;
@@ -812,7 +812,7 @@ bool CHellBoss::Action_Morph(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock); // HP 락 OFF
-		_CollisionComp->bCollision = true;		// 충돌 처리 ON
+		//_CollisionComp->bCollision = true;		// 충돌 처리 ON
 		return true;
 	}
 
@@ -824,7 +824,7 @@ bool CHellBoss::Action_LastMorph(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock); // HP 락 OFF
-		_CollisionComp->bCollision = true;		// 충돌 처리 ON
+		//_CollisionComp->bCollision = true;		// 충돌 처리 ON
 
 		m_wstrTextureKey = L"Com_Texture_FallenLord_Idle";
 		m_fFrameCnt = 0;

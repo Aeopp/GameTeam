@@ -16,7 +16,7 @@ enum class ERenderID
 	NoAlpha,
 	Alpha,
 	UI,
-	ParticleAfterAlpha,
+	ScreenPostEffect,
 	MaxCount
 };
 

@@ -17,8 +17,6 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetShownBarUI() { m_bShown = true; }//ui나타내기
-	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
 
 private:
 	HRESULT	AddComponent();

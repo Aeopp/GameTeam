@@ -8,9 +8,10 @@
 #include "Player.h"
 #include "Vertexs.h"
 #include "BatGrey.h"
-
-
-
+#include "Vertexs.h"
+#include "DXWrapper.h"
+#include "MiniMap.h"
+#include "Management.h"
 
 CMapBase::CMapBase(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
@@ -29,6 +30,8 @@ HRESULT CMapBase::ReadyGameObject(void * pArg)
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	InitializeSceneID = (*reinterpret_cast<ESceneID*>(pArg));
+
 	return S_OK;
 }
 
@@ -39,7 +42,7 @@ _uint CMapBase::UpdateGameObject(float fDeltaTime)
 
 	if (ImGuiHelper::bEditOn)
 	{
-	
+
 	}
 	
 	return _uint();
@@ -58,6 +61,7 @@ _uint CMapBase::LateUpdateGameObject(float fDeltaTime)
 HRESULT CMapBase::RenderGameObject()
 {
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	
 	CubeMapRender();
 
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
@@ -68,13 +72,17 @@ HRESULT CMapBase::RenderGameObject()
 	m_pDevice->SetVertexShader(_Effect.VsShader);
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 
+	m_pDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+	m_pDevice->SetRenderState(D3DRS_STENCILREF, 0x1);
+	m_pDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
 	FloorRender();
 	WallRender();
 	BarRender();
+	m_pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
-
 	m_pDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
 
 	return S_OK;
@@ -190,7 +198,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -321,11 +329,12 @@ void CMapBase::LoadMap(std::wstring FilePath,
 			for (auto iter = _Vertexs.begin(); iter != _Vertexs.end();)
 			{
 				PlaneInfo _PlaneInfo;
-
-				_PlaneInfo.Face[0] = iter->Location;
-				_PlaneInfo.Face[1] = (++iter)->Location;
-				_PlaneInfo.Face[2] = (++iter)->Location;
-
+			/*	_PlaneInfo.Face[0] = iter->Location; 
+				_PlaneInfo.Face[1] = (++iter)->Location; 
+				_PlaneInfo.Face[2] = (++iter)->Location; */
+				_MiniMapPoints.push_back(vec3{ _PlaneInfo.Face[0] = iter->Location      });
+				_MiniMapPoints.push_back(vec3{ _PlaneInfo.Face[1] = (++iter)->Location });
+				_MiniMapPoints.push_back(vec3{ _PlaneInfo.Face[2] = (++iter)->Location });
 				// 로컬에서 정의된 정점들을 월드로 바꿔서 저장
 				_PlaneInfo.Center = { 0,0,0 };
 
@@ -367,7 +376,9 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					TexName.c_str(), &_Info.Diffuse)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#ifdef _DEBUG
+						MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#endif
 				}
 
 				TexName.erase(TexName.find_last_of('.'));
@@ -442,6 +453,9 @@ void CMapBase::Free()
 
 
 
+	SafeRelease(_CurrentMiniMap);
+
+
 	Super::Free();
 }
 void CMapBase::CubeMapRender()
@@ -473,8 +487,8 @@ void CMapBase::CubeMapRender()
 
 	// 여기서 드로잉..
 	{
-		m_pDevice->SetStreamSource(0, _CubeVertexBuf.get(), 0, sizeof(Vertex::CubeTexture));
-		m_pDevice->SetFVF(Vertex::CubeTexture::FVF);
+		m_pDevice->SetStreamSource(0, _CubeVertexBuf.get(), 0, sizeof(Vertex::Location3DUV));
+		m_pDevice->SetFVF(Vertex::Location3DUV::FVF);
 		m_pDevice->SetIndices(_CubeIndexBuf.get());
 		m_pDevice->SetTexture(0, _CubeTexture.get());
 		m_pDevice->SetVertexShader(nullptr);
@@ -497,10 +511,10 @@ void CMapBase::WallRender()
 	{
 		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
 			RefInfo.Diffuse);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
+		/*m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
 			RefInfo.Specular);
 		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
-			RefInfo.Normal);
+			RefInfo.Normal);*/
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
 			0);
@@ -533,10 +547,10 @@ void CMapBase::FloorRender()
 	{
 		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
 			RefInfo.Diffuse);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
+		/*m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
 			RefInfo.Specular);
 		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
-			RefInfo.Normal);
+			RefInfo.Normal);*/
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
 			0);
@@ -544,7 +558,7 @@ void CMapBase::FloorRender()
 			0);
 
 		{
-			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
+	/*		m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
 				D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("DiffuseSampler"),
 				D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
@@ -552,7 +566,7 @@ void CMapBase::FloorRender()
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("SpecularSampler"),
 				D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("SpecularSampler"),
-				D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+				D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);*/
 
 			m_pDevice->SetSamplerState(_Effect.GetTexIdx("NormalSampler"),
 				D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -580,10 +594,10 @@ void CMapBase::BarRender()
 	{
 		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"),
 			RefInfo.Diffuse);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
-			RefInfo.Specular);
-		m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
-			RefInfo.Normal);
+		//m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),
+		//	RefInfo.Specular);
+		//m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),
+		//	RefInfo.Normal);
 
 		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind",
 			0);
@@ -606,7 +620,6 @@ void CMapBase::BarRender()
 
 	m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 };
-
 void CMapBase::LoadFloor(const std::wstring& FilePath)
 {
 	_FloorSubSetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>, []
@@ -717,7 +730,7 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -847,11 +860,12 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 			for (auto iter = _Vertexs.begin(); iter != _Vertexs.end();)
 			{
 				PlaneInfo _PlaneInfo;
-
-				_PlaneInfo.Face[0] = iter->Location;
+					_PlaneInfo.Face[0] = iter->Location;
 				_PlaneInfo.Face[1] = (++iter)->Location;
-				_PlaneInfo.Face[2] = (++iter)->Location;
-
+				_PlaneInfo.Face[2] = (++iter)->Location; 
+			/*	_MiniMapPoints.push_back(Vertex::OnlyLocation{ _PlaneInfo.Face[0] = iter->Location });
+				_MiniMapPoints.push_back(Vertex::OnlyLocation{ _PlaneInfo.Face[1] = (++iter)->Location });
+				_MiniMapPoints.push_back(Vertex::OnlyLocation{ _PlaneInfo.Face[2] = (++iter)->Location });*/
 				// 로컬에서 정의된 정점들을 월드로 바꿔서 저장
 				_PlaneInfo.Center = { 0,0,0 };
 
@@ -920,6 +934,8 @@ void CMapBase::LoadFloor(const std::wstring& FilePath)
 		wss.clear();
 	};
 
+
+
 	CCollisionComponent::AddMapFloorInfo(_PolygonPlanes);
 }
 void CMapBase::LoadCubeMap(const std::wstring& FilePath)
@@ -934,15 +950,16 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 	_CubeTexture = std::shared_ptr<IDirect3DCubeTexture9>(_CubeTexturePtr,
 		[](IDirect3DCubeTexture9* const _Target)
 		{
-			_Target->Release();
+			if(_Target)
+				_Target->Release();
 		});
 
 	IDirect3DVertexBuffer9* _VertexBuf = nullptr;
 
 	if (FAILED(m_pDevice->CreateVertexBuffer(
-		sizeof(Vertex::CubeTexture) * 8,
+		sizeof(Vertex::Location3DUV) * 8,
 		0,
-		Vertex::CubeTexture::FVF,
+		Vertex::Location3DUV::FVF,
 		D3DPOOL_MANAGED, 
 		&_VertexBuf, /* 할당된 버텍스버퍼의 주소를 반환 */
 		nullptr)))
@@ -950,7 +967,7 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 	}
 
-	Vertex::CubeTexture* CubeVertexPtr = nullptr;
+	Vertex::Location3DUV* CubeVertexPtr = nullptr;
 	_VertexBuf->Lock(0, 0, (void**)&CubeVertexPtr, 0);
 
 	CubeVertexPtr[0].UV = CubeVertexPtr[0].Location = D3DXVECTOR3(-0.5f, 0.5f, -0.5f);
@@ -968,7 +985,8 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 		(_VertexBuf,
 			[](IDirect3DVertexBuffer9* const _Target)
 			{
-				_Target->Release();
+				if (_Target)
+					_Target->Release();
 			});
 
 
@@ -1031,10 +1049,10 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 	_CubeIndexBuf = std::shared_ptr<IDirect3DIndexBuffer9>(
 			_IndexBuf, [](IDirect3DIndexBuffer9 * const _Target)
 			{
+			if(_Target)
 				_Target->Release();
 			} );
 }
-
 void CMapBase::LoadBars(const std::wstring& FilePath)
 {
 		_BarSubSetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>, []
@@ -1143,7 +1161,7 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 		const std::wstring VN = L"vn";
 		const std::wstring F = L"f";
 		const std::wstring Mtl = L"usemtl";
-		const wchar_t FDelim = L'\/';
+		const wchar_t FDelim = L'/';
 		size_t VtxElementCount = 3;
 
 		std::wfstream _ObjStream(_ObjFileName);
@@ -1274,11 +1292,12 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 				for (auto iter = _Vertexs.begin(); iter != _Vertexs.end();)
 				{
 					PlaneInfo _PlaneInfo;
-
-					_PlaneInfo.Face[0] = iter->Location;
-					_PlaneInfo.Face[1] = (++iter)->Location;
-					_PlaneInfo.Face[2] = (++iter)->Location;
-
+					/*	_PlaneInfo.Face[0] = iter->Location           ; 
+						_PlaneInfo.Face[1] = (++iter)->Location	  ; 
+						_PlaneInfo.Face[2] = (++iter)->Location	  ; */
+					_MiniMapPoints.push_back({ _PlaneInfo.Face[0] = iter->Location      });
+					_MiniMapPoints.push_back({ _PlaneInfo.Face[1] = (++iter)->Location });
+					_MiniMapPoints.push_back({ _PlaneInfo.Face[2] = (++iter)->Location });
 					// 로컬에서 정의된 정점들을 월드로 바꿔서 저장
 					_PlaneInfo.Center = { 0,0,0 };
 
@@ -1347,7 +1366,29 @@ void CMapBase::LoadBars(const std::wstring& FilePath)
 			wss.clear();
 		};
 
+	
+
 		CCollisionComponent::AddMapPlaneInfo(_PolygonPlanes);
+}
+
+void CMapBase::CreateMiniMap()
+{
+	for (auto& _CurMiniMapPoint : _MiniMapPoints)
+	{
+		std::swap(_CurMiniMapPoint.y, _CurMiniMapPoint.z);
+	};
+
+	CMiniMap::InitializeInfo _InitInfo;
+	_InitInfo._Points = std::move(_MiniMapPoints);
+	_InitInfo.MapWorld = MapWorld;
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		static_cast<int32_t > ( ESceneID::Static),
+		CGameObject::Tag + TYPE_NAME<CMiniMap>(),
+		(int32_t)InitializeSceneID,
+		L"Layer_" +TYPE_NAME<CMiniMap>(),
+		reinterpret_cast<CGameObject**>(&_CurrentMiniMap),&_InitInfo)))
+		PRINT_LOG(__FUNCTIONW__, __FUNCTIONW__);
 }
 
 

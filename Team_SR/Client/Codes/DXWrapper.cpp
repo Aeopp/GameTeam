@@ -167,7 +167,6 @@ typename Effect::Info& Effect::GetEffectFromName(const std::wstring& EffectName)
 		return _EffectInfoMap[EffectName];
 	}
 #endif
-
 	return _EffectInfoMap[EffectName];
 }
 
@@ -196,7 +195,8 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"View",
 				"Projection",
 				"WorldCameraLocation",
-			    "UVFlag"
+			    "UVFlag",
+				"bUI"
 		});
 
 		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
@@ -210,10 +210,14 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 				"LightDiffuse",
 				"bSpecularSamplerBind",
 				"bNormalSamplerBind",
-				"AlphaLerp",
+				"bUVAlphaLerp",
 				 "FogEnd",
 				 "FogStart",
-				 "FogColor"
+				 "FogColor",
+				"bUI",
+				"ColorLerpT",
+				"LightCalcFlag",
+
 		});
 
 		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
@@ -225,6 +229,98 @@ void Effect::EffectInitialize(IDirect3DDevice9* const _Device)
 
 		_EffectInfoMap[L"DiffuseSpecular"] = std::move(_EffectInfo);
 	}
+
+	{
+		// For MiniMap
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\MiniMap");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+			"World",
+			"Projection",
+			
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+			"PlayerScreenLocation",
+			"DistanceMin",
+			"Relative"
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{ 
+			 
+			});
+
+		_EffectInfoMap[L"MiniMap"] = std::move(_EffectInfo);
+	}
+
+
+
+	{
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\UITexture");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+				"World",
+				"Projection",
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+				"RenderFlag",
+				"ColorCoefft",
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{ 
+			  "DiffuseSampler",
+			});
+
+		_EffectInfoMap[L"UITexture"] = std::move(_EffectInfo);
+	};
+
+	{
+		Effect::Info _EffectInfo = Effect::CompileAndCreate
+		(_Device, L"..\\Shader\\ScreenPostEffect");
+
+		_EffectInfo.VsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.VsTable,
+			std::vector<std::string>
+		{
+				"World",
+				"Projection",
+		});
+
+		_EffectInfo.PsHandleMap = Effect::ConstantHandleInitialize(
+			_EffectInfo.PsTable,
+			std::vector<std::string>
+		{
+			"AlphaCoefft",
+			"Flag",
+		});
+
+		_EffectInfo.TextureDescMap = Effect::ConstantHandleDescInitialize
+		(_EffectInfo.PsTable,
+			{
+			  "DiffuseSampler",
+			});
+
+		_EffectInfoMap[L"ScreenPostEffect"] = std::move(_EffectInfo);
+	};
 
 }
 
@@ -269,7 +365,8 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetVSConstantData(_Device, "Projection", Projection);
 		CurEffect.SetVSConstantData(_Device, "WorldCameraLocation", CameraLocation);
 		CurEffect.SetVSConstantData(_Device, "UVFlag", int32_t(0l));
-		
+		CurEffect.SetVSConstantData(_Device, "bUI", 0l);
+
 		// 다중 조명시 수정 해야함...
 		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
 		const vec4 FogColor = { 0.7f,0.7f,0.7f,        1.f };
@@ -277,7 +374,10 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
 		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);
 		CurEffect.SetPSConstantData(_Device, "FogColor", FogColor);
-		CurEffect.SetPSConstantData(_Device, "AlphaLerp", 1.0f);
+		CurEffect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+		CurEffect.SetPSConstantData(_Device, "bUI", 0l);
+		CurEffect.SetPSConstantData(_Device, "ColorLerpT", 0.0f);
+		
 
 		CurEffect.SetPSConstantData(_Device, "LightNum", MapLightSize);
 		CurEffect.PsTable->SetVectorArray(_Device, CurEffect.GetPSConstantHandle("LightLocation"),LightLocations.data(),LightLocations.size());
@@ -629,7 +729,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 	const std::wstring VN = L"vn";
 	const std::wstring F = L"f";
 	const std::wstring Mtl = L"usemtl";
-	const wchar_t FDelim = L'\/';
+	const wchar_t FDelim = L'/';
 	const size_t VtxElementCount = 3;
 
 	std::wfstream _ObjStream(_ObjFileName);
@@ -895,6 +995,20 @@ void AnimationTextures::Update(const float DeltaTime)
 			}
 		}
 	}
+}
+
+typename AnimationTextures::AnimationInfo AnimationTextures::GetAnimInfo() const&
+{
+	AnimationInfo _Info;
+	_Info.CurrentAnimKey = CurrentAnimKey;
+	_Info.CurrentAnimNotify = CurrentAnimNotify;
+	_Info.AnimDelta = AnimDelta;
+	_Info.CurrentImgFrame = CurrentImgFrame;
+	_Info.CurrentT = CurrentT;
+	_Info.ImgNum = ImgNum;
+	_Info.bLoop = bLoop;
+
+	return _Info;
 }
 
 const std::tuple<IDirect3DTexture9*, IDirect3DTexture9*, IDirect3DTexture9*>& AnimationTextures::GetCurrentTexture()

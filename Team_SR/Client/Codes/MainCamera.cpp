@@ -59,8 +59,6 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 	if (!bThirdPerson)
 	{
-		Shaking(fDeltaTime);
-
 		ShowCursor(true);
 
 		POINT _MousePt;
@@ -78,7 +76,6 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		POINT ScreenCenterPT = { static_cast<LONG>(ScreenCenter.x) , static_cast<LONG>(ScreenCenter.y) };
 		ClientToScreen(g_hWnd, &ScreenCenterPT);
 		SetCursorPos(ScreenCenterPT.x, ScreenCenterPT.y);
-
 		
 		_vector Look{ 0,0,1 };
 
@@ -104,8 +101,6 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 	{
 		ShowCursor(true);
 
-		Shaking(fDeltaTime);
-
 		vec3 Location = Offset;
 		m_CameraDesc.vAt = _PlayerTransform->m_TransformDesc.vPosition;
 		Location = MATH::RotationVec(Location, { 1,0,0 }, OffsetRotation.x);
@@ -122,8 +117,11 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 		m_CameraDesc.vUp = MATH::Cross(Look, Right);
 	}
 
+	CalcCurrentShake(fDeltaTime);
+	m_CameraDesc.vEye += CurrentShake;
+	CurrentShake = { 0 , 0 , 0 };
 	Super::LateUpdateGameObject(fDeltaTime);
-
+	
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::NoAlpha, this)))
 		return 0;
 
@@ -171,30 +169,16 @@ CGameObject* CMainCamera::Clone(void * pArg)
 void CMainCamera::Free()
 {
 	Super::Free();
-};
-
-void CMainCamera::Shake(const float Duration, const float Force, vec3 AxisScale,
-	const float Vibration)
-{
-	ShakeInfo _Info;
-	_Info.Duration = Duration;
-	_Info.Force = Force;
-	_Info.AxisScale = AxisScale;
-	_Info.Vibration = Vibration;
-
-	float lhs = _CurrentShake.Duration * _CurrentShake.Force *  _CurrentShake.Vibration *
-					_CurrentShake.AxisScale.x * _CurrentShake.AxisScale.y * 
-					_CurrentShake.AxisScale.z;
-
-	float rhs = _Info.Duration * _Info.Force*       _Info.Vibration*_Info.AxisScale.x 
-					*_Info.AxisScale.y*_Info.AxisScale.z;
-
-	if (rhs > lhs)
-	{
-		_CurrentShake = std::move(_Info);
-		_CurrentShake.Goal = m_pTransformCom->m_TransformDesc.vPosition;
-	}
 }
+void CMainCamera::Shake(const float Force, const vec3 Dir, const float Duration)
+{
+	ShakeInfo _PushShakeInfo;
+	_PushShakeInfo.Force = Force;
+	_PushShakeInfo.Dir = MATH::Normalize(Dir);
+	_PushShakeInfo.Duration = Duration;
+
+	ShakeInfos.emplace_back(std::move(_PushShakeInfo));
+};
 
 void CMainCamera::CameraEditProcess()&
 {
@@ -210,11 +194,7 @@ void CMainCamera::CameraEditProcess()&
 		static float Force = 1.f;
 		static float Vibration = 1.f;
 		static vec3 AxisScale{ 1,1,1 };
-
-		if (ImGui::Button("Shake!"))
-		{
-			Shake(Duration, Force, AxisScale, Vibration);
-		}
+	
 
 		ImGui::SliderFloat("Duration", &Duration, 0.1f, 10.f);
 		ImGui::SliderFloat("Force", &Force, 1.f, 10000.f);
@@ -262,32 +242,15 @@ void CMainCamera::CameraEditProcess()&
 
 }
 
-void CMainCamera::Shaking(const float DeltaTime)
+void CMainCamera::CalcCurrentShake(const float DeltaTime)
 {
-	_CurrentShake.Duration -= DeltaTime;
-
-	if (_CurrentShake.Duration < 0.f)
-	{
-		return;
-	}
-
-	 vec3& Location = m_pTransformCom->m_TransformDesc.vPosition;
-	const float Distance = MATH::Length(Location - _CurrentShake.Goal);
-
-	if (Distance < 1.f)
-	{
-		vec3 Vibration = MATH::RandVec() * _CurrentShake.Vibration;
-
-		Vibration.x *= _CurrentShake.AxisScale.x;
-		Vibration.y *= _CurrentShake.AxisScale.y;
-		Vibration.z *= _CurrentShake.AxisScale.z;
-
-		_CurrentShake.Goal = Vibration + Location;
-	}
-	else
-	{
-		vec3 Dir = MATH::Normalize(_CurrentShake.Goal - Location);
-		Location += Dir * DeltaTime * _CurrentShake.Force;
-	}
+	ShakeInfos.erase(std::remove_if(std::begin(ShakeInfos), std::end(ShakeInfos),
+		[this,DeltaTime](ShakeInfo& _CurrentShakeInfo)
+		{
+			const float Force = MATH::RandReal({ -_CurrentShakeInfo.Force, _CurrentShakeInfo.Force });
+			CurrentShake +=  (Force * _CurrentShakeInfo.Dir);
+			_CurrentShakeInfo.Duration -= DeltaTime;
+			return _CurrentShakeInfo.Duration < 0.0f;
+		}), std::end(ShakeInfos));
 }
 

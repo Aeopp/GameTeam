@@ -6,12 +6,15 @@
 #include "Map1st.h"
 #include "ImGuiHelper.h"
 #include "CollisionComponent.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 #include "UIManager.h"
 #include "Eyebat.h"
 #include "Glacier.h"
 #include "ParticleSystem.h"
+#include "ScreenEffect.h"
+#include "MiniMap.h"
+
 
 #include "Hangman.h"
 #include "Hellhound.h"
@@ -41,36 +44,22 @@ HRESULT CStage::ReadyScene()
 		return E_FAIL;
 
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
 		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CPlayer>(),
-		(CGameObject**)&m_pPlayer, nullptr)))
-		return E_FAIL;
-
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CPlyerInfoUI>(),
+		CLayer::Tag + TYPE_NAME<CScreenEffect>(),
 		nullptr, nullptr)))
 		return E_FAIL;
 
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CWeaponAmmoInfoUI>(),
-		nullptr, nullptr)))
-		return E_FAIL;
+	CUIManager::Get_Instance()->OnAllUI();
 
 	return S_OK;
 }
 
 _uint CStage::UpdateScene(float fDeltaTime)
 {
-	CScene::UpdateScene(fDeltaTime);
+	KeyProcess(fDeltaTime);
 	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav", CSoundMgr::BGM);
-	return KeyProcess(fDeltaTime); 
+	return 	CScene::UpdateScene(fDeltaTime);
 }
 
 _uint CStage::LateUpdateScene()
@@ -92,6 +81,9 @@ _uint CStage::LateUpdateScene()
 
 _uint CStage::KeyProcess(float fDeltaTime)
 {
+	PlayerKeyProcess(m_pPlayer, fDeltaTime);
+
+
 
 	if (ImGuiHelper::bEditOn && m_pManagement->bDebug)
 	{
@@ -114,9 +106,6 @@ _uint CStage::KeyProcess(float fDeltaTime)
 	{
 		_Camera->bThirdPerson = !_Camera->bThirdPerson;
 	}
-
-	PlayerKeyProcess(m_pPlayer ,fDeltaTime);
-
 
 
 	return _uint();
@@ -183,6 +172,11 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
+	if (m_pKeyMgr->Key_Down('M'))
+	{
+		dynamic_cast<CMiniMap* const>(m_pManagement->GetGameObject(-1, L"Layer_MiniMap", 0))->MapOpenToggle();
+	};
+
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
@@ -228,6 +222,10 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->MouseRightUp();
 	}
+	 if (m_pKeyMgr->Key_Up(VK_LBUTTON))
+	 {
+		 m_pPlayer->MouseLeftUp();
+	 }
 	 if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
@@ -248,6 +246,29 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->_5ButtonEvent();
 	}
+	 if (m_pKeyMgr->Key_Down('6'))
+	 {
+		 m_pPlayer->_6ButtonEvent();
+	 }
+	 if (m_pKeyMgr->Key_Down('7'))
+	 {
+		 m_pPlayer->_7ButtonEvent();
+	 }
+	 if (m_pKeyMgr->Key_Down('8'))
+	 {
+		 m_pPlayer->_8ButtonEvent();
+	 }
+
+	 if (m_pKeyMgr->Key_Down('Q'))
+	 {
+		 m_pPlayer->SpellFreeze();
+	 }
+
+	 if (m_pKeyMgr->Key_Down('E'))
+	 {
+		 m_pPlayer->SpellLight();
+	 }
+
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();
@@ -267,8 +288,8 @@ void CStage::Free()
 
 
 
-void CStage::LoadObjects(const std::wstring& FilePath ,
-	 const vec3 WorldScale) & noexcept
+void CStage::LoadObjects(const std::wstring& FilePath,
+	const vec3 WorldScale) & noexcept
 {
 	struct ObjectSpawnInfo
 	{
@@ -300,7 +321,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 			InputStream >> LocalPoint.z;
 
 			const vec3 WorldPoint =
-			{   LocalPoint.x * WorldScale.x ,
+			{ LocalPoint.x * WorldScale.x ,
 				LocalPoint.y * WorldScale.y ,
 				LocalPoint.z * WorldScale.z };
 
@@ -329,7 +350,7 @@ void CStage::LoadObjects(const std::wstring& FilePath ,
 	{
 		SpawnObjectFromName(_CurrentObjectSpawnInfo.Name, _CurrentObjectSpawnInfo.Location);
 	}
-}
+};
 void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
 {
 	// 박쥐

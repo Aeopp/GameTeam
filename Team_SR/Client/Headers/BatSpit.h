@@ -23,9 +23,7 @@ public:
 	static CBatSpit* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
-
 private:
-
 };
 
 #define __BATSPIT_H__

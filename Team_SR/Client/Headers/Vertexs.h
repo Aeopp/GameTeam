@@ -17,12 +17,27 @@ namespace Vertex
 		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl(IDirect3DDevice9* _Device);
 	};
 
-	struct CubeTexture
+	struct OnlyLocation
+	{
+		vec3 Location;
+		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl(IDirect3DDevice9* _Device);
+	};
+
+	struct Location3DUV
 	{
 		vec3 Location;
 		vec3 UV;
+		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl(IDirect3DDevice9* _Device);
 		static const uint32_t FVF;
 	};
+
+	struct Location2DUV
+	{
+		vec3 Location;
+		vec2 UV;
+		static LPDIRECT3DVERTEXDECLARATION9 GetVertexDecl(IDirect3DDevice9* _Device);
+	};
+
 }
 
 namespace Index

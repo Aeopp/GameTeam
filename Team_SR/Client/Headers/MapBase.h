@@ -24,6 +24,7 @@ protected:
 	void LoadFloor(const std::wstring& FilePath );
 	void LoadCubeMap(const std::wstring& FilePath);
 	void LoadBars(const std::wstring& FilePath);
+	void CreateMiniMap();
 public:
 	virtual void Free() override;
 protected:
@@ -39,6 +40,9 @@ private:
 	void WallRender();
 	void FloorRender();
 	void BarRender();
+	ESceneID InitializeSceneID;
+	std::vector<vec3> _MiniMapPoints;
+	class CMiniMap* _CurrentMiniMap{ nullptr };
 };
 
 #define __MapBase_H__

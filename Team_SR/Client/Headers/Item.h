@@ -26,6 +26,8 @@ public:
 	static CItem* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
+	virtual void Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo);
+	FORCEINLINE bool IsAcheive()const& { return bAcheive; };
 private:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작
@@ -33,6 +35,9 @@ private:
 	CTexture* m_pTexture;	// 텍스처
 	ItemInfo m_stItemInfo;	// 아이템 정보
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
+	// 플레이어가 획득하였나요?
+	bool bAcheive = false;
+	float CreateAfterTime = 0.0f;
 };
 
 #define  __ITEM_H__

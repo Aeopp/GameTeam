@@ -26,6 +26,10 @@ int bSpecularSamplerBind;
 int bNormalSamplerBind;
 float AlphaLerp;
 int LightNum;
+int bUI;
+int bUVAlphaLerp;
+int LightCalcFlag;
+float ColorLerpT;
 
 float Shine;
 float FogEnd;
@@ -34,38 +38,67 @@ float4 FogColor;
 
 float4 main(PS_INPUT Input) : COLOR
 {
-    Input.Normal = normalize(Input.Normal);
-    Input.Tangent = normalize(Input.Tangent);
-    Input.BiNormal = normalize(Input.BiNormal);
+    float CurrentColorLerpT = saturate(ColorLerpT);
+    float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+    float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);
+    float FogFactor = FogFactorLinear;
+    float OutAlpha = DiffuseTexColor.a;
+     
+    if (bUVAlphaLerp == 1)
+    {
+        OutAlpha *= (1.25f - (1.0f - Input.UV.x));
+    }
+    if (LightCalcFlag == 1)
+    {
+        float4 Color = tex2D(DiffuseSampler, Input.UV);
+        Color.rgb = (FogColor.rgb * FogFactor) + (Color.rgb * (1.0f - FogFactor));
+        Color.rgb = (float3(1.f, 1.f, 1.f) * CurrentColorLerpT) + (Color.rgb * (1.f - CurrentColorLerpT));
+
+        return float4(Color.rgb, OutAlpha);
+    }
+    
+    if (bUI)
+    {
+        float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
+        return DiffuseTexColor;
+    };
   
-    
-    float3 tangentNormal = tex2D(NormalSampler, Input.UV).xyz;
-    tangentNormal = normalize(tangentNormal * 2 - 1);
-   
-    float3x3 TBN = float3x3(normalize(Input.Tangent), 
-                            normalize(Input.BiNormal), 
-                            normalize(Input.Normal));
-    TBN = transpose(TBN);
-    float3 worldNormal = mul(TBN, tangentNormal);
-    
+    float3 Normal =float3(0, 0, 1);
     Input.ViewDirection = normalize(Input.ViewDirection);
-    float3 Normal = worldNormal;
     
     if (bNormalSamplerBind==0)
     {
         Normal = Input.Normal;
     }
+    else
+    {
+        Input.Normal = normalize(Input.Normal);
+        Input.Tangent = normalize(Input.Tangent);
+        Input.BiNormal = normalize(Input.BiNormal);
+    
+        float3 tangentNormal = tex2D(NormalSampler, Input.UV).xyz;
+        tangentNormal = normalize(tangentNormal * 2 - 1);
    
+        float3x3 TBN = float3x3(normalize(Input.Tangent),
+                            normalize(Input.BiNormal),
+                            normalize(Input.Normal));
+        TBN = transpose(TBN);
+        float3 worldNormal = mul(TBN, tangentNormal);
+        
+        Normal = worldNormal;
+    }
  
-    float4 DiffuseTexColor = tex2D(DiffuseSampler, Input.UV);
-    float4 SpecularTexColor = tex2D(SpecularSampler, Input.UV);
-
+ 
+    float4 SpecularTexColor = float4(1, 1, 1, 1); 
     
     if (bSpecularSamplerBind == 0)
     {
         SpecularTexColor = DiffuseTexColor;
     }
-   
+    else
+    {
+        SpecularTexColor = tex2D(SpecularSampler, Input.UV);
+    }
     
     float3 OutputColor = float3(0.0f, 0.0f, 0.0f);
     
@@ -85,6 +118,7 @@ float4 main(PS_INPUT Input) : COLOR
        
         float3 Specular = 0;
         float3 Environment = float3(0, 0, 0);
+        
         if (Diffuse.x > 0)
         {
             Specular = saturate(dot(ReflectionVector, -Input.ViewDirection));
@@ -102,23 +136,12 @@ float4 main(PS_INPUT Input) : COLOR
         float factor = 1.f - (Distance / LightRadius[i]);
         factor = saturate(factor);
         
-        CurrentColor.rgb += (Environment * 0.49f);
+        CurrentColor.rgb += (Environment * 0.25f);
         CurrentColor.rgb *= factor;
         OutputColor += CurrentColor;
     }
-    
-    float FogFactorLinear = (Input.ViewZ - FogStart) / (FogEnd - FogStart);
-    //float Density = 1.0f;
-    //float FogFactorExp = 1.0f / exp(Input.ViewZ * Density);
-    
-    float FogFactor = FogFactorLinear;
-    
     OutputColor.rgb = (FogColor.rgb * FogFactor) + (OutputColor.rgb * (1.0f - FogFactor));
+    OutputColor.rgb = (float3(1.0f, 1.0f, 1.0f) * CurrentColorLerpT) + (OutputColor.rgb * (1.f - CurrentColorLerpT));
     
-    float OutAlpha = DiffuseTexColor.a;
-    
-    OutAlpha *= AlphaLerp;
-    
-    
-    return float4(OutputColor.rgb, OutAlpha);
+   return float4(OutputColor.rgb, OutAlpha);
 };

@@ -52,6 +52,9 @@
     <Filter Include="02.GameObject\02.Monster\02.BatGrey">
       <UniqueIdentifier>{8f3a5efd-de69-439d-9661-c9b2152d68bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.GameUI">
+      <UniqueIdentifier>{273d5462-ab96-4b62-b7a6-4c4b6b74d4d9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="97.DXWrapper">
       <UniqueIdentifier>{823585c1-1122-4b5c-8cef-a3846cb02321}</UniqueIdentifier>
     </Filter>
@@ -60,6 +63,15 @@
     </Filter>
     <Filter Include="02.GameObject\06.Bullet">
       <UniqueIdentifier>{abfda3f3-4758-48af-81e1-d98ac77a1398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\01.Component">
+      <UniqueIdentifier>{9cf0131a-46f8-4d4e-bd6e-f52138924740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\99.Managerment">
+      <UniqueIdentifier>{6b6da790-162a-4363-ae8c-c90080d2d865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Others">
+      <UniqueIdentifier>{f7df4459-fc37-42fc-9124-962c03fd41ed}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\02.Monster\03.Fire">
       <UniqueIdentifier>{3344bc90-710b-4809-a051-5285fd4c29fa}</UniqueIdentifier>
@@ -112,14 +124,32 @@
     <Filter Include="02.GameObject\08.Decorator">
       <UniqueIdentifier>{b784e838-9699-4b0f-b100-f57df68a00ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.JumpPointSearch">
-      <UniqueIdentifier>{2a1462a1-3246-46f4-9fa9-fea13f73b647}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.GameUI\00.Object">
+      <UniqueIdentifier>{1fa063f6-519c-48c0-82a3-110ade77e878}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\02.Monster\07.Ghoul">
-      <UniqueIdentifier>{aea0dc84-0d0c-412e-ba3f-ed0ad369c990}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI">
+      <UniqueIdentifier>{813c8460-ebad-455d-b137-933cacdc3cd3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\02.Monster\08.Boss_HellBoss">
-      <UniqueIdentifier>{2a7ac348-228a-45f3-86a6-a8619a6fd8a6}</UniqueIdentifier>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI">
+      <UniqueIdentifier>{6b0950e4-06bf-4a2f-92fe-87350ac8fa1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\02.LoadingBar">
+      <UniqueIdentifier>{76533efa-b04d-406d-8796-6e21619c2b6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\Stages">
+      <UniqueIdentifier>{4809b0e9-db87-4f46-94be-58a687ea6d73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\04.ShopUI">
+      <UniqueIdentifier>{b6ce902b-365c-49cc-9b87-6f7a9a4591da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\03.HUDTopUI">
+      <UniqueIdentifier>{5b0dd413-524a-44ae-a2fe-14db4518db8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\01.Component\01.VIBuffer_UITexture">
+      <UniqueIdentifier>{43827cb1-9c1e-4fb5-91b7-febff7bb0966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\05.ButtonUI">
+      <UniqueIdentifier>{21a0e22f-0b32-432b-9ac0-7b4c2ba68fda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -213,16 +243,47 @@
     <ClInclude Include="..\Headers\Client_Struct.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UIManager.h">
+      <Filter>02.GameObject\05.GameUI\99.Managerment</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\DXWrapper.h">
       <Filter>97.DXWrapper</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Vertexs.h">
       <Filter>97.DXWrapper</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PlyerInfoUI.h" />
-    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
+    <ClInclude Include="..\Headers\BatSpit.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Bullet.h">
-      <Filter>02.GameObject\06.Bullet</Filter>
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DXWrapper.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Eyebat.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\EyebatBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Fire.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlacierParticle.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Package.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Vertexs.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Effect.h">
       <Filter>02.GameObject\05.Effect</Filter>
@@ -260,90 +321,112 @@
     <ClInclude Include="..\Headers\Terret.h">
       <Filter>02.GameObject\00.Player\01.Terret</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GameUI.h" />
-    <ClInclude Include="..\Headers\Hangman.h" />
-    <ClInclude Include="..\Headers\HangmanBomb.h" />
-    <ClInclude Include="..\Headers\Hellhound.h" />
-    <ClInclude Include="..\Headers\Item.h" />
-    <ClInclude Include="..\Headers\NormalUVVertexBuffer.h" />
-    <ClInclude Include="..\Headers\Particle.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
-    <ClInclude Include="..\Headers\ParticleSystem.h" />
     <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\GlacierParticle.h" />
-    <ClInclude Include="..\Headers\Hangman.h" />
-    <ClInclude Include="..\Headers\HangmanBomb.h" />
-    <ClInclude Include="..\Headers\Hellhound.h" />
-    <ClInclude Include="..\Headers\Item.h" />
-    <ClInclude Include="..\Headers\Particle.h" />
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GameUI.h">
+      <Filter>02.GameObject\05.GameUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingBar.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage2nd.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage3rd.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage4th.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage5th.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Stage6th.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageBoss.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageMidBoss.h">
+      <Filter>01.Scene\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Decorator.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Hangman.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HangmanBomb.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Hellhound.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Item.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map2nd.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map3rd.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map4th.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map5th.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Map6th.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapBoss.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MapMidBoss.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NormalUVVertexBuffer.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Particle.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ParticleSystem.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Shark.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SharkBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SoundMgr.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GameUI.h">
+      <Filter>02.GameObject\05.GameUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\BatSpit.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Package.h" />
+    <ClInclude Include="..\Headers\Shark.h" />
+    <ClInclude Include="..\Headers\SharkBullet.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
-    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\StateBar.h" />
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
-    <ClInclude Include="..\Headers\Map2nd.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Map3rd.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Map4th.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Map5th.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Map6th.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\MapBoss.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\MapMidBoss.h">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Stage2nd.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Stage3rd.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Stage4th.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Stage5th.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Stage6th.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\StageBoss.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\StageMidBoss.h">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Shark.h">
-      <Filter>02.GameObject\02.Monster\06.Boss_Shark</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\SharkBullet.h">
-      <Filter>02.GameObject\06.Bullet\05.SharkBullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Decorator.h">
-      <Filter>02.GameObject\08.Decorator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\JumpPointSearch.h">
-      <Filter>04.JumpPointSearch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Ghoul.h">
-      <Filter>02.GameObject\02.Monster\07.Ghoul</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HellBoss.h">
-      <Filter>02.GameObject\02.Monster\08.Boss_HellBoss</Filter>
-    </ClInclude>
+    <ClInclude Include="..\Headers\MiniMap.h" />
+    <ClInclude Include="..\Headers\ScreenEffect.h" />
+    <ClInclude Include="..\Headers\ButtonUI.h" />
+    <ClInclude Include="..\Headers\PlayerInfoUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -412,13 +495,44 @@
     <ClCompile Include="..\Codes\DXWrapper.cpp">
       <Filter>97.DXWrapper</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UIManager.cpp">
+      <Filter>02.GameObject\05.GameUI\99.Managerment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BatSpit.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Package.cpp">
       <Filter>.ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\PlyerInfoUI.cpp" />
-    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
     <ClCompile Include="..\Codes\Bullet.cpp">
-      <Filter>02.GameObject\06.Bullet</Filter>
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DXWrapper.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Eyebat.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\EyebatBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Fire.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GlacierParticle.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Package.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Vertexs.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
       <Filter>02.GameObject\05.Effect</Filter>
@@ -456,24 +570,104 @@
     <ClCompile Include="..\Codes\Terret.cpp">
       <Filter>02.GameObject\00.Player\01.Terret</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GameUI.cpp" />
-    <ClCompile Include="..\Codes\Hangman.cpp" />
-    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
-    <ClCompile Include="..\Codes\Hellhound.cpp" />
-    <ClCompile Include="..\Codes\Item.cpp" />
-    <ClCompile Include="..\Codes\NormalUVVertexBuffer.cpp" />
-    <ClCompile Include="..\Codes\Particle.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
-    <ClCompile Include="..\Codes\ParticleSystem.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp" />
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
-    <ClCompile Include="..\Codes\Hangman.cpp" />
-    <ClCompile Include="..\Codes\HangmanBomb.cpp" />
-    <ClCompile Include="..\Codes\Hellhound.cpp" />
-    <ClCompile Include="..\Codes\Item.cpp" />
-    <ClCompile Include="..\Codes\Particle.cpp" />
+    <ClCompile Include="ComponentTemplate.md" />
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GameUI.cpp">
+      <Filter>02.GameObject\05.GameUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingBar.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\02.LoadingBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage2nd.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage3rd.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage4th.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage5th.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Stage6th.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageBoss.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageMidBoss.cpp">
+      <Filter>01.Scene\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Decorator.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hangman.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HangmanBomb.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hellhound.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Item.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map2nd.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map3rd.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map4th.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map5th.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Map6th.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapBoss.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MapMidBoss.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NormalUVVertexBuffer.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Particle.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ParticleSystem.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Shark.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SharkBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SoundMgr.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GameUI.cpp">
+      <Filter>02.GameObject\05.GameUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
+    <ClCompile Include="..\Codes\Shark.cpp" />
+    <ClCompile Include="..\Codes\SharkBullet.cpp" />
     <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
@@ -482,66 +676,10 @@
     <ClCompile Include="..\Codes\ShopUI.cpp" />
     <ClCompile Include="..\Codes\StateBar.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
-    <ClCompile Include="..\Codes\Map2nd.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Map3rd.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Map4th.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Map5th.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Map6th.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\MapBoss.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\MapMidBoss.cpp">
-      <Filter>02.GameObject\03.Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Stage2nd.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Stage3rd.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Stage4th.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Stage5th.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Stage6th.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\StageBoss.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\StageMidBoss.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Shark.cpp">
-      <Filter>02.GameObject\02.Monster\06.Boss_Shark</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\SharkBullet.cpp">
-      <Filter>02.GameObject\06.Bullet\05.SharkBullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Decorator.cpp">
-      <Filter>02.GameObject\08.Decorator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\JumpPointSearch.cpp">
-      <Filter>04.JumpPointSearch</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Ghoul.cpp">
-      <Filter>02.GameObject\02.Monster\07.Ghoul</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HellBoss.cpp">
-      <Filter>02.GameObject\02.Monster\08.Boss_HellBoss</Filter>
-    </ClCompile>
+    <ClCompile Include="..\Codes\MiniMap.cpp" />
+    <ClCompile Include="..\Codes\ScreenEffect.cpp" />
+    <ClCompile Include="..\Codes\ButtonUI.cpp" />
+    <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -559,5 +697,11 @@
   <ItemGroup>
     <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
     <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapPS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapVS.hlsl" />
+    <FxCompile Include="..\Shader\UITexturePS.hlsl" />
+    <FxCompile Include="..\Shader\UITextureVS.hlsl" />
+    <FxCompile Include="..\Shader\ScreenPostEffectPS.hlsl" />
+    <FxCompile Include="..\Shader\ScreenPostEffectVS.hlsl" />
   </ItemGroup>
 </Project>
