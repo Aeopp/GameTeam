@@ -18,10 +18,44 @@ LPDIRECT3DVERTEXDECLARATION9 typename Vertex::Texture::GetVertexDecl(IDirect3DDe
 	return VertexDeclaration;
 };
 
-const uint32_t typename Vertex::CubeTexture::FVF = D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
+const uint32_t typename Vertex::Location3DUV::FVF = D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 const D3DFORMAT Index::_16_t::Format = D3DFMT_INDEX16;
 
+LPDIRECT3DVERTEXDECLARATION9 Vertex::OnlyLocation::GetVertexDecl(IDirect3DDevice9* _Device)
+{
+	LPDIRECT3DVERTEXDECLARATION9 VertexDeclaration;
+	D3DVERTEXELEMENT9 decl[] =
+	{
+		{ 0, 0 , D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		// 	{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		   D3DDECL_END()
+	};
+	_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
+	return VertexDeclaration;
+};
 
+LPDIRECT3DVERTEXDECLARATION9 Vertex::Location3DUV::GetVertexDecl(IDirect3DDevice9* _Device)
+{
+	LPDIRECT3DVERTEXDECLARATION9 VertexDeclaration;
+	D3DVERTEXELEMENT9 decl[] =
+	{
+		{ 0, 0 , D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_TEXCOORD  , 0 },
+		D3DDECL_END()
+	};
+	_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
+	return VertexDeclaration;
+};
 
-
-
+LPDIRECT3DVERTEXDECLARATION9 Vertex::Location2DUV::GetVertexDecl(IDirect3DDevice9* _Device)
+{
+	LPDIRECT3DVERTEXDECLARATION9 VertexDeclaration;
+	D3DVERTEXELEMENT9 decl[] =
+	{
+		{ 0, 0 , D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_TEXCOORD  , 0 },
+		D3DDECL_END()
+	};
+	_Device->CreateVertexDeclaration(decl, &VertexDeclaration);
+	return VertexDeclaration;
+}

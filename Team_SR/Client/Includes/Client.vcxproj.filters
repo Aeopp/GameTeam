@@ -417,9 +417,6 @@
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PlayerInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\GameUI.h">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClInclude>
@@ -745,9 +742,6 @@
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\PlayerInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GameUI.cpp">
       <Filter>02.GameObject\05.GameUI</Filter>
     </ClCompile>
@@ -832,5 +826,11 @@
   <ItemGroup>
     <FxCompile Include="..\Shader\DiffuseSpecularPS.hlsl" />
     <FxCompile Include="..\Shader\DiffuseSpecularVS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapPS.hlsl" />
+    <FxCompile Include="..\Shader\MiniMapVS.hlsl" />
+    <FxCompile Include="..\Shader\UITexturePS.hlsl" />
+    <FxCompile Include="..\Shader\UITextureVS.hlsl" />
+    <FxCompile Include="..\Shader\ScreenPostEffectPS.hlsl" />
+    <FxCompile Include="..\Shader\ScreenPostEffectVS.hlsl" />
   </ItemGroup>
 </Project>

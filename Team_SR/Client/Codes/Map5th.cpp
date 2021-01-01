@@ -26,6 +26,7 @@ HRESULT CMap5th::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+	CreateMiniMap();
 
 	return S_OK;
 }

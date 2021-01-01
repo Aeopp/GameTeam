@@ -12,6 +12,9 @@
 #include "Eyebat.h"
 #include "Glacier.h"
 #include "ParticleSystem.h"
+#include "ScreenEffect.h"
+#include "MiniMap.h"
+
 
 #include "Hangman.h"
 #include "Hellhound.h"
@@ -44,7 +47,14 @@ HRESULT CStage::ReadyScene()
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CPlayer>(),
-		(CGameObject**)&m_pPlayer, nullptr)))
+		(CGameObject**)&m_pPlayer, &CurrentSceneID)))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CScreenEffect>(),
+		nullptr, nullptr)))
 		return E_FAIL;
 
 	CUIManager::Get_Instance()->OnAllUI();
@@ -169,6 +179,11 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		_CurrentPlayer->MoveRight(+fDeltaTime);
 	}
 
+	if (m_pKeyMgr->Key_Down('M'))
+	{
+		dynamic_cast<CMiniMap* const>(m_pManagement->GetGameObject(-1, L"Layer_MiniMap", 0))->MapOpenToggle();
+	};
+
 	if (m_pKeyMgr->Key_Pressing('Z'))
 	{
 		auto& Desc = _CurrentPlayer->GetTransform()->m_TransformDesc;
@@ -214,6 +229,10 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->MouseRightUp();
 	}
+	 if (m_pKeyMgr->Key_Up(VK_LBUTTON))
+	 {
+		 m_pPlayer->MouseLeftUp();
+	 }
 	 if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
@@ -234,6 +253,29 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 	{
 		m_pPlayer->_5ButtonEvent();
 	}
+	 if (m_pKeyMgr->Key_Down('6'))
+	 {
+		 m_pPlayer->_6ButtonEvent();
+	 }
+	 if (m_pKeyMgr->Key_Down('7'))
+	 {
+		 m_pPlayer->_7ButtonEvent();
+	 }
+	 if (m_pKeyMgr->Key_Down('8'))
+	 {
+		 m_pPlayer->_8ButtonEvent();
+	 }
+
+	 if (m_pKeyMgr->Key_Down('O'))
+	 {
+		 m_pPlayer->SpellFreeze();
+	 }
+
+	 if (m_pKeyMgr->Key_Down('P'))
+	 {
+		 m_pPlayer->SpellLight();
+	 }
+
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();

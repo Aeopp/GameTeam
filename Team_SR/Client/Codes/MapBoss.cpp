@@ -19,6 +19,7 @@ HRESULT CMapBoss::ReadyGameObjectPrototype()
 	LoadBars(L"..\\Resources\\Map\\Boss\\"); 
 	LoadCubeMap(L"..\\Resources\\CubeMap\\Red.dds");
 
+
 	return S_OK;
 }
 
@@ -26,6 +27,8 @@ HRESULT CMapBoss::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+
+	CreateMiniMap();
 
 	return S_OK;
 }

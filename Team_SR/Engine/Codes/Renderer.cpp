@@ -46,8 +46,8 @@ HRESULT CRenderer::Render(HWND hWnd)
 	for (size_t i = 0; i < MaxTexState; ++i)
 	{
 		/*m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-		m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);*/
-		
+		  m_pDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);*/
+
 		m_pDevice->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 		m_pDevice->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
@@ -74,6 +74,9 @@ HRESULT CRenderer::Render(HWND hWnd)
 	m_pDevice->SetPixelShader(nullptr);
 
 	if (FAILED(RenderUI()))
+		return E_FAIL;
+
+	if (FAILED(RenderScreenPostEffect()))
 		return E_FAIL;
 
 	return S_OK;
@@ -251,12 +254,12 @@ HRESULT CRenderer::RenderUI()
 		return E_FAIL;
 
 	//Alpa Setting
-	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE)))
-		return E_FAIL;
-	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0x00000088)))
-		return E_FAIL;
-	if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER)))
-		return E_FAIL;
+	//if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE)))
+	//	return E_FAIL;
+	//if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0x00000088)))
+	//	return E_FAIL;
+	//if (HRESULT(m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER)))
+	//	return E_FAIL;
 
 
 	for (auto& pObject : m_GameObjects[(_int)ERenderID::UI])
@@ -274,6 +277,33 @@ HRESULT CRenderer::RenderUI()
 		return E_FAIL;
 	if (HRESULT(m_pDevice->SetTransform(D3DTS_PROJECTION, &PrevProjection)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::RenderScreenPostEffect()
+{
+	m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	m_pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+
+	for (auto& pObject : m_GameObjects[(_int)ERenderID::ScreenPostEffect])
+	{
+		if (FAILED(pObject->RenderGameObject()))
+			return E_FAIL;
+
+		SafeRelease(pObject);
+	}
+
+	m_GameObjects[(_int)ERenderID::ScreenPostEffect].clear();
+
+	m_pDevice->SetVertexShader(nullptr);
+	m_pDevice->SetPixelShader(nullptr);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
 	return S_OK;
 }

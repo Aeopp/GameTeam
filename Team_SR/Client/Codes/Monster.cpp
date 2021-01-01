@@ -4,6 +4,8 @@
 #include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
+#include "Player.h"
+
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -42,13 +44,18 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 		}
 	}
 
+	for (size_t i = 0; i < 52u; ++i)
+	{
+		GibTable.push_back(i);
+	};
+
 	return S_OK;
 }
 
 _uint CMonster::UpdateGameObject(float fDeltaTime)
 {
 	CGameObject::UpdateGameObject(fDeltaTime);
-
+	_CurrentDeltaTime = fDeltaTime;
 	// 2020.12.17 11:08 KMJ
 	// 충돌 이동
 	//CollisionMovement(fDeltaTime);
@@ -63,6 +70,7 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 	IsBillboarding();
 
 	FloorBloodCurrentCoolTime -= fDeltaTime;
+	LightHitTime -= fDeltaTime;
 
 	return _uint();
 }
@@ -160,10 +168,18 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	// 공평회에서는 일단 고정임d
 	//m_stStatus.fHP -= fDemage;
 	 m_stStatus.fHP-=_Target->CurrentAttack;
-	 DeadHitBlood();
+	 auto _Player = dynamic_cast<const CPlayer* const>(_Target);
+	 const CPlayer::EWeaponState _WeaponState=_Player->GetWeaponState();
+
+	 if (false == (_WeaponState == CPlayer::EWeaponState::ElectricStaff ||
+					_WeaponState == CPlayer::EWeaponState::Flak))
+	 {
+		 BloodParticle();
+	 }
+		
 	 if (m_stStatus.fHP < 0.f)
 	 {
-		
+		 DeadProcess();
 	 }
 }
 
@@ -177,11 +193,32 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 
 		if (_ParticlePtr->Name == L"DaggerThrow")
 		{
-			
+
 		}
 
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
-		DeadHitBlood();
+
+		if (m_stStatus.fHP < 0.f)
+		{
+			DeadProcess();
+		}
+
+		BloodParticle();
+	}
+};
+
+void CMonster::FlashHit()&
+{
+	LightHitTime = 0.1f;
+}
+
+void CMonster::FreezeHit()&
+{
+	m_stStatus.fHP -=  ( FreezeHitDamage * _CurrentDeltaTime ) ;
+
+	if (m_stStatus.fHP < 0.0f)
+	{
+		DeadProcess();
 	}
 }
 
@@ -204,6 +241,10 @@ bool CMonster::PlayerAwareness()
 	float fDis = D3DXVec3Length(&vDir);
 	// 플레이어가 범위 안에 있으면
 	if (fDis <= m_stStatus.fDetectionRange) {
+		vec3 DirFromXZPlane = vDir;
+		DirFromXZPlane.y = 0.0f;
+		DirFromXZPlane = MATH::Normalize(DirFromXZPlane);
+		RotationXZPlane = MATH::ToDegree(std::acosf(MATH::Dot(DirFromXZPlane, vec3{ 0.0f,0.0f,1.0f })));
 		return true;
 	}
 	return false;
@@ -217,6 +258,10 @@ bool CMonster::PlayerBeNear()
 	// 플레이어가 범위 안에 있으면
 	if (fDis <= m_stStatus.fMeleeRange) 
 	{
+		vec3 DirFromXZPlane = vDir;
+		DirFromXZPlane.y = 0.0f;
+		DirFromXZPlane = MATH::Normalize(DirFromXZPlane);
+		RotationXZPlane = MATH::ToDegree(std::acosf(MATH::Dot(DirFromXZPlane, vec3{ 0.0f,0.0f,1.0f })));
 		return true;
 	}
 	return false;
@@ -283,12 +328,12 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	_Particle.bMove = false;
 	_Particle.bRotationMatrix = true;
 	_Particle.RotationMatrix = RotAxis;
-	_Particle.bUVAlphaLerp = false;
+	_Particle.UVAlphaLerp = false;
 	int32_t Frame = MATH::RandInt({ 0,3 }); 
 	_Particle.CurrentFrame = Frame; 
 	_Particle.CurrentT = static_cast<float>(Frame); 
 	_Particle.Delta = FLT_MAX;
-	_Particle.Durtaion = 60.f;
+	_Particle.Durtaion = 180.0f;
 	_Particle.EndFrame = Frame;
 	_Particle.StartLocation =   _Particle.Location = IntersectPoint + PlaneNormal * 0.01f;
 	_Particle.Scale = { 1.3,1.3,1.3 };
@@ -297,7 +342,7 @@ static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 	ParticleSystem::Instance().PushParticle(std::move(_Particle)  );
 };
 
-void CMonster::DeadHitBlood()
+void CMonster::BloodParticle()
 {
 	Particle _Particle;
 	_Particle.bBillboard = true;
@@ -323,11 +368,11 @@ void CMonster::DeadHitBlood()
 	_Particle.Name = std::move(Name);
 	_Particle.EndFrame = EndFrame;
 	_Particle.Durtaion = static_cast<float> (EndFrame) * _Particle.Delta;
-	_Particle.Scale = { 1.5f,1.5f,1.5f };
+	_Particle.Scale = { 2.25f,2.25f,2.25f };
 	_Particle.Location = m_pTransformCom->GetLocation() + -m_pTransformCom->GetLook() * 1.f;
 	ParticleSystem::Instance().PushParticle(_Particle);
 
-	for (size_t i = 0; i < 8; ++i)
+	for (size_t i = 0; i < 26; ++i)
 	{
 		Particle _Particle;
 		_Particle.bBillboard = true;
@@ -336,15 +381,14 @@ void CMonster::DeadHitBlood()
 		_Particle.Delta = FLT_MAX;
 		_Particle.Gravity = 5.f;
 
-		const float Speed = MATH::RandReal({ 5,10 });
+		const float Speed = MATH::RandReal({ 5,10});
 		_Particle.Dir = MATH::RandVec();
 		_Particle.Durtaion =  4.f;
 		_Particle.Angle = MATH::RandReal({ 90,130});
 		_Particle.Durtaion = 2.f;
 		_Particle.EndFrame = 1ul;
 		_Particle.Scale = { 0.15f,0.15f,0.15f };
-		_Particle.Location = m_pTransformCom->GetLocation();
-		_Particle.StartLocation = m_pTransformCom->GetLocation();
+		_Particle.StartLocation = _Particle.Location = m_pTransformCom->GetLocation() + MATH::RandVec() * MATH::RandReal({ 0.5f,1.f });
 		_Particle.Name = L"Blood";
 		_Particle.Speed = Speed;
 		ParticleSystem::Instance().PushParticle(_Particle);
@@ -443,6 +487,37 @@ void CMonster::DeadHitBlood()
 				}
 			};
 		}
+	}
+}
+
+void CMonster::DeadProcess()
+{
+	bGravity = false;
+	_CollisionComp->bCollision = false;
+	_CollisionComp->bWallCollision = false;
+	_CollisionComp->bFloorCollision = false;
+
+	for(const size_t GibIdx : GibTable)
+	{
+		CollisionParticle _CollisionParticle;
+		_CollisionParticle.Delta = 10000.f;
+		_CollisionParticle.bCollision = true;
+		_CollisionParticle.bFloorCollision = true;
+		_CollisionParticle.bWallCollision = false;
+		_CollisionParticle.bMapBlock = true;
+		_CollisionParticle.Gravity = MATH::RandReal({20.f,30.f});
+		vec3 SpawnLocation = m_pTransformCom->GetLocation() + MATH::Normalize(MATH::RandVec()) * MATH::RandReal({0.f,2.f});
+		_CollisionParticle.Scale = { 0.5f,0.5f,0.5f };
+		_CollisionParticle.Location  = _CollisionParticle.StartLocation = SpawnLocation;
+		_CollisionParticle.Dir = MATH::Normalize(vec3{ MATH::RandReal({-1,1}),0.f,MATH::RandReal({-1,1}) }); 
+		_CollisionParticle.Angle = MATH::RandReal({ 90,130 });
+		_CollisionParticle.Speed = MATH::RandReal({ 10,20});
+		_CollisionParticle.Rotation = { 0.f,0.f,MATH::RandReal({-180,180}) };
+		_CollisionParticle.Durtaion = 180.0f;
+		_CollisionParticle.Name = L"Gib";
+		_CollisionParticle.CurrentFrame = _CollisionParticle.EndFrame = GibIdx;
+		_CollisionParticle.Radius = 0.3f;
+		ParticleSystem::Instance().PushCollisionParticle(std::move(_CollisionParticle));
 	}
 }
 

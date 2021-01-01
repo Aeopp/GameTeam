@@ -27,6 +27,10 @@ private:
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
+	void FlashHit()&;
+	void FreezeHit()&;
+	FORCEINLINE bool IsDead()const& { 
+		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
@@ -34,7 +38,8 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
-	void DeadHitBlood();
+	void BloodParticle();
+	void DeadProcess();
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -48,6 +53,9 @@ protected:
 		// ... 이 밑으로 5개 예약 가능!!
 	};
 protected:
+	float _CurrentDeltaTime = 0.0f;
+	float FreezeHitDamage = 30.0f;
+	float LightHitTime = 0.0f;
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝
@@ -62,7 +70,7 @@ protected:
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
-
+	std::vector<size_t> GibTable;
 	const float FloorBloodCoolTime = 1.f;
 	float FloorBloodCurrentCoolTime = FloorBloodCoolTime;
 public:
@@ -70,7 +78,8 @@ public:
 	float Shine = 20.f;
 	//                   렌더링 컴포넌트
 	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
-/// 
+	      // Degree
+	float RotationXZPlane = 0.0f;
 };
 
 #define  __MONSTER_H__

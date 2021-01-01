@@ -37,7 +37,7 @@ HRESULT CStageMidBoss::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
 	
 

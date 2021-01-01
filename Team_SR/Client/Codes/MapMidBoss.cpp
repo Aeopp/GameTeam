@@ -26,6 +26,7 @@ HRESULT CMapMidBoss::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+	CreateMiniMap();
 
 	return S_OK;
 }

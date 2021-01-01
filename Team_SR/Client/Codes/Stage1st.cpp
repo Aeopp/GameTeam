@@ -8,7 +8,6 @@
 #include "BatGrey.h"
 #include "PlayerInfoUI.h"
 #include "Spider.h"
-
 #include "Eyebat.h"
 #include "Stage2nd.h"
 #include "Map2nd.h"
@@ -29,8 +28,9 @@ HRESULT CStage1st::ReadyScene()
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)CurrentSceneID,
 		GameObjTag,
-		MapType::Create(m_pDevice))))
+		MapType::Create(m_pDevice)  )))
 		return E_FAIL;
+
 
 	const std::wstring LayerTag = CLayer::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
@@ -38,7 +38,7 @@ HRESULT CStage1st::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID )))
 		return E_FAIL;
 	{
 		MonsterBasicArgument stArg;

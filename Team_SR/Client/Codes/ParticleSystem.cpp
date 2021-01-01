@@ -2,6 +2,8 @@
 #include "..\Headers\ParticleSystem.h"
 #include "Camera.h"
 #include "Player.h"
+#include "MainCamera.h"
+
 
 
 
@@ -166,6 +168,42 @@ void ParticleSystem::InitializeTextures() & noexcept
 
 	_ParticleTextureTable._TextureMap[L"StaffFire"] = CreateTexturesSpecularNormal(
 		_Device, L"..\\Resources\\Effect\\StaffFire\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"Explosion0"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion0\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Explosion1"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion1\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Explosion2"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Explosion2\\", 13);
+
+	_ParticleTextureTable._TextureMap[L"Dynamite"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Dynamite\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"ElectricBeam"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricBeam\\", 1);
+
+	_ParticleTextureTable._TextureMap[L"ElectricLight"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricLight\\", 9ul);
+
+	_ParticleTextureTable._TextureMap[L"ElectricMedium"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricMedium\\", 9ul);
+
+	_ParticleTextureTable._TextureMap[L"ElectricHeavy"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricHeavy\\", 9ul);	
+
+	_ParticleTextureTable._TextureMap[L"ElectricBlast"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\ElectricBlast\\", 12ul);
+
+	_ParticleTextureTable._TextureMap[L"Particle"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Particle\\", 1ul);
+
+	_ParticleTextureTable._TextureMap[L"Snow"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Snow\\", 1ul);
+
+	_ParticleTextureTable._TextureMap[L"Gib"] = CreateTexturesSpecularNormal(
+		_Device, L"..\\Resources\\Effect\\Gib\\", 52ul);
 }
 
 void ParticleSystem::Update(const float DeltaTime)&
@@ -486,19 +524,20 @@ void ParticleSystem::Render()&
 		const auto& TextureTuple =_ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
 
 		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+		//_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		//_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
-
 		_Effect.SetPSConstantData(_Device, "Shine", 20.f);
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.UVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "LightCalcFlag", _Particle.LightCalcFlag);
 		ParticleRenderSetFromName(_Particle, _Effect);
 		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+		_Effect.SetPSConstantData(_Device, "LightCalcFlag", 0l);
 	}
 
 	for (auto& _Particle : _CollisionParticles)
@@ -537,8 +576,8 @@ void ParticleSystem::Render()&
 		const auto& TextureTuple = _ParticleTextureTable.GetTexture(_Particle.Name, _Particle.CurrentFrame);
 
 		_Device->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), std::get<0>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
-		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));
+	/*	_Device->SetTexture(_Effect.GetTexIdx("SpecularSampler"), std::get<1>(TextureTuple));
+		_Device->SetTexture(_Effect.GetTexIdx("NormalSampler"), std::get<2>(TextureTuple));*/
 
 		_Effect.SetPSConstantData(_Device, "bSpecularSamplerBind", 0);
 		_Effect.SetPSConstantData(_Device, "bNormalSamplerBind", 0);
@@ -546,11 +585,14 @@ void ParticleSystem::Render()&
 
 		_Device->SetStreamSource(0, _VertexBuf.get(), 0, VertexByteSize);
 		_Device->SetVertexDeclaration(_VertexDecl.get());
-		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.bUVAlphaLerp);
+		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", _Particle.UVAlphaLerp);
 		ParticleRenderSetFromName(_Particle, _Effect);
 		_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
 	}
 
+
+	_Effect.SetPSConstantData(_Device, "bUVAlphaLerp", 0l);
+	_Effect.SetPSConstantData(_Device, "LightCalcFlag", 0l);
 	_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	_Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
@@ -566,6 +608,18 @@ void ParticleSystem::ClearParticle() & noexcept
 void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 	const float DeltaTime)
 {
+	if (_Particle.Name.find(L"Explosion") != std::wstring::npos)
+	{
+		const float Factor = _Particle.MaxDuration / _Particle.Durtaion;
+		const float DiffuseScale = 100.f / Factor;
+		MyLight _Light;
+		_Light.Diffuse = { DiffuseScale ,DiffuseScale ,DiffuseScale ,1 };
+		_Light.Location = MATH::ConvertVec4(vec3{ _Particle.Location }, 1.f);
+		_Light.Priority = 0ul;
+		_Light.Radius = 10000.f  / Factor;
+		Effect::RegistLight(std::move(_Light));
+	}
+
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		CollisionParticle& _CollisionParticle = static_cast<CollisionParticle&>(_Particle);
@@ -617,8 +671,12 @@ void ParticleSystem::ParticleEventFromName(Particle& _Particle,
 		}
 	}
 
-	if (_Particle.Name == L"BulletShell" || _Particle.Name == L"ShotGunShell" || _Particle.Name == L"MagnumShell" ||
-		_Particle.Name == L"Blood") 
+	if (_Particle.Name == L"BulletShell" || 
+		_Particle.Name == L"ShotGunShell" || 
+		_Particle.Name == L"MagnumShell" ||
+		_Particle.Name == L"Blood" ||  
+		_Particle.Name ==L"Dynamite" || 
+		_Particle.Name == L"Gib")
 	{
 		if (_Particle.bLoop)
 		{		
@@ -661,6 +719,12 @@ void ParticleSystem::ParticleRenderSetFromName( Particle& _Particle,Effect::Info
 		return;
 	}
 
+	if (_Particle.Name.find(L"Electric") !=std::wstring::npos)
+	{
+		_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+		return;
+	}
+
 	_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 }
 
@@ -668,7 +732,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 {
 	if (_Particle.Name == L"BulletShell"  || 
 		_Particle.Name == L"ShotGunShell" || 
-		_Particle.Name == L"MagnumShell")
+		_Particle.Name == L"MagnumShell"  )
 	{
 		_Particle.Dir = { 0,0,0 };
 		_Particle.bBillboard = true;
@@ -686,7 +750,73 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bFloorCollision = false;
 	};
 
-	
+	if (_Particle.Name == L"Gib")
+	{
+		_Particle.bMove = false;
+		_Particle.bLoop = false;
+		_Particle.bCollision = false;
+		_Particle.bWallCollision = false;
+		_Particle.bFloorCollision = false;
+		_Particle.bBillboard = true;
+		_Particle.Rotation.z = MATH::RandReal({ -180,+180 });
+	};
+
+	if (_Particle.Name == L"Dynamite")
+	{
+		_Particle.Dir = { 0,0,0 };
+		_Particle.bBillboard = true;
+		_Particle.bLoop = false;
+		_Particle.bCollision = false;
+		_Particle.bMove = false;
+		_Particle.bFloorCollision = false;
+		_Particle.Durtaion = 0.0f;
+
+
+		 //  여기에 폭발 로직을 추가 한다 .
+		auto _Camera = dynamic_cast<CMainCamera*>(_Management->GetGameObject(-1, L"Layer_MainCamera", 0));
+		_Camera->Shake(2.0f, MATH::RandVec(), 0.8f);
+
+		Particle _DynamiteExplosion;
+		_DynamiteExplosion.bBillboard = true;
+		_DynamiteExplosion.bMove = false;
+		_DynamiteExplosion.Delta = 0.10f;
+		_DynamiteExplosion.EndFrame = 13ul;
+		_DynamiteExplosion.MaxDuration = 		_DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
+		_DynamiteExplosion.Location = _Particle.Location;
+		_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 })); 
+		static constexpr float ExplosionScale = 6.5f;
+		_DynamiteExplosion.Scale = { ExplosionScale ,ExplosionScale ,ExplosionScale };
+		ParticleSystem::PushParticle(_DynamiteExplosion); 
+		
+		Sphere _Sphere;
+		_Sphere.Center = _Particle.Location + _Particle.Correction;
+		_Sphere.Radius = ExplosionScale;
+
+			for (auto& _Comp : CCollisionComponent::_Comps)
+			{
+				if (!_Comp->bCollision)continue;
+#pragma region MatchingCheck
+				auto iter = CCollisionComponent::_TagBind.find(_Particle._Tag);
+				if (iter == std::end(CCollisionComponent::_TagBind))continue;
+				if (iter->second.find(_Comp->_Tag) == std::end(iter->second))continue;
+				vec3 ToRhs = _Sphere.Center - _Comp->_Sphere.Center;
+#pragma endregion
+				// 거리검사
+				if (MATH::Length(ToRhs) > CCollisionComponent::CollisionCheckDistanceMin)continue;
+				// ....
+				auto IsCollision = Collision::IsSphereToSphere(_Sphere, _Comp->_Sphere);
+				// 충돌함.
+				if (IsCollision.first)
+				{
+					_Comp->Owner->ParticleHit(&_Particle, IsCollision.second);
+					/*_LhsOwner->Hit(_RhsOwner, IsCollision.second);
+					_RhsOwner->Hit(_LhsOwner, IsCollision.second);*/
+					//PRINT_LOG(L"충돌체끼리 충돌!!", L"충돌체끼리 충돌!!");
+				}
+
+			}
+	};
+
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		static constexpr float Duration = 5.0f;
@@ -695,17 +825,17 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;
 
-		for (size_t i = 0; i < 99; ++i)
+		for (size_t i = 0; i < 40; ++i)
 		{
 			Particle _SpawnParticle;
-			_SpawnParticle.Scale = { 0.25f,0.25f,0.25f };
+			_SpawnParticle.Scale = { 0.20f,0.20f,0.20f };
 			_SpawnParticle.bBillboard = true;
 			_SpawnParticle.bLoop = true;
 			_SpawnParticle.bRotationMatrix = false;
-			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.UVAlphaLerp = 0ul;
 			_SpawnParticle.Delta = FLT_MAX;
 			const vec3 Dir = MATH::RandVec();
-			const float Speed = MATH::RandReal({ 2.0f,4.0f });  
+			const float Speed = MATH::RandReal({ 3.3f,5.5f });  
 			_SpawnParticle.Dir = Dir;
 			_SpawnParticle.MaxDuration= 			_SpawnParticle.Durtaion = Duration;
 			_SpawnParticle.Location = _Particle.Location  + 
@@ -721,7 +851,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.bBillboard = true;
 		_MagicBoom.bLoop = false;
 		_MagicBoom.bRotationMatrix = false;
-		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.UVAlphaLerp = 0ul;
 		_MagicBoom.Delta = 0.1f;
 		_MagicBoom.bMove = false;
 		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
@@ -747,15 +877,15 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		for (size_t i = 0; i < (_Particle.CurrentAttack / 15.0f) * 13; ++i)
 		{
 			Particle _SpawnParticle;
-			_SpawnParticle.Scale = { 0.45f,0.45f,0.45f };
+			_SpawnParticle.Scale = { 0.40f,0.40f,0.40f };
 			_SpawnParticle.bBillboard = true;
 			_SpawnParticle.bLoop = true;
 			_SpawnParticle.bRotationMatrix = false;
-			_SpawnParticle.bUVAlphaLerp = 0ul;
+			_SpawnParticle.UVAlphaLerp = 0ul;
 			_SpawnParticle.Delta = 0.12f;
 			_SpawnParticle.EndFrame = 7ul;
 			const vec3 Dir = MATH::RandVec();
-			const float Speed = MATH::RandReal({ 1.0f,1.5f });
+			const float Speed = MATH::RandReal({ 1.8f,2.7f });
 			_SpawnParticle.Dir = Dir;
 			_SpawnParticle.MaxDuration = _SpawnParticle.Durtaion = Duration;
 			_SpawnParticle.Location = _Particle.Location +
@@ -771,7 +901,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.bBillboard = true;
 		_MagicBoom.bLoop = false;
 		_MagicBoom.bRotationMatrix = false;
-		_MagicBoom.bUVAlphaLerp = 0ul;
+		_MagicBoom.UVAlphaLerp = 0ul;
 		_MagicBoom.Delta = 0.1f;
 		_MagicBoom.bMove = false;
 		_MagicBoom.Durtaion = _MagicBoom.Delta * 7.0f;
@@ -782,6 +912,21 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_MagicBoom.StartLocation = _MagicBoom.Location;
 		ParticleSystem::PushParticle(_MagicBoom);
 	}
+}
+
+boost::optional<Particle&> ParticleSystem::GetParticle(const std::wstring& Name)
+{
+	auto iter = std::find_if(std::begin(_Particles), std::end(_Particles), [Name](const auto& _CurParticle)
+		{
+			return _CurParticle.Name == Name;
+		});
+
+	if (iter != std::end(_Particles))
+	{
+		return  boost::optional<Particle&> {*iter}; 
+	}
+
+	return {};
 }
 
 void ParticleSystem::PushParticle(const Particle& _Particle)
