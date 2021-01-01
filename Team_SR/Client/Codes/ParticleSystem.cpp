@@ -914,7 +914,8 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 	}
 }
 
-boost::optional<Particle&> ParticleSystem::GetParticle(const std::wstring& Name)
+
+std::pair<bool,Particle*> ParticleSystem::GetParticle(const std::wstring& Name)
 {
 	auto iter = std::find_if(std::begin(_Particles), std::end(_Particles), [Name](const auto& _CurParticle)
 		{
@@ -923,10 +924,10 @@ boost::optional<Particle&> ParticleSystem::GetParticle(const std::wstring& Name)
 
 	if (iter != std::end(_Particles))
 	{
-		return  boost::optional<Particle&> {*iter}; 
+		return  std::pair<bool, Particle*> {true,&(*iter)};
 	}
 
-	return {};
+	return {false,nullptr};
 }
 
 void ParticleSystem::PushParticle(const Particle& _Particle)

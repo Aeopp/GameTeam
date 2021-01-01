@@ -12,6 +12,11 @@ private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CPlayer() = default;
 public:
+	struct InitInfo
+	{
+		ESceneID SceneID;
+		vec3 Location;
+	};
 	enum class EWeaponState : uint8_t
 	{
 		Dagger,

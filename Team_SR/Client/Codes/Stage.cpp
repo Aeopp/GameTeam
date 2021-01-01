@@ -44,13 +44,6 @@ HRESULT CStage::ReadyScene()
 		return E_FAIL;
 
 	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlayer>(),
-		(_int)CurrentSceneID,
-		CLayer::Tag + TYPE_NAME<CPlayer>(),
-		(CGameObject**)&m_pPlayer, &CurrentSceneID)))
-		return E_FAIL;
-
-	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
 		(_int)CurrentSceneID,
 		CLayer::Tag + TYPE_NAME<CScreenEffect>(),
@@ -266,12 +259,12 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		 m_pPlayer->_8ButtonEvent();
 	 }
 
-	 if (m_pKeyMgr->Key_Down('O'))
+	 if (m_pKeyMgr->Key_Down('Q'))
 	 {
 		 m_pPlayer->SpellFreeze();
 	 }
 
-	 if (m_pKeyMgr->Key_Down('P'))
+	 if (m_pKeyMgr->Key_Down('E'))
 	 {
 		 m_pPlayer->SpellLight();
 	 }

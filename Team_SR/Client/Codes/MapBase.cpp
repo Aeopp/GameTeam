@@ -376,7 +376,9 @@ void CMapBase::LoadMap(std::wstring FilePath,
 				if (FAILED(D3DXCreateTextureFromFile(m_pDevice,
 					TexName.c_str(), &_Info.Diffuse)))
 				{
-					MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#ifdef _DEBUG
+						MessageBox(nullptr, L"FAILED D3DXCreateTextureFromFile ", nullptr, 0);
+					#endif
 				}
 
 				TexName.erase(TexName.find_last_of('.'));

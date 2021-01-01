@@ -10,7 +10,6 @@
 #include "MainCamera.h"
 #include "Item.h"
 #include "ScreenEffect.h"
-#include "boost/algorithm/clamp.hpp"
 #include "UIManager.h"
 
 
@@ -162,8 +161,8 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 
 	if (pArg)
 	{
-		ESceneID*  _SceneIDPtr = reinterpret_cast<ESceneID*>(pArg);
-		switch (*_SceneIDPtr)
+		CPlayer::InitInfo*  _InitInfoPtr = reinterpret_cast<CPlayer::InitInfo*>(pArg);
+		switch (_InitInfoPtr->SceneID)
 		{
 		case ESceneID::StageMidBoss:
 		case ESceneID::StageFinalBoss:
@@ -172,11 +171,12 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 		default:
 			break;
 		}
+		m_pTransformCom->m_TransformDesc.vPosition = _InitInfoPtr->Location;
 	};
 
+	
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 23.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
-	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
 
@@ -395,7 +395,14 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 	if (_AnimationTextures.GetAnimationKey() == L"ElectricStaff_Fire")
 	{
 		CurrentElectricStaffFireDamage += fDeltaTime * ElectricStaffReinForceTimeRequired;
-		CurrentElectricStaffFireDamage = boost::algorithm::clamp<float>(CurrentElectricStaffFireDamage, 0.0f, ElectricStaffDamageLimitTable[2]);
+		if (CurrentElectricStaffFireDamage <= 0.0f)
+		{
+			CurrentElectricStaffFireDamage = 0.0f;
+		}
+		else if (CurrentElectricStaffFireDamage >= ElectricStaffDamageLimitTable[2])
+		{
+			CurrentElectricStaffFireDamage = ElectricStaffDamageLimitTable[2]; 
+		};
 		LightingDurationTable[L"ElectricStaffFire"] = 0.1f;
 		bWeaponEffectRender = true;
 	}
@@ -2125,11 +2132,11 @@ void CPlayer::ElectricStaffFire()
 		_Particle.RotationMatrix = Rot;
 	};
 
-	boost::optional<Particle&> _Particle = ParticleSystem::Instance().GetParticle(EffectName);
+	std::pair<bool,Particle*> _Particle = ParticleSystem::Instance().GetParticle(EffectName);
 
-	if (_Particle)
+	if (_Particle.first)
 	{
-		CalcElectricInfo(*_Particle, CalcElectricStaffGizmo(), _Camera->GetCameraDesc().vAt);
+		CalcElectricInfo(*_Particle.second, CalcElectricStaffGizmo(), _Camera->GetCameraDesc().vAt);
 	}
 	else
 	{
@@ -2147,7 +2154,7 @@ void CPlayer::ElectricStaffFire()
 	}
 
 
-	boost::optional<Particle&> _BlastParticle =
+	std::pair<bool, Particle*> _BlastParticle =
 		ParticleSystem::Instance().GetParticle(L"ElectricBlast");
 
 	static auto CalcBlastInfo = [](
@@ -2160,9 +2167,9 @@ void CPlayer::ElectricStaffFire()
 		_Particle.Location = Gizmo + Dir * Rich;
 	};
 
-	if (_BlastParticle)
+	if (_BlastParticle.first)
 	{
-		CalcBlastInfo(*_BlastParticle, _Camera->GetCameraDesc().vAt, CalcElectricStaffGizmo(), ElectricStaffFireRich);
+		CalcBlastInfo(*_BlastParticle.second, _Camera->GetCameraDesc().vAt, CalcElectricStaffGizmo(), ElectricStaffFireRich);
 	}
 	else
 	{
