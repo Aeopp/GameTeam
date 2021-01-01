@@ -233,6 +233,7 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
 			m_fpAction = &CHellhound::Action_Dead;
 			m_wstrTextureKey = L"Com_Texture_Hellhound_Death";
 			m_fFrameCnt = 0;

@@ -99,7 +99,7 @@ HRESULT CStage1st::ReadyScene()
 		stArg.vPosition = { 0.f, 10.f, 20.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
-			CGameObject::Tag + L"BatGrey",
+			CGameObject::Tag + L"HellBoss",
 			(_int)CurrentSceneID,
 			CLayer::Tag + L"Monster",
 			nullptr, static_cast<void*>(&stArg))))

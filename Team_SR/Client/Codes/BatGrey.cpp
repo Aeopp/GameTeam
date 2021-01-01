@@ -207,6 +207,7 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
 			m_fpAction = &CBatGrey::Action_Dead;
 			m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
 			m_fFrameCnt = 0;

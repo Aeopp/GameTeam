@@ -292,7 +292,10 @@ void JumpPointSearch::Finish(list<vec3>& listMovePos)
 	// 2020.12.27
 	// 원본 도착지점과 길찾기 도착지점의 좌표가 약간 다르기 때문에 어색합니다.
 	// 원본 도착지점과 이전 이동 지점 사이에 벽이 없으면 원본 도착지점 좌표를 사용합니다.
-	vec3 vDir = { float(stpNode->lPosX - m_vRealDest.x), 0.f, float(stpNode->lPosZ - m_vRealDest.z) };
+	// fTileCenter - 길찾기 좌표 기준이 왼쪽 위 꼭지점 기준임 타일의 중앙 좌표를 구하기위해서는 Z 축은 빼줘야합니다
+	vec3 vDir = { ((stpNode->lPosX + m_mapRect.left - static_cast<LONG>(m_dwCalibrationX)) * m_fTileSize + fTileCenter) - m_vRealDest.x,
+		0.f,
+		((stpNode->lPosZ + m_mapRect.top - static_cast<LONG>(m_dwCalibrationZ)) * -1.f * m_fTileSize - fTileCenter) - m_vRealDest.z };
 	float fDistance = D3DXVec3Length(&vDir);
 	D3DXVec3Normalize(&vDir, &vDir);
 	vDir *= m_fTileSize;
@@ -307,7 +310,7 @@ void JumpPointSearch::Finish(list<vec3>& listMovePos)
 	while (stpNode->stpParent != nullptr) {
 		listMovePos.emplace_front(vec3((stpNode->lPosX + m_mapRect.left - static_cast<LONG>(m_dwCalibrationX)) * m_fTileSize + fTileCenter,
 			0.f,
-			(stpNode->lPosZ + m_mapRect.top - static_cast<LONG>(m_dwCalibrationZ)) * -1.f * m_fTileSize + fTileCenter));
+			(stpNode->lPosZ + m_mapRect.top - static_cast<LONG>(m_dwCalibrationZ)) * -1.f * m_fTileSize - fTileCenter));
 
 		stpNode = stpNode->stpParent;
 	} 
@@ -422,7 +425,10 @@ BOOL JumpPointSearch::Find_UU(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// ■★
 		if (_lPosX - 1 >= 0) {
 			if (CheckType(_lPosX - 1, _lPosZ) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -439,7 +445,10 @@ BOOL JumpPointSearch::Find_UU(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// ★■
 		if(_lPosX + 1 < (LONG)m_dwPathWidth) {
 			if (CheckType(_lPosX + 1, _lPosZ) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -486,7 +495,10 @@ BOOL JumpPointSearch::Find_RR(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// ★□
 		if (_lPosZ - 1 >= 0) {
 			if (CheckType(_lPosX, _lPosZ - 1) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX + 1, _lPosZ - 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX + 1, _lPosZ) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -502,7 +514,10 @@ BOOL JumpPointSearch::Find_RR(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// ■□
 		if (_lPosZ + 1 < (LONG)m_dwPathHeight) {
 			if (CheckType(_lPosX, _lPosZ + 1) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX + 1, _lPosZ) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -549,7 +564,10 @@ BOOL JumpPointSearch::Find_DD(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// □□
 		if (_lPosX - 1 >= 0) {
 			if (CheckType(_lPosX - 1, _lPosZ) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -565,7 +583,10 @@ BOOL JumpPointSearch::Find_DD(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// □□
 		if (_lPosX + 1 < (LONG)m_dwPathWidth) {
 			if (CheckType(_lPosX + 1, _lPosZ) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX + 1, _lPosZ + 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -612,7 +633,10 @@ BOOL JumpPointSearch::Find_LL(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// □★
 		if (_lPosZ - 1 >= 0) {
 			if (CheckType(_lPosX, _lPosZ - 1) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX - 1, _lPosZ - 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX - 1, _lPosZ) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -628,7 +652,10 @@ BOOL JumpPointSearch::Find_LL(LONG _lPosX, LONG _lPosZ, stNode** _ppCreateNode) 
 		// □■
 		if (_lPosZ + 1 < (LONG)m_dwPathHeight) {
 			if (CheckType(_lPosX, _lPosZ + 1) == static_cast<BYTE>(PathType::WALL)
-				&& CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+				&& (CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::EMPT)
+					// 2021.01.01
+					// 도착지도 노드를 만들어야 합니다
+					|| CheckType(_lPosX - 1, _lPosZ + 1) == static_cast<BYTE>(PathType::DEST))
 				&& CheckType(_lPosX - 1, _lPosZ) == static_cast<BYTE>(PathType::EMPT)) {
 				//노드 생성
 				*_ppCreateNode = new stNode;
@@ -1081,7 +1108,7 @@ void JumpPointSearch::OptimizePath(stNode * _stpFinishNode)
 			vDir = { float(stpNode->lPosX - stpRay->lPosX), 0.f, float(stpNode->lPosZ - stpRay->lPosZ) };
 			fDistance = D3DXVec3Length(&vDir);
 			D3DXVec3Normalize(&vDir, &vDir);
-			vPos = { (float)stpRay->lPosX, (float)stpRay->lPosZ, 0.f };
+			vPos = { (float)stpRay->lPosX, 0.f, (float)stpRay->lPosZ };
 
 			// Ray... - Next - Node 의 관계에서
 			// 중간에있는 Next 노드를 지울 수 있나 검사한다
@@ -1106,7 +1133,7 @@ void JumpPointSearch::OptimizePath(stNode * _stpFinishNode)
 BOOL JumpPointSearch::RayCast(vec3 _vPos, vec3 _vDir, float _fDistance)
 {
 	// 목표 지점까지 간다
-	while (_fDistance > 0.f)
+	while (_fDistance - 1.f > 0.f)
 	{
 		_vPos = _vPos + _vDir;
 
@@ -1127,7 +1154,7 @@ BOOL JumpPointSearch::FinishRayCast(vec3 _vPos, vec3 _vDir, float _fDistance)
 	LONG lPosZ;
 
 	// 목표 지점까지 간다
-	while (_fDistance > 0.f)
+	while (_fDistance - m_fTileSize > 0.f)
 	{
 		_vPos = _vPos + _vDir;
 		lPosX = LONG((_vPos.x / m_fTileSize) + m_dwCalibrationX) - m_mapRect.left;

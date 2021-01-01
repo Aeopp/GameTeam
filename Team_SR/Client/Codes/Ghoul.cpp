@@ -201,6 +201,7 @@ void CGhoul::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
 			m_fpAction = &CGhoul::Action_Dead;
 			m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
 			m_fFrameCnt = 0;
