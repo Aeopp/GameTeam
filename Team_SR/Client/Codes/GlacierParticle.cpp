@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\GlacierParticle.h"
+#include "NormalUVVertexBuffer.h"
 
 CGlacierParticle::CGlacierParticle(LPDIRECT3DDEVICE9 pDevice)
 	:CEffect(pDevice)
@@ -44,7 +45,8 @@ HRESULT CGlacierParticle::ReadyGameObject(void * pArg /*= nullptr*/)
 
 _uint CGlacierParticle::UpdateGameObject(float fDeltaTime)
 {
-
+	if (m_bStop)
+		return 0;
 	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime;
 	m_pTransformCom->m_TransformDesc.vPosition.y = m_fStartY + (m_fJumpPower * m_fJumpTime - 9.8f * m_fJumpTime * m_fJumpTime);
 	m_fJumpTime += 0.03f;
@@ -61,7 +63,7 @@ _uint CGlacierParticle::LateUpdateGameObject(float fDeltaTime)
 
 	CEffect::IsBillboarding();
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
 
 
@@ -74,21 +76,52 @@ HRESULT CGlacierParticle::RenderGameObject()
 	if (FAILED(CEffect::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
+	// 현재 사용중이던 텍스쳐를 여기에 세팅.
+	{
+		//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
+		{
+			IDirect3DBaseTexture9* const  DiffuseTexture = m_pTexture->GetTexture((_uint)m_fFrameCnt);
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+			m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), DiffuseTexture);
+		}
+		// 1.       그냥 세팅을 안하거나
+		{
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+		}
+		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
+		{
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
+		}
+	}
+	// 월드 행렬 바인딩
+	_Effect.SetVSConstantData(m_pDevice, "World", World);
+	// 광택 설정 
+	_Effect.SetPSConstantData(m_pDevice, "Shine", Shine);
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+	_VertexBuffer->Render();
+
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
 
 void CGlacierParticle::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
 {
-	int i = 0;
+	m_bStop = true;
+	m_pTransformCom->m_TransformDesc.vPosition.y = _CollisionInfo.IntersectPoint.y;
 }
 
 HRESULT CGlacierParticle::AddComponents()
@@ -109,7 +142,7 @@ HRESULT CGlacierParticle::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 0.75f;
 	_Info.Tag = CCollisionComponent::ETag::Particle;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = false;
@@ -119,6 +152,13 @@ HRESULT CGlacierParticle::AddComponents()
 		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
 		CComponent::Tag + TYPE_NAME<CCollisionComponent>(),
 		(CComponent**)&_CollisionComp, &_Info);
+
+	if (FAILED(CGameObject::AddComponent(
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -153,5 +193,6 @@ CGameObject * CGlacierParticle::Clone(void * pArg /*= nullptr*/)
 
 void CGlacierParticle::Free()
 {
+	SafeRelease(_VertexBuffer);
 	CEffect::Free();
 }

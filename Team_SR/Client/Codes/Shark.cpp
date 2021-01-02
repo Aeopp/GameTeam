@@ -25,9 +25,9 @@ HRESULT CShark::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	m_wstrTextureKey = m_wstrBase + L"Walk_1Phase";
 
-	m_pTransformCom->m_TransformDesc.vScale = { 5.f, 5.f, 5.f };
-
-	m_stOriginStatus.fHP = 300.f;
+	m_pTransformCom->m_TransformDesc.vScale = { 15.f, 15.f, 15.f };
+	bGravity = false;
+	m_stOriginStatus.fHP = 4000.f;
 	m_stOriginStatus.fATK = 15.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 15.f;
@@ -85,6 +85,8 @@ HRESULT CShark::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
+	_CollisionComp->DebugDraw();
+
 	return S_OK;
 }
 
@@ -97,6 +99,7 @@ void CShark::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
 	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
 	//CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
+	CMonster::CreateBlood();
 }
 
 void CShark::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
@@ -186,7 +189,7 @@ void CShark::AI_SecondPhase()
 
 void CShark::AI_ThridPhase()
 {
-	m_stStatus.fSpeed = 15.f;
+	m_stStatus.fSpeed = 25.f;
 	m_fpAction = &CShark::Action_Move;
 	m_fCountDown = 1.5f;
 	m_wstrTextureKey = m_wstrBase + L"Walk_3Phase";
@@ -342,7 +345,7 @@ void CShark::CreateBullet(float fDeltaTime)
 {
 	_vector vPos = m_pTransformCom->m_TransformDesc.vPosition;
 	_vector vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
-
+	vDir.y = 0.f;
 	D3DXVec3Normalize(&vDir, &vDir);
 
 	//for (int i = 0; i < 6; ++i)
@@ -357,10 +360,10 @@ void CShark::CreateBullet(float fDeltaTime)
 	//}
 
 	m_fBulletCoolDown += fDeltaTime;
-	if (m_fBulletCoolDown > 0.3f && m_iBulletCount < 6)
+	if (m_fBulletCoolDown > 0.2f && m_iBulletCount < 6)
 	{
 		m_fBulletCoolDown = 0.f;
-		vPos += vDir * (m_iBulletCount*10);
+		vPos += vDir * ((m_iBulletCount + 1)*10);
 		if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
 			(_int)ESceneID::Stage1st,
@@ -531,7 +534,7 @@ HRESULT CShark::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 7.5f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;

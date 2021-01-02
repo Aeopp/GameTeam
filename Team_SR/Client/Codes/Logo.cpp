@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Logo.h"
-#include "Stage1st.h"
 #include "Loading.h"
 #include "ImGuiHelper.h"
+#include "StageMidBoss.h"
 
 
 CLogo::CLogo(LPDIRECT3DDEVICE9 pDevice)
@@ -37,8 +37,8 @@ _uint CLogo::KeyProcess(float fDeltaTime)
 		if (nullptr == pManagement)
 			return 0;
 
-		if (FAILED(pManagement->SetUpCurrentScene((_int)ESceneID::Stage1st,
-			CStage1st::Create(m_pDevice))))
+		if (FAILED(pManagement->SetUpCurrentScene((_int)ESceneID::StageMidBoss,
+			CStageMidBoss::Create(m_pDevice))))
 		{
 			PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 			return 0;

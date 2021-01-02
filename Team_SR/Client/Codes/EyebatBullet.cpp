@@ -10,7 +10,7 @@ HRESULT CEyebatBullet::ReadyGameObjectPrototype()
 {
 	if (FAILED(CBullet::ReadyGameObjectPrototype()))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -25,6 +25,7 @@ HRESULT CEyebatBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (nullptr != pArg)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = ((_vector*)pArg)[1];
+		m_vStartPoint = ((_vector*)pArg)[1];
 		m_vLook = ((_vector*)pArg)[0] - m_pTransformCom->m_TransformDesc.vPosition;
 		m_vLook.y = 0.f;
 	}
@@ -34,11 +35,11 @@ HRESULT CEyebatBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 150;
 	m_stOriginStatus.fATK = 7.f;
-	m_stOriginStatus.fSpeed = 1.f;
+	m_stOriginStatus.fSpeed = 0.85f;
 	m_stOriginStatus.fImpact = 0.f;
 	m_stStatus = m_stOriginStatus;
 
-	m_fJumpPower = 15.f;
+	m_fJumpPower = 13.f;
 	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 
 	m_fFrameCnt = 0;
@@ -71,6 +72,8 @@ _uint CEyebatBullet::LateUpdateGameObject(float fDeltaTime)
 {
 	//if (true == m_bTest)
 	//	return 0;
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CBullet::LateUpdateGameObject(fDeltaTime);
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
@@ -140,10 +143,12 @@ HRESULT CEyebatBullet::AddComponents()
 
 void CEyebatBullet::Movement(float fDeltaTime)
 {
+	//_vector vDifference = m_vStartPoint - m_pTransformCom->m_TransformDesc.vPosition;
+	//float fDistance = D3DXVec3Length(&vDifference);
+	//if(fDistance < 100)
 	m_pTransformCom->m_TransformDesc.vPosition += m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition.y = m_fStartY + (m_fJumpPower * m_fJumpTime - 9.8f * m_fJumpTime * m_fJumpTime);
 
-	float fDistance = D3DXVec3Length(&m_vLook);
 
 	//m_fJumpTime += 0.001f * fDistance;
 	m_fJumpTime += 0.05f;

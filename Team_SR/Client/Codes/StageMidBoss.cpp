@@ -39,7 +39,43 @@ HRESULT CStageMidBoss::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
 		return E_FAIL;
-	
+
+	MonsterBasicArgument stArg;
+	stArg.uiSize = sizeof(MonsterBasicArgument);
+	stArg.pPlayer = m_pPlayer;
+	stArg.vPosition = { 10.f, 10.f, 170.f };
+	//if (FAILED(m_pManagement->AddGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	CGameObject::Tag + L"Shark",
+	//	(_int)CurrentSceneID,
+	//	CLayer::Tag + L"Monster",
+	//	nullptr, static_cast<void*>(&stArg))))
+	//	return E_FAIL;
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	if (FAILED(m_pManagement->AddGameObjectInLayer(
+	//		(_int)ESceneID::Static,
+	//		CGameObject::Tag + L"Spider",
+	//		(_int)CurrentSceneID,
+	//		CLayer::Tag + L"Monster",
+	//		nullptr, static_cast<void*>(&stArg))))
+	//		return E_FAIL;
+	//}
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Glacier",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -48,6 +84,7 @@ HRESULT CStageMidBoss::ReadyScene()
 _uint CStageMidBoss::UpdateScene(float fDeltaTime)
 {
 	return Super::UpdateScene(fDeltaTime);
+
 }
 
 _uint CStageMidBoss::LateUpdateScene()
@@ -73,6 +110,21 @@ _uint CStageMidBoss::KeyProcess(float fDeltaTime)
 		}
 
 		return CHANGE_SCNENE;
+	}
+	if (m_pKeyMgr->Key_Down('M'))
+	{
+		int random = rand() % 100 - 50;
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { -55.f, 10.f, 200.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Spider",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 	}
 
 	return _uint();

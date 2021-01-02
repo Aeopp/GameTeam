@@ -50,7 +50,7 @@ _uint CBullet::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera");
 	if (nullptr == pCamera)
 		return E_FAIL;
 
@@ -58,7 +58,6 @@ _uint CBullet::LateUpdateGameObject(float fDeltaTime)
 	vec3 BillboardRotation = _TransformDesc.vRotation;
 	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
 	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
-
 
 	return _uint();
 }

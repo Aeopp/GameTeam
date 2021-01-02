@@ -30,6 +30,11 @@ private:
 	float m_fStartY = 0.f;
 	float m_fJumpPower = 0.f;
 	float m_fJumpTime = 0.f;
+	bool  m_bStop = false;
+
+	float Shine = 20.f;
+	//                   렌더링 컴포넌트
+	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
 };
 
 #endif // GlacierParticle_h__

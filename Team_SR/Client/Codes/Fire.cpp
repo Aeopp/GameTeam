@@ -32,17 +32,19 @@ HRESULT CFire::ReadyGameObject(void * pArg /*= nullptr*/)
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 1.5f,1.5f,1.5f };
-
+	bGravity = false;
 	m_fFrameCnt = 0.f;
 	m_fFrameSpeed = 7.f;
 	m_fStartFrame = 0.f;
-	m_fEndFrame = 21.f;
+	m_fEndFrame = 20.f;
 
 	return S_OK;
 }
 
 _uint CFire::UpdateGameObject(float fDeltaTime)
 {
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CMonster::UpdateGameObject(fDeltaTime);
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::FIRE);
 	CSoundMgr::Get_Instance()->PlaySound(L"fire_burn.wav", CSoundMgr::FIRE);
@@ -51,6 +53,8 @@ _uint CFire::UpdateGameObject(float fDeltaTime)
 
 _uint CFire::LateUpdateGameObject(float fDeltaTime)
 {
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
 

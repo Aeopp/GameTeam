@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\GlacierBullet.h"
+#include "DXWrapper.h"
+#include "NormalUVVertexBuffer.h"
 
 
 CGlacierBullet::CGlacierBullet(LPDIRECT3DDEVICE9 pDevice)
@@ -24,11 +26,21 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	if (sizeof(BulletBasicArgument) == *(_uint*)pArg)
+	{
+		BulletBasicArgument* pData = (BulletBasicArgument*)pArg;
+		m_vLook  = pData->vDir;
+		m_vLook.y = 0.f;
+		m_pTransformCom->m_TransformDesc.vPosition = pData->vPosition;
+		delete pData;
+		pData = nullptr;
+	}
+
+	//m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
-	m_stOriginStatus.fRange = 100.f;
+	m_stOriginStatus.fRange = 500.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 5.f;
 	m_stOriginStatus.fImpact = 0.f;
@@ -46,6 +58,7 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
+	
 	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동
 	m_stStatus.fRange -= D3DXVec3Length(&vMoveDstnc);			// 사거리 차감
@@ -53,7 +66,7 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 	}
 
-	_CollisionComp->Update(m_pTransformCom);
+	//_CollisionComp->Update(m_pTransformCom);
 
 	return _uint();
 }
@@ -75,14 +88,44 @@ HRESULT CGlacierBullet::RenderGameObject()
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
+	// 현재 사용중이던 텍스쳐를 여기에 세팅.
+	{
+		//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
+		{
+			IDirect3DBaseTexture9* const  DiffuseTexture = m_pTexture->GetTexture((_uint)m_fFrameCnt);
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+			m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), DiffuseTexture);
+		}
+		// 1.       그냥 세팅을 안하거나
+		{
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+		}
+		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
+		{
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
+		}
+	}
+	// 월드 행렬 바인딩
+	_Effect.SetVSConstantData(m_pDevice, "World", World);
+	// 광택 설정 
+	_Effect.SetPSConstantData(m_pDevice, "Shine", Shine);
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+	_VertexBuffer->Render();
+
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -102,14 +145,21 @@ HRESULT CGlacierBullet::AddComponents()
 		return E_FAIL;
 #pragma endregion
 
-	// 충돌 컴포넌트
+	if (FAILED(CGameObject::AddComponent(
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
+		return E_FAIL;
+
+	 //충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.bMapBlock = false;
+	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bWallCollision = true;
-	_Info.bFloorCollision = true;
+	_Info.bWallCollision = false;
+	_Info.bFloorCollision = false;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -149,5 +199,6 @@ CGameObject * CGlacierBullet::Clone(void * pArg /*= nullptr*/)
 
 void CGlacierBullet::Free()
 {
+	SafeRelease(_VertexBuffer);
 	CBullet::Free();
 }

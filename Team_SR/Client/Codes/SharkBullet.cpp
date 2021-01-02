@@ -26,8 +26,10 @@ HRESULT CSharkBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = *(_vector*)pArg;
 	}
-	m_pTransformCom->m_TransformDesc.vScale = { 5.f, 5.f, 5.f };
+	m_pTransformCom->m_TransformDesc.vPosition.y = 10.f;
+	m_pTransformCom->m_TransformDesc.vScale = { 12.f, 12.f, 12.f };
 	int random = rand() % 3;
+	bGravity = false;
 	switch (random)
 	{
 	case 0:
@@ -135,10 +137,10 @@ HRESULT CSharkBullet::AddComponents()
 
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.bMapBlock = false;
-	_Info.Radius = 2.5f;
+	_Info.bMapBlock = true;
+	_Info.Radius = 6.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
-	_Info.bFloorCollision = false;
+	_Info.bFloorCollision = true;
 	_Info.bWallCollision = false;
 	_Info.Owner = this;
 	CGameObject::AddComponent(

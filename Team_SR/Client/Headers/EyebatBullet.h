@@ -29,6 +29,7 @@ public:
 
 private:
 	_vector m_vLook;
+	_vector m_vStartPoint;
 	float m_fAngle = 0.f;
 	float m_fStartY = 0.f;
 	float m_fJumpPower = 0.f;
