@@ -6,7 +6,6 @@
 #include "ParticleSystem.h"
 #include "Player.h"
 
-
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)

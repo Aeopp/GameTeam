@@ -175,8 +175,8 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 	};
 
 	
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 23.f;
-	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 20.f;
+	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI*2.f;
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
 
@@ -522,30 +522,48 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 10.f;
 			break;
 		case Item::HealthSmall:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 5.f;
 			break;
 		case Item::ManaBig:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 10.f ;
 			break;
 		case Item::ManaSmall:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 5.f;
 			break;
 		case Item::Ammo:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"treasure1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tWeaponInfo.iMinAmmo += 20l;
 			break;
 		case Item::KeyBlue:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyBlue = true;
 			break;
 		case Item::KeyRed:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyRed= true;
 			break;
-		case Item::KeyYellow:
+		case Item::KeyYellow:			
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyYellow = true;
 			break;
 		case Item::Upgrade:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"treasure1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bUpgrade = true;
 			break;
 		default:
