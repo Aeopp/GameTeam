@@ -8,8 +8,8 @@
 
 USING(Engine)
 
-float  CCollisionComponent::MapCollisionCheckDistanceMin= 20.f;
-float  CCollisionComponent::CollisionCheckDistanceMin = 20.f;
+float  CCollisionComponent::MapCollisionCheckDistanceMin= 40.0f;
+float  CCollisionComponent::CollisionCheckDistanceMin = 40.0f;
 std::vector<CCollisionComponent*> CCollisionComponent::_Comps{};
 int32_t CCollisionComponent::CurrentID{ 0 };
 std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};
@@ -259,19 +259,23 @@ void CCollisionComponent::DebugDraw()
 
 	DWORD _AlphaValue;
 	m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);
-	if (_AlphaValue == TRUE)
-		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	m_pDevice->SetVertexShader(nullptr);
 	m_pDevice->SetPixelShader(nullptr);
-	mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
-	m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
-	_SphereMesh->DrawSubset(0);
-	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
-	if (_AlphaValue == TRUE)
-		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	{
+		mat DebugSphereWorld = MATH::WorldMatrix({ 1,1,1 }, { 0,0,0 }, _Sphere.Center);
+		m_pDevice->SetTransform(D3DTS_WORLD, &DebugSphereWorld);
+		IDirect3DVertexBuffer9* _VtxBuf;
+		_SphereMesh->GetVertexBuffer(&_VtxBuf);
+		m_pDevice->SetStreamSource(0, _VtxBuf, 0, _SphereMesh->GetNumBytesPerVertex());
+		m_pDevice->SetFVF(_SphereMesh->GetFVF());
+		_SphereMesh->DrawSubset(0);
+	}
+
+	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, _AlphaValue);
 };
  const std::vector<PlaneInfo>& CCollisionComponent::GetMapPlaneInfo()
  { 

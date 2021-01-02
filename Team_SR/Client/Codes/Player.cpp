@@ -278,13 +278,22 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		{
 			StaffChargeT = 4.0f;
 		};
-
+		static float StaffLoopSoundTime = 1.0f;
+		StaffLoopSoundTime += fDeltaTime;
 		MyLight _Light{};
 		_Light.Location =MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
 		_Light.Diffuse = { 0,0,0.0f + (StaffChargeT *0.5f),1 };
 		_Light.Priority = 1l;
 		_Light.Radius =  (StaffChargeT * 50.0f);
 		Effect::RegistLight(std::move(_Light));
+
+		if (StaffLoopSoundTime>=1.0f)
+		{
+			StaffLoopSoundTime -= 1.f;
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+			CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav",CSoundMgr::CHANNELID::PLAYER_WEAPON);
+		}
+		
 	}
 
 	auto iter = LightingDurationTable.find(L"SpellLight");
@@ -509,7 +518,7 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 	{
 		auto *const _ScreenEffect = dynamic_cast<CScreenEffect* const > (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->ItemInteractionEffect();
-	
+ 	
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
@@ -1274,6 +1283,11 @@ void CPlayer::DaggerThrow()
 	CSoundMgr::Get_Instance()->PlaySound(L"magic_dagger_throw_1.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
+	_Notify[6u] = [this]() 
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+		CSoundMgr::Get_Instance()->PlaySound(L"magic_dagger_recall.wav", CSoundMgr::PLAYER_WEAPON);
+	};
 	_Notify[12ul] = [this]()
 	{
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
@@ -1802,7 +1816,7 @@ void CPlayer::MagnumFire()
 void CPlayer::StaffFire()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"Staff_Shot.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_basic_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
@@ -1893,12 +1907,11 @@ void CPlayer::StaffFire()
 void CPlayer::StaffCharge()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_charging_full.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
 	StaffChargeT = 0.0f;
-
 
 	_Notify[16ul] = [this]()
 	{
@@ -1913,7 +1926,8 @@ void CPlayer::StaffCharge()
 void CPlayer::StaffRelease()
 {
 	AnimationTextures::NotifyType _Notify;
-
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_basic_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	bStaffLoop = false;
 
 	_Notify[5ul] = [this]()
@@ -2001,8 +2015,6 @@ void CPlayer::StaffRelease()
 			ParticleSystem::Instance().PushParticle(_BlastParticle);
 		};
 	}
-
-
 
 	StaffChargeT = 0.0f;
 }
@@ -2095,6 +2107,16 @@ void CPlayer::FlakReload()
 
 void CPlayer::ElectricStaffFire()
 {
+	static float SoundStaffLightningLoopTime = 2.f;
+	SoundStaffLightningLoopTime += _DeltaTime;
+
+	if (SoundStaffLightningLoopTime >=2.f)
+	{
+		SoundStaffLightningLoopTime -= 2.f;
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+		CSoundMgr::Get_Instance()->PlaySound(L"staff_lightning_loop.wav", CSoundMgr::PLAYER_WEAPON);
+	};
+
 	if (_AnimationTextures.GetAnimationKey() != L"ElectricStaff_Fire")
 	{
 		_AnimationTextures.ChangeAnim(L"ElectricStaff_Fire", WeaponAnimDelta, 6ul, true);

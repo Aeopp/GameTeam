@@ -93,7 +93,8 @@ HRESULT CDecorator::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
-	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	mat World = m_pTransformCom->m_TransformDesc.matWorld;
+
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
 	// 현재 사용중이던 텍스쳐를 여기에 세팅.
@@ -141,7 +142,7 @@ HRESULT CDecorator::AddComponents()
 	// 충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 1.0f;
 	_Info.Tag = CCollisionComponent::ETag::Decorator;
 	_Info.bWallCollision = false;
 	_Info.bFloorCollision = true;
@@ -842,15 +843,6 @@ void CDecorator::UpdateFromMyDecoType()
 		break;
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 static void DecoratorBomb(CDecorator* const _Target)

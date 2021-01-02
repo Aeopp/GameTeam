@@ -21,6 +21,7 @@ HRESULT CStage6th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage6th;
 	NextSceneID = ESceneID::StageFinalBoss;
 	using MapType = CMap6th;
+	BgmKey = L"007 Medieval - Sable Scabbard.wav";
 
 	Super::ReadyScene();
 

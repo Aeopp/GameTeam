@@ -21,6 +21,7 @@ HRESULT CStage3rd::ReadyScene()
 	CurrentSceneID = ESceneID::Stage3rd;
 	NextSceneID = ESceneID::StageMidBoss;
 	using MapType = CMap3rd;
+	BgmKey = L"004 Entering Level - Waking The Dead.wav";
 
 	Super::ReadyScene();
 

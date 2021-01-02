@@ -14,8 +14,6 @@
 #include "ParticleSystem.h"
 #include "ScreenEffect.h"
 #include "MiniMap.h"
-
-
 #include "Hangman.h"
 #include "Hellhound.h"
 
@@ -58,7 +56,8 @@ HRESULT CStage::ReadyScene()
 _uint CStage::UpdateScene(float fDeltaTime)
 {
 	KeyProcess(fDeltaTime);
-	CSoundMgr::Get_Instance()->PlaySound(L"BGM_STAGE1.wav", CSoundMgr::BGM);
+
+	CSoundMgr::Get_Instance()->PlaySound(const_cast<TCHAR*>(BgmKey.c_str()), CSoundMgr::BGM);
 	return 	CScene::UpdateScene(fDeltaTime);
 }
 
@@ -278,6 +277,8 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 
 void CStage::Free()
 {
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BGM);
+
 	SafeRelease(m_pPlayer);
 	SafeRelease(_Camera);
 	SafeRelease(_CurrentMap);

@@ -21,6 +21,7 @@ HRESULT CStage2nd::ReadyScene()
 	CurrentSceneID = ESceneID::Stage2nd;
 	NextSceneID = ESceneID::Stage3rd;
 	using MapType = CMap2nd;
+	BgmKey = L"018 Medieval Epilogue - Chloradyne.wav";
 
 	Super::ReadyScene();
 

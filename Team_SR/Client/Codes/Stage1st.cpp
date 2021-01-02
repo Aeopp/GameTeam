@@ -21,7 +21,7 @@ HRESULT CStage1st::ReadyScene()
 	CurrentSceneID = ESceneID::Stage1st;
 	NextSceneID = ESceneID::Stage2nd;
 	using MapType = CMap1st;
-
+	BgmKey = L"001 Jerry and Luke's Final Theme.wav";
 	Super::ReadyScene();
 
 	CPlayer::InitInfo _InitInfo;

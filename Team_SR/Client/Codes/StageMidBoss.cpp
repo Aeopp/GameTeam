@@ -21,6 +21,7 @@ HRESULT CStageMidBoss::ReadyScene()
 	CurrentSceneID = ESceneID::StageMidBoss;
 	NextSceneID = ESceneID::Stage4th;
 	using MapType = CMapMidBoss;
+	BgmKey = L"037 Egyptian - Osiris.wav";
 
 	Super::ReadyScene();
 
