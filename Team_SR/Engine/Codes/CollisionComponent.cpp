@@ -8,8 +8,8 @@
 
 USING(Engine)
 
-float  CCollisionComponent::MapCollisionCheckDistanceMin= 10.f;
-float  CCollisionComponent::CollisionCheckDistanceMin = 10.f;
+float  CCollisionComponent::MapCollisionCheckDistanceMin= 20.f;
+float  CCollisionComponent::CollisionCheckDistanceMin = 20.f;
 std::vector<CCollisionComponent*> CCollisionComponent::_Comps{};
 int32_t CCollisionComponent::CurrentID{ 0 };
 std::vector<PlaneInfo> CCollisionComponent::_MapPlaneInfo{};

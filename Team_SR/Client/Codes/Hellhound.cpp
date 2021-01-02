@@ -16,6 +16,9 @@ HRESULT CHellhound::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
+	GibTable = { 44,45,46,47,48,49,50,51};
+
+
 	return S_OK;
 }
 

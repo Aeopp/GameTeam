@@ -494,7 +494,6 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		else
 		{
 			m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
-
 			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 			_ScreenEffect->BloodEffect();
 			auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
@@ -510,7 +509,7 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 	{
 		auto *const _ScreenEffect = dynamic_cast<CScreenEffect* const > (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->ItemInteractionEffect();
-		_ScreenEffect->BloodEffect();
+	
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
@@ -1027,6 +1026,8 @@ void CPlayer::ShotGunShot()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1075,6 +1076,7 @@ void CPlayer::ShotGunShot()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1216,6 +1218,8 @@ void CPlayer::DaggerStab()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1242,6 +1246,8 @@ void CPlayer::DaggerStab()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1264,8 +1270,8 @@ void CPlayer::DaggerStab()
 void CPlayer::DaggerThrow()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"knife_throw.wav", CSoundMgr::PLAYER_WEAPON);
-
+// 	CSoundMgr::Get_Instance()->PlaySound(L"knife_throw.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"magic_dagger_throw_1.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
 	_Notify[12ul] = [this]()
@@ -1385,6 +1391,8 @@ void CPlayer::AkimboFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1427,6 +1435,8 @@ void CPlayer::AkimboFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1598,6 +1608,8 @@ void CPlayer::MagnumFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1644,6 +1656,8 @@ void CPlayer::MagnumFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -2208,6 +2222,8 @@ void CPlayer::ElectricStaffFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -2271,6 +2287,8 @@ void CPlayer::ElectricStaffFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;

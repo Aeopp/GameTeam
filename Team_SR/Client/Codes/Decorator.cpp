@@ -673,18 +673,17 @@ void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 
 	m_stDecoratorInfo.fHP -= _Target->CurrentAttack;
 
-
+	if(m_stDecoratorInfo.fHP<0.0f)
 	{
-		// 체력 다하면 중력과 충돌 끄기
-		// bGravity = false;
-		//_CollisionComp->bCollision = false;
-		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
-	}
+		bGravity = false;
+		_CollisionComp->bCollision = false;
+		_CollisionComp->bWallCollision = false;
+		_CollisionComp->bFloorCollision = false;
 
-	if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
-	{
-		// TODO :: if( HP < 0.0f )
-		DecoratorBomb(this);
+		if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
+		{
+			DecoratorBomb(this);
+		}
 	}
 
 	if (m_fTriggerHP != -1.f) 
@@ -704,8 +703,6 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
 
-
-
 	if (_Particle)
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
@@ -716,12 +713,19 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 		}
 
 		m_stDecoratorInfo.fHP -= _ParticlePtr->CurrentAttack;
-		// 체력 다하면 중력과 충돌 끄기
-		// bGravity = false;
-		//_CollisionComp->bCollision = false;
-		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
 
+		if (m_stDecoratorInfo.fHP < 0.0f)
+		{
+			bGravity = false;
+			_CollisionComp->bCollision = false;
+			_CollisionComp->bWallCollision = false;
+			_CollisionComp->bFloorCollision = false;
 
+			if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
+			{
+				DecoratorBomb(this);
+			}
+		}
 
 		if (m_fTriggerHP != -1.f)
 		{
@@ -749,8 +753,6 @@ void CDecorator::Frame_Move(float fDeltaTime)
 
 HRESULT CDecorator::IsBillboarding()
 {
-
-
 	CMainCamera* pCamera = dynamic_cast<CMainCamera*> (m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera"));
 	if (nullptr == pCamera)
 		return E_FAIL;

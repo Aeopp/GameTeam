@@ -44,10 +44,10 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 		}
 	}
 
-	for (size_t i = 0; i < 52u; ++i)
-	{
-		GibTable.push_back(i);
-	};
+	//for (size_t i = 0; i < 52u; ++i)
+	//{
+	//	GibTable.push_back(i);
+	//};
 
 	return S_OK;
 }
@@ -125,8 +125,8 @@ HRESULT CMonster::RenderGameObject()
 		}
 		// 1.       그냥 세팅을 안하거나
 		{
-			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
-			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0l);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0l);
 		}
 		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
 		{
