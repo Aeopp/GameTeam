@@ -523,22 +523,22 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		{
 		case Item::HealthBig:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
-			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 10.f;
 			break;
 		case Item::HealthSmall:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
-			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 5.f;
 			break;
 		case Item::ManaBig:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
-			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 10.f ;
 			break;
 		case Item::ManaSmall:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
-			CSoundMgr::Get_Instance()->PlaySound(L"pickup1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 5.f;
 			break;
 		case Item::Ammo:

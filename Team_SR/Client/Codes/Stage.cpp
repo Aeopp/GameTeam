@@ -47,7 +47,7 @@ HRESULT CStage::ReadyScene()
 		CLayer::Tag + TYPE_NAME<CScreenEffect>(),
 		nullptr, nullptr)))
 		return E_FAIL;
-
+	CUIManager::Get_Instance()->UIOpen(CurrentSceneID);
 	CUIManager::Get_Instance()->OnAllUI();
 
 	return S_OK;

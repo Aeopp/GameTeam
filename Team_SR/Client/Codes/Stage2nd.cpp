@@ -15,7 +15,6 @@ CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
 
-
 HRESULT CStage2nd::ReadyScene()
 {
 	CurrentSceneID = ESceneID::Stage2nd;
