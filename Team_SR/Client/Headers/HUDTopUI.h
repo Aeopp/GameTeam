@@ -20,9 +20,7 @@ private:	//내부메서드관련
 	HRESULT	AddComponent();
 
 public:
-	void SetShownBarUI() { m_bShown = true; }//ui나타내기
-	void SetInvisibleBarUI() { m_bShown = false; }//ui숨기기
-	void SetMaxHPAndHP(int* _piMaxValue, int* _piValue);
+	void SetMaxHPAndHP(_int* _piMaxValue, _int* _piValue);
 public:
 	static CHUDTopUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
@@ -32,15 +30,12 @@ private:
 	class CVIBuffer* m_pBossHPVIBufferCom = nullptr;
 	class CTexture* m_pBossHPTextureCom = nullptr;
 
-	class CLoadingBar* m_pBossHPBar = nullptr;
+	class CLoadingBar* m_pMonsterHPBar = nullptr;
 
 private:
 	UI_DESC m_tBossUIDesc;
-	bool m_bShown;
-#pragma region Test_Font
-	int m_iMax;
-	int m_iMin;
-#pragma endregion
+	bool m_bMonsterHPbarShown = false;
+
 };
 
 #define __HUDBOSSBAR_H__

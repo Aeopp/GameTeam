@@ -13,11 +13,10 @@ HRESULT CMap2nd::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	mat MapWorld  = MATH::WorldMatrix({ 5,5,5}, { 0,0,0}, { 0,0,0});
+	mat MapWorld = MATH::WorldMatrix({ 2.5,2.5,2.5 }, { 0,0,0 }, { 0,0,0 });
 	LoadMap(L"..\\Resources\\Map\\2\\", MapWorld);
 	LoadFloor(L"..\\Resources\\Map\\2\\");
 	LoadBars(L"..\\Resources\\Map\\2\\"); 
-	
 	LoadCubeMap(L"..\\Resources\\CubeMap\\Blue.dds");
 
 	return S_OK;
@@ -28,6 +27,7 @@ HRESULT CMap2nd::ReadyGameObject(void * pArg)
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
 
+	CreateMiniMap();
 
 	return S_OK;
 }

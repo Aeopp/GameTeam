@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Headers\VIBuffer_UITexture.h"
+#include "VIBuffer_UITexture.h"
 
 
 CVIBuffer_UITexture::CVIBuffer_UITexture(LPDIRECT3DDEVICE9 pDevice)
@@ -89,41 +89,10 @@ HRESULT CVIBuffer_UITexture::Render_VIBuffer()
 	return m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iVertexCount, 0, m_iTriCount);
 }
 
-
-//HRESULT CVIBuffer_UITexture::SetDisposVertex()
-//{
-//	//x축 : 비율을 정해서 먼저 계산한 것을 -값 늦게 계산한 것을 +값으로 한다.
-//	//y축 : 
-//	VTX_TEXTURE* pVertex = nullptr;
-//	m_pVB->Lock(0, 0, (void**)&pVertex, 0);
-//
-//	_vector vBefor = { 0, 0, 0 };
-//	vBefor.x = m_vSize.x * m_vCenter.x;
-//	vBefor.y = m_vSize.y * m_vCenter.y;
-//	_vector vAfter = { 0, 0, 0 };
-//	vAfter.x = m_vSize.x - vBefor.x;
-//	vAfter.y = m_vSize.y - vBefor.y;
-//
-//	pVertex[0].vPosition = D3DXVECTOR3(-vBefor.x, vAfter.y, 0.f);
-//	pVertex[0].vUV = m_v2UVArr[0];
-//	pVertex[1].vPosition = D3DXVECTOR3(vAfter.x, vAfter.y, 0.f);
-//	pVertex[1].vUV = m_v2UVArr[1];
-//	pVertex[2].vPosition = D3DXVECTOR3(vAfter.x, -vBefor.y, 0.f);
-//	pVertex[2].vUV = m_v2UVArr[2];
-//	pVertex[3].vPosition = D3DXVECTOR3(-vBefor.x, -vBefor.y, 0.f);
-//	pVertex[3].vUV = m_v2UVArr[3];
-//
-//	m_pVB->Unlock();
-//	return S_OK;
-//}
-
-
-
-
 HRESULT CVIBuffer_UITexture::SetDisUVposX(float _xUV)
 {
 	if (1.f <= _xUV)
-		_xUV = 1.f - 0.01f;
+		_xUV = 1.f;
 
 	VTX_TEXTURE* pVertex = nullptr;
 	m_pVB->Lock(0, 0, (void**)&pVertex, 0);

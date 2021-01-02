@@ -25,15 +25,10 @@ HRESULT CLoadingBar::ReadyGameObject(void * pArg/* = nullptr*/)
 	if (FAILED(CGameUI::ReadyGameObject(pArg)))
 		return E_FAIL;
 
-	ZeroMemory(&m_tFontInfo, sizeof(D3DXFONT_DESCW));
+	if (nullptr == pArg)
+		return E_FAIL;
 
-	m_tFontInfo.Height = 20;
-	m_tFontInfo.Width = 10;
-	m_tFontInfo.Weight = FW_HEAVY;
-	m_tFontInfo.CharSet = HANGUL_CHARSET;
-	lstrcpy(m_tFontInfo.FaceName, L"돋움체");
-
-		UI_ADD_COMPONENT tagInput = *static_cast<UI_ADD_COMPONENT*>(pArg);;
+	UI_BAR_ADD_COMPONENT tagInput = *static_cast<UI_BAR_ADD_COMPONENT*>(pArg);;
 
 	if (FAILED(AddComponent(tagInput.wsPrototypeTag, tagInput.wsComponentTag)))
 		return E_FAIL;
@@ -43,7 +38,7 @@ HRESULT CLoadingBar::ReadyGameObject(void * pArg/* = nullptr*/)
 	m_fMaxSize = m_UIDesc.vUISize.x;
 	m_UIDesc.vUIPos = tagInput.tUIDesc.vUIPos;
 	m_UIDesc.vCenter = tagInput.tUIDesc.vCenter;
-
+	m_bTextOut = tagInput.bTextOut;
 
 	if (FAILED(D3DXCreateSprite(m_pDevice, &m_pSprite)))
 	{
@@ -51,7 +46,9 @@ HRESULT CLoadingBar::ReadyGameObject(void * pArg/* = nullptr*/)
 		return E_FAIL;
 	}
 
-	if (FAILED(D3DXCreateFontIndirect(m_pDevice, &m_tFontInfo, &m_pFont)))
+	//Font
+	if (FAILED(D3DXCreateFont(m_pDevice, 20, 20, 1000, 1, false,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, 0, L"신명조", &m_pFont)))
 	{
 		PRINT_LOG(L"Warning", L"폰트불러오기 실패");
 		return E_FAIL;
@@ -63,6 +60,9 @@ HRESULT CLoadingBar::ReadyGameObject(void * pArg/* = nullptr*/)
 _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 {
 	CGameUI::UpdateGameObject(fDeltaTime);
+
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
+		return S_OK;
 
 	char* pStr;
 
@@ -95,6 +95,8 @@ _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 	//	reinterpret_cast<float*>(&m_fRatio),
 	//	0.f, +1.f, "%f");
 
+	
+
 	ImGui::Separator();
 	ImGui::SliderInt(" Max",
 		reinterpret_cast<int*>(m_piMaxValue),
@@ -105,6 +107,7 @@ _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 		0, 1000, "%d");
 	ImGui::End();
 
+	
 	m_UIDesc.vUISize.x = m_fMaxSize * m_fRatio;
 
 
@@ -113,6 +116,8 @@ _uint CLoadingBar::UpdateGameObject(float fDeltaTime)
 
 _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 {
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
+		return S_OK;
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
 	if (m_piMinValue && m_piMaxValue)
@@ -130,7 +135,7 @@ _uint CLoadingBar::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CLoadingBar::RenderGameObject()
 {
-	if (!m_bShown)
+	if (!m_bShown || !m_piMaxValue || !m_piMinValue)
 		return S_OK;
 
 	if (FAILED(CGameUI::RenderGameObject()))
@@ -158,30 +163,32 @@ HRESULT CLoadingBar::RenderGameObject()
 
 	static_cast<CVIBuffer_UITexture*>(m_pVIBufferCom)->ResetDisUVpos();
 
-	TCHAR szRenderLife[64] = L"";
-	swprintf_s(szRenderLife, L"%d / %d", *m_piMinValue, *m_piMaxValue);
+	if (m_bTextOut)
+		RenderText();
 
-	D3DXMATRIX matWorld, matScale, matTrans;
-	D3DXMatrixScaling(&matScale, 10.f, 10.f, 0.f);
-	D3DXMatrixTranslation(&matTrans, 0.f, 0.f, 0.f);
-	//D3DXMatrixTranslation(&matTrans, m_UIDesc.vUIPos.x, m_UIDesc.vUIPos.y, m_UIDesc.vUIPos.z);
-	matWorld = matScale * matTrans;
-
-	m_pSprite->SetTransform(&matWorld);
-	//m_pFont->DrawTextW(m_pSprite, szRenderLife, lstrlen(szRenderLife),
-	//	nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
-	m_pFont->DrawTextW(m_pSprite, szRenderLife, lstrlen(szRenderLife),
-		nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
-
-	
 	return S_OK;
 }
 
-void CLoadingBar::SetMaxHPAndHP(int* _piMaxValue, int* _piValue)
+void CLoadingBar::SetMaxValueAndMinValue(_int* _piMaxValue, _int* _piValue)
 {
 	m_piMaxValue = _piMaxValue;
 	m_piMinValue = _piValue;
 }
+
+int CLoadingBar::GetMaxValue()
+{
+	if (!m_piMaxValue)
+		return 0;
+	return *m_piMaxValue;
+}
+
+int CLoadingBar::GetMinValue()
+{
+	if (!m_piMinValue)
+		return 0;
+	return *m_piMinValue;
+}
+
 
 HRESULT CLoadingBar::AddComponent(wstring _PrototypeTag, wstring _ComponentTag)
 {
@@ -192,6 +199,35 @@ HRESULT CLoadingBar::AddComponent(wstring _PrototypeTag, wstring _ComponentTag)
 		_ComponentTag,
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoadingBar::RenderText()
+{
+	TCHAR szRenderLife[64] = L"";
+	swprintf_s(szRenderLife, L"%d / %d", *m_piMinValue, *m_piMaxValue);
+
+	_vector vTextSize = { 2.f, 1.f, 0.f };
+	_vector vConvertUIPos = m_UIDesc.vUIPos;
+	vConvertUIPos.y = -m_UIDesc.vUIPos.y;
+	vConvertUIPos.x += (float)(WINCX / 2);
+	vConvertUIPos.y += (float)(WINCY / 2);
+
+	if (0.f <= m_UIDesc.vCenter.x)
+	{
+		vConvertUIPos.x -= m_UIDesc.vCenter.x * m_fMaxSize;
+	}
+
+	//y축은 위로 올림
+	if (0.f <= m_UIDesc.vCenter.y)
+	{
+		vConvertUIPos.y -= (m_UIDesc.vUISize.y / 2.f) - 10.f;
+	}
+
+	RECT rc = { vConvertUIPos.x - (vTextSize.x / 2), vConvertUIPos.y - (vTextSize.y / 2),
+		vConvertUIPos.x + (vTextSize.x / 2), vConvertUIPos.y + (vTextSize.y / 2) };
+	m_pFont->DrawText(NULL, szRenderLife, -1, &rc, DT_LEFT | DT_NOCLIP, 0xffffff00);
 
 	return S_OK;
 }
@@ -228,6 +264,8 @@ CGameObject * CLoadingBar::Clone(void * pArg/* = nullptr*/)
 
 void CLoadingBar::Free()
 {
+
 	//m_pFont->Release();
 	CGameUI::Free();
 }
+

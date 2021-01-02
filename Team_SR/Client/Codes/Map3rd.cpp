@@ -13,7 +13,7 @@ HRESULT CMap3rd::ReadyGameObjectPrototype()
 	if (FAILED(Super::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
-	mat MapWorld = MATH::WorldMatrix({ 5,5,5 }, { 0,0,0 }, { 0,0,0 });
+	mat MapWorld = MATH::WorldMatrix({ 2.5,2.5,2.5 }, { 0,0,0 }, { 0,0,0 });
 	LoadMap(L"..\\Resources\\Map\\3\\", MapWorld);
 	LoadFloor(L"..\\Resources\\Map\\3\\");
 	LoadBars(L"..\\Resources\\Map\\3\\"); 
@@ -26,6 +26,7 @@ HRESULT CMap3rd::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+	CreateMiniMap();
 
 	return S_OK;
 }

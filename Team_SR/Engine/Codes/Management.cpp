@@ -208,6 +208,11 @@ HRESULT CManagement::AddGameObjectPrototype(
 	if (nullptr == m_pGameObjectManager)
 		return E_FAIL;
 
+	if (iSceneIndex == -1)
+	{
+		iSceneIndex = CurrentSceneIdx;
+	}
+
 	return m_pGameObjectManager->AddGameObjectPrototype(iSceneIndex, GameObjectTag, pPrototype);
 }
 
@@ -221,6 +226,7 @@ HRESULT CManagement::AddGameObjectInLayer(
 {
 	if (nullptr == m_pGameObjectManager)
 		return E_FAIL;
+
 
 	return m_pGameObjectManager->AddGameObjectInLayer(iFromSceneIndex, GameObjectTag, iToSceneIndex, LayerTag, ppGameObject, pArg);
 }

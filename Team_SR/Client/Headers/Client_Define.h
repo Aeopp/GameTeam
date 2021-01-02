@@ -8,7 +8,6 @@
 #define TERRAIN_VTX_COUNTX 129
 #define TERRAIN_VTX_COUNTZ 129
 
-
 #define NO_COPY(ClassName)						\
 private:										\
 	ClassName(const ClassName&) = delete;		\

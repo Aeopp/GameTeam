@@ -38,7 +38,7 @@ HRESULT CHUDTopUI::ReadyGameObjectPrototype()
 
 
 #pragma endregion
-	UI_ADD_COMPONENT tagLayerCom;
+	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_BosHP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = WINCX - 500.f - 70.f;
@@ -50,25 +50,20 @@ HRESULT CHUDTopUI::ReadyGameObjectPrototype()
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_HUDBossHPBar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = false;
 
 	//HUD_HP_Bar
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_LoadingBar",
-		(_int)ESceneID::Stage1st,
+		(_int)ESceneID::Static,
 		L"Layer_HUD_HUDBossHPBar",
-		(CGameObject**)&m_pBossHPBar, &tagLayerCom)))
+		(CGameObject**)&m_pMonsterHPBar, &tagLayerCom)))
 		return E_FAIL;
 #pragma endregion
 
-#pragma region Test_Font
+	m_pMonsterHPBar->SetInvisibleBarUI();
 
-	m_iMax = 100;
-
-	m_iMin = 100;
-
-	m_pBossHPBar->SetMaxHPAndHP(&m_iMax, &m_iMin);
-#pragma endregion
 	return S_OK;
 }
 
@@ -102,7 +97,6 @@ HRESULT CHUDTopUI::ReadyGameObject(void * pArg/* = nullptr*/)
 	
 	m_tBossUIDesc.vCenter = _vector(0.f, 0.f, 0.f);
 
-
 	return S_OK;
 }
 
@@ -132,28 +126,41 @@ _uint CHUDTopUI::UpdateGameObject(float fDeltaTime)
 		reinterpret_cast<float*>(&m_tBossUIDesc.vUIPos),
 		-1000.f, +2000.f, "%f");
 	ImGui::Separator();
-	ImGui::SliderInt("BossUIDesc Shown",
+	
+	ImGui::SliderInt("TopUIDesc Shown",
 		reinterpret_cast<int*>(&m_bShown),
+		0, 1, "%f");
+	ImGui::SliderInt("BossUIDesc Shown",
+		reinterpret_cast<int*>(&m_bMonsterHPbarShown),
 		0, 1, "%f");
 
 	ImGui::End();
+
+	//몬스터 HP관련 업데이트
+	if (!m_pMonsterHPBar)
+		return _uint();
+	else
+	{
+		//Monster is Dead!!
+		//Reset input the SetMaxHPAndHP()
+		if (0 >= m_pMonsterHPBar->GetMinValue())
+		{
+			m_bMonsterHPbarShown = false;
+			m_pMonsterHPBar->SetInvisibleBarUI();
+		}
+	}
+
 	return _uint();
 }
 
 _uint CHUDTopUI::LateUpdateGameObject(float fDeltaTime)
 {
+	if (!m_bShown)
+		return S_OK;
+
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
 	CGameUI::SetupUIMatrix(m_tBossUIDesc);
-
-	if (m_bShown)
-	{
-		m_pBossHPBar->SetShownBarUI();
-	}
-	else
-	{
-		m_pBossHPBar->SetInvisibleBarUI();
-	}
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
@@ -163,6 +170,9 @@ _uint CHUDTopUI::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CHUDTopUI::RenderGameObject()
 {
+	if (!m_bShown)
+		return S_OK;
+
 	if (FAILED(CGameUI::RenderGameObject()))
 		return E_FAIL;
 
@@ -181,8 +191,15 @@ HRESULT CHUDTopUI::RenderGameObject()
 	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
 
-	if (!m_bShown)
+	if (!m_bMonsterHPbarShown)
+	{
+		m_pMonsterHPBar->SetInvisibleBarUI();
 		return S_OK;
+	}
+	else
+	{
+		m_pMonsterHPBar->SetShownBarUI();
+	}
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_tBossUIDesc.matWorld)))
 		return E_FAIL;
 
@@ -226,13 +243,14 @@ HRESULT CHUDTopUI::AddComponent()
 		(CComponent**)&m_pBossHPTextureCom)))
 		return E_FAIL;
 	
-
 	return S_OK;
 }
 
-void CHUDTopUI::SetMaxHPAndHP(int * _piMaxValue, int * _piValue)
+void CHUDTopUI::SetMaxHPAndHP(_int * _piMaxValue, _int * _piValue)
 {
-	m_pBossHPBar->SetMaxHPAndHP(_piMaxValue, _piValue);
+	m_bMonsterHPbarShown = true;
+	m_pMonsterHPBar->SetMaxValueAndMinValue(_piMaxValue, _piValue);
+	m_pMonsterHPBar->SetShownBarUI();
 }
 
 CHUDTopUI * CHUDTopUI::Create(LPDIRECT3DDEVICE9 pDevice)

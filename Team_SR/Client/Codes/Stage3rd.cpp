@@ -6,7 +6,7 @@
 #include "Map1st.h"
 #include "Glacier.h"
 #include "BatGrey.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "Eyebat.h"
 #include "Map3rd.h"
 #include "StageMidBoss.h"
@@ -24,6 +24,17 @@ HRESULT CStage3rd::ReadyScene()
 
 	Super::ReadyScene();
 
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { -66,5,-96};
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
+
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)CurrentSceneID,
@@ -37,10 +48,10 @@ HRESULT CStage3rd::ReadyScene()
 		GameObjTag,
 		(_int)CurrentSceneID,
 		LayerTag,
-		reinterpret_cast<CGameObject**>(&_CurrentMap), nullptr)))
+		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
 
-	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 5,5,5 });
+	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

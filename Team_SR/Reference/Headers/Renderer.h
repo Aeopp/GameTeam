@@ -21,8 +21,8 @@ private:
 	HRESULT RenderPriority();
 	HRESULT RenderNoAlpha();
 	HRESULT RenderAlpha();
-	HRESULT RenderParticleAfterAlpha();
 	HRESULT RenderUI();
+	HRESULT RenderScreenPostEffect();
 public:
 	static CRenderer* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;

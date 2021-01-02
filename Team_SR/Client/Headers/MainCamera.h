@@ -22,29 +22,24 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 public:
-	void Shake(const float Duration,
-				const float Force,
-				vec3 AxisScale,
-					
-					const float Vibration);
 	bool bThirdPerson = false;
 	float FirstPersonRotationSpeed = 10.f;
+	void Shake(const float Force,const vec3 Dir, const float Duration);
+private:
+	vec3 Offset{ 0,0,-20};
+	vec3 OffsetRotation{ 0,0,0 };
+private:
+	void CameraEditProcess()&;
 private:
 	struct ShakeInfo
 	{
-		float Duration{ 0.f };
 		float Force{ 1.f };
-		float Vibration{ 1.f };
-		vec3 AxisScale{ 1,1,1 };
-		vec3 Goal{ 0,0,0 };
+		vec3 Dir{ 1,0,0 };
+		float Duration{ 0.1f };
 	};
-	vec3 Offset{ 0,0,-20};
-	vec3 OffsetRotation{ 0,0,0 };
-
-private:
-	void CameraEditProcess()&;
-	void Shaking(const float DeltaTime);
-	ShakeInfo _CurrentShake;
+	std::vector<typename CMainCamera::ShakeInfo> ShakeInfos{};
+	vec3 CurrentShake{ 0,0 , 0 };
+	void CalcCurrentShake(const float DeltaTime);
 };
 
 #define __MAINCAMERA_H__

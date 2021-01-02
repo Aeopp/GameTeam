@@ -9,7 +9,7 @@
 #include "GlacierParticle.h"
 #include "CollisionComponent.h"
 #include "DXWrapper.h"
-#include "PlyerInfoUI.h"
+#include "PlayerInfoUI.h"
 #include "WeaponAmmoInfoUI.h"
 
 #include "Terret.h"
@@ -28,11 +28,14 @@
 #include "HangmanBomb.h" // 행맨 폭탄
 #include "Hellhound.h"	// 헬 하운드
 #include "ParticleSystem.h"
+#include "MiniMap.h"
 
 #include "Particle.h"	// 파티클
 #include "Decorator.h"	// 장식품
 #include "Shark.h"
 #include "SharkBullet.h"
+#include "ScreenEffect.h"
+
 
 CMainApp::CMainApp()
 	: m_pManagement(CManagement::Get_Instance())
@@ -114,11 +117,22 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_Player
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		/*L"Layer_Player"*/
 		CGameObject::Tag + TYPE_NAME<CPlayer>(),
 		CPlayer::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CMiniMap>(),
+		CMiniMap::Create(m_pDevice))))
+		return E_FAIL;
+
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CScreenEffect>(),
+		CScreenEffect::Create(m_pDevice))))
+		return E_FAIL;
 
 	// 카메라
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -140,8 +154,8 @@ HRESULT CMainApp::ReadyStaticResources()
 #pragma region GameObject_PlayerInfoUI
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CPlyerInfoUI>(),
-		CPlyerInfoUI::Create(m_pDevice))))
+		CGameObject::Tag + TYPE_NAME<CPlayerInfoUI>(),
+		CPlayerInfoUI::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1128,7 +1142,6 @@ HRESULT CMainApp::ReadyStaticResources()
 
 
 #pragma endregion Component_Texutre_Shark
-
 
 	return S_OK;
 }
