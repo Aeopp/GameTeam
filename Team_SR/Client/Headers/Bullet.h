@@ -33,6 +33,10 @@ protected:
 	CTexture* m_pTexture;	// 텍스처
 	BulletStatus m_stOriginStatus;	// 총알 원본 스텟
 	BulletStatus m_stStatus;		// 총알 스텟
+
+public:
+	float Shine = 20.f;
+	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
 };
 
 #define  __BULLET_H__

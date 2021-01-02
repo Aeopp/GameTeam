@@ -63,7 +63,7 @@ HRESULT CStageMidBoss::ReadyScene()
 	//}
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + L"Spider",
+		CGameObject::Tag + L"Eyebat",
 		(_int)CurrentSceneID,
 		CLayer::Tag + L"Monster",
 		nullptr, static_cast<void*>(&stArg))))

@@ -63,7 +63,7 @@ _uint CGlacierParticle::LateUpdateGameObject(float fDeltaTime)
 
 	CEffect::IsBillboarding();
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
 

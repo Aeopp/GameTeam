@@ -33,6 +33,7 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 	m_iDir = 1;
 	//
+	bGravity = false;
 
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;
@@ -313,7 +314,7 @@ HRESULT CEyebat::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
