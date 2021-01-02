@@ -247,6 +247,7 @@ HRESULT CRenderer::RenderUI()
 	m_pDevice->SetPixelShader(nullptr);
 
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	if (HRESULT(m_pDevice->GetTransform(D3DTS_VIEW, &PrevView)))
 		return E_FAIL;
@@ -272,6 +273,7 @@ HRESULT CRenderer::RenderUI()
 
 	m_GameObjects[(_int)ERenderID::UI].clear();
 	m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	m_pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 
 	if (HRESULT(m_pDevice->SetTransform(D3DTS_VIEW, &PrevView)))
 		return E_FAIL;
