@@ -799,45 +799,45 @@ void CPlayer::_1ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dagger;
 	_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ShotGun;
 	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 void CPlayer::_3ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Akimbo;
 	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 void CPlayer::_4ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Magnum;
 	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
 	_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 
 void CPlayer::_6ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dynamite;
 	_AnimationTextures.ChangeAnim(L"Dynamite_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 
 void CPlayer::_7ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ElectricStaff;
 	_AnimationTextures.ChangeAnim(L"ElectricStaff_Idle", FLT_MAX, 1);
-
+	CUIManager::Get_Instance()->AllShownWeaponUI();
 }
 
 void CPlayer::_8ButtonEvent()&

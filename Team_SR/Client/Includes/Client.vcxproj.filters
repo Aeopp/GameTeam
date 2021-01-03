@@ -411,9 +411,6 @@
     <ClInclude Include="..\Headers\SharkBullet.h">
       <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SoundMgr.h">
-      <Filter>97.Others</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClInclude>
@@ -502,6 +499,9 @@
     <ClInclude Include="..\Headers\ScreenEffect.h" />
     <ClInclude Include="..\Headers\PlayerInfoUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SoundMgr.h">
+      <Filter>96.SoundMgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -732,9 +732,6 @@
     <ClCompile Include="..\Codes\SharkBullet.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SoundMgr.cpp">
-      <Filter>97.Others</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\01.WeaponAmmoInfoUI</Filter>
     </ClCompile>
@@ -806,6 +803,9 @@
     <ClCompile Include="..\Codes\ScreenEffect.cpp" />
     <ClCompile Include="..\Codes\PlayerInfoUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SoundMgr.cpp">
+      <Filter>96.SoundMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,9 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
+public:
+	void SetShownUI() { m_bShown = true; m_fShownTime = 0.f; }
+
 private:
 	HRESULT	AddComponent(wstring _PrototypeTag, wstring _ComponentTag);
 	HRESULT RenderText();
@@ -31,6 +34,9 @@ private:
 	_uint m_iID;
 	wstring m_wsObjectName;
 	bool m_bOnWeapon = true;
+
+	float m_fShownTime = 0.f;
+	const float m_cfMaxShownTime;
 };
 
 #define __WEAPONUI_H__

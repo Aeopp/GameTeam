@@ -7,7 +7,7 @@ USING(UI_AddTag)
 _uint CWeaponUI::s_iCloneCount = 0;
 LPD3DXFONT CWeaponUI::s_pFont = nullptr;
 CWeaponUI::CWeaponUI(LPDIRECT3DDEVICE9 pDevice)
-	: CGameUI(pDevice)
+	: CGameUI(pDevice), m_cfMaxShownTime(5.f)
 {
 }
 
@@ -81,9 +81,14 @@ _uint CWeaponUI::UpdateGameObject(float fDeltaTime)
 	
 	ImGui::End();
 
-	m_bShown = true;
+	//m_bShown = true;
 	if (!m_bShown)
+	{
+		m_fShownTime = 0.f;
 		return _uint();
+	}
+	m_fShownTime += fDeltaTime;
+
 	return _uint();
 }
 
@@ -95,6 +100,13 @@ _uint CWeaponUI::LateUpdateGameObject(float fDeltaTime)
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
+
+	if (m_cfMaxShownTime <= m_fShownTime)
+	{
+		m_fShownTime = 0.f;
+		m_bShown = false;
+		CUIManager::Get_Instance()->AllInvisibleWeaponUI();
+	}
 
 	return _uint();
 }
@@ -127,7 +139,6 @@ HRESULT CWeaponUI::RenderGameObject()
 			return E_FAIL;
 	}
 	
-
 	return S_OK;
 }
 
@@ -203,6 +214,5 @@ CGameObject * CWeaponUI::Clone(void * pArg/* = nullptr*/)
 
 void CWeaponUI::Free()
 {
-	CUIManager::Get_Instance()->FreeToWeaponUIArrayClone();
 	CGameUI::Free();
 }

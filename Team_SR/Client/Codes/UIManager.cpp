@@ -114,8 +114,6 @@ HRESULT CUIManager::ReadyUI()
 	return S_OK;
 }
 
-//HRESULT CUIManager::CreateCloneUI()
-//{
 HRESULT CUIManager::UIOpen(ESceneID SceneID)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
@@ -217,40 +215,40 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 #pragma endregion
 #pragma endregion
 
-
 	if (0 != m_iWeaponUIIndex)
 		return E_FAIL;
-	m_iWeaponUIIndex = 0;
 
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Akimbo");
+	m_iWeaponUIIndex = 0;
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dagger");
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ShotGun");
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Akimbo");
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Magnum");
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Staff");
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dynamite");
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ElectricStaff");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Flak");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Magnum");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ShotGun");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Staff");
+	//SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Flak");
+	
 	return S_OK;
 }
 
 void CUIManager::OnAllUI()
 {
-	m_pPlayerInfoUI->SetShownBarUI();
-	m_pWeaponAmmoInfoUI->SetShownBarUI();
-	m_pHUD_HpBar->SetShownBarUI();
-	m_pHUD_ManaBar->SetShownBarUI();
-	m_pHUD_AmmoBar->SetShownBarUI();
-	m_pHUD_TopUI->SetShownBarUI();
+	m_pPlayerInfoUI->SetShownUI();
+	m_pWeaponAmmoInfoUI->SetShownUI();
+	m_pHUD_HpBar->SetShownUI();
+	m_pHUD_ManaBar->SetShownUI();
+	m_pHUD_AmmoBar->SetShownUI();
+	m_pHUD_TopUI->SetShownUI();
 }
 
 void CUIManager::OffAllUI()
 {
-	m_pPlayerInfoUI->SetInvisibleBarUI();
-	m_pWeaponAmmoInfoUI->SetInvisibleBarUI();
-	m_pHUD_HpBar->SetInvisibleBarUI();
-	m_pHUD_ManaBar->SetInvisibleBarUI();
-	m_pHUD_AmmoBar->SetInvisibleBarUI();
-	m_pHUD_TopUI->SetInvisibleBarUI();
+	m_pPlayerInfoUI->SetInvisibleUI();
+	m_pWeaponAmmoInfoUI->SetInvisibleUI();
+	m_pHUD_HpBar->SetInvisibleUI();
+	m_pHUD_ManaBar->SetInvisibleUI();
+	m_pHUD_AmmoBar->SetInvisibleUI();
+	m_pHUD_TopUI->SetInvisibleUI();
 }
 
 void CUIManager::OnPlayerInfo(PLAYER_INFO* _pPlayerDesc)
@@ -276,6 +274,22 @@ void CUIManager::OffWeaponAmmom()
 void CUIManager::OnMonsterBar(_int* _iMaxHP, _int* _iMinHP)
 {
 	m_pHUD_TopUI->SetMaxHPAndHP(_iMaxHP, _iMinHP);
+}
+
+void CUIManager::AllShownWeaponUI()
+{
+	for (int i = 0; i < m_iWeaponUIIndex; ++i)
+	{
+		m_pWeaponUIArr[i]->SetShownUI();
+	}
+}
+
+void CUIManager::AllInvisibleWeaponUI()
+{
+	for (int i = 0; i < m_iWeaponUIIndex; ++i)
+	{
+		m_pWeaponUIArr[i]->SetInvisibleUI();
+	}
 }
 
 HRESULT CUIManager::SetWeaponUIArrayPrototype()
@@ -380,7 +394,7 @@ HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
 	tagLayerCom.tUIDesc.vUISize.x = 150.f;
 	tagLayerCom.tUIDesc.vUISize.y = 150.f;
 	tagLayerCom.tUIDesc.vUISize.z = 0;
-	tagLayerCom.tUIDesc.vUIPos.x = -780 + (tagLayerCom.tUIDesc.vUISize.x * m_iWeaponUIIndex);
+	tagLayerCom.tUIDesc.vUIPos.x = -500 + (tagLayerCom.tUIDesc.vUISize.x * m_iWeaponUIIndex);
 	tagLayerCom.tUIDesc.vUIPos.y = 300;
 	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
 	tagLayerCom.tUIDesc.vCenter = _vector(0.f, 0.f, 0.f);
@@ -406,6 +420,5 @@ HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
 
 void CUIManager::Free()
 {
-	m_iWeaponUIIndex = 0;
 	SafeRelease(m_pDevice);
 }
