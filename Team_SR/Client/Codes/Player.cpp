@@ -299,6 +299,11 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	auto iter = LightingDurationTable.find(L"SpellLight");
 	if ( (iter != std::end(LightingDurationTable) ) && _AnimationTextures.GetAnimationKey() == L"Light"  &&  ( iter->second<=0.0f) )
 	{
+		if (MATH::RandInt({ 0,9 }) == 0)
+		{
+			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+		}
+
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->Blur();
 
@@ -337,6 +342,12 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	if (_AnimationTextures.GetAnimationKey() == L"Freeze")
 	{
+		if (MATH::RandInt({ 0,9 }) == 0)
+		{
+			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+		}
+		
+
 		FreezeParticlePush();
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->FreezeEffect();
@@ -794,33 +805,39 @@ void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ShotGun;
 	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_3ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Akimbo;
 	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_4ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Magnum;
 	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
 	_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_6ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dynamite;
 	_AnimationTextures.ChangeAnim(L"Dynamite_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_7ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ElectricStaff;
 	_AnimationTextures.ChangeAnim(L"ElectricStaff_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_8ButtonEvent()&
@@ -1144,7 +1161,7 @@ void CPlayer::ShotGunShot()
 		_CollisionInfos.clear();
 	}
 
-
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo-6,0);
 
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
 }
@@ -1385,6 +1402,8 @@ void CPlayer::DaggerThrow()
 			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
 		};
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 6, 0);
 }
 
 void CPlayer::AkimboFire()
@@ -1601,6 +1620,11 @@ void CPlayer::AkimboFire()
 			
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
+	}
+
+	if (MATH::RandInt({ 0,9 }) == 0)
+	{
+		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
 	}
 }
 
@@ -1829,6 +1853,8 @@ void CPlayer::MagnumFire()
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
 }
 
 void CPlayer::StaffFire()
@@ -1920,6 +1946,8 @@ void CPlayer::StaffFire()
 		};
 
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 3, 0);
 }
 
 void CPlayer::StaffCharge()
@@ -2035,6 +2063,8 @@ void CPlayer::StaffRelease()
 	}
 
 	StaffChargeT = 0.0f;
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
 }
 
 void CPlayer::StaffLoop()
@@ -2098,7 +2128,7 @@ void CPlayer::DynamiteThrow()
 	_AnimationTextures.ChangeAnim(L"Dynamite_Throw", WeaponAnimDelta, 
 		15ul, false, std::move(_Notify));
 
-
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 20, 0);
 }
 
 void CPlayer::FlakFire()
@@ -2380,6 +2410,9 @@ void CPlayer::ElectricStaffFire()
 			ParticleSystem::Instance().PushParticle(_Particle);
 		};
 	};
+
+	if ( MATH::RandInt({ 0,9 })==0 )
+		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
 }
 
 void CPlayer::FreezeParticlePush()&

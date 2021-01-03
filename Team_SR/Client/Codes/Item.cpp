@@ -38,6 +38,7 @@ HRESULT CItem::ReadyGameObject(void* pArg /*= nullptr*/)
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 0.5f, 0.5f, 0.5f };
+	CreateAfterTime = 0.0f;
 
 	if (FAILED(CItem::AddComponents()))
 		return E_FAIL;
