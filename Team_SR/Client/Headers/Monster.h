@@ -26,6 +26,7 @@ private:
 	HRESULT IsBillboarding();
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 	void FlashHit()&;
 	void FreezeHit()&;

@@ -186,6 +186,16 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 }
 }
 
+void CMonster::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
+{
+	CGameObject::MapHit(_PlaneInfo, _CollisionInfo);
+
+	if (_CollisionInfo.Flag == L"Floor")
+	{
+		bGravity = false;
+	};
+}
+
 void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
