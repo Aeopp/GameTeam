@@ -20,8 +20,20 @@ HRESULT CStageBoss::ReadyScene()
 	CurrentSceneID = ESceneID::StageFinalBoss;
 	NextSceneID = ESceneID::Stage1st;
 	using MapType = CMapBoss;
+	BgmKey = L"030 Antarctic - The End.wav";
 
 	Super::ReadyScene();
+
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { 160, 5, -10 };
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
 
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(

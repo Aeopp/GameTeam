@@ -21,8 +21,19 @@ HRESULT CStage5th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage5th;
 	NextSceneID = ESceneID::Stage6th;
 	using MapType = CMap5th;
+	BgmKey = L"006 Medieval - Oubliette.wav";
 
 	Super::ReadyScene();
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { 19,5,-28 };
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
 
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(

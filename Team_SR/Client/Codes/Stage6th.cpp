@@ -21,8 +21,20 @@ HRESULT CStage6th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage6th;
 	NextSceneID = ESceneID::StageFinalBoss;
 	using MapType = CMap6th;
+	BgmKey = L"007 Medieval - Sable Scabbard.wav";
 
 	Super::ReadyScene();
+
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { -8 ,5 ,-25 };
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
 
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(

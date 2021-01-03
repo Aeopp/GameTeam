@@ -40,6 +40,7 @@ public:
 	// UI 초기화
 	HRESULT ReadyUI();
 	HRESULT CreateCloneUI();
+	void UIOpen(ESceneID SceneID);
 public:
 	// 모든 UI
 	void OnAllUI();

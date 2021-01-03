@@ -12,6 +12,11 @@ private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CPlayer() = default;
 public:
+	struct InitInfo
+	{
+		ESceneID SceneID;
+		vec3 Location;
+	};
 	enum class EWeaponState : uint8_t
 	{
 		Dagger,
@@ -67,30 +72,10 @@ public: //변수
 	bool bKeyYellow = false;
 	bool bKeyRed = false;
 public:
-	//struct PlayerInfo
-	//{
-	//	const int32_t MaxAmmo = 100l;
-	//	const float MaxHP = 100.0f;
-	//	const float MaxMP = 100.f;
-	//	int32_t Ammo = 0l;
-	//	float HP = MaxHP;
-	//	float MP = MaxMP;
-	//};
 public:
-//	FORCEINLINE const PlayerInfo& GetPlayerInfo()const& { return _CurrentInfo; };
-
 	WEAPON_INFO m_tWeaponInfo;
-	//int32_t mMaxAmmo = 100l;
-	//int32_t Ammo = 100l;
-
 	PLAYER_INFO m_tPlayerInfo;
-	//float mMaxHP = 100.f;
-	//float HP = 100.f;
-	//float mMaxMP = 100.f;
-	//float MP = 100.f;
-
 private:
-	//PlayerInfo _CurrentInfo;
 	class CNormalUVVertexBuffer* _VertexBuffer{ nullptr };
 	AnimationTextures _AnimationTextures;
 	AnimationTextures _WeaponEffectAnimTextures;

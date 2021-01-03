@@ -7,7 +7,6 @@ CGlacierBullet::CGlacierBullet(LPDIRECT3DDEVICE9 pDevice)
 {
 }
 
-
 HRESULT CGlacierBullet::ReadyGameObjectPrototype()
 {
 	if (FAILED(CBullet::ReadyGameObjectPrototype()))

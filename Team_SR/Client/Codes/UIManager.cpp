@@ -170,6 +170,33 @@ HRESULT CUIManager::CreateCloneUI()
 		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
+
+//#pragma region Test_Player
+//
+//	m_iMaxs[0] = 100;
+//	m_iMaxs[1] = 200;
+//	m_iMaxs[2] = 50;
+//		  
+//	m_iMins[0] = 100;
+//	m_iMins[1] = 100;
+//	m_iMins[2] = 100;
+//
+//	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
+//	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
+//	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
+//#pragma endregion
+//#pragma region Test_MonsterHP
+//	m_iMax = 100;
+//	m_iMin = 100;
+//
+//	OnMonsterBar(&m_iMax, &m_iMin);
+//#pragma endregion
+	return S_OK;
+}
+
+void CUIManager::UIOpen(ESceneID SceneID)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
 	//------------------------------------------------------
 	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_HP_Bar
@@ -186,13 +213,13 @@ HRESULT CUIManager::CreateCloneUI()
 	tagLayerCom.bTextOut = true;
 
 	//HUD_HP_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
+	pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_LoadingBar",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_HUD_HpBar",
-		(CGameObject**)&m_pHUD_HpBar, &tagLayerCom)))
-		return E_FAIL;
+		(CGameObject**)&m_pHUD_HpBar, &tagLayerCom);
+
 #pragma endregion
 #pragma region HUD_Mana_Bar
 	//HUD_Mana_Bar
@@ -207,13 +234,13 @@ HRESULT CUIManager::CreateCloneUI()
 	tagLayerCom.wsComponentTag = L"Com_Texture";
 	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
+	pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_LoadingBar",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_HUD_ManaBar",
-		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom)))
-		return E_FAIL;
+		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom);
+
 #pragma endregion
 
 #pragma region HUD_Mana_Bar
@@ -229,13 +256,12 @@ HRESULT CUIManager::CreateCloneUI()
 	tagLayerCom.wsComponentTag = L"Com_Texture";
 	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
+			pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_LoadingBar",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_HUD_AmmoBar",
-		(CGameObject**)&m_pHUD_AmmoBar, &tagLayerCom)))
-		return E_FAIL;
+		(CGameObject**)&m_pHUD_AmmoBar, &tagLayerCom);
 #pragma endregion
 #pragma endregion
 

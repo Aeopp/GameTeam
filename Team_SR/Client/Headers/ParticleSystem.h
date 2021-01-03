@@ -5,8 +5,6 @@
 #include "DXWrapper.h"
 #include "Vertexs.h"
 #include "CollisionComponent.h"
-#include "boost/optional.hpp"
-
 
 USING(Engine)
 
@@ -93,7 +91,7 @@ public:
 	void ParticleEventFromName(Particle& _Particle, const float DeltaTime);
 	void ParticleRenderSetFromName(Particle& _Particle, Effect::Info& _Effect);
 	void ParticleCollisionEventFromName(CollisionParticle& _Particle);
-	boost::optional<Particle&> GetParticle(const std::wstring& Name);
+	std::pair<bool, Particle*> GetParticle(const std::wstring& Name);
 public:
 	void PushParticle(const Particle& _Particle);
 	void PushCollisionParticle(const CollisionParticle& _Particle);

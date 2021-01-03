@@ -15,14 +15,25 @@ CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
 
-
 HRESULT CStage2nd::ReadyScene()
 {
 	CurrentSceneID = ESceneID::Stage2nd;
 	NextSceneID = ESceneID::Stage3rd;
 	using MapType = CMap2nd;
+	BgmKey = L"018 Medieval Epilogue - Chloradyne.wav";
 
 	Super::ReadyScene();
+
+	CPlayer::InitInfo _InitInfo;
+	_InitInfo.SceneID = CurrentSceneID;
+	_InitInfo.Location = { 5,5,9};
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CPlayer>(),
+		(_int)CurrentSceneID,
+		CLayer::Tag + TYPE_NAME<CPlayer>(),
+		(CGameObject**)&m_pPlayer, &_InitInfo)))
+		return E_FAIL;
 
 	const wstring GameObjTag = CGameObject::Tag + TYPE_NAME<MapType>();
 	if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -41,7 +52,8 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\CandleTorchData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 	
 
 

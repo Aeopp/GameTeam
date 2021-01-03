@@ -10,7 +10,6 @@
 #include "MainCamera.h"
 #include "Item.h"
 #include "ScreenEffect.h"
-#include "boost/algorithm/clamp.hpp"
 #include "UIManager.h"
 
 
@@ -162,8 +161,8 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 
 	if (pArg)
 	{
-		ESceneID*  _SceneIDPtr = reinterpret_cast<ESceneID*>(pArg);
-		switch (*_SceneIDPtr)
+		CPlayer::InitInfo*  _InitInfoPtr = reinterpret_cast<CPlayer::InitInfo*>(pArg);
+		switch (_InitInfoPtr->SceneID)
 		{
 		case ESceneID::StageMidBoss:
 		case ESceneID::StageFinalBoss:
@@ -172,11 +171,12 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 		default:
 			break;
 		}
+		m_pTransformCom->m_TransformDesc.vPosition = _InitInfoPtr->Location;
 	};
 
-	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 23.f;
-	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI;
-	m_pTransformCom->m_TransformDesc.vPosition = { 0,10,0 };
+	
+	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 20.f;
+	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI*2.f;
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
 	m_pTransformCom->m_TransformDesc.vScale = { 1,1,1 };
 
@@ -278,18 +278,32 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		{
 			StaffChargeT = 4.0f;
 		};
-
+		static float StaffLoopSoundTime = 1.0f;
+		StaffLoopSoundTime += fDeltaTime;
 		MyLight _Light{};
 		_Light.Location =MATH::ConvertVec4((m_pTransformCom->GetLocation() + m_pTransformCom->GetLook() * 10.f), 1.f);
 		_Light.Diffuse = { 0,0,0.0f + (StaffChargeT *0.5f),1 };
 		_Light.Priority = 1l;
 		_Light.Radius =  (StaffChargeT * 50.0f);
 		Effect::RegistLight(std::move(_Light));
+
+		if (StaffLoopSoundTime>=1.0f)
+		{
+			StaffLoopSoundTime -= 1.f;
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+			CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav",CSoundMgr::CHANNELID::PLAYER_WEAPON);
+		}
+		
 	}
 
 	auto iter = LightingDurationTable.find(L"SpellLight");
 	if ( (iter != std::end(LightingDurationTable) ) && _AnimationTextures.GetAnimationKey() == L"Light"  &&  ( iter->second<=0.0f) )
 	{
+		if (MATH::RandInt({ 0,9 }) == 0)
+		{
+			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+		}
+
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->Blur();
 
@@ -328,6 +342,12 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	if (_AnimationTextures.GetAnimationKey() == L"Freeze")
 	{
+		if (MATH::RandInt({ 0,9 }) == 0)
+		{
+			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+		}
+		
+
 		FreezeParticlePush();
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->FreezeEffect();
@@ -395,7 +415,14 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 	if (_AnimationTextures.GetAnimationKey() == L"ElectricStaff_Fire")
 	{
 		CurrentElectricStaffFireDamage += fDeltaTime * ElectricStaffReinForceTimeRequired;
-		CurrentElectricStaffFireDamage = boost::algorithm::clamp<float>(CurrentElectricStaffFireDamage, 0.0f, ElectricStaffDamageLimitTable[2]);
+		if (CurrentElectricStaffFireDamage <= 0.0f)
+		{
+			CurrentElectricStaffFireDamage = 0.0f;
+		}
+		else if (CurrentElectricStaffFireDamage >= ElectricStaffDamageLimitTable[2])
+		{
+			CurrentElectricStaffFireDamage = ElectricStaffDamageLimitTable[2]; 
+		};
 		LightingDurationTable[L"ElectricStaffFire"] = 0.1f;
 		bWeaponEffectRender = true;
 	}
@@ -487,7 +514,6 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		else
 		{
 			m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
-
 			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 			_ScreenEffect->BloodEffect();
 			auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
@@ -503,34 +529,52 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 	{
 		auto *const _ScreenEffect = dynamic_cast<CScreenEffect* const > (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->ItemInteractionEffect();
-		_ScreenEffect->BloodEffect();
+ 	
 		switch (_Item->GetItemInfo().etype)
 		{
 		case Item::HealthBig:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 10.f;
 			break;
 		case Item::HealthSmall:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinHP += 5.f;
 			break;
 		case Item::ManaBig:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 10.f ;
 			break;
 		case Item::ManaSmall:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tPlayerInfo.iMinMana += 5.f;
 			break;
 		case Item::Ammo:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"treasure1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			m_tWeaponInfo.iMinAmmo += 20l;
 			break;
 		case Item::KeyBlue:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyBlue = true;
 			break;
 		case Item::KeyRed:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyRed= true;
 			break;
-		case Item::KeyYellow:
+		case Item::KeyYellow:			
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"secret.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bKeyYellow = true;
 			break;
 		case Item::Upgrade:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
+			CSoundMgr::Get_Instance()->PlaySound(L"treasure1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
 			bUpgrade = true;
 			break;
 		default:
@@ -761,33 +805,39 @@ void CPlayer::_2ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ShotGun;
 	_AnimationTextures.ChangeAnim(L"ShotGun_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_3ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Akimbo;
 	_AnimationTextures.ChangeAnim(L"Akimbo_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_4ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Magnum;
 	_AnimationTextures.ChangeAnim(L"Magnum_Idle", FLT_MAX, 1);
+
 }
 void CPlayer::_5ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Staff;
 	_AnimationTextures.ChangeAnim(L"Staff_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_6ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::Dynamite;
 	_AnimationTextures.ChangeAnim(L"Dynamite_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_7ButtonEvent()&
 {
 	_CurrentWeaponState = EWeaponState::ElectricStaff;
 	_AnimationTextures.ChangeAnim(L"ElectricStaff_Idle", FLT_MAX, 1);
+
 }
 
 void CPlayer::_8ButtonEvent()&
@@ -1020,6 +1070,8 @@ void CPlayer::ShotGunShot()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1068,6 +1120,7 @@ void CPlayer::ShotGunShot()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1108,7 +1161,7 @@ void CPlayer::ShotGunShot()
 		_CollisionInfos.clear();
 	}
 
-
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo-6,0);
 
 	LightingDurationTable[L"ShotGunShot"] = 0.3f;
 }
@@ -1209,6 +1262,8 @@ void CPlayer::DaggerStab()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1235,6 +1290,8 @@ void CPlayer::DaggerStab()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1257,10 +1314,15 @@ void CPlayer::DaggerStab()
 void CPlayer::DaggerThrow()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"knife_throw.wav", CSoundMgr::PLAYER_WEAPON);
-
+// 	CSoundMgr::Get_Instance()->PlaySound(L"knife_throw.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"magic_dagger_throw_1.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 
+	_Notify[6u] = [this]() 
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+		CSoundMgr::Get_Instance()->PlaySound(L"magic_dagger_recall.wav", CSoundMgr::PLAYER_WEAPON);
+	};
 	_Notify[12ul] = [this]()
 	{
 		_AnimationTextures.ChangeAnim(L"Dagger_Idle", FLT_MAX, 1);
@@ -1340,6 +1402,8 @@ void CPlayer::DaggerThrow()
 			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
 		};
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 6, 0);
 }
 
 void CPlayer::AkimboFire()
@@ -1378,6 +1442,8 @@ void CPlayer::AkimboFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1420,6 +1486,8 @@ void CPlayer::AkimboFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1553,6 +1621,11 @@ void CPlayer::AkimboFire()
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 0.7f);
 		}
 	}
+
+	if (MATH::RandInt({ 0,9 }) == 0)
+	{
+		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
+	}
 }
 
 void CPlayer::MagnumFire()
@@ -1591,6 +1664,8 @@ void CPlayer::MagnumFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -1637,6 +1712,8 @@ void CPlayer::MagnumFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -1776,12 +1853,14 @@ void CPlayer::MagnumFire()
 			PlaneEffect(*this, std::get<0>(*find_iter), std::get<1>(*find_iter), 1.25f);
 		}
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
 }
 
 void CPlayer::StaffFire()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"Staff_Shot.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_basic_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
@@ -1867,17 +1946,18 @@ void CPlayer::StaffFire()
 		};
 
 	}
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 3, 0);
 }
 
 void CPlayer::StaffCharge()
 {
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
-	CSoundMgr::Get_Instance()->PlaySound(L"staff_charge_loopable_sound_loop.wav", CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_charging_full.wav", CSoundMgr::PLAYER_WEAPON);
 	AnimationTextures::NotifyType _Notify;
 	bStaffLoop = false;
 
 	StaffChargeT = 0.0f;
-
 
 	_Notify[16ul] = [this]()
 	{
@@ -1892,7 +1972,8 @@ void CPlayer::StaffCharge()
 void CPlayer::StaffRelease()
 {
 	AnimationTextures::NotifyType _Notify;
-
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"staff_basic_shot.wav", CSoundMgr::PLAYER_WEAPON);
 	bStaffLoop = false;
 
 	_Notify[5ul] = [this]()
@@ -1981,9 +2062,9 @@ void CPlayer::StaffRelease()
 		};
 	}
 
-
-
 	StaffChargeT = 0.0f;
+
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
 }
 
 void CPlayer::StaffLoop()
@@ -2047,7 +2128,7 @@ void CPlayer::DynamiteThrow()
 	_AnimationTextures.ChangeAnim(L"Dynamite_Throw", WeaponAnimDelta, 
 		15ul, false, std::move(_Notify));
 
-
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 20, 0);
 }
 
 void CPlayer::FlakFire()
@@ -2074,6 +2155,16 @@ void CPlayer::FlakReload()
 
 void CPlayer::ElectricStaffFire()
 {
+	static float SoundStaffLightningLoopTime = 2.f;
+	SoundStaffLightningLoopTime += _DeltaTime;
+
+	if (SoundStaffLightningLoopTime >=2.f)
+	{
+		SoundStaffLightningLoopTime -= 2.f;
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::PLAYER_WEAPON);
+		CSoundMgr::Get_Instance()->PlaySound(L"staff_lightning_loop.wav", CSoundMgr::PLAYER_WEAPON);
+	};
+
 	if (_AnimationTextures.GetAnimationKey() != L"ElectricStaff_Fire")
 	{
 		_AnimationTextures.ChangeAnim(L"ElectricStaff_Fire", WeaponAnimDelta, 6ul, true);
@@ -2125,11 +2216,11 @@ void CPlayer::ElectricStaffFire()
 		_Particle.RotationMatrix = Rot;
 	};
 
-	boost::optional<Particle&> _Particle = ParticleSystem::Instance().GetParticle(EffectName);
+	std::pair<bool,Particle*> _Particle = ParticleSystem::Instance().GetParticle(EffectName);
 
-	if (_Particle)
+	if (_Particle.first)
 	{
-		CalcElectricInfo(*_Particle, CalcElectricStaffGizmo(), _Camera->GetCameraDesc().vAt);
+		CalcElectricInfo(*_Particle.second, CalcElectricStaffGizmo(), _Camera->GetCameraDesc().vAt);
 	}
 	else
 	{
@@ -2147,7 +2238,7 @@ void CPlayer::ElectricStaffFire()
 	}
 
 
-	boost::optional<Particle&> _BlastParticle =
+	std::pair<bool, Particle*> _BlastParticle =
 		ParticleSystem::Instance().GetParticle(L"ElectricBlast");
 
 	static auto CalcBlastInfo = [](
@@ -2160,9 +2251,9 @@ void CPlayer::ElectricStaffFire()
 		_Particle.Location = Gizmo + Dir * Rich;
 	};
 
-	if (_BlastParticle)
+	if (_BlastParticle.first)
 	{
-		CalcBlastInfo(*_BlastParticle, _Camera->GetCameraDesc().vAt, CalcElectricStaffGizmo(), ElectricStaffFireRich);
+		CalcBlastInfo(*_BlastParticle.second, _Camera->GetCameraDesc().vAt, CalcElectricStaffGizmo(), ElectricStaffFireRich);
 	}
 	else
 	{
@@ -2201,6 +2292,8 @@ void CPlayer::ElectricStaffFire()
 		(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 		auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+		if (!_CollisionComp->bCollision)continue;
+
 		if (_CollisionComp)
 		{
 			float t0 = 0;
@@ -2264,6 +2357,8 @@ void CPlayer::ElectricStaffFire()
 			(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (!_CollisionComp->bCollision)continue;
+
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -2315,6 +2410,9 @@ void CPlayer::ElectricStaffFire()
 			ParticleSystem::Instance().PushParticle(_Particle);
 		};
 	};
+
+	if ( MATH::RandInt({ 0,9 })==0 )
+		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
 }
 
 void CPlayer::FreezeParticlePush()&
