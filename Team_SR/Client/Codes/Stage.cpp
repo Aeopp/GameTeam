@@ -289,8 +289,7 @@ void CStage::Free()
 
 
 
-void CStage::LoadObjects(const std::wstring& FilePath,
-	const vec3 WorldScale) & noexcept
+void CStage::LoadObjects(const std::wstring& FilePath,const vec3 WorldScale) & noexcept
 {
 	struct ObjectSpawnInfo
 	{
