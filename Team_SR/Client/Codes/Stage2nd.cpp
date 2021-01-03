@@ -52,7 +52,8 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\CandleTorchData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 	
 
 
