@@ -17,10 +17,12 @@ HRESULT CGlacier::ReadyGameObjectPrototype()
 
 	m_wstrBase = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CGlacier>();
 
+	GibTable = { 16,17,18,19,20,16,17,18,19,20};
+
 	return S_OK;
 }
 
-HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
+HRESULT CGlacier::ReadyGameObject(void* pArg /*= nulptr*/)
 {
 	if (FAILED(CMonster::ReadyGameObject(pArg)))
 		return E_FAIL;

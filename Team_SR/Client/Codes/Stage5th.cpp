@@ -21,6 +21,7 @@ HRESULT CStage5th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage5th;
 	NextSceneID = ESceneID::Stage6th;
 	using MapType = CMap5th;
+	BgmKey = L"006 Medieval - Oubliette.wav";
 
 	Super::ReadyScene();
 	CPlayer::InitInfo _InitInfo;

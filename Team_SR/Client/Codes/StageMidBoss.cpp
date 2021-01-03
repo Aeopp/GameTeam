@@ -9,7 +9,7 @@
 #include "PlayerInfoUI.h"
 #include "Eyebat.h"
 #include "MapMidBoss.h"
-#include "Stage4th.h"
+#include "Stage5th.h"
 
 
 CStageMidBoss::CStageMidBoss(LPDIRECT3DDEVICE9 pDevice)
@@ -19,8 +19,9 @@ CStageMidBoss::CStageMidBoss(LPDIRECT3DDEVICE9 pDevice)
 HRESULT CStageMidBoss::ReadyScene()
 {
 	CurrentSceneID = ESceneID::StageMidBoss;
-	NextSceneID = ESceneID::Stage4th;
+	NextSceneID = ESceneID::Stage5th;
 	using MapType = CMapMidBoss;
+	BgmKey = L"037 Egyptian - Osiris.wav";
 
 	Super::ReadyScene();
 
@@ -138,7 +139,7 @@ _uint CStageMidBoss::KeyProcess(float fDeltaTime)
 			return 0;
 
 		if (FAILED(pManagement->SetUpCurrentScene((_int)NextSceneID,
-			CStage4th::Create(m_pDevice))))
+			CStage5th::Create(m_pDevice))))
 		{
 			PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
 			return 0;

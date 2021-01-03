@@ -16,6 +16,9 @@ HRESULT CHangman::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
+	GibTable = { 39,38,37,36,12,1,39,38,37,36 };
+
+
 	return S_OK;
 }
 

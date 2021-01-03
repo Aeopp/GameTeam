@@ -20,6 +20,7 @@ HRESULT CStageBoss::ReadyScene()
 	CurrentSceneID = ESceneID::StageFinalBoss;
 	NextSceneID = ESceneID::Stage1st;
 	using MapType = CMapBoss;
+	BgmKey = L"030 Antarctic - The End.wav";
 
 	Super::ReadyScene();
 

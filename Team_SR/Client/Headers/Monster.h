@@ -27,12 +27,13 @@ private:
 	HRESULT IsBillboarding();
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
-	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
+	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 	void FlashHit()&;
 	void FreezeHit()&;
-	FORCEINLINE bool IsDead()const& { 
-		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
+	void Attack(const Sphere _Sphere,const float Attack)&;
+	void Attack(const Ray _Ray, const float Attack)&;
+	FORCEINLINE bool IsDead()const& { return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
