@@ -59,7 +59,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 	if (!bThirdPerson)
 	{
-		ShowCursor(true);
+		ShowCursor(false);
 
 		POINT _MousePt;
 		GetCursorPos(&_MousePt);

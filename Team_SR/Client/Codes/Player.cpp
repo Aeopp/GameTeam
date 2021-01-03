@@ -12,7 +12,6 @@
 #include "ScreenEffect.h"
 #include "UIManager.h"
 
-
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice)
 {
@@ -389,6 +388,7 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 	CGameObject::LateUpdateGameObject(fDeltaTime);
 
 	bWeaponEffectRender = false;
+	invincibility -= fDeltaTime;
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
@@ -505,25 +505,6 @@ HRESULT CPlayer::RenderGameObject()
 
 void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionInfo)
 {
-	if (_Target->CurrentAttack > 0.0f)
-	{
-		if (RemainShield > 0.0f)
-		{
-			RemainShield -= _Target->CurrentAttack;
-		}
-		else
-		{
-			m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
-			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
-			_ScreenEffect->BloodEffect();
-			auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
-			_Camera->Shake(_Target->CurrentAttack / 15.0f, MATH::RandVec(), _Target->CurrentAttack / 15.0f);
-		}
-		return;
-	}
-
-	m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
-
 	auto* _Item = dynamic_cast<CItem*>(_Target);
 	if (_Item)
 	{
@@ -580,6 +561,24 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		default:
 			break;
 		}
+	}
+	else if	(invincibility < 0.0f && _Target->CurrentAttack > 0.0f)
+	{
+		invincibility = 1.f;
+
+		if (RemainShield > 0.0f)
+		{
+			RemainShield -= _Target->CurrentAttack;
+		}
+		else
+		{
+			m_tPlayerInfo.iMinHP -= _Target->CurrentAttack;
+			auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
+			_ScreenEffect->BloodEffect();
+			auto _Camera = dynamic_cast<CMainCamera*>(m_pManagement->GetGameObject(-1, L"Layer_MainCamera", 0));
+			_Camera->Shake(_Target->CurrentAttack / 15.0f, MATH::RandVec(), _Target->CurrentAttack / 15.0f);
+		}
+		return;
 	};
 }
 

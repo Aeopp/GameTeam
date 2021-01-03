@@ -11,7 +11,6 @@
 #include "Map6th.h"
 #include "StageBoss.h"
 
-
 CStage6th::CStage6th(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {};
