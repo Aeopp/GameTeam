@@ -234,7 +234,6 @@ void CMonster::FreezeHit()&
 		DeadProcess();
 	}
 };
-
 void CMonster::Attack(const Sphere _Sphere, const float Attack)&
 {
 	auto _Player=dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));

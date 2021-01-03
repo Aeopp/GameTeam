@@ -5,8 +5,6 @@
 #include "DXWrapper.h"
 #include "Vertexs.h"
 
-
-
 USING(Engine)
 class CMonster abstract : public CGameObject
 {
