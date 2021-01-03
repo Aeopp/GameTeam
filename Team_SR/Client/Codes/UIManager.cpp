@@ -396,7 +396,6 @@ HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 
-
 	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region WeaponHUD_Akimbo
 	//HUD_HP_Bar
@@ -410,8 +409,6 @@ HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
 	tagLayerCom.wsPrototypeTag = _wcStr;
 	tagLayerCom.wsComponentTag = L"Com_Texture";
 	tagLayerCom.bTextOut = true;
-
-//	m_pcwLayerArr[m_iWeaponUIIndex];
 
 	wprintf_s(m_pcwLayerArr[m_iWeaponUIIndex], L"Layer_HUD_WeaponUI_%d", m_iWeaponUIIndex);
 	
