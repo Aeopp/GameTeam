@@ -27,13 +27,13 @@ HRESULT CGhoul::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 50.f;
+	m_stOriginStatus.fHP = 10.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 6.f;
+	m_stOriginStatus.fSpeed = 3.f;
 	m_stOriginStatus.fMeleeRange = 6.f;
 	m_stOriginStatus.fDetectionRange = 6.f;
 	// 인게임에서 사용할 스텟
@@ -45,6 +45,8 @@ HRESULT CGhoul::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 1;
 	m_fFrameSpeed = 10.f;
+
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 
 	// 대기
 	m_fpAction = &CGhoul::Action_Idle;
@@ -168,9 +170,9 @@ HRESULT CGhoul::AddComponents()
 
 	// 충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
-	_Info.bCollision = false;	// 숨어있는 동안 충돌 안함
+	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 0.5f;
+	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y + 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -355,15 +357,15 @@ RETURN_MOVE:	// 이동
 
 RETURN_DIG_OUT:	// 땅파고 나옴
 	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
+	m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock);				// HP 락 OFF
 	m_fpAction = &CGhoul::Action_DigOut;
 	m_wstrTextureKey = L"Com_Texture_Ghoul_DigOut";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 16;
 	isHide = false;	// 숨은 상태 아님
-	m_stStatus.fDetectionRange = 25.f;
-	m_stOriginStatus.fDetectionRange = 25.f;
-	_CollisionComp->bCollision = true;	// 충돌 처리 ON
+	m_stStatus.fDetectionRange = 20.f;
+	m_stOriginStatus.fDetectionRange = 20.f;
 	return;
 }
 

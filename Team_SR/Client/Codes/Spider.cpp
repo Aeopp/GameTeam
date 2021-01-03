@@ -31,7 +31,7 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fFrameSpeed = 20.f;
 	m_pTransformCom->m_TransformDesc.vRotation.z = -90.f;
 
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 20.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 2.f;

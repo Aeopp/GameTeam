@@ -71,6 +71,11 @@ HRESULT CBullet::RenderGameObject()
 	return S_OK;
 }
 
+void CBullet::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
+}
+
 HRESULT CBullet::AddComponents()
 {
 	/* For.Com_VIBuffer */

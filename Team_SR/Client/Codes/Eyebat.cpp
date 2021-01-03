@@ -34,7 +34,7 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_iDir = 1;
 	//
 
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 20.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;

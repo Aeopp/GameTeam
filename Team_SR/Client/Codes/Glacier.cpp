@@ -33,7 +33,7 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
 
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 30.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;

@@ -37,6 +37,8 @@
 #include "Ghoul.h"		// 구울
 #include "HellBoss.h"	// 헬 보스
 #include "ScreenEffect.h"
+#include "HellBossRingBullet.h"	// 헬 보스 리틀 데몬 링 총알
+#include "HellBossChainGunBullet.h"	// 헬 보스 터보 사탄 체인건 총알
 
 
 CMainApp::CMainApp()
@@ -351,6 +353,20 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CHellBoss>(),
 		CHellBoss::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 링 총알
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossRingBullet>(),
+		CHellBossRingBullet::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 체인건 총알
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossChainGunBullet>(),
+		CHellBossChainGunBullet::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1255,6 +1271,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/Walk/hellboss_dwarf_walk000%d.png", 8))))
 		return E_FAIL;
 
+	// 리틀 데몬 원형 총알
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_RingBullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/RingBullet/pulsating_bullet%d.png", 11))))
+		return E_FAIL;
+
 	//--------------------------------
 	// 터보 사탄
 	//--------------------------------
@@ -1319,6 +1342,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_HellBoss_TurboSatan_Walk",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Walk/hellboss_big_walk000%d.png", 8))))
+		return E_FAIL;
+
+	// 터보 사탄 체인건 총알
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_ChainGunBullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/ChainGunBullet/ChainGunBullet.png", 1))))
 		return E_FAIL;
 
 	//--------------------------------

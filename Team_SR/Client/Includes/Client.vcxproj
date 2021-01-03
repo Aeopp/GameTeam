@@ -200,6 +200,8 @@
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\HellBoss.h" />
+    <ClInclude Include="..\Headers\HellBossChainGunBullet.h" />
+    <ClInclude Include="..\Headers\HellBossRingBullet.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Item.h" />
@@ -284,6 +286,8 @@
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\HellBoss.cpp" />
+    <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp" />
+    <ClCompile Include="..\Codes\HellBossRingBullet.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />

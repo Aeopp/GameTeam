@@ -313,7 +313,7 @@ HRESULT CHellBoss::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 1.5f;
+	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y + 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -526,6 +526,9 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 26;
 	m_fFrameSpeed = 10.f;
+	// 목표 = 플레이어 위치 - 몬스터 위치
+	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&m_vAim, &m_vAim);
 	return;
 
 RETURN_MOVE:	// 이동
@@ -565,6 +568,9 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 5;
 	m_fFrameSpeed = 10.f;
+	// 목표 = 플레이어 위치 - 몬스터 위치
+	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&m_vAim, &m_vAim);
 	return;
 
 RETURN_MOVE:	// 이동
@@ -851,7 +857,34 @@ bool CHellBoss::Action_LittleDemon_EyeBlast(float fDeltaTime)
 // 리틀 데몬 원거리 공격
 bool CHellBoss::Action_LittleDemon_Shoot(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 6.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		m_iRepeatCount = 6;
+		m_fNextAtkWait = 2.f;
+	}
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt < 17.f) {
+		m_fNextAtkWait -= m_fFrameSpeed * fDeltaTime;
+		// 지정된 프레임 마다
+		if (m_fNextAtkWait <= 0 && m_iRepeatCount != 0) {
+			m_fNextAtkWait = 2.f;
+			--m_iRepeatCount;
+
+			// 총알 생성
+			BulletBasicArgument* pArg = new BulletBasicArgument;
+			pArg->uiSize = sizeof(BulletBasicArgument);
+			pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+			pArg->vDir = m_vAim;	// 방향
+			m_pManagement->AddScheduledGameObjectInLayer(
+				(_int)ESceneID::Static,
+				L"GameObject_HellBossRingBullet",
+				L"Layer_Bullet",
+				nullptr, (void*)pArg);
+		}
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 1.f;
 		return true;
 	}
@@ -893,11 +926,39 @@ bool CHellBoss::Action_TurboSatan_ShootSpin(float fDeltaTime)
 // 터보 사탄 원거리 공격 발싸
 bool CHellBoss::Action_TurboSatan_ShootFire(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 0.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		m_iRepeatCount = 2;
+		m_fNextAtkWait = 2.f;
+	}
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt < 3.f) {
+		m_fNextAtkWait -= m_fFrameSpeed * fDeltaTime;
+		// 지정된 프레임 마다
+		if (m_fNextAtkWait <= 0 && m_iRepeatCount != 0) {
+			m_fNextAtkWait = 2.f;
+			--m_iRepeatCount;
+
+			// 총알 생성
+			BulletBasicArgument* pArg = new BulletBasicArgument;
+			pArg->uiSize = sizeof(BulletBasicArgument);
+			pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+			pArg->vDir = m_vAim;	// 방향
+			m_pManagement->AddScheduledGameObjectInLayer(
+				(_int)ESceneID::Static,
+				L"GameObject_HellBossRingBullet",
+				L"Layer_Bullet",
+				nullptr, (void*)pArg);
+		}
+	}
+
 	if (m_bFrameLoopCheck) {
 		if (m_iRepeatCount != 0) {
 			--m_iRepeatCount;
 			return false;
 		}
+
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 
 		m_fpAction = &CHellBoss::Action_TurboSatan_ShootEnd;
 		m_wstrTextureKey = L"Com_Texture_TurboSatan_AttackEnd";

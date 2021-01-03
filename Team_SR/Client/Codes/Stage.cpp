@@ -18,6 +18,11 @@
 
 #include "Hangman.h"
 #include "Hellhound.h"
+#include "Spider.h"		// 거미
+#include "BatGrey.h"	// 박쥐
+#include "Shark.h"		// 보스 샤크
+#include "Ghoul.h"		// 구울
+#include "HellBoss.h"	// 최종 보스
 
 CStage::CStage(LPDIRECT3DDEVICE9 pDevice)
 	: CScene(pDevice), m_pUIManager(CUIManager::Get_Instance())
@@ -353,8 +358,8 @@ void CStage::LoadObjects(const std::wstring& FilePath,
 };
 void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept
 {
-	// 박쥐
-	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
+	// 눈깔 박쥐
+	if (ObjectName.find(L"Eyebat") != std::wstring::npos)
 	{
 		using SpawnType = CEyebat;
 
@@ -424,7 +429,7 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 	// 스파이더
 	if (ObjectName.find(L"Spider") != std::wstring::npos)
 	{
-		using SpawnType = CHellhound;
+		using SpawnType = CSpider;
 
 		MonsterBasicArgument _MonsterBasicArgument;
 		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
@@ -438,10 +443,10 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
 	}
 
-	// 눈깔 박쥐
+	// 일반 박쥐
 	if (ObjectName.find(L"BatGrey") != std::wstring::npos)
 	{
-		using SpawnType = CHellhound;
+		using SpawnType = CBatGrey;
 
 		MonsterBasicArgument _MonsterBasicArgument;
 		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
@@ -458,7 +463,41 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 	// 보스 샤크
 	if (ObjectName.find(L"Shark") != std::wstring::npos)
 	{
-		using SpawnType = CHellhound;
+		using SpawnType = CShark;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
+	}
+
+	// 구울
+	if (ObjectName.find(L"Ghoul") != std::wstring::npos)
+	{
+		using SpawnType = CGhoul;
+
+		MonsterBasicArgument _MonsterBasicArgument;
+		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
+		_MonsterBasicArgument.pPlayer = m_pPlayer;
+		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
+
+		m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + TYPE_NAME<SpawnType>(),
+			(int)CurrentSceneID,
+			CLayer::Tag + L"Monster", nullptr, &_MonsterBasicArgument);
+	}
+
+	// 최종 보스
+	if (ObjectName.find(L"HellBoss") != std::wstring::npos)
+	{
+		using SpawnType = CHellBoss;
 
 		MonsterBasicArgument _MonsterBasicArgument;
 		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);

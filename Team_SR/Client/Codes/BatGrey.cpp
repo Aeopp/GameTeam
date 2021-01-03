@@ -27,15 +27,15 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 30.f;
+	m_stOriginStatus.fHP = 5.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 10.f;
+	m_stOriginStatus.fSpeed = 8.f;
 	m_stOriginStatus.fMeleeRange = 5.f;
-	m_stOriginStatus.fDetectionRange = 50.f;
+	m_stOriginStatus.fDetectionRange = 15.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
@@ -164,7 +164,7 @@ HRESULT CBatGrey::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y * 0.5f;
+	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y + 1.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;

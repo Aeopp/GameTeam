@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "..\Headers\BatSpit.h"
+#include "..\Headers\HellBossChainGunBullet.h"
 
 
-CBatSpit::CBatSpit(LPDIRECT3DDEVICE9 pDevice)
+CHellBossChainGunBullet::CHellBossChainGunBullet(LPDIRECT3DDEVICE9 pDevice)
 	:CBullet(pDevice)
 {
 }
 
 
-HRESULT CBatSpit::ReadyGameObjectPrototype()
+HRESULT CHellBossChainGunBullet::ReadyGameObjectPrototype()
 {
 	if (FAILED(CBullet::ReadyGameObjectPrototype()))
 		return E_FAIL;
@@ -16,7 +16,7 @@ HRESULT CBatSpit::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
+HRESULT CHellBossChainGunBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CBullet::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -28,9 +28,9 @@ HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
-	m_stOriginStatus.fRange = 100.f;
-	m_stOriginStatus.fATK = 7.f;
-	m_stOriginStatus.fSpeed = 15.f;
+	m_stOriginStatus.fRange = 300.f;
+	m_stOriginStatus.fATK = 10.f;
+	m_stOriginStatus.fSpeed = 30.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -38,12 +38,12 @@ HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
 	// 기본 텍스처 프레임
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
-	m_fEndFrame = 8;
+	m_fEndFrame = 11;
 
 	return S_OK;
 }
 
-_uint CBatSpit::UpdateGameObject(float fDeltaTime)
+_uint CHellBossChainGunBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
@@ -51,7 +51,7 @@ _uint CBatSpit::UpdateGameObject(float fDeltaTime)
 	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동
 	m_stStatus.fRange -= D3DXVec3Length(&vMoveDstnc);			// 사거리 차감
 	if (m_stStatus.fRange <= 0) {	// 사거리를 전부 차감했으면
-		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
+		m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -59,9 +59,9 @@ _uint CBatSpit::UpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-_uint CBatSpit::LateUpdateGameObject(float fDeltaTime)
+_uint CHellBossChainGunBullet::LateUpdateGameObject(float fDeltaTime)
 {
-	CBullet::LateUpdateGameObject(fDeltaTime);
+	//CBullet::LateUpdateGameObject(fDeltaTime);	// 빌보드 X
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
@@ -71,7 +71,7 @@ _uint CBatSpit::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CBatSpit::RenderGameObject()
+HRESULT CHellBossChainGunBullet::RenderGameObject()
 {
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
@@ -88,17 +88,17 @@ HRESULT CBatSpit::RenderGameObject()
 	return S_OK;
 }
 
-HRESULT CBatSpit::AddComponents()
+HRESULT CHellBossChainGunBullet::AddComponents()
 {
 	if (FAILED(CBullet::AddComponents()))	// Monster.cpp에서 RectTexture 호출
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
-	// 박쥐 침 텍스처
+	// 터보 사탄 체인건 총알 텍스처
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_BatGreySpit",
-		L"Com_Texture_BatGreySpit",
+		L"Component_Texture_HellBoss_TurboSatan_ChainGunBullet",
+		L"Com_Texture_TurboSatan_ChainGunBullet",
 		(CComponent**)&m_pTexture)))
 		return E_FAIL;
 #pragma endregion
@@ -121,35 +121,35 @@ HRESULT CBatSpit::AddComponents()
 	return S_OK;
 }
 
-CBatSpit* CBatSpit::Create(LPDIRECT3DDEVICE9 pDevice)
+CHellBossChainGunBullet* CHellBossChainGunBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CBatSpit* pInstance = new CBatSpit(pDevice);
+	CHellBossChainGunBullet* pInstance = new CHellBossChainGunBullet(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create CGlacier");
+		PRINT_LOG(L"Warning", L"Failed To Create CHellBossChainGunBullet");
 		SafeRelease(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CBatSpit::Clone(void* pArg/* = nullptr*/)
+CGameObject* CHellBossChainGunBullet::Clone(void* pArg/* = nullptr*/)
 {
-	CBatSpit* pClone = new CBatSpit(*this); /* 복사생성자 */
+	CHellBossChainGunBullet* pClone = new CHellBossChainGunBullet(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone CGlacier");
+		PRINT_LOG(L"Warning", L"Failed To Clone CHellBossChainGunBullet");
 		SafeRelease(pClone);
 	}
 
 	return pClone;
 }
 
-void CBatSpit::Free()
+void CHellBossChainGunBullet::Free()
 {
 	CBullet::Free();
 }

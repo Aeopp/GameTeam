@@ -183,6 +183,13 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 }
 }
 
+void CMonster::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	CGameObject::MapHit(_PlaneInfo, _CollisionInfo);
+
+	bGravity = false;	// 중력 OFF
+}
+
 void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);

@@ -15,6 +15,8 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
 	virtual HRESULT RenderGameObject() = 0;
+public:
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 protected:
 	virtual HRESULT AddComponents();
 protected:

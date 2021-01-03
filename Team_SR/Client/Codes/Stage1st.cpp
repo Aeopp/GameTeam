@@ -104,17 +104,7 @@ HRESULT CStage1st::ReadyScene()
 
 		JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 45, 45, 31, 38, 2.5f, 5);
 
-		MonsterBasicArgument stArg;
-		stArg.uiSize = sizeof(MonsterBasicArgument);
-		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { 22.5f, 10.f, 15.f };
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"HellBoss",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Monster",
-			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+		LoadObjects(L"..\\Resources\\map\\1\\GameObjectData.obj", vec3{ 2.5f,2.5f,2.5f });
 	}
 	
 	return S_OK;

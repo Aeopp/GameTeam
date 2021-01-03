@@ -151,6 +151,15 @@
     <Filter Include="02.GameObject\05.GameUI\00.Object\05.ButtonUI">
       <UniqueIdentifier>{21a0e22f-0b32-432b-9ac0-7b4c2ba68fda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\07.HellBoss">
+      <UniqueIdentifier>{c332669c-2740-4571-a13e-aa291c1cc945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Bullet\06.HellBossRingBullet">
+      <UniqueIdentifier>{9d58a9bc-0e62-4753-a5e0-72a528eb5625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\06.Bullet\07.HellBossChainGunBullet">
+      <UniqueIdentifier>{18caa8d5-5530-4ae6-87b1-99bc1bcd21fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -427,6 +436,17 @@
     <ClInclude Include="..\Headers\ScreenEffect.h" />
     <ClInclude Include="..\Headers\ButtonUI.h" />
     <ClInclude Include="..\Headers\PlayerInfoUI.h" />
+    <ClInclude Include="..\Headers\Ghoul.h" />
+    <ClInclude Include="..\Headers\JumpPointSearch.h" />
+    <ClInclude Include="..\Headers\HellBoss.h">
+      <Filter>02.GameObject\02.Monster\07.HellBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossRingBullet.h">
+      <Filter>02.GameObject\06.Bullet\06.HellBossRingBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossChainGunBullet.h">
+      <Filter>02.GameObject\06.Bullet\07.HellBossChainGunBullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -680,6 +700,17 @@
     <ClCompile Include="..\Codes\ScreenEffect.cpp" />
     <ClCompile Include="..\Codes\ButtonUI.cpp" />
     <ClCompile Include="..\Codes\PlayerInfoUI.cpp" />
+    <ClCompile Include="..\Codes\Ghoul.cpp" />
+    <ClCompile Include="..\Codes\JumpPointSearch.cpp" />
+    <ClCompile Include="..\Codes\HellBoss.cpp">
+      <Filter>02.GameObject\02.Monster\07.HellBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossRingBullet.cpp">
+      <Filter>02.GameObject\06.Bullet\06.HellBossRingBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp">
+      <Filter>02.GameObject\06.Bullet\07.HellBossChainGunBullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
