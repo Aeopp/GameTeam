@@ -109,36 +109,14 @@ HRESULT CUIManager::ReadyUI()
 #pragma endregion
 #pragma endregion
 
-	//Add Layer
-
-
-//#pragma region Test_Player
-//
-//	m_iMaxs[0] = 100;
-//	m_iMaxs[1] = 200;
-//	m_iMaxs[2] = 50;
-//		  
-//	m_iMins[0] = 100;
-//	m_iMins[1] = 100;
-//	m_iMins[2] = 100;
-//
-//	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
-//	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
-//	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
-//#pragma endregion
-//#pragma region Test_MonsterHP
-//	m_iMax = 100;
-//	m_iMin = 100;
-//
-//	OnMonsterBar(&m_iMax, &m_iMin);
-//#pragma endregion
-
 	SetWeaponUIArrayPrototype();
 
 	return S_OK;
 }
 
-HRESULT CUIManager::CreateCloneUI()
+//HRESULT CUIManager::CreateCloneUI()
+//{
+HRESULT CUIManager::UIOpen(ESceneID SceneID)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 
@@ -147,7 +125,7 @@ HRESULT CUIManager::CreateCloneUI()
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_PlayerInfoUI",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_GameObject_PlayerInfoUI",
 		(CGameObject**)&m_pPlayerInfoUI, nullptr)))
 		return E_FAIL;
@@ -156,7 +134,7 @@ HRESULT CUIManager::CreateCloneUI()
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_WeaponAmmoInfoUI",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_WeaponAmmoInfoUI",
 		(CGameObject**)&m_pWeaponAmmoInfoUI, nullptr)))
 		return E_FAIL;
@@ -165,38 +143,12 @@ HRESULT CUIManager::CreateCloneUI()
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_HUDTopUI",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		L"Layer_HUDTopUI",
 		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
 
-//#pragma region Test_Player
-//
-//	m_iMaxs[0] = 100;
-//	m_iMaxs[1] = 200;
-//	m_iMaxs[2] = 50;
-//		  
-//	m_iMins[0] = 100;
-//	m_iMins[1] = 100;
-//	m_iMins[2] = 100;
-//
-//	m_pHUD_HpBar->SetMaxValueAndMinValue(&m_iMaxs[0], &m_iMins[0]);
-//	m_pHUD_ManaBar->SetMaxValueAndMinValue(&m_iMaxs[1], &m_iMins[1]);
-//	m_pHUD_AmmoBar->SetMaxValueAndMinValue(&m_iMaxs[2], &m_iMins[2]);
-//#pragma endregion
-//#pragma region Test_MonsterHP
-//	m_iMax = 100;
-//	m_iMin = 100;
-//
-//	OnMonsterBar(&m_iMax, &m_iMin);
-//#pragma endregion
-	return S_OK;
-}
-
-void CUIManager::UIOpen(ESceneID SceneID)
-{
-	CManagement* pManagement = CManagement::Get_Instance();
 	//------------------------------------------------------
 	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_HP_Bar
@@ -256,7 +208,7 @@ void CUIManager::UIOpen(ESceneID SceneID)
 	tagLayerCom.wsComponentTag = L"Com_Texture";
 	tagLayerCom.bTextOut = true;
 	//HUD_Mana_Bar
-			pManagement->AddGameObjectInLayer(
+	pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_LoadingBar",
 		(_int)SceneID,
