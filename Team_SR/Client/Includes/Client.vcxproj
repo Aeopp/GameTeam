@@ -244,7 +244,6 @@
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
-    <ClInclude Include="..\Headers\WeaponInfoUI.h" />
     <ClInclude Include="..\Headers\WeaponUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ImGuiHelper.h" />
@@ -328,7 +327,6 @@
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />
     <ClCompile Include="..\Codes\WeaponAmmoInfoUI.cpp" />
-    <ClCompile Include="..\Codes\WeaponInfoUI.cpp" />
     <ClCompile Include="..\Codes\WeaponUI.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ComponentTemplate.md">

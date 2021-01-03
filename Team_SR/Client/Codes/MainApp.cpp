@@ -83,6 +83,10 @@ HRESULT CMainApp::ReadyMainApp()
 		PRINT_LOG(L"Error", L"Failed To ReadyUI");
 		return E_FAIL;
 	}
+	if (FAILED(CUIManager::Get_Instance()->CreateCloneUI())) {
+		PRINT_LOG(L"Error", L"Failed To SetCloneUI");
+		return E_FAIL;
+	}
 
 	srand(0);	// 랜덤 시드값
 

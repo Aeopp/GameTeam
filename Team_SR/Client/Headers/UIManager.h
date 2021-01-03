@@ -39,7 +39,7 @@ private:
 public:
 	// UI 초기화
 	HRESULT ReadyUI();
-
+	HRESULT CreateCloneUI();
 public:
 	// 모든 UI
 	void OnAllUI();
@@ -62,7 +62,11 @@ public:
 
 private:
 	//내부 메서드
-	HRESULT SetWeaponUIArray();
+	HRESULT SetWeaponUIArrayPrototype();
+	HRESULT SetWeaponUIArrayClone(WCHAR* _wcStr);
+
+public:
+	void FreeToWeaponUIArrayClone() { --m_iWeaponUIIndex; }
 
 public:
 	virtual void Free() override;
@@ -74,9 +78,7 @@ private:
 	class CLoadingBar* m_pHUD_ManaBar = nullptr;
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
 	class CHUDTopUI* m_pHUD_TopUI = nullptr;
-
-public:
-
+	class CWeaponUI* m_pWeaponUIArr[9];
 
 private:
 //#pragma region Test_Player
@@ -90,6 +92,8 @@ private:
 //#pragma endregion
 
 	LPDIRECT3DDEVICE9	m_pDevice;
+	_int m_iWeaponUIIndex = 0;
+	WCHAR m_pcwLayerArr[9][256];
 };
 
 #define __UIMANAGER_H__

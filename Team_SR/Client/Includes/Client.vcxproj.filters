@@ -459,16 +459,10 @@
     <ClInclude Include="..\Headers\HUDTopUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ShopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\03.HUDTopUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\ShopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
@@ -504,8 +498,10 @@
     <ClInclude Include="..\Headers\WeaponUI.h">
       <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\WeaponInfoUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI</Filter>
+    <ClInclude Include="..\Headers\MiniMap.h" />
+    <ClInclude Include="..\Headers\ScreenEffect.h" />
+    <ClInclude Include="..\Headers\PlayerInfoUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -806,8 +802,10 @@
     <ClCompile Include="..\Codes\WeaponUI.cpp">
       <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\WeaponInfoUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI</Filter>
+    <ClCompile Include="..\Codes\MiniMap.cpp" />
+    <ClCompile Include="..\Codes\ScreenEffect.cpp" />
+    <ClCompile Include="..\Codes\PlayerInfoUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\00.PlayerInfoUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -17,7 +17,7 @@ HRESULT CWeaponUI::ReadyGameObjectPrototype()
 		return E_FAIL;
 
 	//Font
-	if (FAILED(D3DXCreateFont(m_pDevice, 10, 10, 500, 1, false,
+	if (FAILED(D3DXCreateFont(m_pDevice, 25, 25, 1000, 1, false,
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, 0, L"신명조", &s_pFont)))
 	{
 		PRINT_LOG(L"Warning", L"폰트불러오기 실패");
@@ -78,9 +78,13 @@ _uint CWeaponUI::UpdateGameObject(float fDeltaTime)
 	ImGui::SliderFloat3("Location",
 		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
 		-1000.f, +1000.f, "%f");
+	
+	ImGui::End();
 
+	m_bShown = true;
 	if (!m_bShown)
-		return S_OK;
+		return _uint();
+	return _uint();
 }
 
 _uint CWeaponUI::LateUpdateGameObject(float fDeltaTime)
@@ -159,7 +163,7 @@ HRESULT CWeaponUI::RenderText()
 	//y축은 위로 올림
 	if (0.f <= m_UIDesc.vCenter.y)
 	{
-		vConvertUIPos.y -= (m_UIDesc.vUISize.y / 2.f) - 10.f;
+		vConvertUIPos.y -= (m_UIDesc.vUISize.y / 2.f) + 10.f;
 	}
 
 	RECT rc = { vConvertUIPos.x - (vTextSize.x / 2), vConvertUIPos.y - (vTextSize.y / 2),
@@ -199,5 +203,6 @@ CGameObject * CWeaponUI::Clone(void * pArg/* = nullptr*/)
 
 void CWeaponUI::Free()
 {
+	CUIManager::Get_Instance()->FreeToWeaponUIArrayClone();
 	CGameUI::Free();
 }

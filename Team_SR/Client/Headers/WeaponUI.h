@@ -30,7 +30,7 @@ private:
 	static LPD3DXFONT s_pFont;
 	_uint m_iID;
 	wstring m_wsObjectName;
-	bool m_bOnWeapon = false;
+	bool m_bOnWeapon = true;
 };
 
 #define __WEAPONUI_H__
