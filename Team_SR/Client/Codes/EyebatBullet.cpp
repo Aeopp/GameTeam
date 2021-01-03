@@ -127,7 +127,7 @@ HRESULT CEyebatBullet::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 0.7f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
 	_Info.bWallCollision= true;
 	_Info.bFloorCollision = true;

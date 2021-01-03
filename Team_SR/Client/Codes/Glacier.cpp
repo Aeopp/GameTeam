@@ -33,7 +33,7 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
 
-	bGravity = false;
+	//bGravity = false;
 
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;
@@ -149,6 +149,14 @@ void CGlacier::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
 	CreateParticle();
+}
+
+void CGlacier::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (L"Floor" == _CollisionInfo.Flag)
+	{
+		bGravity = false;
+	}
 }
 
 HRESULT CGlacier::AddComponents()

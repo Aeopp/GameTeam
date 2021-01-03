@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
-#include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "Player.h"
@@ -289,18 +288,6 @@ void CMonster::CreateBlood()
 
 void CMonster::CreateFloorBlood()
 {
-	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		(_int)ESceneID::Stage1st,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
-		return;
-
-	//m_pManagement->AddScheduledGameObjectInLayer(
-	//	(_int)ESceneID::Static,
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 

@@ -19,7 +19,7 @@ public:
 public:
 	// 2020.12.17 9:57 KMJ
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
-
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();

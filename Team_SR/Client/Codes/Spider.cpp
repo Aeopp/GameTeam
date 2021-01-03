@@ -123,6 +123,12 @@ void CSpider::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return;
 	}
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+
+
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
 
@@ -194,6 +200,7 @@ void CSpider::Update_AI(float fDeltaTime)
 		if (m_stStatus.fHP <= 0)
 		{
 			m_ePhase = PHASE::DEATH;
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);
 		}
 
 

@@ -51,17 +51,6 @@ HRESULT CStage4th::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
 
-	MonsterBasicArgument stArg;
-	stArg.uiSize = sizeof(MonsterBasicArgument);
-	stArg.pPlayer = m_pPlayer;
-	stArg.vPosition = { 0.f, 10.f, 20.f };
-	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		CGameObject::Tag + L"Shark",
-		(_int)CurrentSceneID,
-		CLayer::Tag + L"Monster",
-		nullptr, static_cast<void*>(&stArg))))
-		return E_FAIL;
 
 	return S_OK;
 }

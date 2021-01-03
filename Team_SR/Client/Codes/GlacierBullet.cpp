@@ -26,15 +26,15 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	if (sizeof(BulletBasicArgument) == *(_uint*)pArg)
-	{
-		BulletBasicArgument* pData = (BulletBasicArgument*)pArg;
-		m_vLook  = pData->vDir;
-		m_vLook.y = 0.f;
-		m_pTransformCom->m_TransformDesc.vPosition = pData->vPosition;
-		delete pData;
-		pData = nullptr;
-	}
+	//if (sizeof(BulletBasicArgument) == *(_uint*)pArg)
+	//{
+	//	BulletBasicArgument* pData = (BulletBasicArgument*)pArg;
+	//	m_vLook  = pData->vDir;
+	//	m_vLook.y = 0.f;
+	//	m_pTransformCom->m_TransformDesc.vPosition = pData->vPosition;
+	//	delete pArg;
+	//	//pArg = nullptr;
+	//}
 
 	//m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 

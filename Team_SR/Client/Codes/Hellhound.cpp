@@ -35,7 +35,7 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 30.f;
 	m_stOriginStatus.fMeleeRange = 6.f;
-	m_stOriginStatus.fDetectionRange = 100.f;
+	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
@@ -45,6 +45,7 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 12;
 	m_fFrameSpeed = 10.f;
+
 
 	// 부화
 	m_fpAction = &CHellhound::Action_EggHatch;
@@ -94,6 +95,8 @@ HRESULT CHellhound::RenderGameObject()
 {
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
+
+	_CollisionComp->DebugDraw();
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 	//	return E_FAIL;
@@ -211,7 +214,7 @@ HRESULT CHellhound::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -291,6 +294,15 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 		m_fStartFrame = 0;
 		m_fEndFrame = 1;
 		m_fFrameSpeed = 5.f;
+	}
+}
+
+void CHellhound::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (L"Floor" == _CollisionInfo.Flag)
+	{
+		bGravity = false;
+		//m_pTransformCom->m_TransformDesc.vPosition.y = _CollisionInfo.IntersectPoint.y + 5;
 	}
 }
 

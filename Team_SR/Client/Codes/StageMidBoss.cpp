@@ -55,7 +55,7 @@ HRESULT CStageMidBoss::ReadyScene()
 	MonsterBasicArgument stArg;
 	stArg.uiSize = sizeof(MonsterBasicArgument);
 	stArg.pPlayer = m_pPlayer;
-	stArg.vPosition = { 10.f, 10.f, 170.f };
+	stArg.vPosition = { 0.f, 10.f, 95.f };
 	//if (FAILED(m_pManagement->AddGameObjectInLayer(
 	//	(_int)ESceneID::Static,
 	//	CGameObject::Tag + L"Shark",
@@ -123,13 +123,13 @@ _uint CStageMidBoss::KeyProcess(float fDeltaTime)
 
 		return CHANGE_SCNENE;
 	}
-	if (m_pKeyMgr->Key_Down('M'))
+	if (m_pKeyMgr->Key_Down('B'))
 	{
 		int random = rand() % 100 - 50;
 		MonsterBasicArgument stArg;
 		stArg.uiSize = sizeof(MonsterBasicArgument);
 		stArg.pPlayer = m_pPlayer;
-		stArg.vPosition = { -55.f, 10.f, 200.f };
+		stArg.vPosition = { 0.f, 5.f, 95.f };
 		if (FAILED(m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + L"Spider",

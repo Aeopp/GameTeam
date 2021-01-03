@@ -26,7 +26,7 @@ private:
 	
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
-
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
 	HRESULT Set_Texture();					// 장치에 텍스처 셋
