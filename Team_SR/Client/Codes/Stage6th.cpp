@@ -52,6 +52,8 @@ HRESULT CStage6th::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
 
+	LoadObjects(L"..\\Resources\\Map\\6\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
+
 
 	return S_OK;
 }
