@@ -137,7 +137,6 @@ HRESULT CUIManager::ReadyUI()
 		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
-
 //#pragma region Test_Player
 //
 //	m_iMaxs[0] = 100;
