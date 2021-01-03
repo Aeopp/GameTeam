@@ -27,6 +27,7 @@ HRESULT CMainCamera::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,0,-10 };
 
 	return S_OK;

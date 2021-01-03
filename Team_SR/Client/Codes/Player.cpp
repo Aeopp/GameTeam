@@ -298,9 +298,9 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	auto iter = LightingDurationTable.find(L"SpellLight");
 	if ( (iter != std::end(LightingDurationTable) ) && _AnimationTextures.GetAnimationKey() == L"Light"  &&  ( iter->second<=0.0f) )
 	{
-		if (MATH::RandInt({ 0,9 }) == 0)
+		if (MATH::RandInt({ 0,9}) == 0)
 		{
-			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 5, 0);
 		}
 
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
@@ -343,7 +343,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	{
 		if (MATH::RandInt({ 0,9 }) == 0)
 		{
-			m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 5, 0);
 		}
 		
 
@@ -1401,8 +1401,7 @@ void CPlayer::DaggerThrow()
 			ParticleSystem::Instance().PushCollisionParticle(_ArrowParticle);
 		};
 	}
-
-	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 6, 0);
+	m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 6, 0);
 }
 
 void CPlayer::AkimboFire()
@@ -1621,7 +1620,7 @@ void CPlayer::AkimboFire()
 		}
 	}
 
-	if (MATH::RandInt({ 0,9 }) == 0)
+	if (MATH::RandInt({ 0,5}) == 0)
 	{
 		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
 	}
@@ -1853,7 +1852,7 @@ void CPlayer::MagnumFire()
 		}
 	}
 
-	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 6, 0);
 }
 
 void CPlayer::StaffFire()
@@ -1945,8 +1944,7 @@ void CPlayer::StaffFire()
 		};
 
 	}
-
-	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 3, 0);
+	m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 4, 0);
 }
 
 void CPlayer::StaffCharge()
@@ -2062,8 +2060,7 @@ void CPlayer::StaffRelease()
 	}
 
 	StaffChargeT = 0.0f;
-
-	m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 5, 0);
+	m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 5, 0);
 }
 
 void CPlayer::StaffLoop()
@@ -2410,8 +2407,8 @@ void CPlayer::ElectricStaffFire()
 		};
 	};
 
-	if ( MATH::RandInt({ 0,9 })==0 )
-		m_tWeaponInfo.iMinAmmo = (std::max)(m_tWeaponInfo.iMinAmmo - 1, 0);
+	if ( MATH::RandInt({ 0,5})==0 )
+		m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 1, 0);
 }
 
 void CPlayer::FreezeParticlePush()&
