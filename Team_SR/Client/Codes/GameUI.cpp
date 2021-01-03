@@ -89,7 +89,7 @@ _uint CGameUI::SetupUIMatrix(UI_DESC & _desc)
 
 void CGameUI::Free()
 {
-	//SafeRelease(m_pVIBufferCom);	// ¹öÅØ½º ¹öÆÛ
-	//SafeRelease(m_pTextureCom);		// ÅØ½ºÃ³
+	//SafeRelease(m_pVIBufferCom);	// ë²„í…ìŠ¤ ë²„í¼
+	//SafeRelease(m_pTextureCom);		// í…ìŠ¤ì²˜
 	CGameObject::Free();
 }

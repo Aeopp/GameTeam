@@ -25,6 +25,7 @@ public:
 protected:
 	ESceneID CurrentSceneID;
 	ESceneID NextSceneID;
+	std::wstring BgmKey{};
 protected:
 	void LoadObjects(const std::wstring& FilePath, const vec3 WorldScale) & noexcept;
 	void SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocation) & noexcept;

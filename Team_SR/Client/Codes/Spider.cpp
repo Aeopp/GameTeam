@@ -13,6 +13,9 @@ HRESULT CSpider::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 	m_wstrBase = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CSpider>();
+
+	GibTable = { 1,2,5,11,9,28,29,41,40,34,43 };
+
 	return S_OK;
 }
 

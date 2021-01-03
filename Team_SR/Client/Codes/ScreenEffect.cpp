@@ -65,6 +65,17 @@ HRESULT CScreenEffect::ReadyGameObjectPrototype()
 					_Target->Release();
 			});
 
+	Textures[L"Cross"] = std::shared_ptr<IDirect3DTexture9>
+		(
+			LOAD_TEXTURE(m_pDevice, L"..\\Resources\\ScreenEffect\\Cross.png"),
+			[](IDirect3DTexture9* const _Target)
+			{
+				if (_Target)
+					_Target->Release();
+			});
+
+
+
 	for (size_t i = 0; i < 9; ++i)
 	{
 		const std::wstring Idx = std::to_wstring(i); 
@@ -169,6 +180,15 @@ HRESULT CScreenEffect::RenderGameObject()
 		_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", 1.f);
 		_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0);
 		m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Shield" + std::to_wstring(ShieldImgIdx)].get());
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
+
+
+
+		World = MATH::WorldMatrix({ 50,50,0.0f }, { 0,0,0 }, { 0.0f,0.0f,0.0f });
+		_ScreenPostEffect.SetVSConstantData(m_pDevice, "World", World);
+		_ScreenPostEffect.SetPSConstantData(m_pDevice, "AlphaCoefft", 1.f);
+		_ScreenPostEffect.SetPSConstantData(m_pDevice, "Flag", 0);
+		m_pDevice->SetTexture(_ScreenPostEffect.GetTexIdx("DiffuseSampler"), Textures[L"Cross"].get());
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, TriangleCount);
 
 	return S_OK;

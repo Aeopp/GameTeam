@@ -93,7 +93,8 @@ HRESULT CDecorator::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
-	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	mat World = m_pTransformCom->m_TransformDesc.matWorld;
+
 	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
 	// 현재 사용중이던 텍스쳐를 여기에 세팅.
@@ -141,7 +142,7 @@ HRESULT CDecorator::AddComponents()
 	// 충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 1.0f;
 	_Info.Tag = CCollisionComponent::ETag::Decorator;
 	_Info.bWallCollision = false;
 	_Info.bFloorCollision = true;
@@ -151,14 +152,15 @@ HRESULT CDecorator::AddComponents()
 
 	DecoNextFrameInfo NextFrameInfo;
 
+	static constexpr float ScaleFactor = 0.5f;
 #pragma region Item_Texture
 	// 아이템 타입으로 텍스처 컴포넌트 추가
 	switch (m_stDecoratorInfo.eType)
 	{
 		// 횃불
 	case DECO::Torch:
-		m_pTransformCom->m_TransformDesc.vScale = { 1.f, 3.f, 1.f };
-		_Info.Radius = 1.5f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 1.f, 3.f, 1.f } *ScaleFactor;
+		_Info.Radius = 1.5f * ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 1.f;
 		m_fFrameCnt = 0.f;
@@ -178,8 +180,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 양초
 	case DECO::Candle:
-		m_pTransformCom->m_TransformDesc.vScale = { 1.f, 3.5f, 1.f };
-		_Info.Radius = 1.75f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 1.f, 3.5f, 1.f } *ScaleFactor ;
+		_Info.Radius = 1.75f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 5.f;
@@ -193,8 +195,9 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 나무 통
 	case DECO::Barrel:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.f, 2.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.f, 2.f, 1.f } *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
 		m_stDecoratorInfo.fHP = 10.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -213,8 +216,9 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 폭탄 통
 	case DECO::BarrelBomb:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.f, 2.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale =vec3 { 2.f, 2.f, 1.f } *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
 		m_stDecoratorInfo.fHP = 10.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -233,8 +237,10 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 폐기물 통
 	case DECO::BarrelWaste:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.f, 2.2f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.f, 2.2f, 1.f }*ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
+
 		m_stDecoratorInfo.fHP = 100.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -257,8 +263,10 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 나무 상자 1
 	case DECO::Box1:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.8f, 2.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.8f, 2.f, 1.f } *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
+
 		m_stDecoratorInfo.fHP = 10.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -277,8 +285,10 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 나무 상자 2
 	case DECO::Box2:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.8f, 2.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.8f, 2.f, 1.f } *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
+
 		m_stDecoratorInfo.fHP = 10.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -297,8 +307,10 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 강철 상자 1
 	case DECO::BoxSteel1:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.8f, 2.f, 1.f };
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.8f, 2.f, 1.f } *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		_Info.Radius = 1.0f * ScaleFactor;
+
 		m_stDecoratorInfo.fHP = 100.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -317,8 +329,10 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 강철 상자 2
 	case DECO::BoxSteel2:
-		m_pTransformCom->m_TransformDesc.vScale = { 2.8f, 2.f, 1.f };
-		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 2.8f, 2.f, 1.f } *ScaleFactor;
+		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator; 
+		_Info.Radius = 1.0f * ScaleFactor;
+
 		m_stDecoratorInfo.fHP = 100.f;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
@@ -337,8 +351,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 1
 	case DECO::Headstone1:
-		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
-		_Info.Radius = 2.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3 { 4.f, 4.f, 1.f } *ScaleFactor;
+		_Info.Radius = 2.f *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 700.f;
 		m_fFrameCnt = 0.f;
@@ -386,8 +400,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 2
 	case DECO::Headstone2:
-		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
-		_Info.Radius = 2.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 4.f, 4.f, 1.f } *ScaleFactor;
+		_Info.Radius = 2.f *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 700.f;
 		m_fFrameCnt = 0.f;
@@ -435,8 +449,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 묘비 3
 	case DECO::Headstone3:
-		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
-		_Info.Radius = 2.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 4.f, 4.f, 1.f }*ScaleFactor ;
+		_Info.Radius = 2.f *ScaleFactor;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 600.f;
 		m_fFrameCnt = 0.f;
@@ -476,8 +490,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 가시 덩굴
 	case DECO::ThornyVine:
-		m_pTransformCom->m_TransformDesc.vScale = { 4.f, 4.f, 1.f };
-		_Info.Radius = 2.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 4.f, 4.f, 1.f } *ScaleFactor;
+		_Info.Radius = 2.f *ScaleFactor ;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 500.f;
 		m_fFrameCnt = 0.f;
@@ -513,8 +527,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 나무
 	case DECO::TreeBlight:
-		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
-		_Info.Radius = 5.f;
+		m_pTransformCom->m_TransformDesc.vScale =vec3{ 10.f, 10.f, 1.f } * ScaleFactor;
+		_Info.Radius = 5.f * ScaleFactor ;
 		_Info.Tag = CCollisionComponent::ETag::DestroyDecorator;
 		m_stDecoratorInfo.fHP = 500.f;
 		m_fFrameCnt = 0.f;
@@ -546,8 +560,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 나무 1
 	case DECO::Tree1:
-		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
-		_Info.Radius = 5.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 10.f, 10.f, 1.f } *ScaleFactor;
+		_Info.Radius = 5.f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -561,8 +575,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 나무 2
 	case DECO::Tree2:
-		m_pTransformCom->m_TransformDesc.vScale = { 10.f, 10.f, 1.f };
-		_Info.Radius = 5.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 10.f, 10.f, 1.f } *ScaleFactor;
+		_Info.Radius = 5.f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -576,8 +590,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 시체 1
 	case DECO::Dead_Caleb:
-		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
-		_Info.Radius = 3.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 6.f, 6.f, 1.f } *ScaleFactor;
+		_Info.Radius = 3.f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -591,8 +605,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 시체 2
 	case DECO::Dead_Doomguy:
-		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
-		_Info.Radius = 3.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 6.f, 6.f, 1.f } *ScaleFactor;
+		_Info.Radius = 3.f *ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -606,8 +620,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 시체 3
 	case DECO::Dead_Duke:
-		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
-		_Info.Radius = 3.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 6.f, 6.f, 1.f }*ScaleFactor ;
+		_Info.Radius = 3.f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -621,8 +635,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 시체 4
 	case DECO::Dead_Sam:
-		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
-		_Info.Radius = 3.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 6.f, 6.f, 1.f } *ScaleFactor;
+		_Info.Radius = 3.f  *ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -636,8 +650,8 @@ HRESULT CDecorator::AddComponents()
 		break;
 		// 죽은 시체 5
 	case DECO::Dead_Wang:
-		m_pTransformCom->m_TransformDesc.vScale = { 6.f, 6.f, 1.f };
-		_Info.Radius = 3.f;
+		m_pTransformCom->m_TransformDesc.vScale = vec3{ 6.f, 6.f, 1.f }*ScaleFactor ;
+		_Info.Radius = 3.f * ScaleFactor;
 		m_fFrameCnt = 0.f;
 		m_fStartFrame = 0.f;
 		m_fEndFrame = 1.f;
@@ -673,18 +687,17 @@ void CDecorator::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 
 	m_stDecoratorInfo.fHP -= _Target->CurrentAttack;
 
-
+	if(m_stDecoratorInfo.fHP<0.0f)
 	{
-		// 체력 다하면 중력과 충돌 끄기
-		// bGravity = false;
-		//_CollisionComp->bCollision = false;
-		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
-	}
+		bGravity = false;
+		_CollisionComp->bCollision = false;
+		_CollisionComp->bWallCollision = false;
+		_CollisionComp->bFloorCollision = false;
 
-	if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
-	{
-		// TODO :: if( HP < 0.0f )
-		DecoratorBomb(this);
+		if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
+		{
+			DecoratorBomb(this);
+		}
 	}
 
 	if (m_fTriggerHP != -1.f) 
@@ -704,8 +717,6 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
 
-
-
 	if (_Particle)
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
@@ -716,12 +727,19 @@ void CDecorator::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 		}
 
 		m_stDecoratorInfo.fHP -= _ParticlePtr->CurrentAttack;
-		// 체력 다하면 중력과 충돌 끄기
-		// bGravity = false;
-		//_CollisionComp->bCollision = false;
-		// ! 원작 효과 고기,뼈 ?? 등등 떨구기
 
+		if (m_stDecoratorInfo.fHP < 0.0f)
+		{
+			bGravity = false;
+			_CollisionComp->bCollision = false;
+			_CollisionComp->bWallCollision = false;
+			_CollisionComp->bFloorCollision = false;
 
+			if (m_stDecoratorInfo.eType == DECO::BarrelBomb)
+			{
+				DecoratorBomb(this);
+			}
+		}
 
 		if (m_fTriggerHP != -1.f)
 		{
@@ -749,8 +767,6 @@ void CDecorator::Frame_Move(float fDeltaTime)
 
 HRESULT CDecorator::IsBillboarding()
 {
-
-
 	CMainCamera* pCamera = dynamic_cast<CMainCamera*> (m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera"));
 	if (nullptr == pCamera)
 		return E_FAIL;
@@ -840,15 +856,6 @@ void CDecorator::UpdateFromMyDecoType()
 		break;
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 static void DecoratorBomb(CDecorator* const _Target)

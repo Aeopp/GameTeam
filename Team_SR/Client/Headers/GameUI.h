@@ -9,7 +9,7 @@ public:
 	virtual ~CGameUI() = default;
 
 public:
-	// CGameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CGameObjectì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() PURE;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) PURE;
 	virtual _uint UpdateGameObject(float fDeltaTime) PURE;
@@ -17,8 +17,8 @@ public:
 	virtual HRESULT RenderGameObject() override PURE;
 
 public:
-	void SetShownBarUI() { m_bShown = true; }//ui³ªÅ¸³»±â
-	void SetInvisibleBarUI() { m_bShown = false; }//ui¼û±â±â
+	void SetShownBarUI() { m_bShown = true; }//uië‚˜íƒ€ë‚´ê¸°
+	void SetInvisibleBarUI() { m_bShown = false; }//uiìˆ¨ê¸°ê¸°
 
 private:
 	HRESULT	AddComponent();

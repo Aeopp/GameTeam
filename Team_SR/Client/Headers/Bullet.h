@@ -24,7 +24,6 @@ public:
 	virtual void Free() override;
 protected:
 	class CVIBuffer* m_pVIBufferCom = nullptr;
-
 protected:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작

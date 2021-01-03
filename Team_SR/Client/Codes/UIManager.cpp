@@ -137,74 +137,6 @@ HRESULT CUIManager::ReadyUI()
 		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
-//------------------------------------------------------
-	UI_BAR_ADD_COMPONENT tagLayerCom;
-#pragma region HUD_HP_Bar
-	//HUD_HP_Bar
-	tagLayerCom.tUIDesc.vUISize.x = 312.f;
-	tagLayerCom.tUIDesc.vUISize.y = 60.f;
-	tagLayerCom.tUIDesc.vUISize.z = 0;
-	tagLayerCom.tUIDesc.vUIPos.x = -742;
-	tagLayerCom.tUIDesc.vUIPos.y = -410;
-	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
-	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
-	tagLayerCom.wsPrototypeTag = L"Component_Texture_HPbar";
-	tagLayerCom.wsComponentTag = L"Com_Texture";
-	tagLayerCom.bTextOut = true;
-
-	//HUD_HP_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_LoadingBar",
-		(_int)ESceneID::Stage1st,
-		L"Layer_HUD_HpBar",
-		(CGameObject**)&m_pHUD_HpBar, &tagLayerCom)))
-		return E_FAIL;
-#pragma endregion
-#pragma region HUD_Mana_Bar
-	//HUD_Mana_Bar
-	tagLayerCom.tUIDesc.vUISize.x = 310.f;
-	tagLayerCom.tUIDesc.vUISize.y = 60.f;
-	tagLayerCom.tUIDesc.vUISize.z = 0.f;
-	tagLayerCom.tUIDesc.vUIPos.x = -675.f;
-	tagLayerCom.tUIDesc.vUIPos.y = -480.f;
-	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
-	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
-	tagLayerCom.wsPrototypeTag = L"Component_Texture_Manabar";
-	tagLayerCom.wsComponentTag = L"Com_Texture";
-	tagLayerCom.bTextOut = true;
-	//HUD_Mana_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_LoadingBar",
-		(_int)ESceneID::Stage1st,
-		L"Layer_HUD_ManaBar",
-		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom)))
-		return E_FAIL;
-#pragma endregion
-
-#pragma region HUD_Mana_Bar
-	//HUD_Ammo_Bar
-	tagLayerCom.tUIDesc.vUISize.x = 535.f;
-	tagLayerCom.tUIDesc.vUISize.y = 90.f;
-	tagLayerCom.tUIDesc.vUISize.z = 0.f;
-	tagLayerCom.tUIDesc.vUIPos.x = 925.f;
-	tagLayerCom.tUIDesc.vUIPos.y = -452.f;
-	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
-	tagLayerCom.tUIDesc.vCenter = _vector(1.f, 0.f, 0.f);
-	tagLayerCom.wsPrototypeTag = L"Component_Texture_AmmoBar";
-	tagLayerCom.wsComponentTag = L"Com_Texture";
-	tagLayerCom.bTextOut = true;
-	//HUD_Mana_Bar
-	if (FAILED(pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_LoadingBar",
-		(_int)ESceneID::Stage1st,
-		L"Layer_HUD_AmmoBar",
-		(CGameObject**)&m_pHUD_AmmoBar, &tagLayerCom)))
-		return E_FAIL;
-#pragma endregion
-#pragma endregion
 
 //#pragma region Test_Player
 //
@@ -227,6 +159,79 @@ HRESULT CUIManager::ReadyUI()
 //	OnMonsterBar(&m_iMax, &m_iMin);
 //#pragma endregion
 	return S_OK;
+}
+
+void CUIManager::UIOpen(ESceneID SceneID)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	//------------------------------------------------------
+	UI_BAR_ADD_COMPONENT tagLayerCom;
+#pragma region HUD_HP_Bar
+	//HUD_HP_Bar
+	tagLayerCom.tUIDesc.vUISize.x = 312.f;
+	tagLayerCom.tUIDesc.vUISize.y = 60.f;
+	tagLayerCom.tUIDesc.vUISize.z = 0;
+	tagLayerCom.tUIDesc.vUIPos.x = -742;
+	tagLayerCom.tUIDesc.vUIPos.y = -410;
+	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
+	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
+	tagLayerCom.wsPrototypeTag = L"Component_Texture_HPbar";
+	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
+
+	//HUD_HP_Bar
+	pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_LoadingBar",
+		(_int)SceneID,
+		L"Layer_HUD_HpBar",
+		(CGameObject**)&m_pHUD_HpBar, &tagLayerCom);
+
+#pragma endregion
+#pragma region HUD_Mana_Bar
+	//HUD_Mana_Bar
+	tagLayerCom.tUIDesc.vUISize.x = 310.f;
+	tagLayerCom.tUIDesc.vUISize.y = 60.f;
+	tagLayerCom.tUIDesc.vUISize.z = 0.f;
+	tagLayerCom.tUIDesc.vUIPos.x = -675.f;
+	tagLayerCom.tUIDesc.vUIPos.y = -480.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
+	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
+	tagLayerCom.wsPrototypeTag = L"Component_Texture_Manabar";
+	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
+	//HUD_Mana_Bar
+	pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_LoadingBar",
+		(_int)SceneID,
+		L"Layer_HUD_ManaBar",
+		(CGameObject**)&m_pHUD_ManaBar, &tagLayerCom);
+
+#pragma endregion
+
+#pragma region HUD_Mana_Bar
+	//HUD_Ammo_Bar
+	tagLayerCom.tUIDesc.vUISize.x = 535.f;
+	tagLayerCom.tUIDesc.vUISize.y = 90.f;
+	tagLayerCom.tUIDesc.vUISize.z = 0.f;
+	tagLayerCom.tUIDesc.vUIPos.x = 925.f;
+	tagLayerCom.tUIDesc.vUIPos.y = -452.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
+	tagLayerCom.tUIDesc.vCenter = _vector(1.f, 0.f, 0.f);
+	tagLayerCom.wsPrototypeTag = L"Component_Texture_AmmoBar";
+	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
+	//HUD_Mana_Bar
+			pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_LoadingBar",
+		(_int)SceneID,
+		L"Layer_HUD_AmmoBar",
+		(CGameObject**)&m_pHUD_AmmoBar, &tagLayerCom);
+#pragma endregion
+#pragma endregion
+
 }
 
 void CUIManager::OnAllUI()
