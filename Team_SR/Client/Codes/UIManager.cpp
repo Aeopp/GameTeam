@@ -279,6 +279,135 @@ void CUIManager::OnMonsterBar(_int* _iMaxHP, _int* _iMinHP)
 	m_pHUD_TopUI->SetMaxHPAndHP(_iMaxHP, _iMinHP);
 }
 
+HRESULT CUIManager::SetWeaponUIArrayPrototype()
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+
+#pragma region Add_Prototype
+	//Ojbect
+	//Componet
+	//Texture
+	// WeaponUI HUD Akimbo
+#pragma region Component_Texture_WeaponHUD_Akimbo
+	if (FAILED(pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponHUD_Akimbo",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Akimbo/Hud/0.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+	// WeaponUI HUD Dagger
+#pragma region Component_Texture_WeaponHUD_Dagger
+	if (FAILED(pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponHUD_Dagger",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Dagger/Hud/0.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+	// WeaponUI HUD Dynamite
+#pragma region Component_Texture_WeaponHUD_Dynamite
+	if (FAILED(pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponHUD_Dynamite",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Dynamite/Hud/0.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+	// WeaponUI HUD ElectricStaff
+#pragma region Component_Texture_WeaponHUD_ElectricStaff
+	if (FAILED(pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_WeaponHUD_ElectricStaff",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/ElectricStaff/Hud/0.png", 1))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_WeaponHUD_Flak
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_WeaponHUD_Flak",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Flak/Hud/0.png", 1))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_WeaponHUD_Magnum
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_WeaponHUD_Magnum",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Magnum/Hud/0.png", 1))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_WeaponHUD_ShotGun
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_WeaponHUD_ShotGun",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/ShotGun/Hud/0.png", 1))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_WeaponHUD_Staff
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_WeaponHUD_Staff",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Staff/Hud/0.png", 1))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma endregion
+//////////////////////////////////////////////////////////////////////
+#pragma region Add_GameObject
+#pragma region GameObject_WeaponUI
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWeaponUI>(),
+		CWeaponUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+#pragma endregion
+	
+	return S_OK;
+}
+
+HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+
+
+	UI_BAR_ADD_COMPONENT tagLayerCom;
+#pragma region WeaponHUD_Akimbo
+	//HUD_HP_Bar
+	tagLayerCom.tUIDesc.vUISize.x = 150.f;
+	tagLayerCom.tUIDesc.vUISize.y = 150.f;
+	tagLayerCom.tUIDesc.vUISize.z = 0;
+	tagLayerCom.tUIDesc.vUIPos.x = -780 + (tagLayerCom.tUIDesc.vUISize.x * m_iWeaponUIIndex);
+	tagLayerCom.tUIDesc.vUIPos.y = 300;
+	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
+	tagLayerCom.tUIDesc.vCenter = _vector(0.f, 0.f, 0.f);
+	tagLayerCom.wsPrototypeTag = _wcStr;
+	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = true;
+
+//	m_pcwLayerArr[m_iWeaponUIIndex];
+
+	wprintf_s(m_pcwLayerArr[m_iWeaponUIIndex], L"Layer_HUD_WeaponUI_%d", m_iWeaponUIIndex);
+	
+	//HUD_HP_Bar
+	if (FAILED(pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_WeaponUI",
+		(_int)ESceneID::Static,
+		m_pcwLayerArr[m_iWeaponUIIndex],
+		(CGameObject**)&m_pWeaponUIArr[m_iWeaponUIIndex], &tagLayerCom)))
+		return E_FAIL;
+#pragma endregion
+	++m_iWeaponUIIndex;
+
+	return S_OK;
+}
+
 void CUIManager::Free()
 {
 	SafeRelease(m_pDevice);

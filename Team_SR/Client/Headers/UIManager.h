@@ -60,6 +60,14 @@ public:
 	//몬스터의 체력
 	void OnMonsterBar(_int* _iMaxHP, _int* _iMinHP);
 
+private:
+	//내부 메서드
+	HRESULT SetWeaponUIArrayPrototype();
+	HRESULT SetWeaponUIArrayClone(WCHAR* _wcStr);
+
+public:
+	void FreeToWeaponUIArrayClone() { --m_iWeaponUIIndex; }
+
 public:
 	virtual void Free() override;
 
