@@ -29,6 +29,8 @@ public:
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 	void FlashHit()&;
 	void FreezeHit()&;
+	bool Attack(const Sphere _Sphere, const float Attack) &;
+	bool Attack(const Ray _Ray, const float Attack) &;
 	FORCEINLINE bool IsDead()const& { 
 		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:

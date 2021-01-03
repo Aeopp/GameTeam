@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Shark.h"
 #include "SharkBullet.h"
+#include "Player.h"
 
 CShark::CShark(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice),m_wstrBase(L""),m_fpSharkAI{},m_fpAction(nullptr)
@@ -25,7 +26,7 @@ HRESULT CShark::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	m_wstrTextureKey = m_wstrBase + L"Walk_1Phase";
 
-	m_pTransformCom->m_TransformDesc.vScale = { 15.f, 15.f, 15.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 8.f, 8.f, 8.f };
 	bGravity = false;
 	m_stOriginStatus.fHP = 4000.f;
 	m_stOriginStatus.fATK = 15.f;
@@ -224,13 +225,13 @@ bool CShark::Action_Move(float fDeltaTime)
 	float fLookLength = D3DXVec3Length(&vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 
-	if (fLookLength > 15)
+	if (fLookLength > 10)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition += vLook * fDeltaTime * m_stStatus.fSpeed;
 		if (PHASE::HP_Middle == m_ePhase)
 			m_pTransformCom->m_TransformDesc.vPosition.x += m_iDir;
 	}
-	if (fLookLength <= 15)
+	if (fLookLength <= 10)
 	{
 		if (PHASE::HP_High == m_ePhase)
 		{
@@ -319,6 +320,12 @@ bool CShark::Action_MeleeAttack(float fDeltaTime)
 	if (m_bFrameLoopCheck) 
 	{
 		m_fNextAtkWait = 1.f;
+		_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+		D3DXVec3Normalize(&AttackDir, &AttackDir);
+		Ray _Ray;
+		_Ray.Direction = AttackDir;
+		_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
+		CMonster::Attack(_Ray, 10.f);
 		return true;
 	}
 
@@ -363,7 +370,7 @@ void CShark::CreateBullet(float fDeltaTime)
 	if (m_fBulletCoolDown > 0.2f && m_iBulletCount < 6)
 	{
 		m_fBulletCoolDown = 0.f;
-		vPos += vDir * ((m_iBulletCount + 1)*10);
+		vPos += vDir * ((m_iBulletCount + 1)*6);
 		if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
 			(_int)ESceneID::Stage1st,
@@ -534,7 +541,7 @@ HRESULT CShark::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 7.5f;
+	_Info.Radius = 4.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;

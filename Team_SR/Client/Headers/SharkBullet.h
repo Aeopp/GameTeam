@@ -30,6 +30,7 @@ public:
 
 private:
 	wstring m_wstrBase;
+	bool	m_bTest = false;
 };
 
 

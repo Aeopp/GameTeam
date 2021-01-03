@@ -55,35 +55,96 @@ HRESULT CStageMidBoss::ReadyScene()
 	MonsterBasicArgument stArg;
 	stArg.uiSize = sizeof(MonsterBasicArgument);
 	stArg.pPlayer = m_pPlayer;
-	stArg.vPosition = { 0.f, 10.f, 95.f };
-	//if (FAILED(m_pManagement->AddGameObjectInLayer(
-	//	(_int)ESceneID::Static,
-	//	CGameObject::Tag + L"Shark",
-	//	(_int)CurrentSceneID,
-	//	CLayer::Tag + L"Monster",
-	//	nullptr, static_cast<void*>(&stArg))))
-	//	return E_FAIL;
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	if (FAILED(m_pManagement->AddGameObjectInLayer(
-	//		(_int)ESceneID::Static,
-	//		CGameObject::Tag + L"Spider",
-	//		(_int)CurrentSceneID,
-	//		CLayer::Tag + L"Monster",
-	//		nullptr, static_cast<void*>(&stArg))))
-	//		return E_FAIL;
-	//}
+	stArg.vPosition = { 0.f, 8.f, 95.f };
+
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + L"Eyebat",
+		CGameObject::Tag + L"Shark",
 		(_int)CurrentSceneID,
 		CLayer::Tag + L"Monster",
 		nullptr, static_cast<void*>(&stArg))))
 		return E_FAIL;
 
+
+	stArg.vPosition = { 35.f, 5.f, 90.f };
 	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
-		CGameObject::Tag + L"Glacier",
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { -30.f, 5.f, 90.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 110.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { -10.f, 5.f, 110.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 65.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+
+
+
+	stArg.vPosition = { 0.f, 5.f, 50.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
 		(_int)CurrentSceneID,
 		CLayer::Tag + L"Monster",
 		nullptr, static_cast<void*>(&stArg))))

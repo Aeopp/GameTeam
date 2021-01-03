@@ -129,7 +129,7 @@ HRESULT CEyebatBullet::AddComponents()
 	_Info.bMapBlock = true;
 	_Info.Radius = 0.7f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bWallCollision= true;
+	_Info.bWallCollision= false;
 	_Info.bFloorCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(

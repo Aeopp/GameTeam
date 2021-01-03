@@ -221,6 +221,39 @@ void CMonster::FreezeHit()&
 	}
 }
 
+bool CMonster::Attack(const Sphere _Sphere, const float Attack)&
+{
+	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	if (false == _Player->_CollisionComp->bCollision)return false;
+
+	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
+	auto OCollision = Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
+	if (OCollision.first)
+	{
+		this->CurrentAttack = Attack;
+		_Player->Hit(this, OCollision.second);
+		return true;
+	};
+	return false;
+};
+
+bool CMonster::Attack(const Ray _Ray, const float Attack)&
+{
+	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	if (false == _Player->_CollisionComp->bCollision)return false;
+
+	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
+	float t0, t1;
+	vec3 IntersectPoint;
+	auto OCollision = Collision::IsRayToSphere(_Ray, TargetSphere, t0, t1, IntersectPoint);
+	if (OCollision.first)
+	{
+		this->CurrentAttack = Attack;
+		_Player->Hit(this, OCollision.second);
+		return true;
+	};
+};
+
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)
 {

@@ -35,7 +35,7 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_stOriginStatus.fHP = 100.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 10.f;
+	m_stOriginStatus.fSpeed = 8.f;
 	m_stOriginStatus.fDetectionRange = 30.f;
 	m_stOriginStatus.fMeleeRange = 15.f;
 	// 인게임에서 사용할 스텟
@@ -77,7 +77,7 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 	//}
 
 	if (false == m_bTest
-		&& m_pTransformCom->m_TransformDesc.vPosition.y > 20)
+		&& m_pTransformCom->m_TransformDesc.vPosition.y > 13)
 		m_vRandomLook.y *= -1.f; /** m_stStatus.fSpeed*/;
 	if (true == m_bTest)
 		Jump(fDeltaTime);
@@ -127,7 +127,11 @@ void CSpider::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 		return;
 	}
 
-
+	if (&CSpider::Action_Move_NoAwareness == m_fpAction)
+	{
+		m_eAwareness = AWARENESS::Yes;
+		m_ePhase = PHASE::FLOOR;
+	}
 
 
 	CMonster::Hit(_Target, _CollisionInfo);		// CMonster 에서 HP 감소
