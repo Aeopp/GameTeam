@@ -1,14 +1,12 @@
 #pragma once
-#ifndef __LOADINGBAR_H__
-
+#ifndef __WEAPONUI_H__
 #include "GameUI.h"
 
-USING(Engine)
-class CLoadingBar final : public CGameUI
+class CWeaponUI final : public CGameUI
 {
 private:
-	explicit CLoadingBar(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CLoadingBar() = default;
+	explicit CWeaponUI(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CWeaponUI() = default;
 
 public:
 	// CGameUI을(를) 통해 상속됨
@@ -19,32 +17,27 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxValueAndMinValue(_int* _piMaxValue, _int* _piValue);
+	void SetShownUI() { m_bShown = true; m_fShownTime = 0.f; }
 
-	int GetMaxValue();
-	int	GetMinValue();
-
-
-private://내부메서드관련
+private:
 	HRESULT	AddComponent(wstring _PrototypeTag, wstring _ComponentTag);
 	HRESULT RenderText();
 
 public:
-	static CLoadingBar* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CWeaponUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
 private:
+	static _uint s_iCloneCount;
 	static LPD3DXFONT s_pFont;
-
-	float m_fRatio = 1.f;//Test
-	float m_fMaxSize;
-	bool m_bTextOut;
+	_uint m_iID;
 	wstring m_wsObjectName;
+	bool m_bOnWeapon = true;
 
-	_int* m_piMaxValue;
-	_int* m_piMinValue;
+	float m_fShownTime = 0.f;
+	const float m_cfMaxShownTime;
 };
 
-#define __LOADINGBAR_H__
-#endif // !__LOADINGBAR_H__
+#define __WEAPONUI_H__
+#endif // !__WEAPONUI_H__
