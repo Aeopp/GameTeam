@@ -102,7 +102,20 @@ public:
 		D3DXMatrixTranspose(&_transpose, &_mat);
 		return _transpose;
 	}
-
+	template<typename T>
+	FORCEINLINE static T Clamp(const T& Target, const T& Min, const T& Max)
+	{
+		if (Target < Min) 
+		{
+			return Min;
+		}
+		else if (Target > Max)
+		{
+			return Max;
+		}
+		
+		return Target;
+	};
 	//static float Parabolic(const float InitY/*운동을 시작한 타이밍의 높이 좌표*/,
 	//	const float Speed/*단위 벡터가 아님 속도도 곱해야함*/,
 	//	const float Degree, const float t, const float Gravity);

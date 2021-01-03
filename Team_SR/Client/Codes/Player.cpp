@@ -434,6 +434,11 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 	auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 	_ScreenEffect->Shield(CalcShieldStep());
 
+	m_tPlayerInfo.iMinHP = MATH::Clamp(m_tPlayerInfo.iMinHP, 0, m_tPlayerInfo.iMaxHP);
+	m_tPlayerInfo.iMinMana= MATH::Clamp(m_tPlayerInfo.iMinMana, 0, m_tPlayerInfo.iMaxMana);
+	m_tWeaponInfo.iMinAmmo = MATH::Clamp(m_tWeaponInfo.iMinAmmo, 0, m_tWeaponInfo.iMaxAmmo);
+
+
 	return _uint();
 }
 
