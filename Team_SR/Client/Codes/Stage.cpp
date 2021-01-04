@@ -269,6 +269,18 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 		 m_pPlayer->SpellLight();
 	 }
 
+	 if (m_pKeyMgr->Key_Down('T'))
+	 {
+		 if (FAILED(m_pManagement->AddGameObjectInLayer(
+			 (_int)ESceneID::Static,
+			 CGameObject::Tag + L"Terret",
+			 (_int)CurrentSceneID,
+			 CLayer::Tag + L"Terret")))
+		 {
+
+		 }
+	 }
+
 	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();

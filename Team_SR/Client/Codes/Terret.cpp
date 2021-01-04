@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "..\Headers\Terret.h"
 #include "Camera.h"
-
+#include "DXWrapper.h"
+#include "NormalUVVertexBuffer.h"
+#include "Monster.h"
 CTerret::CTerret(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice),m_fFrameCnt(0.f), m_pTexture(nullptr)
 {
@@ -19,8 +21,14 @@ HRESULT CTerret::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	if (FAILED(AddComponents()))
 		return E_FAIL;
+	auto _Player = m_pManagement->GetGameObject(-1, L"Layer_Player", 0);
+	if (nullptr == _Player)
+		return E_FAIL;
+	m_pTransformCom->m_TransformDesc.vPosition = _Player->GetTransform()->m_TransformDesc.vPosition;
+	m_pTransformCom->m_TransformDesc.vPosition.y -= 0.5f;
+	CurrentAttack = 1.f;
 
-	m_pTransformCom->m_TransformDesc.vPosition = { 10.f,10.f,20.f };
+	m_pTransformCom->m_TransformDesc.vScale *= 4.f;
 
 	return S_OK;
 }
@@ -53,9 +61,11 @@ _uint CTerret::LateUpdateGameObject(float fDeltaTime)
 	{
 		if ((BYTE)ObjFlag::Remove & m_pTarget->GetOBjFlag())
 			m_pTarget = nullptr;
+		if (dynamic_cast<CMonster*>(m_pTarget)->IsHpLock())
+			m_pTarget = nullptr;
 	}
 	UpdateAngle();
-	//IsBillboarding();
+	IsBillboarding();
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
@@ -68,17 +78,47 @@ HRESULT CTerret::RenderGameObject()
 	if (FAILED(CGameObject::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
-		return E_FAIL;
+	const mat World = m_pTransformCom->m_TransformDesc.matWorld;
+	auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
+	// 현재 사용중이던 텍스쳐를 여기에 세팅.
+	{
+		//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
+		{
+			IDirect3DBaseTexture9* const  DiffuseTexture = m_pTexture->GetTexture((_uint)m_fFrameCnt);
 
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
+			m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), DiffuseTexture);
+		}
+		// 1.       그냥 세팅을 안하거나
+		{
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+		}
+		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
+		{
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
+			// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
+		}
+	}
+	// 월드 행렬 바인딩
+	_Effect.SetVSConstantData(m_pDevice, "World", World);
+	// 광택 설정 
+	_Effect.SetPSConstantData(m_pDevice, "Shine", Shine);
+	m_pDevice->SetVertexShader(_Effect.VsShader);
+	m_pDevice->SetPixelShader(_Effect.PsShader);
+	_VertexBuffer->Render();
 
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
+	//if (FAILED(m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -90,6 +130,13 @@ HRESULT CTerret::AddComponents()
 		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		CComponent::Tag + TYPE_NAME<CVIBuffer_RectTexture>(),
 		(CComponent**)&m_pVIBufferCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::AddComponent(
+		(_uint)ESceneID::Static,
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		CComponent::Tag + TYPE_NAME<CNormalUVVertexBuffer>(),
+		(CComponent**)&_VertexBuffer)))
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
@@ -134,7 +181,7 @@ void CTerret::Fire(float fDeltaTime)
 		return;
 	m_fTestTime += fDeltaTime;
 	m_fFrameCnt = 5;
-	if (m_fTestTime > 1)
+	if (m_fTestTime > 0.3f)
 	{
 		m_fFrameCnt = 4;
 		m_fTestTime = 0.f;
@@ -193,7 +240,7 @@ void CTerret::UpdateAngle()
 
 void CTerret::IsBillboarding()
 {
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera");
 	if (nullptr == pCamera)
 		return;
 
@@ -236,6 +283,7 @@ CGameObject * CTerret::Clone(void * pArg /*= nullptr*/)
 
 void CTerret::Free()
 {
+	SafeRelease(_VertexBuffer);
 	SafeRelease(m_pVIBufferCom);
 	SafeRelease(m_pTexture);
 	CGameObject::Free();

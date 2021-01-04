@@ -4,6 +4,7 @@
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "Player.h"
+#include "Terret.h"
 
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
@@ -168,6 +169,16 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	//m_stStatus.fHP -= fDemage;
 	 m_stStatus.fHP-=_Target->CurrentAttack;
 	 auto _Player = dynamic_cast<const CPlayer* const>(_Target);
+	 if (nullptr == _Player)
+	 {
+		 auto _Turret = dynamic_cast<const CTerret* const>(_Target);
+		 BloodParticle();
+		 //if (m_stStatus.fHP < 0.f)
+		 //{
+			// DeadProcess();
+		 //}
+		 return;
+	 }
 	 const CPlayer::EWeaponState _WeaponState=_Player->GetWeaponState();
 
 	 if (false == (_WeaponState == CPlayer::EWeaponState::ElectricStaff ||

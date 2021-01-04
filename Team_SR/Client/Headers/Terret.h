@@ -35,7 +35,10 @@ private:
 	float m_fTestTime;
 	float m_fAngle = 0.f;
 	CGameObject* m_pTarget = nullptr;
-	
+public:
+public:
+	float Shine = 20.f;
+	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
 };
 
 #endif // Terret_h__

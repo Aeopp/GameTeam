@@ -32,6 +32,9 @@ public:
 	bool Attack(const Sphere _Sphere, const float Attack) &;
 	bool Attack(const Ray _Ray, const float Attack) &;
 	void MeleeAttack();
+	bool IsHpLock() const& {
+		return ((m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::HPLock)));
+	}
 	FORCEINLINE bool IsDead()const& { 
 		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
