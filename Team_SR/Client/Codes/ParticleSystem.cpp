@@ -3,12 +3,9 @@
 #include "Camera.h"
 #include "Player.h"
 #include "MainCamera.h"
-
-
-
+#include "SoundMgr.h"
 
 std::shared_ptr<ParticleSystem>ParticleSystem::_Instance{nullptr};
-
 
 void ParticleSystem::Initialize(CManagement* const _Management,IDirect3DDevice9* const _Device) noexcept
 {
@@ -771,6 +768,8 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bFloorCollision = false;
 		_Particle.Durtaion = 0.0f;
 
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_WEAPON);
+		CSoundMgr::Get_Instance()->PlaySound(L"explosion_01.wav", CSoundMgr::CHANNELID::PLAYER_WEAPON);
 
 		 //  여기에 폭발 로직을 추가 한다 .
 		auto _Camera = dynamic_cast<CMainCamera*>(_Management->GetGameObject(-1, L"Layer_MainCamera", 0));

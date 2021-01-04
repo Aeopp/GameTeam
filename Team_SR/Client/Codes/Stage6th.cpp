@@ -11,7 +11,6 @@
 #include "Map6th.h"
 #include "StageBoss.h"
 
-
 CStage6th::CStage6th(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {};
@@ -21,6 +20,7 @@ HRESULT CStage6th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage6th;
 	NextSceneID = ESceneID::StageFinalBoss;
 	using MapType = CMap6th;
+	BgmKey = L"007 Medieval - Sable Scabbard.wav";
 
 	Super::ReadyScene();
 
@@ -50,6 +50,8 @@ HRESULT CStage6th::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
+
+	LoadObjects(L"..\\Resources\\Map\\6\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 
 	return S_OK;

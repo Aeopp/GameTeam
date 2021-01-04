@@ -21,6 +21,7 @@ HRESULT CStage5th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage5th;
 	NextSceneID = ESceneID::Stage6th;
 	using MapType = CMap5th;
+	BgmKey = L"006 Medieval - Oubliette.wav";
 
 	Super::ReadyScene();
 	CPlayer::InitInfo _InitInfo;
@@ -50,6 +51,7 @@ HRESULT CStage5th::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
 
+	LoadObjects(L"..\\Resources\\Map\\5\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 
 	return S_OK;

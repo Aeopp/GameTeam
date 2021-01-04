@@ -21,7 +21,7 @@ HRESULT CStage1st::ReadyScene()
 	CurrentSceneID = ESceneID::Stage1st;
 	NextSceneID = ESceneID::Stage2nd;
 	using MapType = CMap1st;
-
+	BgmKey = L"001 Jerry and Luke's Final Theme.wav";
 	Super::ReadyScene();
 
 	CPlayer::InitInfo _InitInfo;
@@ -51,182 +51,12 @@ HRESULT CStage1st::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID )))
 		return E_FAIL;
-	{
-		//MonsterBasicArgument stArg;
-		//stArg.uiSize = sizeof(MonsterBasicArgument);
-		//stArg.pPlayer = m_pPlayer;
-		//stArg.vPosition = { 0.f, 10.f, 20.f };
 
-		//	if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//		(_int)ESceneID::Static,
-		//		CGameObject::Tag + L"Glacier",
-		//		(_int)CurrentSceneID,
-		//		CLayer::Tag + L"Monster",
-		//		nullptr, static_cast<void*>(&stArg))))
-		//		return E_FAIL;
+	LoadObjects(L"..\\Resources\\Map\\1\\CandleData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\1\\TorchData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\1\\ItemData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\1\\DeadData.obj", vec3{ 2.5,2.5,2.5 });
 
-		//MonsterBasicArgument stArg;
-		//stArg.uiSize = sizeof(MonsterBasicArgument);
-		//stArg.pPlayer = m_pPlayer;
-		//stArg.vPosition = { 0.f, 10.f, 20.f };
-		//if (FAILED(m_pManagement->AddGameObjectInLayer(
-		//	(_int)ESceneID::Static,
-		//	CGameObject::Tag + L"BatGrey",
-		//	(_int)CurrentSceneID,
-		//	CLayer::Tag + L"Monster",
-		//	nullptr, static_cast<void*>(&stArg))))
-		//	return E_FAIL;
-		/*
-#pragma region ������ ���� �ڵ��
-		// �̳�ū ü�� ����
-		ItemBasicArgument stItemArg;
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 0.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthBig;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���� ü�� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 1.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::HealthSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-
-		// �̳�ū ���� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 2.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaBig;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���� ���� ����
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 3.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::ManaSmall;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// �Ѿ� �ڽ�
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 4.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Ammo;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// �Ķ� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 5.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyBlue;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 6.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyRed;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ��� Ű
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 7.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::KeyYellow;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-
-		// ���׷��̵� ��ȭ
-		stItemArg.uiSize = sizeof(ItemBasicArgument);
-		stItemArg.vPosition = { 8.f, 10.f, 20.f };
-		stItemArg.etype = ITEM::Upgrade;
-		stItemArg.bDeleteFlag = false;
-		if (FAILED(m_pManagement->AddGameObjectInLayer(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + L"Item",
-			(_int)CurrentSceneID,
-			CLayer::Tag + L"Item",
-			nullptr, static_cast<void*>(&stItemArg))))
-			return E_FAIL;
-#pragma endregion
-*/
-	}
-
-	//SpawnObjectFromName(L"Torch", { -10.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Candle", { -9.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Barrel", { -7.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"BarrelBomb", { -5.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"BarrelWaste", { -3.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Box1", { -10.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Box2", { -8.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"BoxSteel1", { -6.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"BoxSteel2", { -4.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Headstone1", { 0.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Headstone2", { 4.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"Headstone3", { 8.f, 10.f, 10.f });
-	//SpawnObjectFromName(L"ThornyVine", { 0.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"TreeBlight", { 3.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Tree1", { 10.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Tree2", { 15.f, 10.f, 14.f });
-	//SpawnObjectFromName(L"Dead_Caleb", { -20.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Doomguy", { -14.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Duke", { -8.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Sam", { 0.f, 10.f, 16.f });
-	//SpawnObjectFromName(L"Dead_Wang", { 6.f, 10.f, 16.f });
-
-	//SpawnObjectFromName(L"Hangman", { 0.f, 10.f, 16.f });
-
-	//LoadObjects();
-
-	
 	return S_OK;
 }
 

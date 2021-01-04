@@ -16,6 +16,9 @@ HRESULT CHellhound::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
+	GibTable = { 44,45,46,47,48,49,50,51};
+
+
 	return S_OK;
 }
 
@@ -71,7 +74,7 @@ _uint CHellhound::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
-
+	if (LightHitTime > 0.0f)return 0;
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
 	_CollisionComp->Update(m_pTransformCom);

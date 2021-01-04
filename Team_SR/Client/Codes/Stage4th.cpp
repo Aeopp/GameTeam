@@ -21,6 +21,7 @@ HRESULT CStage4th::ReadyScene()
 	CurrentSceneID = ESceneID::Stage4th;
 	NextSceneID = ESceneID::Stage5th;
 	using MapType = CMap4th;
+	BgmKey = L"005 Intermission - Zeus #588511.wav";
 
 	Super::ReadyScene();
 

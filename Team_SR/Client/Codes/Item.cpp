@@ -38,6 +38,7 @@ HRESULT CItem::ReadyGameObject(void* pArg /*= nullptr*/)
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 0.5f, 0.5f, 0.5f };
+	CreateAfterTime = 0.0f;
 
 	if (FAILED(CItem::AddComponents()))
 		return E_FAIL;
@@ -126,7 +127,7 @@ HRESULT CItem::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 
 	_Info.bCollision = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 1.0f;
 	_Info.Tag = CCollisionComponent::ETag::Item;
 	_Info.bWallCollision = false;
 	_Info.bFloorCollision = true;

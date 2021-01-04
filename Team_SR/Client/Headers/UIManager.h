@@ -39,7 +39,7 @@ private:
 public:
 	// UI 초기화
 	HRESULT ReadyUI();
-
+	HRESULT UIOpen(ESceneID SceneID);
 public:
 	// 모든 UI
 	void OnAllUI();
@@ -61,6 +61,19 @@ public:
 	void OnMonsterBar(_int* _iMaxHP, _int* _iMinHP);
 
 public:
+	//WeaponUI관련 메서드
+	void AllShownWeaponUI();
+	void AllInvisibleWeaponUI();
+
+private:
+	//내부 메서드
+	HRESULT SetWeaponUIArrayPrototype();
+	HRESULT SetWeaponUIArrayClone(WCHAR* _wcStr);
+
+public:
+	void FreeToWeaponUIArrayClone() { --m_iWeaponUIIndex; }
+
+public:
 	virtual void Free() override;
 
 private:
@@ -70,22 +83,12 @@ private:
 	class CLoadingBar* m_pHUD_ManaBar = nullptr;
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
 	class CHUDTopUI* m_pHUD_TopUI = nullptr;
-
-public:
-
+	class CWeaponUI* m_pWeaponUIArr[9];
 
 private:
-//#pragma region Test_Player
-//	_uint m_iMaxs[3];
-//	_uint m_iMins[3];
-//#pragma endregion
-//
-//#pragma region Test_MonsterHP
-//	_uint m_iMax;
-//	_uint m_iMin;
-//#pragma endregion
-
 	LPDIRECT3DDEVICE9	m_pDevice;
+	_int m_iWeaponUIIndex = 0;
+	WCHAR m_pcwLayerArr[9][256];
 };
 
 #define __UIMANAGER_H__

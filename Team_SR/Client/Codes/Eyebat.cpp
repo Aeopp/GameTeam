@@ -13,6 +13,10 @@ HRESULT CEyebat::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 	m_wstrBase = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CEyebat>();
+
+	GibTable = {8,8,7,1,2,6,8,37,39,32,23,23 };
+
+
 	return S_OK;
 }
 
@@ -68,6 +72,8 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+
+	if (LightHitTime > 0.0f)return 0;
 
 	Update_AI(fDeltaTime);
 
