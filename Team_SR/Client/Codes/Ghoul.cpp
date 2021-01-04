@@ -34,8 +34,8 @@ HRESULT CGhoul::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 3.f;
-	m_stOriginStatus.fMeleeRange = 6.f;
-	m_stOriginStatus.fDetectionRange = 6.f;
+	m_stOriginStatus.fMeleeRange = 12.f;
+	m_stOriginStatus.fDetectionRange = 12.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 

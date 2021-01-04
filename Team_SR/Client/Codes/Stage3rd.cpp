@@ -121,6 +121,7 @@ HRESULT CStage3rd::ReadyScene()
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 34, 62, 33, 21, 2.5f, 5);
 
+	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 	LoadObjects(L"..\\Resources\\Map\\3\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;

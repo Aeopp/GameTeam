@@ -212,7 +212,7 @@ HRESULT CStageMidBoss::ReadyScene()
 	};
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 40, 55, 21, 54, 2.5f, 5);
-	
+
 	LoadObjects(L"..\\Resources\\Map\\MidBoss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;

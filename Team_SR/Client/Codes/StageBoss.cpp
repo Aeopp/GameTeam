@@ -108,6 +108,7 @@ HRESULT CStageBoss::ReadyScene()
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 76, 50, 9, 20, 2.5f, 5);
 	
+	LoadObjects(L"..\\Resources\\Map\\Boss\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 	LoadObjects(L"..\\Resources\\Map\\Boss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;

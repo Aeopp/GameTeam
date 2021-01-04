@@ -27,7 +27,7 @@ HRESULT CHellBoss::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 5.f,5.f,5.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 7.f,7.f,7.f };
 
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 100.f;//500.f;
