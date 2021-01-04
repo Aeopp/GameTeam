@@ -69,6 +69,8 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 		return 0;
 	}
 
+	if (LightHitTime > 0.0f)return 0;
+
 	if (GetAsyncKeyState('6') & 0x8000)
 	{
 		m_bTest = true;

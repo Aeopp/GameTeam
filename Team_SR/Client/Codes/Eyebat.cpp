@@ -72,6 +72,8 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 		return 0;
 	}
 
+	if (LightHitTime > 0.0f)return 0;
+
 	Update_AI(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);

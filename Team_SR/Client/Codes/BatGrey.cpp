@@ -71,6 +71,7 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+	if (LightHitTime > 0.0f)return 0;
 
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
