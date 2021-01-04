@@ -30,7 +30,7 @@ HRESULT CHellBossChainGunBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 300.f;
 	m_stOriginStatus.fATK = 10.f;
-	m_stOriginStatus.fSpeed = 30.f;
+	m_stOriginStatus.fSpeed = 1.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -66,7 +66,7 @@ _uint CHellBossChainGunBullet::LateUpdateGameObject(float fDeltaTime)
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
+	//Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
 
 	return _uint();
 }
@@ -74,15 +74,6 @@ _uint CHellBossChainGunBullet::LateUpdateGameObject(float fDeltaTime)
 HRESULT CHellBossChainGunBullet::RenderGameObject()
 {
 	if (FAILED(CBullet::RenderGameObject()))
-		return E_FAIL;
-
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
 		return E_FAIL;
 
 	return S_OK;

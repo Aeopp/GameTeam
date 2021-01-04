@@ -27,7 +27,7 @@ HRESULT CHellBoss::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 7.f,7.f,7.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 10.f,10.f,10.f };
 
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 100.f;//500.f;
@@ -313,7 +313,7 @@ HRESULT CHellBoss::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y + 1.f;
+	_Info.Radius = 5.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -425,18 +425,6 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			throw;
 		}
 
-		// 몬스터가 안죽었으면
-		//if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
-		//	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
-		//	_CollisionComp->bCollision = false;		// 충돌 처리 OFF
-		//	bGravity = false;						// 중력 OFF
-		//	m_fpAction = &CHellBoss::Action_Dead;
-		//	m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
-		//	m_fFrameCnt = 0;
-		//	m_fStartFrame = 0;
-		//	m_fEndFrame = 12;
-		//	m_fFrameSpeed = 10.f;
-		//}
 		return;
 	}
 
@@ -946,7 +934,7 @@ bool CHellBoss::Action_TurboSatan_ShootFire(float fDeltaTime)
 			pArg->vDir = m_vAim;	// 방향
 			m_pManagement->AddScheduledGameObjectInLayer(
 				(_int)ESceneID::Static,
-				L"GameObject_HellBossRingBullet",
+				L"GameObject_HellBossChainGunBullet",
 				L"Layer_Bullet",
 				nullptr, (void*)pArg);
 		}

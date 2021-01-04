@@ -436,6 +436,7 @@ bool CGhoul::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		CMonster::MeleeAttack();
 		return true;
 	}
 
