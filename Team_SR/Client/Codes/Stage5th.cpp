@@ -50,7 +50,7 @@ HRESULT CStage5th::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
-
+	
 	// 맵 정보
 	BYTE byMap[53][53] = {
 	//	  1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3
@@ -110,6 +110,8 @@ HRESULT CStage5th::ReadyScene()
 	};
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 53, 53, 4, 39, 2.5f, 5);
+	
+	LoadObjects(L"..\\Resources\\Map\\5\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

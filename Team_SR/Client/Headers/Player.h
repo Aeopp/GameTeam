@@ -122,6 +122,7 @@ private:
 	};
 	void PlayStepSound();
 private:
+	float invincibility = 1.f;
 	float RemainShield = 0.0f;
 	float _DeltaTime = 0.0f;
 	const vec3 CalcElectricStaffGizmo()const&;

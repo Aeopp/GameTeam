@@ -52,6 +52,104 @@ HRESULT CStageMidBoss::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
+
+	MonsterBasicArgument stArg;
+	stArg.uiSize = sizeof(MonsterBasicArgument);
+	stArg.pPlayer = m_pPlayer;
+	stArg.vPosition = { 0.f, 8.f, 95.f };
+
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Shark",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+
+	stArg.vPosition = { 35.f, 5.f, 90.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { -30.f, 5.f, 90.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 110.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { -10.f, 5.f, 110.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 65.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+	stArg.vPosition = { 10.f, 5.f, 75.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
+
+
+
+
+	stArg.vPosition = { 0.f, 5.f, 50.f };
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Spider",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Monster",
+		nullptr, static_cast<void*>(&stArg))))
+		return E_FAIL;
 	
 	// 맵 정보
 	BYTE byMap[55][40] = {
@@ -114,6 +212,8 @@ HRESULT CStageMidBoss::ReadyScene()
 	};
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 40, 55, 21, 54, 2.5f, 5);
+	
+	LoadObjects(L"..\\Resources\\Map\\MidBoss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }
@@ -121,6 +221,7 @@ HRESULT CStageMidBoss::ReadyScene()
 _uint CStageMidBoss::UpdateScene(float fDeltaTime)
 {
 	return Super::UpdateScene(fDeltaTime);
+
 }
 
 _uint CStageMidBoss::LateUpdateScene()
@@ -146,6 +247,21 @@ _uint CStageMidBoss::KeyProcess(float fDeltaTime)
 		}
 
 		return CHANGE_SCNENE;
+	}
+	if (m_pKeyMgr->Key_Down('B'))
+	{
+		int random = rand() % 100 - 50;
+		MonsterBasicArgument stArg;
+		stArg.uiSize = sizeof(MonsterBasicArgument);
+		stArg.pPlayer = m_pPlayer;
+		stArg.vPosition = { 0.f, 5.f, 95.f };
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Spider",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 	}
 
 	return _uint();

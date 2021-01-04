@@ -13,7 +13,6 @@
 #include "WeaponAmmoInfoUI.h"
 
 #include "Terret.h"
-#include "Blood.h"
 #include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
@@ -21,7 +20,6 @@
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
-#include "FloorBlood.h"
 #include "UIManager.h"	// UI 매니저
 #include "Item.h"		// 아이템
 #include "Hangman.h"	// 행맨
@@ -245,21 +243,6 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 #pragma endregion
 
-#pragma region GameObject_Blood
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CBlood>(),
-			CBlood::Create(m_pDevice))))
-			return E_FAIL;
-#pragma endregion
-
-#pragma region GameObject_FloorBlood
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-			CFloorBlood::Create(m_pDevice))))
-			return E_FAIL;
-#pragma endregion
 
 #pragma region GameObject_Terret
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -636,24 +619,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Wep/Wep%d.png", 1))))
 		return E_FAIL;
 #pragma endregion
-#pragma endregion
-
-#pragma region Component_Texture_Blood
-	wstring wstrTextureBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CBlood>();
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		wstrTextureBlood,
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Blood/Blood%d.png", 8))))
-		return E_FAIL;
-#pragma endregion
-
-#pragma region Component_Texture_FloorBlood
-	wstring wstrTextureFloorBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFloorBlood>();
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		wstrTextureFloorBlood,
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/FloorBlood/FloorBlood%d.png", 4))))
-		return E_FAIL;
 #pragma endregion
 
 #pragma region Component_Texture_Terret

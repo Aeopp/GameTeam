@@ -22,8 +22,9 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 
-private:
-	
+//public:
+//	float Shine = 20.f;
+//	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };
 };
 #define __GLACIERBULLET_H__
 #endif

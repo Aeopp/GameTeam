@@ -36,11 +36,13 @@ private:
 	void AI_FloorPhase();
 	void AI_DeadPhase();
 	////////////////////ACTION/////////////////////
+	bool Action_Move_NoAwareness(float fDeltaTime);
 	bool Action_Move_Wall(float fDeltaTime);
 	bool Action_Move_Floor(float fDeltaTime);
 	bool Action_Idle(float fDeltaTime);
 	bool Action_Shoot(float fDeltaTime);
 	bool Action_Death(float fDeltaTime);
+	bool Action_Mellee_Attack(float fDeltaTime);
 	///////////////////////////////////////////////
 	void CreateBullet();
 

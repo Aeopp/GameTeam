@@ -37,8 +37,9 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 	m_iDir = 1;
 	//
+	bGravity = false;
 
-	m_stOriginStatus.fHP = 20.f;
+	m_stOriginStatus.fHP = 40.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
@@ -72,6 +73,8 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 		return 0;
 	}
 
+	if (LightHitTime > 0.0f)return 0;
+
 	Update_AI(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -98,7 +101,7 @@ HRESULT CEyebat::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	_CollisionComp->DebugDraw();
+	//_CollisionComp->DebugDraw();
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 	//	return E_FAIL;
@@ -317,7 +320,7 @@ HRESULT CEyebat::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;

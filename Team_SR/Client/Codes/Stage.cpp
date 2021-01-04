@@ -418,7 +418,6 @@ void CStage::SpawnObjectFromName(const std::wstring& ObjectName, vec3 SpawnLocat
 		_MonsterBasicArgument.uiSize = sizeof(MonsterBasicArgument);
 		_MonsterBasicArgument.pPlayer = m_pPlayer;
 		_MonsterBasicArgument.vPosition = std::move(SpawnLocation);
-
 		m_pManagement->AddGameObjectInLayer(
 			(_int)ESceneID::Static,
 			CGameObject::Tag + TYPE_NAME<SpawnType>(),

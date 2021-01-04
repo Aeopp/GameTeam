@@ -237,7 +237,7 @@ CButtonUI * CButtonUI::Create(LPDIRECT3DDEVICE9 pDevice)
 	CButtonUI* pInstance = new CButtonUI(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create PlyerInfoUI");
+		PRINT_LOG(L"Warning", L"Failed To Create CButtonUI");
 		SafeRelease(pInstance);
 	}
 
@@ -250,7 +250,7 @@ CGameObject * CButtonUI::Clone(void * pArg/* = nullptr*/)
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone PlyerInfoUI");
+		PRINT_LOG(L"Warning", L"Failed To Clone CButtonUI");
 		SafeRelease(pClone);
 	}
 

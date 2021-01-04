@@ -35,9 +35,7 @@ public:
 	virtual void Free() override;
 
 private:
-	LPD3DXSPRITE m_pSprite;
-	LPD3DXFONT m_pFont;
-
+	static LPD3DXFONT s_pFont;
 
 	float m_fRatio = 1.f;//Test
 	float m_fMaxSize;

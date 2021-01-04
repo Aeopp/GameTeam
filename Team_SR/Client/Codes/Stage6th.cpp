@@ -11,7 +11,6 @@
 #include "Map6th.h"
 #include "StageBoss.h"
 
-
 CStage6th::CStage6th(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {};
@@ -51,7 +50,7 @@ HRESULT CStage6th::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
-
+	
 	// 맵 정보
 	BYTE byMap[59][80] = {
 	//	  1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0
@@ -117,6 +116,8 @@ HRESULT CStage6th::ReadyScene()
 	};
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 80, 59, 29, 46, 2.5f, 5);
+	
+	LoadObjects(L"..\\Resources\\Map\\6\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

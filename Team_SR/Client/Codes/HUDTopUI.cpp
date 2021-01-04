@@ -62,7 +62,7 @@ HRESULT CHUDTopUI::ReadyGameObjectPrototype()
 		return E_FAIL;
 #pragma endregion
 
-	m_pMonsterHPBar->SetInvisibleBarUI();
+	m_pMonsterHPBar->SetInvisibleUI();
 
 	return S_OK;
 }
@@ -146,7 +146,7 @@ _uint CHUDTopUI::UpdateGameObject(float fDeltaTime)
 		if (0 >= m_pMonsterHPBar->GetMinValue())
 		{
 			m_bMonsterHPbarShown = false;
-			m_pMonsterHPBar->SetInvisibleBarUI();
+			m_pMonsterHPBar->SetInvisibleUI();
 		}
 	}
 
@@ -193,12 +193,12 @@ HRESULT CHUDTopUI::RenderGameObject()
 
 	if (!m_bMonsterHPbarShown)
 	{
-		m_pMonsterHPBar->SetInvisibleBarUI();
+		m_pMonsterHPBar->SetInvisibleUI();
 		return S_OK;
 	}
 	else
 	{
-		m_pMonsterHPBar->SetShownBarUI();
+		m_pMonsterHPBar->SetShownUI();
 	}
 	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_tBossUIDesc.matWorld)))
 		return E_FAIL;
@@ -250,7 +250,7 @@ void CHUDTopUI::SetMaxHPAndHP(_int * _piMaxValue, _int * _piValue)
 {
 	m_bMonsterHPbarShown = true;
 	m_pMonsterHPBar->SetMaxValueAndMinValue(_piMaxValue, _piValue);
-	m_pMonsterHPBar->SetShownBarUI();
+	m_pMonsterHPBar->SetShownUI();
 }
 
 CHUDTopUI * CHUDTopUI::Create(LPDIRECT3DDEVICE9 pDevice)

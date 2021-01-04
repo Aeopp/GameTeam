@@ -32,7 +32,7 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 5.f;
+	m_stOriginStatus.fHP = 40.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 8.f;
@@ -71,6 +71,7 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+	if (LightHitTime > 0.0f)return 0;
 
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
@@ -550,6 +551,7 @@ bool CBatGrey::Action_Melee(float fDeltaTime)
 	CSoundMgr::Get_Instance()->PlaySound(L"Bat_attack_01.wav", CSoundMgr::BATGRAY);
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		CMonster::MeleeAttack();
 		return true;
 	}
 

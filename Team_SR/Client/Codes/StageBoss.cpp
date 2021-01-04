@@ -50,7 +50,7 @@ HRESULT CStageBoss::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
-
+	
 	// 맵 정보
 	BYTE byMap[50][76] = {
 	//	  1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6 7 8 9 0|1 2 3 4 5 6
@@ -107,6 +107,8 @@ HRESULT CStageBoss::ReadyScene()
 	};
 
 	JumpPointSearch::Get_Instance()->ReadyMap(byMap[0], 76, 50, 9, 20, 2.5f, 5);
+	
+	LoadObjects(L"..\\Resources\\Map\\Boss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

@@ -26,8 +26,10 @@ HRESULT CSharkBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	{
 		m_pTransformCom->m_TransformDesc.vPosition = *(_vector*)pArg;
 	}
+	m_pTransformCom->m_TransformDesc.vPosition.y = 8.f;
 	m_pTransformCom->m_TransformDesc.vScale = { 5.f, 5.f, 5.f };
 	int random = rand() % 3;
+	bGravity = false;
 	switch (random)
 	{
 	case 0:
@@ -71,7 +73,13 @@ _uint CSharkBullet::UpdateGameObject(float fDeltaTime)
 		return 0;
 	CMonster::UpdateGameObject(fDeltaTime);
 
-
+	if (!m_bTest)
+	{
+		if (CMonster::Attack(_CollisionComp->_Sphere, 10.f))
+		{
+			m_bTest = true;
+		}
+	}
 	_CollisionComp->Update(m_pTransformCom);
 	return _uint();
 }
@@ -135,11 +143,11 @@ HRESULT CSharkBullet::AddComponents()
 
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.bMapBlock = false;
-	_Info.Radius = 2.5f;
+	_Info.bMapBlock = true;
+	_Info.Radius = 3.0f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = false;
-	_Info.bWallCollision = false;
+	_Info.bWallCollision = true;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),

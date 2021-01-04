@@ -34,8 +34,10 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nulptr*/)
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
+	
+	//bGravity = false;
 
-	m_stOriginStatus.fHP = 30.f;
+	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
@@ -151,6 +153,14 @@ void CGlacier::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	CreateParticle();
 }
 
+void CGlacier::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (L"Floor" == _CollisionInfo.Flag)
+	{
+		bGravity = false;
+	}
+}
+
 HRESULT CGlacier::AddComponents()
 {
 	if (FAILED(CMonster::AddComponents()))	// Monster.cpp에서 RectTexture 호출
@@ -194,7 +204,7 @@ HRESULT CGlacier::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -228,37 +238,37 @@ HRESULT CGlacier::Set_Texture()
 
 void CGlacier::Update_AI(float fDeltaTime)
 {
-	//if ((this->*m_fpAction)(fDeltaTime)) 
-	//{
-	//	// 플레이어를 인식했는가?
-	//	if (PlayerAwareness()) {
-	//		m_eAwareness = AWARENESS::Yes;	
-	//	}
-	//	else {
-	//		m_eAwareness = AWARENESS::No;	
-	//	}
+	if ((this->*m_fpAction)(fDeltaTime)) 
+	{
+		// 플레이어를 인식했는가?
+		if (PlayerAwareness()) {
+			m_eAwareness = AWARENESS::Yes;	
+		}
+		else {
+			m_eAwareness = AWARENESS::No;	
+		}
 
 
-	//	if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
-	//		m_ePhase = PHASE::HP_High;	
-	//	}
-	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
-	//		&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
-	//	{
-	//		m_ePhase = PHASE::HP_Half;	
-	//	}
-	//	else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
-	//		&& m_stStatus.fHP > 0)
-	//	{
-	//		m_ePhase = PHASE::HP_Low;
-	//	}
-	//	else if (m_stStatus.fHP < 0)
-	//	{
-	//		m_ePhase = PHASE::HP_ZERO;
-	//	}
+		if (m_stStatus.fHP > m_stOriginStatus.fHP * 0.7f) {
+			m_ePhase = PHASE::HP_High;	
+		}
+		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.7f
+			&& m_stStatus.fHP > m_stOriginStatus.fHP * 0.4f)
+		{
+			m_ePhase = PHASE::HP_Half;	
+		}
+		else if(m_stStatus.fHP < m_stOriginStatus.fHP * 0.4f
+			&& m_stStatus.fHP > 0)
+		{
+			m_ePhase = PHASE::HP_Low;
+		}
+		else if (m_stStatus.fHP < 0)
+		{
+			m_ePhase = PHASE::HP_ZERO;
+		}
 
-	//	(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
-	//}
+		(this->*m_fpGlacierAI[(int)m_eAwareness][(int)m_ePhase])();
+	}
 }
 
 void CGlacier::AI_NoAwareness()
@@ -274,7 +284,7 @@ void CGlacier::AI_NoAwareness()
 void CGlacier::AI_FirstPhase()
 {
 	m_fpAction = &CGlacier::Action_Move;
-	m_fCountDown = 1.f;
+	m_fCountDown = 0.5f;
 	m_wstrTextureKey = m_wstrBase + L"Move";
 	m_fFrameCnt = 0.f;
 	m_fStartFrame = 0.f;
@@ -286,7 +296,7 @@ void CGlacier::AI_SecondPhase()
 	//총알 발사
 
 	m_fpAction = &CGlacier::Action_Hurt;
-	m_fCountDown = 1.f;
+	m_fCountDown = 0.5f;
 	m_wstrTextureKey = m_wstrBase + L"Hurt";
 	m_fFrameCnt = 0.f;
 	m_fStartFrame = 0.f;
@@ -298,7 +308,7 @@ void CGlacier::AI_ThirdPhase()
 {
 	//총알 발사
 	m_fpAction = &CGlacier::Action_Shoot;
-	m_fCountDown = 1.f;
+	m_fCountDown = 0.5f;
 	m_wstrTextureKey = m_wstrBase + L"Attack";
 	m_fFrameCnt = 0.f;
 	m_fStartFrame = 0.f;

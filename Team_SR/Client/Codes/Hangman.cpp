@@ -33,7 +33,7 @@ HRESULT CHangman::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 25.f;
+	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 5.f;
@@ -538,6 +538,7 @@ bool CHangman::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		CMonster::MeleeAttack();
 		return true;
 	}
 

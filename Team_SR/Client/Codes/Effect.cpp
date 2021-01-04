@@ -82,7 +82,7 @@ bool CEffect::Frame_Move(float fDeltaTime)
 
 HRESULT CEffect::IsBillboarding()
 {
-	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)ESceneID::Stage1st, L"Layer_MainCamera");
+	CCamera* pCamera = (CCamera*)m_pManagement->GetGameObject((_int)-1, L"Layer_MainCamera");
 	if (nullptr == pCamera)
 		return E_FAIL;
 
@@ -90,7 +90,6 @@ HRESULT CEffect::IsBillboarding()
 	vec3 BillboardRotation = _TransformDesc.vRotation;
 	BillboardRotation.y += pCamera->GetTransform()->GetRotation().y;
 	m_pTransformCom->m_TransformDesc.matWorld = MATH::WorldMatrix(_TransformDesc.vScale, BillboardRotation, _TransformDesc.vPosition);
-
 
 
 	return S_OK;

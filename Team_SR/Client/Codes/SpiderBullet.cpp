@@ -29,7 +29,6 @@ HRESULT CSpiderBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 
 _uint CSpiderBullet::UpdateGameObject(float fDeltaTime)
 {
-
 	CBullet::UpdateGameObject(fDeltaTime);
 
 	return _uint();
@@ -70,7 +69,7 @@ HRESULT CSpiderBullet::AddComponents()
 		return E_FAIL;
 
 #pragma region Add_Component_Texture
-	// ±€∑π¿Ãº≠ ∫“∑ø ≈ÿΩ∫√≥
+	// Í∏ÄÎ†àÏù¥ÏÑú Î∂àÎ†õ ÌÖçÏä§Ï≤ò
 	wstring wstrTexture = CComponent::Tag + TYPE_NAME<CTexture>();
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
@@ -100,7 +99,7 @@ CSpiderBullet * CSpiderBullet::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CSpiderBullet::Clone(void * pArg/* = nullptr*/)
 {
-	CSpiderBullet* pClone = new CSpiderBullet(*this); /* ∫πªÁª˝º∫¿⁄ */
+	CSpiderBullet* pClone = new CSpiderBullet(*this); /* Î≥µÏÇ¨ÏÉùÏÑ±Ïûê */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
-#include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "Player.h"
@@ -235,35 +234,47 @@ void CMonster::FreezeHit()&
 	}
 };
 
-void CMonster::Attack(const Sphere _Sphere, const float Attack)&
+bool CMonster::Attack(const Sphere _Sphere, const float Attack)&
 {
-	auto _Player=dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
-	if (false==_Player->_CollisionComp->bCollision)return;
+	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	if (false == _Player->_CollisionComp->bCollision)return false;
 
-	Sphere TargetSphere=_Player->_CollisionComp->_Sphere;
-	auto OCollision=Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
+	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
+	auto OCollision = Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
 	if (OCollision.first)
 	{
 		this->CurrentAttack = Attack;
 		_Player->Hit(this, OCollision.second);
+		return true;
 	};
+	return false;
 };
 
-void CMonster::Attack(const Ray _Ray, const float Attack)&
+bool CMonster::Attack(const Ray _Ray, const float Attack)&
 {
 	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
-	if (false == _Player->_CollisionComp->bCollision)return;
+	if (false == _Player->_CollisionComp->bCollision)return false;
 
 	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
 	float t0, t1;
 	vec3 IntersectPoint;
-	auto OCollision = Collision::IsRayToSphere(_Ray, TargetSphere,t0,t1,IntersectPoint);
+	auto OCollision = Collision::IsRayToSphere(_Ray, TargetSphere, t0, t1, IntersectPoint);
 	if (OCollision.first)
 	{
 		this->CurrentAttack = Attack;
 		_Player->Hit(this, OCollision.second);
+		return true;
 	};
-};
+}
+void CMonster::MeleeAttack()
+{
+	_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&AttackDir, &AttackDir);
+	Ray _Ray;
+	_Ray.Direction = AttackDir;
+	_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
+	CMonster::Attack(_Ray, 10.f);
+}
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)
@@ -332,18 +343,6 @@ void CMonster::CreateBlood()
 
 void CMonster::CreateFloorBlood()
 {
-	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		(_int)ESceneID::Stage1st,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
-		return;
-
-	//m_pManagement->AddScheduledGameObjectInLayer(
-	//	(_int)ESceneID::Static,
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
 // 길찾기

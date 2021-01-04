@@ -127,7 +127,7 @@ HRESULT CItem::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 
 	_Info.bCollision = true;
-	_Info.Radius = 0.5f;
+	_Info.Radius = 1.0f;
 	_Info.Tag = CCollisionComponent::ETag::Item;
 	_Info.bWallCollision = false;
 	_Info.bFloorCollision = true;

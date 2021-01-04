@@ -33,12 +33,12 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 40.f;
+	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 20.f;
 	m_stOriginStatus.fMeleeRange = 6.f;
-	m_stOriginStatus.fDetectionRange = 30.f;
+	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
@@ -48,6 +48,7 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 12;
 	m_fFrameSpeed = 10.f;
+
 
 	// 부화
 	m_fpAction = &CHellhound::Action_EggHatch;
@@ -73,7 +74,7 @@ _uint CHellhound::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
-
+	if (LightHitTime > 0.0f)return 0;
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -97,6 +98,17 @@ HRESULT CHellhound::RenderGameObject()
 {
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
+	
+	_CollisionComp->DebugDraw();
+
+	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
+	//	return E_FAIL;
+
+	//if (FAILED(Set_Texture()))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -205,7 +217,7 @@ HRESULT CHellhound::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = m_pTransformCom->m_TransformDesc.vScale.y + 1.f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -291,6 +303,15 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 		m_fStartFrame = 0;
 		m_fEndFrame = 1;
 		m_fFrameSpeed = 5.f;
+	}
+}
+
+void CHellhound::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (L"Floor" == _CollisionInfo.Flag)
+	{
+		bGravity = false;
+		//m_pTransformCom->m_TransformDesc.vPosition.y = _CollisionInfo.IntersectPoint.y + 5;
 	}
 }
 
@@ -506,6 +527,7 @@ bool CHellhound::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		CMonster::MeleeAttack();
 		return true;
 	}
 
