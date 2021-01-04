@@ -53,6 +53,19 @@ HRESULT CStage2nd::ReadyScene()
 
 
 	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
+
+	MonsterBasicArgument stArg;
+	stArg.uiSize = sizeof(MonsterBasicArgument);
+	stArg.pPlayer = m_pPlayer;
+	stArg.vPosition = { 0.f, 10.f, 20.f };
+
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Glacier",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Monster",
+			nullptr, static_cast<void*>(&stArg))))
+			return E_FAIL;
 	
 
 

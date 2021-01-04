@@ -35,7 +35,7 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nullptr*/)
 
 	//bGravity = false;
 
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;

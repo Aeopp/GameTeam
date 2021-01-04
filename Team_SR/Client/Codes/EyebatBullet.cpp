@@ -64,7 +64,7 @@ _uint CEyebatBullet::UpdateGameObject(float fDeltaTime)
 	//}
 	
 	_CollisionComp->Update(m_pTransformCom);
-
+	Bullet_Attack();
 	return _uint();
 }
 

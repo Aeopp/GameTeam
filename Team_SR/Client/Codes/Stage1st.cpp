@@ -59,7 +59,7 @@ HRESULT CStage1st::ReadyScene()
 
 		//	if (FAILED(m_pManagement->AddGameObjectInLayer(
 		//		(_int)ESceneID::Static,
-		//		CGameObject::Tag + L"Shark",
+		//		CGameObject::Tag + L"Glacier",
 		//		(_int)CurrentSceneID,
 		//		CLayer::Tag + L"Monster",
 		//		nullptr, static_cast<void*>(&stArg))))

@@ -30,7 +30,7 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 200.f;
+	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 30.f;
@@ -493,6 +493,7 @@ bool CHellhound::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		CMonster::MeleeAttack();
 		return true;
 	}
 

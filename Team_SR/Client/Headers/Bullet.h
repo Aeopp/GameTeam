@@ -15,6 +15,9 @@ public:
 	virtual _uint UpdateGameObject(float fDeltaTime) = 0;
 	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
 	virtual HRESULT RenderGameObject() = 0;
+public:
+	void	Bullet_Attack();
+	bool Attack(const Sphere _Sphere, const float Attack) &;
 protected:
 	virtual HRESULT AddComponents();
 protected:
@@ -33,7 +36,7 @@ protected:
 	CTexture* m_pTexture;	// 텍스처
 	BulletStatus m_stOriginStatus;	// 총알 원본 스텟
 	BulletStatus m_stStatus;		// 총알 스텟
-
+	bool m_bOneHit = false;
 public:
 	float Shine = 20.f;
 	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };

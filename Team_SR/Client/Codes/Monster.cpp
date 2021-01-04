@@ -252,7 +252,16 @@ bool CMonster::Attack(const Ray _Ray, const float Attack)&
 		_Player->Hit(this, OCollision.second);
 		return true;
 	};
-};
+}
+void CMonster::MeleeAttack()
+{
+	_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&AttackDir, &AttackDir);
+	Ray _Ray;
+	_Ray.Direction = AttackDir;
+	_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
+	CMonster::Attack(_Ray, 10.f);
+}
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)

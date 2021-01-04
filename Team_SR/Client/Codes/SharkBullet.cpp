@@ -75,10 +75,10 @@ _uint CSharkBullet::UpdateGameObject(float fDeltaTime)
 
 	if (!m_bTest)
 	{
-		//if (CMonster::Attack(_CollisionComp->_Sphere, 10.f))
-		//{
-		//	m_bTest = true;
-		//}
+		if (CMonster::Attack(_CollisionComp->_Sphere, 10.f))
+		{
+			m_bTest = true;
+		}
 	}
 	_CollisionComp->Update(m_pTransformCom);
 	return _uint();

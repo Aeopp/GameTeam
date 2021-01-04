@@ -2,6 +2,8 @@
 #include "..\Headers\Bullet.h"
 #include "Camera.h"
 #include "NormalUVVertexBuffer.h"
+#include "Monster.h"
+#include "Player.h"
 CBullet::CBullet(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_pTexture(nullptr)
@@ -109,6 +111,33 @@ HRESULT CBullet::RenderGameObject()
 
 	return S_OK;
 }
+
+void CBullet::Bullet_Attack()
+{
+	if (!m_bOneHit)
+	{
+		if (Attack(_CollisionComp->_Sphere, 10.f))
+		{
+			m_bOneHit = true;
+		}
+	}
+}
+
+bool CBullet::Attack(const Sphere _Sphere, const float Attack)&
+{
+	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	if (false == _Player->_CollisionComp->bCollision)return false;
+
+	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
+	auto OCollision = Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
+	if (OCollision.first)
+	{
+		this->CurrentAttack = Attack;
+		_Player->Hit(this, OCollision.second);
+		return true;
+	};
+	return false;
+};
 
 HRESULT CBullet::AddComponents()
 {

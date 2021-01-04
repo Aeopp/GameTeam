@@ -28,7 +28,7 @@ HRESULT CShark::ReadyGameObject(void * pArg /*= nullptr*/)
 
 	m_pTransformCom->m_TransformDesc.vScale = { 8.f, 8.f, 8.f };
 	bGravity = false;
-	m_stOriginStatus.fHP = 4000.f;
+	m_stOriginStatus.fHP = 1200.f;
 	m_stOriginStatus.fATK = 15.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 15.f;

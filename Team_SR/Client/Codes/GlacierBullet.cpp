@@ -66,7 +66,8 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 		m_byObjFlag ^= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 	}
 
-	//_CollisionComp->Update(m_pTransformCom);
+	_CollisionComp->Update(m_pTransformCom);
+	Bullet_Attack();
 
 	return _uint();
 }
@@ -88,44 +89,7 @@ HRESULT CGlacierBullet::RenderGameObject()
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
 
-	//const mat World = m_pTransformCom->m_TransformDesc.matWorld;
-	//auto& _Effect = Effect::GetEffectFromName(L"DiffuseSpecular");
 
-	//// 현재 사용중이던 텍스쳐를 여기에 세팅.
-	//{
-	//	//  본래 사용중이던 로직 그대로 현재 텍스쳐를 구해와서 세팅 .
-	//	{
-	//		IDirect3DBaseTexture9* const  DiffuseTexture = m_pTexture->GetTexture((_uint)m_fFrameCnt);
-
-	//		m_pDevice->SetTexture(_Effect.GetTexIdx("DiffuseSampler"), DiffuseTexture);
-	//	}
-	//	// 1.       그냥 세팅을 안하거나
-	//	{
-	//		_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
-	//		_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
-	//	}
-	//	// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
-	//	{
-	//		// m_pDevice->SetTexture(_Effect.GetTexIdx("SpecularSampler"),SpecularTexture);
-	//		// m_pDevice->SetTexture(_Effect.GetTexIdx("NormalSampler"),NormalTexture);
-	//	}
-	//}
-	//// 월드 행렬 바인딩
-	//_Effect.SetVSConstantData(m_pDevice, "World", World);
-	//// 광택 설정 
-	//_Effect.SetPSConstantData(m_pDevice, "Shine", Shine);
-	//m_pDevice->SetVertexShader(_Effect.VsShader);
-	//m_pDevice->SetPixelShader(_Effect.PsShader);
-	//_VertexBuffer->Render();
-
-	////if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-	////	return E_FAIL;
-
-	////if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-	////	return E_FAIL;
-
-	////if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-	////	return E_FAIL;
 	return S_OK;
 }
 

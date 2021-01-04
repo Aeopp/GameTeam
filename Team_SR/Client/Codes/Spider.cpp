@@ -32,7 +32,7 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	//m_pTransformCom->m_TransformDesc.vRotation.z = -90.f;
 
 	bGravity = false;
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 60.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 8.f;
@@ -85,6 +85,7 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 	ChagneSpeed(fDeltaTime);
 	
 	_CollisionComp->Update(m_pTransformCom);
+	
 
 	return _uint();
 }
@@ -471,8 +472,21 @@ bool CSpider::Action_Death(float fDeltaTime)
 bool CSpider::Action_Mellee_Attack(float fDeltaTime)
 {
 	m_fCountDown -= fDeltaTime;
+	//_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	//D3DXVec3Normalize(&AttackDir, &AttackDir);
+	//Sphere _Sphere;
+	//_Sphere.Center = m_pTransformCom->m_TransformDesc.vPosition + (AttackDir);
+	//_Sphere.Radius = 10;
+	//CMonster::Attack(_Sphere, 30.f);
 	if (m_fCountDown <= 0)
 	{
+		//_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+		//D3DXVec3Normalize(&AttackDir, &AttackDir);
+		//Ray _Ray;
+		//_Ray.Direction = AttackDir;
+		//_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
+		//CMonster::Attack(_Ray, 10.f);
+		CMonster::MeleeAttack();
 		return true;
 	}
 	return false;

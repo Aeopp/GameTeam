@@ -31,6 +31,7 @@ public:
 	void FreezeHit()&;
 	bool Attack(const Sphere _Sphere, const float Attack) &;
 	bool Attack(const Ray _Ray, const float Attack) &;
+	void MeleeAttack();
 	FORCEINLINE bool IsDead()const& { 
 		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
