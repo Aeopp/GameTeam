@@ -15,12 +15,12 @@ CStage2nd::CStage2nd(LPDIRECT3DDEVICE9 pDevice)
 	: Super(pDevice)
 {}
 
-
 HRESULT CStage2nd::ReadyScene()
 {
 	CurrentSceneID = ESceneID::Stage2nd;
 	NextSceneID = ESceneID::Stage3rd;
 	using MapType = CMap2nd;
+	BgmKey = L"018 Medieval Epilogue - Chloradyne.wav";
 
 	Super::ReadyScene();
 
@@ -52,9 +52,9 @@ HRESULT CStage2nd::ReadyScene()
 		return E_FAIL;
 
 
-	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
+//	LoadObjects(L"..\\Resources\\Map\\2\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 
-	MonsterBasicArgument stArg;
+/*	MonsterBasicArgument stArg;
 	stArg.uiSize = sizeof(MonsterBasicArgument);
 	stArg.pPlayer = m_pPlayer;
 	stArg.vPosition = { 0.f, 10.f, 20.f };
@@ -65,7 +65,10 @@ HRESULT CStage2nd::ReadyScene()
 			(_int)CurrentSceneID,
 			CLayer::Tag + L"Monster",
 			nullptr, static_cast<void*>(&stArg))))
-			return E_FAIL;
+			return E_FAIL;*/
+			
+	LoadObjects(L"..\\Resources\\Map\\2\\CandleTorchData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\2\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 	
 
 

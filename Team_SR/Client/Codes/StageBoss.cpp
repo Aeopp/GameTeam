@@ -20,6 +20,7 @@ HRESULT CStageBoss::ReadyScene()
 	CurrentSceneID = ESceneID::StageFinalBoss;
 	NextSceneID = ESceneID::Stage1st;
 	using MapType = CMapBoss;
+	BgmKey = L"030 Antarctic - The End.wav";
 
 	Super::ReadyScene();
 
@@ -49,6 +50,8 @@ HRESULT CStageBoss::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
+
+	LoadObjects(L"..\\Resources\\Map\\Boss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

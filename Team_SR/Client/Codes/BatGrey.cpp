@@ -16,6 +16,8 @@ HRESULT CBatGrey::ReadyGameObjectPrototype()
 	if (FAILED(CMonster::ReadyGameObjectPrototype()))
 		return E_FAIL;
 
+	GibTable = { 3,3,3,2,2,1,1,24,21,26,36,37,42};
+
 	return S_OK;
 }
 
@@ -69,6 +71,7 @@ _uint CBatGrey::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+	if (LightHitTime > 0.0f)return 0;
 
 	Update_AI(fDeltaTime);	// 업데이트 AI
 

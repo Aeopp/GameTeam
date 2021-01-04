@@ -5,7 +5,6 @@
 #include "ParticleSystem.h"
 #include "Player.h"
 
-
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
@@ -43,10 +42,10 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 		}
 	}
 
-	for (size_t i = 0; i < 52u; ++i)
-	{
-		GibTable.push_back(i);
-	};
+	//for (size_t i = 0; i < 52u; ++i)
+	//{
+	//	GibTable.push_back(i);
+	//};
 
 	return S_OK;
 }
@@ -124,8 +123,8 @@ HRESULT CMonster::RenderGameObject()
 		}
 		// 1.       그냥 세팅을 안하거나
 		{
-			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0);
-			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0);
+			_Effect.SetPSConstantData(m_pDevice, "bSpecularSamplerBind", 0l);
+			_Effect.SetPSConstantData(m_pDevice, "bNormalSamplerBind", 0l);
 		}
 		// 2. 세팅을 하고 난 이후의                                   ↑↑↑↑↑↑↑↑↑↑     TRUE 로 바꾸어주기.
 		{
@@ -141,6 +140,10 @@ HRESULT CMonster::RenderGameObject()
 	m_pDevice->SetPixelShader(_Effect.PsShader);
 	_VertexBuffer->Render();
 
+	if (_CollisionComp)
+	{
+		_CollisionComp->DebugDraw();
+	}
 
 	return S_OK;
 }
@@ -182,6 +185,16 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 }
 }
 
+void CMonster::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)
+{
+	CGameObject::MapHit(_PlaneInfo, _CollisionInfo);
+
+	if (_CollisionInfo.Flag == L"Floor")
+	{
+		bGravity = false;
+	};
+}
+
 void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
 {
 	CGameObject::ParticleHit(_Particle, _CollisionInfo);
@@ -213,13 +226,13 @@ void CMonster::FlashHit()&
 
 void CMonster::FreezeHit()&
 {
-	m_stStatus.fHP -=  ( FreezeHitDamage * _CurrentDeltaTime ) ;
+	m_stStatus.fHP -= (FreezeHitDamage * _CurrentDeltaTime);
 
 	if (m_stStatus.fHP < 0.0f)
 	{
 		DeadProcess();
 	}
-}
+};
 
 bool CMonster::Attack(const Sphere _Sphere, const float Attack)&
 {

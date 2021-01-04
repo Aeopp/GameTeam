@@ -21,6 +21,7 @@ HRESULT CStage3rd::ReadyScene()
 	CurrentSceneID = ESceneID::Stage3rd;
 	NextSceneID = ESceneID::StageMidBoss;
 	using MapType = CMap3rd;
+	BgmKey = L"004 Entering Level - Waking The Dead.wav";
 
 	Super::ReadyScene();
 
@@ -51,7 +52,7 @@ HRESULT CStage3rd::ReadyScene()
 		reinterpret_cast<CGameObject**>(&_CurrentMap),&CurrentSceneID)))
 		return E_FAIL;
 
-	LoadObjects(L"..\\Resources\\Map\\3\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\3\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }

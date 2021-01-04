@@ -8,7 +8,7 @@ private:
 	explicit CGlacierBullet(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CGlacierBullet() = default;
 
-	// CBulletÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CBulletì„(ë¥¼) í†µí•´ ìƒì†ë¨
 public:
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
