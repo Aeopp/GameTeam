@@ -298,10 +298,13 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 	auto iter = LightingDurationTable.find(L"SpellLight");
 	if ( (iter != std::end(LightingDurationTable) ) && _AnimationTextures.GetAnimationKey() == L"Light"  &&  ( iter->second<=0.0f) )
 	{
-		if (MATH::RandInt({ 0,9}) == 0)
+		static float LightTime = 0.f;
+		LightTime += _DeltaTime;
+		if (LightTime >= 1.f)
 		{
-			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 5, 0);
-		}
+			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 3, 0);
+			LightTime = 0.f;
+		};
 
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
 		_ScreenEffect->Blur();
@@ -323,6 +326,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		{
 			auto _Component = _CurrentMonster->GetComponent(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp->bCollision == false)continue;
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -341,11 +345,13 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 
 	if (_AnimationTextures.GetAnimationKey() == L"Freeze")
 	{
-		if (MATH::RandInt({ 0,9 }) == 0)
-		{
-			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 5, 0);
-		}
-		
+		static float FreezeTime = 0.f;
+		FreezeTime += _DeltaTime;
+		if (FreezeTime >= 1.f) 
+		{    
+			m_tPlayerInfo.iMinMana = (std::max)(m_tPlayerInfo.iMinMana - 3, 0);
+			FreezeTime = 0.f; 
+		};
 
 		FreezeParticlePush();
 		auto* const _ScreenEffect = dynamic_cast<CScreenEffect* const> (m_pManagement->GetGameObject(-1, L"Layer_" + TYPE_NAME<CScreenEffect>(), 0));
@@ -360,6 +366,7 @@ _uint CPlayer::UpdateGameObject(float fDeltaTime)
 		{
 			auto _Component = _CurrentMonster->GetComponent(CComponent::Tag + TYPE_NAME<CCollisionComponent >());
 			auto _CollisionComp = dynamic_cast<CCollisionComponent*> (_Component);
+			if (_CollisionComp->bCollision == false)continue;
 			if (_CollisionComp)
 			{
 				float t0 = 0;
@@ -521,27 +528,27 @@ void CPlayer::Hit(CGameObject* const _Target, const Collision::Info& _CollisionI
 		case Item::HealthBig:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
 			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
-			m_tPlayerInfo.iMinHP += 10.f;
+			m_tPlayerInfo.iMinHP += 40.f;
 			break;
 		case Item::HealthSmall:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
 			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
-			m_tPlayerInfo.iMinHP += 5.f;
+			m_tPlayerInfo.iMinHP += 20.f;
 			break;
 		case Item::ManaBig:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
 			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
-			m_tPlayerInfo.iMinMana += 10.f ;
+			m_tPlayerInfo.iMinMana += 40.f ;
 			break;
 		case Item::ManaSmall:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
 			CSoundMgr::Get_Instance()->PlaySound(L"potion.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
-			m_tPlayerInfo.iMinMana += 5.f;
+			m_tPlayerInfo.iMinMana += 20.f;
 			break;
 		case Item::Ammo:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
 			CSoundMgr::Get_Instance()->PlaySound(L"treasure1.wav", CSoundMgr::CHANNELID::PLAYER_ITEM);
-			m_tWeaponInfo.iMinAmmo += 20l;
+			m_tWeaponInfo.iMinAmmo += 50l;
 			break;
 		case Item::KeyBlue:
 			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_ITEM);
@@ -1433,7 +1440,7 @@ void CPlayer::AkimboFire()
 	vec3 ScreenPos{ (float)_Pt.x,(float)_Pt.y,1.f };
 	Ray _Ray = MATH::GetRayScreenProjection(ScreenPos, m_pDevice, WINCX, WINCY);
 
-	this->CurrentAttack = 1.5f;
+	this->CurrentAttack = 3.f;
 	                                                         //  IntersectPoint
 	std::vector< std::tuple<CGameObject*, const float, Collision::Info,vec3>  > _CollisionInfos;
 
@@ -2427,7 +2434,7 @@ void CPlayer::FreezeParticlePush()&
 	const std::pair<float, float > GravityRange = { 10.f,20.f};
 	const float OffSetScale = 4.f;
 
-	for (size_t i = 0; i < 1000.f*_DeltaTime; ++i)
+	for (size_t i = 0; i < 650.f*_DeltaTime; ++i)
 	{
 		Particle _Particle;
 		_Particle.bBillboard = true;

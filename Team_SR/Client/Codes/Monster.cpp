@@ -70,6 +70,14 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 	FloorBloodCurrentCoolTime -= fDeltaTime;
 	LightHitTime -= fDeltaTime;
 
+	if(IsDead())
+	{
+		bGravity = false;
+		_CollisionComp->bCollision = false;
+		_CollisionComp->bWallCollision = false;
+		_CollisionComp->bFloorCollision = false;
+	};
+
 	return _uint();
 }
 
@@ -534,10 +542,6 @@ void CMonster::BloodParticle()
 
 void CMonster::DeadProcess()
 {
-	bGravity = false;
-	_CollisionComp->bCollision = false;
-	_CollisionComp->bWallCollision = false;
-	_CollisionComp->bFloorCollision = false;
 
 	for(const size_t GibIdx : GibTable)
 	{
