@@ -86,8 +86,8 @@ private:
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
 	class CHUDTopUI* m_pHUD_TopUI = nullptr;
 	class CWeaponUI* m_pWeaponUIArr[9];
-	class CFaceUI* m_pFaceUI;
-
+	class CFaceUI* m_pFaceUI = nullptr;
+	class CShopUI* m_pShopUI = nullptr;
 private:
 	LPDIRECT3DDEVICE9	m_pDevice;
 	_int m_iWeaponUIIndex = 0;
