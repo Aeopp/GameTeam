@@ -73,8 +73,14 @@ _uint CHellBossChainGunBullet::LateUpdateGameObject(float fDeltaTime)
 
 HRESULT CHellBossChainGunBullet::RenderGameObject()
 {
+	// 뒷면을 컬링하지 않습니다
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
+
+	// 시계 반대 방향을 컬링합니다
+	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	return S_OK;
 }
