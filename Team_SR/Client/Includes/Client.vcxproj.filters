@@ -151,11 +151,11 @@
     <Filter Include="02.GameObject\05.GameUI\00.Object\05.ButtonUI">
       <UniqueIdentifier>{21a0e22f-0b32-432b-9ac0-7b4c2ba68fda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI">
-      <UniqueIdentifier>{21cc32e8-6bb3-4249-b629-38cba0d8a914}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI">
+    <Filter Include="02.GameObject\05.GameUI\00.Object\06.WeaponUI">
       <UniqueIdentifier>{61edeb6b-79ec-4d15-b8d6-31eb896ec9cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\05.GameUI\00.Object\07.FaceUI">
+      <UniqueIdentifier>{be73dfd3-8d72-4441-b1f6-92d56e85f69d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -422,7 +422,6 @@
     <ClInclude Include="..\Headers\Package.h" />
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
-    <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h">
@@ -493,7 +492,7 @@
     <ClInclude Include="..\Headers\Stage.h" />
     <ClInclude Include="..\Headers\Stage1st.h" />
     <ClInclude Include="..\Headers\WeaponUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MiniMap.h" />
     <ClInclude Include="..\Headers\ScreenEffect.h" />
@@ -502,6 +501,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>96.SoundMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SoundMgr.h">
+      <Filter>96.SoundMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="FaceUI.h">
+      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -741,7 +749,6 @@
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Shark.cpp" />
     <ClCompile Include="..\Codes\SharkBullet.cpp" />
-    <ClCompile Include="..\Codes\SoundMgr.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="ComponentTemplate.md" />
@@ -797,7 +804,7 @@
       <Filter>97.Others</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponInfoUI\06.WeaponUI</Filter>
+      <Filter>02.GameObject\05.GameUI\00.Object\06.WeaponUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MiniMap.cpp" />
     <ClCompile Include="..\Codes\ScreenEffect.cpp" />
@@ -806,6 +813,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>96.SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SoundMgr.cpp">
+      <Filter>96.SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="FaceUI.cpp">
+      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

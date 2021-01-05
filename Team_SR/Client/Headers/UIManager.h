@@ -68,10 +68,12 @@ public:
 private:
 	//내부 메서드
 	HRESULT SetWeaponUIArrayPrototype();
-	HRESULT SetWeaponUIArrayClone(WCHAR* _wcStr);
+	HRESULT SetWeaponUIArrayClone(WCHAR* _wcStr, ESceneID SceneID);
+	
 
 public:
 	void FreeToWeaponUIArrayClone() { --m_iWeaponUIIndex; }
+	ESceneID GetSceneID() { return m_eSceneID; }
 
 public:
 	virtual void Free() override;
@@ -84,11 +86,14 @@ private:
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
 	class CHUDTopUI* m_pHUD_TopUI = nullptr;
 	class CWeaponUI* m_pWeaponUIArr[9];
+	class CFaceUI* m_pFaceUI;
 
 private:
 	LPDIRECT3DDEVICE9	m_pDevice;
 	_int m_iWeaponUIIndex = 0;
 	WCHAR m_pcwLayerArr[9][256];
+
+	ESceneID m_eSceneID;
 };
 
 #define __UIMANAGER_H__

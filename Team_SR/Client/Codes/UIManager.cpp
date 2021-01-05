@@ -8,7 +8,7 @@
 #include "HUDTopUI.h"
 #include "HUDTopUI.h"
 #include "WeaponUI.h"
-
+#include "FaceUI.h"
 IMPLEMENT_SINGLETON(CUIManager)
 
 using namespace UI_AddTag;
@@ -107,6 +107,15 @@ HRESULT CUIManager::ReadyUI()
 		CHUDTopUI::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+
+#pragma region GameObject_FaceUI
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CFaceUI>(),
+		CFaceUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
 #pragma endregion
 
 	SetWeaponUIArrayPrototype();
@@ -119,6 +128,16 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 	CManagement* pManagement = CManagement::Get_Instance();
 
 #pragma region Add_Layer
+
+#pragma region FaceUI
+	if (FAILED(pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_FaceUI",
+		(_int)SceneID,
+		L"Layer_FaceUI",
+		(CGameObject**)&m_pFaceUI, nullptr)))
+		return E_FAIL;
+#pragma endregion
 	//플레이어 정보 - 체력, 마나, 초상화
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -156,7 +175,7 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 	tagLayerCom.tUIDesc.vUISize.z = 0;
 	tagLayerCom.tUIDesc.vUIPos.x = -742;
 	tagLayerCom.tUIDesc.vUIPos.y = -410;
-	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 2.f;
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_HPbar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
@@ -178,7 +197,7 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 	tagLayerCom.tUIDesc.vUISize.z = 0.f;
 	tagLayerCom.tUIDesc.vUIPos.x = -675.f;
 	tagLayerCom.tUIDesc.vUIPos.y = -480.f;
-	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 2.f;
 	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_Manabar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
@@ -200,7 +219,7 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 	tagLayerCom.tUIDesc.vUISize.z = 0.f;
 	tagLayerCom.tUIDesc.vUIPos.x = 925.f;
 	tagLayerCom.tUIDesc.vUIPos.y = -452.f;
-	tagLayerCom.tUIDesc.vUIPos.z = 1.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 2.f;
 	tagLayerCom.tUIDesc.vCenter = _vector(1.f, 0.f, 0.f);
 	tagLayerCom.wsPrototypeTag = L"Component_Texture_AmmoBar";
 	tagLayerCom.wsComponentTag = L"Com_Texture";
@@ -219,15 +238,19 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 		return E_FAIL;
 
 	m_iWeaponUIIndex = 0;
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dagger");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ShotGun");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Akimbo");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Magnum");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Staff");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dynamite");
-	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ElectricStaff");
-	//SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Flak");
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dagger", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ShotGun", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Akimbo", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Magnum", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Staff", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dynamite", SceneID);
+	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ElectricStaff", SceneID);
+	//SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Flak", SceneID);
+
+
 	
+	m_eSceneID = SceneID;
+
 	return S_OK;
 }
 
@@ -239,6 +262,7 @@ void CUIManager::OnAllUI()
 	m_pHUD_ManaBar->SetShownUI();
 	m_pHUD_AmmoBar->SetShownUI();
 	m_pHUD_TopUI->SetShownUI();
+	m_pFaceUI->SetShownUI();
 }
 
 void CUIManager::OffAllUI()
@@ -249,6 +273,7 @@ void CUIManager::OffAllUI()
 	m_pHUD_ManaBar->SetInvisibleUI();
 	m_pHUD_AmmoBar->SetInvisibleUI();
 	m_pHUD_TopUI->SetInvisibleUI();
+	m_pFaceUI->SetInvisibleUI();
 }
 
 void CUIManager::OnPlayerInfo(PLAYER_INFO* _pPlayerDesc)
@@ -367,6 +392,41 @@ HRESULT CUIManager::SetWeaponUIArrayPrototype()
 			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Player/Staff/Hud/0.png", 1))))
 			return E_FAIL;
 #pragma endregion
+		//Face Texture
+#pragma region Face_Texture
+#pragma region Component_Texture_Ani_Face_Unhurt
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_Ani_Face_Unhurt",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/Face/Unhurt/face_unhurt_%d.png", 3))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_Ani_Face_Bleeding
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_Ani_Face_Bleeding",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/Face/Bleeding/face_bleeding_%d.png", 3))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma region Component_Texture_Ani_Face_Injured
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_Ani_Face_Injured",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/Face/Injured/face_injured_%d.png", 3))))
+			return E_FAIL;
+#pragma endregion
+#pragma region Component_Texture_Ani_Face_Dying
+		if (FAILED(pManagement->AddComponentPrototype(
+			(_int)ESceneID::Static,
+			L"Component_Texture_Ani_Face_Dying",
+			CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/Face/Dying/face_dying_%d.png", 3))))
+			return E_FAIL;
+#pragma endregion
+
+#pragma endregion
+
 
 #pragma endregion
 //////////////////////////////////////////////////////////////////////
@@ -384,7 +444,7 @@ HRESULT CUIManager::SetWeaponUIArrayPrototype()
 	return S_OK;
 }
 
-HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
+HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr, ESceneID SceneID)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 
@@ -408,7 +468,7 @@ HRESULT CUIManager::SetWeaponUIArrayClone(WCHAR* _wcStr)
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_WeaponUI",
-		(_int)ESceneID::Static,
+		(_int)SceneID,
 		m_pcwLayerArr[m_iWeaponUIIndex],
 		(CGameObject**)&m_pWeaponUIArr[m_iWeaponUIIndex], &tagLayerCom)))
 		return E_FAIL;
