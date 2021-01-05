@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Monster.h"
 #include "Camera.h"
-#include "FloorBlood.h"
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "Player.h"
@@ -10,7 +9,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
 	, m_fCrossValue(0.f), m_vCollisionDir{0.f, 0.f, 0.f}, m_vAim {0.f, 0.f, 0.f}
-	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}, m_wstrTextureKey(L""), m_pJumpPointSearch(JumpPointSearch::Get_Instance())
 	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
 	bGravity = true;
@@ -70,6 +69,16 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 	FloorBloodCurrentCoolTime -= fDeltaTime;
 	LightHitTime -= fDeltaTime;
+	FreezeDeadProcessTime -= fDeltaTime;
+	FreezeBloodParticleTime -= fDeltaTime;
+
+	if(IsDead())
+	{
+		bGravity = false;
+		_CollisionComp->bCollision = false;
+		_CollisionComp->bWallCollision = false;
+		_CollisionComp->bFloorCollision = false;
+	};
 
 	return _uint();
 }
@@ -204,11 +213,6 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
 
-		if (_ParticlePtr->Name == L"DaggerThrow")
-		{
-
-		}
-
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
 
 		if (m_stStatus.fHP < 0.f)
@@ -225,45 +229,63 @@ void CMonster::FlashHit()&
 	LightHitTime = 0.1f;
 }
 
-void CMonster::FreezeHit()&
+void CMonster::FreezeHit()
 {
 	m_stStatus.fHP -= (FreezeHitDamage * _CurrentDeltaTime);
 
-	if (m_stStatus.fHP < 0.0f)
+	if (m_stStatus.fHP < 0.0f && FreezeDeadProcessTime<0.0f)
 	{
+		FreezeDeadProcessTime = 0.7f;
 		DeadProcess();
+	}
+	if (FreezeBloodParticleTime < 0.0f)
+	{
+		FreezeBloodParticleTime = 0.4f;
+		BloodParticle();
 	}
 };
 
-void CMonster::Attack(const Sphere _Sphere, const float Attack)&
+bool CMonster::Attack(const Sphere _Sphere, const float Attack)&
 {
-	auto _Player=dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
-	if (false==_Player->_CollisionComp->bCollision)return;
+	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
+	if (false == _Player->_CollisionComp->bCollision)return false;
 
-	Sphere TargetSphere=_Player->_CollisionComp->_Sphere;
-	auto OCollision=Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
+	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
+	auto OCollision = Collision::IsSphereToSphere(_CollisionComp->_Sphere, TargetSphere);
 	if (OCollision.first)
 	{
 		this->CurrentAttack = Attack;
 		_Player->Hit(this, OCollision.second);
+		return true;
 	};
+	return false;
 };
 
-void CMonster::Attack(const Ray _Ray, const float Attack)&
+bool CMonster::Attack(const Ray _Ray, const float Attack)&
 {
 	auto _Player = dynamic_cast<CPlayer* const>(m_pManagement->GetGameObject(-1, L"Layer_Player", 0));
-	if (false == _Player->_CollisionComp->bCollision)return;
+	if (false == _Player->_CollisionComp->bCollision)return false;
 
 	Sphere TargetSphere = _Player->_CollisionComp->_Sphere;
 	float t0, t1;
 	vec3 IntersectPoint;
-	auto OCollision = Collision::IsRayToSphere(_Ray, TargetSphere,t0,t1,IntersectPoint);
+	auto OCollision = Collision::IsRayToSphere(_Ray, TargetSphere, t0, t1, IntersectPoint);
 	if (OCollision.first)
 	{
 		this->CurrentAttack = Attack;
 		_Player->Hit(this, OCollision.second);
+		return true;
 	};
-};
+}
+void CMonster::MeleeAttack()
+{
+	_vector AttackDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	D3DXVec3Normalize(&AttackDir, &AttackDir);
+	Ray _Ray;
+	_Ray.Direction = AttackDir;
+	_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
+	CMonster::Attack(_Ray, 10.f);
+}
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 bool CMonster::Frame_Move(float fDeltaTime)
@@ -332,20 +354,30 @@ void CMonster::CreateBlood()
 
 void CMonster::CreateFloorBlood()
 {
-	if (FAILED(m_pManagement->AddGameObjectInLayer((_int)ESceneID::Static,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		(_int)ESceneID::Stage1st,
-		CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-		nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition)))
-		return;
-
-	//m_pManagement->AddScheduledGameObjectInLayer(
-	//	(_int)ESceneID::Static,
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-	//	nullptr, (void*)&m_pTransformCom->m_TransformDesc.vPosition);
 }
 
+// 길찾기
+// _vDepa : 출발지
+// _vDest : 도착지
+void CMonster::PathFinding(vec3 _vDepa, vec3 _vDest)
+{
+	int iCount = 3;
+
+	// 길찾기 시작
+	while (!m_pJumpPointSearch->Start(_vDepa, _vDest)) {
+		// 탐색 실패시 목적지를 근처의 경로로 변경 후
+		// 다시 길찾기를 한다
+		JumpPointSearch::Get_Instance()->NearbyPath(_vDepa, _vDest);
+		--iCount;
+		if (iCount == 0) {
+			break;
+		}
+	}
+	// 길찾기 완료
+	// 이동 지점 리스트에 담기
+	m_listMovePos.clear();
+	m_pJumpPointSearch->Finish(m_listMovePos);
+}
 
 static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 {
@@ -535,10 +567,6 @@ void CMonster::BloodParticle()
 
 void CMonster::DeadProcess()
 {
-	bGravity = false;
-	_CollisionComp->bCollision = false;
-	_CollisionComp->bWallCollision = false;
-	_CollisionComp->bFloorCollision = false;
 
 	for(const size_t GibIdx : GibTable)
 	{

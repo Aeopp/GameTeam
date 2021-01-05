@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\GlacierBullet.h"
+#include "DXWrapper.h"
+
 
 
 CGlacierBullet::CGlacierBullet(LPDIRECT3DDEVICE9 pDevice)
@@ -23,11 +25,21 @@ HRESULT CGlacierBullet::ReadyGameObject(void * pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	//if (sizeof(BulletBasicArgument) == *(_uint*)pArg)
+	//{
+	//	BulletBasicArgument* pData = (BulletBasicArgument*)pArg;
+	//	m_vLook  = pData->vDir;
+	//	m_vLook.y = 0.f;
+	//	m_pTransformCom->m_TransformDesc.vPosition = pData->vPosition;
+	//	delete pArg;
+	//	//pArg = nullptr;
+	//}
+
+	//m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
-	m_stOriginStatus.fRange = 100.f;
+	m_stOriginStatus.fRange = 500.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fSpeed = 5.f;
 	m_stOriginStatus.fImpact = 0.f;
@@ -45,6 +57,7 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
+	
 	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동
 	m_stStatus.fRange -= D3DXVec3Length(&vMoveDstnc);			// 사거리 차감
@@ -53,6 +66,7 @@ _uint CGlacierBullet::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
+	Bullet_Attack();
 
 	return _uint();
 }
@@ -74,14 +88,7 @@ HRESULT CGlacierBullet::RenderGameObject()
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
-		return E_FAIL;
 
-	if (FAILED(m_pTexture->Set_Texture((_uint)m_fFrameCnt)))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render_VIBuffer()))
-		return E_FAIL;
 	return S_OK;
 }
 
@@ -101,14 +108,16 @@ HRESULT CGlacierBullet::AddComponents()
 		return E_FAIL;
 #pragma endregion
 
-	// 충돌 컴포넌트
+
+
+	 //충돌 컴포넌트
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
-	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.bMapBlock = false;
+	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
-	_Info.bWallCollision = true;
-	_Info.bFloorCollision = true;
+	_Info.bWallCollision = false;
+	_Info.bFloorCollision = false;
 	_Info.Owner = this;
 	CGameObject::AddComponent(
 		static_cast<int32_t>(ESceneID::Static),
@@ -148,5 +157,6 @@ CGameObject * CGlacierBullet::Clone(void * pArg /*= nullptr*/)
 
 void CGlacierBullet::Free()
 {
+
 	CBullet::Free();
 }

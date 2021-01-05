@@ -32,17 +32,19 @@ HRESULT CFire::ReadyGameObject(void * pArg /*= nullptr*/)
 	}
 
 	m_pTransformCom->m_TransformDesc.vScale = { 1.5f,1.5f,1.5f };
-
+	bGravity = false;
 	m_fFrameCnt = 0.f;
 	m_fFrameSpeed = 7.f;
 	m_fStartFrame = 0.f;
-	m_fEndFrame = 21.f;
+	m_fEndFrame = 20.f;
 
 	return S_OK;
 }
 
 _uint CFire::UpdateGameObject(float fDeltaTime)
 {
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CMonster::UpdateGameObject(fDeltaTime);
 	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::FIRE);
 	CSoundMgr::Get_Instance()->PlaySound(L"fire_burn.wav", CSoundMgr::FIRE);
@@ -51,6 +53,8 @@ _uint CFire::UpdateGameObject(float fDeltaTime)
 
 _uint CFire::LateUpdateGameObject(float fDeltaTime)
 {
+	if (static_cast<BYTE>(ObjFlag::Remove) & m_byObjFlag)
+		return 0;
 	CMonster::LateUpdateGameObject(fDeltaTime);
 
 
@@ -107,7 +111,7 @@ HRESULT CFire::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆìž„ í…ìŠ¤ì²˜ ìž¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -141,7 +145,7 @@ CFire * CFire::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CFire::Clone(void * pArg /*= nullptr*/)
 {
-	CFire* pClone = new CFire(*this); /* º¹»ç»ý¼ºÀÚ */
+	CFire* pClone = new CFire(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -155,4 +159,8 @@ CGameObject * CFire::Clone(void * pArg /*= nullptr*/)
 void CFire::Free()
 {
 	CMonster::Free();
+}
+
+void CFire::FreezeHit()
+{
 }

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Logo.h"
-#include "Stage1st.h"
 #include "Loading.h"
 #include "ImGuiHelper.h"
+#include "Stage1st.h"
 
 
 CLogo::CLogo(LPDIRECT3DDEVICE9 pDevice)

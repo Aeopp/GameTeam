@@ -30,6 +30,10 @@ public:
 
 private:
 	wstring m_wstrBase;
+	bool	m_bTest = false;
+
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
 };
 
 

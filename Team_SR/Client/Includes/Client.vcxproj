@@ -22,7 +22,7 @@
     <ProjectGuid>{BA8BCAB2-E54D-4859-8DF2-5715F3C4D460}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Client</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -175,7 +175,9 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\BatGrey.h" />
     <ClInclude Include="..\Headers\BatSpit.h" />
-    <ClInclude Include="..\Headers\Blood.h" />
+    <ClInclude Include="..\Headers\Blood.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\Bullet.h" />
     <ClInclude Include="..\Headers\ButtonUI.h" />
     <ClInclude Include="..\Headers\Client_Define.h" />
@@ -190,7 +192,10 @@
     <ClInclude Include="..\Headers\Eyebat.h" />
     <ClInclude Include="..\Headers\EyebatBullet.h" />
     <ClInclude Include="..\Headers\Fire.h" />
-    <ClInclude Include="..\Headers\FloorBlood.h" />
+    <ClInclude Include="..\Headers\FloorBlood.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Ghoul.h" />
     <ClInclude Include="..\Headers\Glacier.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -198,9 +203,13 @@
     <ClInclude Include="..\Headers\GlacierParticle.h" />
     <ClInclude Include="..\Headers\Hangman.h" />
     <ClInclude Include="..\Headers\HangmanBomb.h" />
+    <ClInclude Include="..\Headers\HellBoss.h" />
+    <ClInclude Include="..\Headers\HellBossChainGunBullet.h" />
+    <ClInclude Include="..\Headers\HellBossRingBullet.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Item.h" />
+    <ClInclude Include="..\Headers\JumpPointSearch.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\Logo.h" />
@@ -264,7 +273,9 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\BatGrey.cpp" />
     <ClCompile Include="..\Codes\BatSpit.cpp" />
-    <ClCompile Include="..\Codes\Blood.cpp" />
+    <ClCompile Include="..\Codes\Blood.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\Bullet.cpp" />
     <ClCompile Include="..\Codes\ButtonUI.cpp" />
     <ClCompile Include="..\Codes\Decorator.cpp" />
@@ -274,7 +285,10 @@
     <ClCompile Include="..\Codes\Eyebat.cpp" />
     <ClCompile Include="..\Codes\EyebatBullet.cpp" />
     <ClCompile Include="..\Codes\Fire.cpp" />
-    <ClCompile Include="..\Codes\FloorBlood.cpp" />
+    <ClCompile Include="..\Codes\FloorBlood.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Ghoul.cpp" />
     <ClCompile Include="..\Codes\Glacier.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -282,9 +296,13 @@
     <ClCompile Include="..\Codes\GlacierParticle.cpp" />
     <ClCompile Include="..\Codes\Hangman.cpp" />
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
+    <ClCompile Include="..\Codes\HellBoss.cpp" />
+    <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp" />
+    <ClCompile Include="..\Codes\HellBossRingBullet.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
+    <ClCompile Include="..\Codes\JumpPointSearch.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\Logo.cpp" />

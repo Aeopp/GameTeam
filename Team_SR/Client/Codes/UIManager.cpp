@@ -165,7 +165,6 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 		(CGameObject**)&m_pHUD_TopUI, nullptr)))
 		return E_FAIL;
 
-
 	//------------------------------------------------------
 	UI_BAR_ADD_COMPONENT tagLayerCom;
 #pragma region HUD_HP_Bar
@@ -234,8 +233,8 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 #pragma endregion
 #pragma endregion
 
-	if (0 != m_iWeaponUIIndex)
-		return E_FAIL;
+	/*if (0 != m_iWeaponUIIndex)
+		return E_FAIL;*/
 
 	m_iWeaponUIIndex = 0;
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dagger", SceneID);
@@ -245,6 +244,7 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Staff", SceneID);
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Dynamite", SceneID);
 	SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_ElectricStaff", SceneID);
+	
 	//SetWeaponUIArrayClone(L"Component_Texture_WeaponHUD_Flak", SceneID);
 
 

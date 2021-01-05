@@ -2,6 +2,7 @@
 #ifndef __STAGE_H__
 
 #include "Scene.h"
+#include "JumpPointSearch.h"
 
 USING(Engine)
 class CStage abstract : public CScene

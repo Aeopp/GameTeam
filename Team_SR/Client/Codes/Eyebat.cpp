@@ -37,8 +37,9 @@ HRESULT CEyebat::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fStartY = m_pTransformCom->m_TransformDesc.vPosition.y;
 	m_iDir = 1;
 	//
+	bGravity = false;
 
-	m_stOriginStatus.fHP = 100.f;
+	m_stOriginStatus.fHP = 40.f;
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 10.f;
@@ -72,6 +73,8 @@ _uint CEyebat::UpdateGameObject(float fDeltaTime)
 		return 0;
 	}
 
+	if (LightHitTime > 0.0f)return 0;
+
 	Update_AI(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -98,7 +101,7 @@ HRESULT CEyebat::RenderGameObject()
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
 
-	_CollisionComp->DebugDraw();
+	//_CollisionComp->DebugDraw();
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
 	//	return E_FAIL;
@@ -131,6 +134,21 @@ void CEyebat::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 
 void CEyebat::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
 {
+}
+
+void CEyebat::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::EYEBAT);
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+	CMonster::CreateBlood();
 }
 
 void CEyebat::Update_AI(float fDeltaTime)
@@ -317,7 +335,7 @@ HRESULT CEyebat::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.25f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -379,4 +397,18 @@ void CEyebat::Free()
 	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();
+}
+
+void CEyebat::FreezeHit()
+{// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();		// CMonster 에서 HP 감소
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::EYEBAT);
+	// 충돌 관련 정보
+	
+	CMonster::CreateBlood();
 }

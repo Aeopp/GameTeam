@@ -4,8 +4,7 @@
 #include "GameObject.h"
 #include "DXWrapper.h"
 #include "Vertexs.h"
-
-
+#include "JumpPointSearch.h"
 
 USING(Engine)
 class CMonster abstract : public CGameObject
@@ -29,10 +28,12 @@ public:
 	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 	void FlashHit()&;
-	void FreezeHit()&;
-	void Attack(const Sphere _Sphere,const float Attack)&;
-	void Attack(const Ray _Ray, const float Attack)&;
-	FORCEINLINE bool IsDead()const& { return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
+	virtual void FreezeHit()=0;
+	bool Attack(const Sphere _Sphere, const float Attack) &;
+	bool Attack(const Ray _Ray, const float Attack) &;
+	void MeleeAttack();
+	FORCEINLINE bool IsDead()const& { 
+		return   ( (m_byMonsterFlag & static_cast<BYTE>(CMonster::MonsterFlag::Dead )) == (BYTE)MonsterFlag::Dead); };
 protected:
 	bool Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
 	bool PlayerAwareness();					// 플레이어 인식 - 인식하면 true, 인식하지 못하면 false
@@ -40,6 +41,7 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
+	void PathFinding(vec3 _vDepa, vec3 _vDest);	// 길찾기
 	void BloodParticle();
 	void DeadProcess();
 public:
@@ -51,13 +53,16 @@ protected:
 		HPLock				= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
 		Dead				= 1 << 1,		// 죽음
 		Shoot				= 1 << 2,		// 총쏨
-		TextureChangeLock	= 1 << 3		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
-		// ... 이 밑으로 5개 예약 가능!!
+		TextureChangeLock	= 1 << 3,		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
+		PlayerTracking		= 1 << 4		// 플레이어 추적
+		// ... 이 밑으로 3개 예약 가능!!
 	};
 protected:
 	float _CurrentDeltaTime = 0.0f;
-	float FreezeHitDamage = 30.0f;
+	float FreezeHitDamage = 12.f;
 	float LightHitTime = 0.0f;
+	float FreezeDeadProcessTime = 0.0f;
+	float FreezeBloodParticleTime = 0.0f;
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝
@@ -70,6 +75,8 @@ protected:
 	MonsterStatus m_stStatus;				// 몬스터 스텟
 	wstring m_wstrTextureKey;				// 텍스처 키
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
+	list<vec3> m_listMovePos;				// 이동 좌표 리스트
+	JumpPointSearch* m_pJumpPointSearch;	// 길찾기
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 	std::vector<size_t> GibTable;

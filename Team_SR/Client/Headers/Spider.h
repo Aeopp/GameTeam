@@ -14,7 +14,7 @@ private:
 	enum class DIR{LEFT,RIGHT,UP,DOWN,DIR_END};
 
 public:
-	// CMonster¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CMonsterÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -23,7 +23,8 @@ public:
 
 public:
 	// 2020.12.17 9:57 KMJ
-	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ∏ÛΩ∫≈Õ∞° «««ÿ∏¶ πﬁ¿Ω
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// Î™¨Ïä§ÌÑ∞Í∞Ä ÌîºÌï¥Î•º Î∞õÏùå
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 private:
 	void Update_AI(float fDeltaTime);
@@ -36,11 +37,13 @@ private:
 	void AI_FloorPhase();
 	void AI_DeadPhase();
 	////////////////////ACTION/////////////////////
+	bool Action_Move_NoAwareness(float fDeltaTime);
 	bool Action_Move_Wall(float fDeltaTime);
 	bool Action_Move_Floor(float fDeltaTime);
 	bool Action_Idle(float fDeltaTime);
 	bool Action_Shoot(float fDeltaTime);
 	bool Action_Death(float fDeltaTime);
+	bool Action_Mellee_Attack(float fDeltaTime);
 	///////////////////////////////////////////////
 	void CreateBullet();
 
@@ -63,7 +66,7 @@ public:
 
 private:
 	float		m_fCountDown = 0.f;
-	////////////////////////≈◊Ω∫∆Æ////////////////////////////
+	////////////////////////ÌÖåÏä§Ìä∏////////////////////////////
 	float		m_fTest = 0.f;
 	float		m_fChangeSpeed = 0.f;
 	float		m_fDashSpeed = 0.f;
@@ -81,6 +84,9 @@ private:
 	DIR			m_eDir = DIR::DIR_END;
 	AIFunc		m_fpSpiderAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+	// CMonsterÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
+	virtual void FreezeHit() override;
 };
 
 #endif // Spider_h__

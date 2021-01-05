@@ -66,8 +66,10 @@ _uint CFaceUI::LateUpdateGameObject(float fDeltaTime)
 		return 0;
 
 	CLoadingBar* m_pHpBar = static_cast<CLoadingBar*>
-		(CManagement::Get_Instance()->GetGameObject((_int)CUIManager::Get_Instance()->GetSceneID(),
+		(CManagement::Get_Instance()->GetGameObject(-1 /*(_int)CUIManager::Get_Instance()->GetSceneID()*/,
 		L"Layer_HUD_HpBar"));
+
+	if (!m_pHpBar)return _uint();
 
 	int iMax = m_pHpBar->GetMaxValue();
 	int iMin = m_pHpBar->GetMinValue();

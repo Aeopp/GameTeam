@@ -33,6 +33,8 @@ protected:
 	float m_fEndFrame;		// ������ ��
 	float m_fFrameSpeed;					// ������ �ӵ�
 	bool m_bFrameLoopCheck;					// ������ ����
+
+	
 };
 
 #endif // Effect_h__

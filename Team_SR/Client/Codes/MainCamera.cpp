@@ -27,6 +27,7 @@ HRESULT CMainCamera::ReadyGameObject(void * pArg)
 {
 	if (FAILED(Super::ReadyGameObject(pArg)))
 		return E_FAIL;
+
 	m_pTransformCom->m_TransformDesc.vPosition = { 0,0,-10 };
 
 	return S_OK;
@@ -59,7 +60,7 @@ _uint CMainCamera::LateUpdateGameObject(float fDeltaTime)
 
 	if (!bThirdPerson)
 	{
-		ShowCursor(true);
+		ShowCursor(false);
 
 		POINT _MousePt;
 		GetCursorPos(&_MousePt);

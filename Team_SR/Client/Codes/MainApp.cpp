@@ -13,7 +13,6 @@
 #include "WeaponAmmoInfoUI.h"
 
 #include "Terret.h"
-#include "Blood.h"
 #include "Spider.h"
 #include "Eyebat.h"
 #include "EyebatBullet.h"
@@ -21,7 +20,6 @@
 #include "Fire.h"
 #include "BatGrey.h"	// 박쥐
 #include "BatSpit.h"	// 박쥐 총알
-#include "FloorBlood.h"
 #include "UIManager.h"	// UI 매니저
 #include "Item.h"		// 아이템
 #include "Hangman.h"	// 행맨
@@ -34,7 +32,11 @@
 #include "Decorator.h"	// 장식품
 #include "Shark.h"
 #include "SharkBullet.h"
+#include "Ghoul.h"		// 구울
+#include "HellBoss.h"	// 헬 보스
 #include "ScreenEffect.h"
+#include "HellBossRingBullet.h"	// 헬 보스 리틀 데몬 링 총알
+#include "HellBossChainGunBullet.h"	// 헬 보스 터보 사탄 체인건 총알
 
 
 CMainApp::CMainApp()
@@ -241,21 +243,6 @@ HRESULT CMainApp::ReadyStaticResources()
 			return E_FAIL;
 #pragma endregion
 
-#pragma region GameObject_Blood
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CBlood>(),
-			CBlood::Create(m_pDevice))))
-			return E_FAIL;
-#pragma endregion
-
-#pragma region GameObject_FloorBlood
-		if (FAILED(m_pManagement->AddGameObjectPrototype(
-			(_int)ESceneID::Static,
-			CGameObject::Tag + TYPE_NAME<CFloorBlood>(),
-			CFloorBlood::Create(m_pDevice))))
-			return E_FAIL;
-#pragma endregion
 
 #pragma region GameObject_Terret
 		if (FAILED(m_pManagement->AddGameObjectPrototype(
@@ -331,6 +318,38 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CSharkBullet>(),
 		CSharkBullet::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 구울 오브젝트
+#pragma region GameObject_Ghoul
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CGhoul>(),
+		CGhoul::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+
+	// 헬 보스 오브젝트
+#pragma region GameObject_HellBoss
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBoss>(),
+		CHellBoss::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 링 총알
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossRingBullet>(),
+		CHellBossRingBullet::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 체인건 총알
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossChainGunBullet>(),
+		CHellBossChainGunBullet::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -600,24 +619,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Spider/Wep/Wep%d.png", 1))))
 		return E_FAIL;
 #pragma endregion
-#pragma endregion
-
-#pragma region Component_Texture_Blood
-	wstring wstrTextureBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CBlood>();
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		wstrTextureBlood,
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Blood/Blood%d.png", 8))))
-		return E_FAIL;
-#pragma endregion
-
-#pragma region Component_Texture_FloorBlood
-	wstring wstrTextureFloorBlood = CComponent::Tag + TYPE_NAME<CTexture>() + TYPE_NAME<CFloorBlood>();
-	if (FAILED(m_pManagement->AddComponentPrototype(
-		(_int)ESceneID::Static,
-		wstrTextureFloorBlood,
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/FloorBlood/FloorBlood%d.png", 4))))
-		return E_FAIL;
 #pragma endregion
 
 #pragma region Component_Texture_Terret
@@ -1143,6 +1144,256 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion Component_Texutre_Shark
 
+	// 구울 텍스처들
+#pragma region Component_Texture_Ghoul
+	// 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Attack/Ghul_ATTACK%d.png", 15))))
+		return E_FAIL;
+
+	// 뒤돌아봄
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Back",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Back/Ghul_back.png", 1))))
+		return E_FAIL;
+
+	// 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Death/Ghul_death%d.png", 12))))
+		return E_FAIL;
+
+	// 땅파기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_DigOut",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/DigOut/ghoul_digout%d.png", 16))))
+		return E_FAIL;
+
+	// 숨음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Hide",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Hide/ghoul_hide.png", 1))))
+		return E_FAIL;
+
+	// 피격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Hit",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Hit/Ghul_hit.png", 1))))
+		return E_FAIL;
+
+	// 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Ghoul_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/Ghoul/Walk/Ghul_walk000%d.png", 6))))
+		return E_FAIL;
+#pragma endregion	// Component_Texture_Ghoul
+
+	// 헬 보스 텍스처들
+#pragma region Component_Texture_HellBoss
+	//--------------------------------
+	// 리틀 데몬
+	//--------------------------------
+	// 리틀 데몬 눈깔 빔
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_EyeBlast",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/EyeBlast/hellboss_dwarf_eyeblast%d.png", 21))))
+		return E_FAIL;
+
+	// 리틀 데몬 대기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_Idle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/Idle/hellboss_dwarf_idle.png", 1))))
+		return E_FAIL;
+
+	// 리틀 데몬 변신
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_Morph",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/Morph/hellboss_dwarf_morph%d.png", 31))))
+		return E_FAIL;
+
+	// 리틀 데몬 원거리 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_Shoot",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/Shoot/hellboss_dwarf_shoot%d.png", 26))))
+		return E_FAIL;
+
+	// 리틀 데몬 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/Walk/hellboss_dwarf_walk000%d.png", 8))))
+		return E_FAIL;
+
+	// 리틀 데몬 원형 총알
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_LittleDemon_RingBullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/LittleDemon/RingBullet/pulsating_bullet%d.png", 11))))
+		return E_FAIL;
+
+	//--------------------------------
+	// 터보 사탄
+	//--------------------------------
+	// 터보 사탄 원거리 공격 끝
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_AttackEnd",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/AttackEnd/hellboss_big_attack_end000%d.png", 4))))
+		return E_FAIL;
+
+	// 터보 사탄 원거리 공격 발싸
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_AttackFire",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/AttackFire/hellboss_big_attack_fire000%d.png", 4))))
+		return E_FAIL;
+
+	// 터보 사탄 원거리 공격 회전
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_AttackSpin",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/AttackSpin/hellboss_big_attack_spin000%d.png", 4))))
+		return E_FAIL;
+
+	// 터보 사탄 원거리 공격 시작
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_AttackStart",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/AttackStart/hellboss_big_attack_start000%d.png", 5))))
+		return E_FAIL;
+
+	// 터보 사탄 손상
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_Damage",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Damage/hellboss_big_damage_first000%d.png", 6))))
+		return E_FAIL;
+
+	// 터보 사탄 손상 원거리 로켓 공격
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_DamagedAttack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/DamagedAttack/hellboss_big_damaged_first_attack%d.png", 16))))
+		return E_FAIL;
+
+	// 터보 사탄 손상 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_DamagedWalk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/DamagedWalk/hellboss_big_damaged_first_walk000%d.png", 7))))
+		return E_FAIL;
+
+	// 터보 사탄 변신
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_Morph",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Morph/hellboss_big_morph%d.png", 65))))
+		return E_FAIL;
+
+	// 터보 사탄 이동
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_Walk",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Walk/hellboss_big_walk000%d.png", 8))))
+		return E_FAIL;
+
+	// 터보 사탄 체인건 총알
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_ChainGunBullet",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/ChainGunBullet/ChainGunBullet.png", 1))))
+		return E_FAIL;
+
+	//--------------------------------
+	// 카코 데빌
+	//--------------------------------
+	// 카코 데빌 몬스터 소환
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_CacoDevil_Attack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/CacoDevil/Attack/hellboss_caco_attack%d.png", 12))))
+		return E_FAIL;
+
+	// 카코 데빌 눈깔 레이저
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_CacoDevil_EyeLasers",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/CacoDevil/EyeLasers/hellboss_caco_attack_eyelasers%d.png", 11))))
+		return E_FAIL;
+
+	// 카코 데빌 부유
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_CacoDevil_Float",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/CacoDevil/Float/hellboss_caco_float000%d.png", 9))))
+		return E_FAIL;
+
+	// 카코 데빌 변신
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_CacoDevil_Morph",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/CacoDevil/Morph/hellboss_caco_morph%d.png", 43))))
+		return E_FAIL;
+
+	// 카코 데빌 충격파
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_CacoDevil_Nova",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/CacoDevil/Nova/hellboss_caco_attack_nova%d.png", 11))))
+		return E_FAIL;
+
+	//--------------------------------
+	// 몰락한 군주
+	//--------------------------------
+	// 몰락한 군주 죽음
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_FallenLord_Death",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/FallenLord/Death/hellboss_final_death%d.png", 26))))
+		return E_FAIL;
+
+	// 몰락한 군주 대기
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_FallenLord_Idle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/FallenLord/Idle/hellboss_final_idle%d.png", 21))))
+		return E_FAIL;
+
+	// 몰락한 군주 가시 1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_FallenLord_Spike1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/FallenLord/Spike1/hellboss_final_spike_01_%d.png", 10))))
+		return E_FAIL;
+
+	// 몰락한 군주 가시 2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_FallenLord_Spike2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/FallenLord/Spike2/hellboss_final_spike_02_%d.png", 11))))
+		return E_FAIL;
+
+	// 몰락한 군주 촉수
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_FallenLord_Tentacle",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/FallenLord/Tentacle/hellboss_final_tentacle%d.png", 18))))
+		return E_FAIL;
+
+#pragma endregion	// Component_Texture_HellBoss
+
 	return S_OK;
 }
 
@@ -1177,5 +1428,5 @@ void CMainApp::Free()
 	CManagement::ReleaseEngine();
 	CSoundMgr::Get_Instance()->Release();
 	CSoundMgr::Destroy_Instance();
-
+	JumpPointSearch::Destroy_Instance();
 }

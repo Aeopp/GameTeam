@@ -21,6 +21,7 @@ public:
 	// 2020.12.17 11:25 KMJ
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 private:
 	void Update_AI(float fDeltaTime);
 
@@ -63,6 +64,10 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpEyebatAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
 
 };
 

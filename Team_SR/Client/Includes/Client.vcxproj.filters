@@ -502,14 +502,20 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>96.SoundMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ShopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    <ClInclude Include="..\Headers\JumpPointSearch.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SoundMgr.h">
-      <Filter>96.SoundMgr</Filter>
+    <ClInclude Include="..\Headers\Ghoul.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="FaceUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
+    <ClInclude Include="..\Headers\HellBoss.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossChainGunBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossRingBullet.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -814,11 +820,20 @@
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>96.SoundMgr</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SoundMgr.cpp">
-      <Filter>96.SoundMgr</Filter>
+    <ClCompile Include="..\Codes\JumpPointSearch.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="FaceUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
+    <ClCompile Include="..\Codes\Ghoul.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBoss.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossRingBullet.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
