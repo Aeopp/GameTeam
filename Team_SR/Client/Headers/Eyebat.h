@@ -21,6 +21,7 @@ public:
 	// 2020.12.17 11:25 KMJ
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 private:
 	void Update_AI(float fDeltaTime);
 

@@ -136,6 +136,21 @@ void CEyebat::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _Coll
 {
 }
 
+void CEyebat::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::EYEBAT);
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+	CMonster::CreateBlood();
+}
+
 void CEyebat::Update_AI(float fDeltaTime)
 {
 	if ((this->*m_fpAction)(fDeltaTime))

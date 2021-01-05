@@ -4,7 +4,7 @@
 
 CHellhound::CHellhound(LPDIRECT3DDEVICE9 pDevice)
 	:CMonster(pDevice)
-	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fpAction(nullptr)
+	, m_fCountdown(0.f), m_fNextAtkWait(0.f), m_fPlayerTrackingCount(0.f), m_fpAction(nullptr)
 	, m_eAwareness(AWARENESS::End), m_ePhase(PHASE::End)
 	, m_fpMonsterAI{}, isDamaged(false)
 {
@@ -30,13 +30,13 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 3.5f,3.5f,3.5f };
 
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 80.f;
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
-	m_stOriginStatus.fSpeed = 30.f;
+	m_stOriginStatus.fSpeed = 20.f;
 	m_stOriginStatus.fMeleeRange = 6.f;
 	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
@@ -98,7 +98,7 @@ HRESULT CHellhound::RenderGameObject()
 {
 	if (FAILED(CMonster::RenderGameObject()))
 		return E_FAIL;
-
+	
 	_CollisionComp->DebugDraw();
 
 	//if (FAILED(m_pDevice->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_TransformDesc.matWorld)))
@@ -247,6 +247,8 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
 			m_fpAction = &CHellhound::Action_Dead;
 			m_wstrTextureKey = L"Com_Texture_Hellhound_Death";
 			m_fFrameCnt = 0;
@@ -260,6 +262,84 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 	// 충돌 관련 정보
 	m_vCollisionDir = _CollisionInfo.Dir;
 	m_fCrossValue = _CollisionInfo.CrossValue;
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackingCount = 20.f;
+
+	// 텍스처 교체 불가
+	if ((m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::TextureChangeLock))) {
+		return;
+	}
+
+	if (!isDamaged) {
+		// 체력이 50%
+		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
+			m_fpAction = &CHellhound::Action_Damage;
+			m_wstrTextureKey = L"Com_Texture_Hellhound_Damage";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 3;
+			m_fFrameSpeed = 5.f;
+			return;
+		}
+
+		// 피해를 받아서 현제 행동 취소
+		// Hurt 텍스처를 취함
+		m_fpAction = &CHellhound::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hellhound_Hurt";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 1;
+		m_fFrameSpeed = 5.f;
+	}
+	else {
+		// 피해를 받아서 현제 행동 취소
+		// Hit 텍스처를 취함
+		m_fpAction = &CHellhound::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hellhound_DamagedHit";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 1;
+		m_fFrameSpeed = 5.f;
+	}
+}
+
+void CHellhound::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::HELLGROUND);
+	CSoundMgr::Get_Instance()->PlaySound(L"hangman_pain1.wav", CSoundMgr::HELLGROUND);
+	// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CHellhound::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_Hellhound_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 12;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackingCount = 20.f;
 
 	// 텍스처 교체 불가
 	if ((m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::TextureChangeLock))) {
@@ -314,14 +394,27 @@ void CHellhound::Update_AI(float fDeltaTime)
 {
 	// 다음 공격 대기 시간 감소
 	m_fNextAtkWait -= fDeltaTime;
+	// 플레이어 추적 시간 감소
+	m_fPlayerTrackingCount -= fDeltaTime;
+	if (m_fPlayerTrackingCount <= 0.f) {
+		// 플레이어 추적 OFF
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	}
 
 	// 몬스터 행동
 	if (!(this->*m_fpAction)(fDeltaTime)) {
 		return;
 	}
 
-	// 플레이어를 인식했는가?
+	// 플레이어가 사정거리 안에 있는가?
 	if (PlayerAwareness()) {
+		// 플레이어 추적 ON
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+		m_fPlayerTrackingCount = 20.f;
+	}
+
+	// 플레이어를 추적중인가?
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::PlayerTracking)) {
 		m_eAwareness = AWARENESS::Yes;	// 플레이어 발견
 	}
 	else {
@@ -338,20 +431,6 @@ void CHellhound::Update_AI(float fDeltaTime)
 
 	// AI 처리
 	(this->*m_fpMonsterAI[(int)m_eAwareness][(int)m_ePhase])();
-}
-
-HRESULT CHellhound::Set_Texture()
-{
-	// 텍스처 찾기
-	auto iter_find = m_mapTexture.find(m_wstrTextureKey);
-	if (m_mapTexture.end() == iter_find)
-		return E_FAIL;
-
-	CTexture* pTexture = (CTexture*)iter_find->second;
-	// 해당 프레임 텍스처 장치에 셋
-	pTexture->Set_Texture((_uint)m_fFrameCnt);
-
-	return S_OK;
 }
 
 // 플레이어를 인식하지 못함
@@ -401,6 +480,10 @@ RETURN_MOVE:	// 이동
 		m_fEndFrame = 5;
 		m_fFrameSpeed = 10.f;
 	}
+
+	// 길찾기
+	CMonster::PathFinding(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
+
 	return;
 }
 
@@ -439,6 +522,10 @@ RETURN_MOVE:	// 이동
 		m_fEndFrame = 6;
 		m_fFrameSpeed = 10.f;
 	}
+
+	// 길찾기
+	CMonster::PathFinding(m_pTransformCom->m_TransformDesc.vPosition, m_pPlayer->GetTransform()->m_TransformDesc.vPosition);
+
 	return;
 }
 
@@ -470,9 +557,27 @@ bool CHellhound::Action_Idle(float fDeltaTime)
 // 이동
 bool CHellhound::Action_Move(float fDeltaTime)
 {
+	// 더 이상 이동할 좌표가 없으면 이동을 끝냄
+	if (m_listMovePos.size() == 0) {
+		return true;
+	}
+
+	// 리스트에 저장된 이동 좌표 하나 꺼냄
+	list<vec3>::iterator iter = m_listMovePos.begin();
+	vec3 vDestPos = *iter;
+
 	// 방향
-	vec3 vDir = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
+	vec3 vDir = vDestPos - m_pTransformCom->m_TransformDesc.vPosition;
 	vDir.y = 0.f;
+	// 길이
+	float fLength = D3DXVec3Length(&vDir);
+	// 리스트에서 꺼낸 좌표 까지 가까이 왔으면
+	if (m_stStatus.fSpeed * fDeltaTime > fLength) {
+		// 현재 좌표는 리스트에서 지움
+		m_listMovePos.erase(iter);
+	}
+
+
 	D3DXVec3Normalize(&vDir, &vDir);
 	// 포지션 이동
 	m_pTransformCom->m_TransformDesc.vPosition += vDir * m_stStatus.fSpeed * fDeltaTime;
@@ -530,7 +635,7 @@ bool CHellhound::Action_Damage(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		isDamaged = true;	// 손상 상태 ON
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
-		m_stStatus.fSpeed = 10.f;		// 스피드 대폭 감소
+		m_stStatus.fSpeed = 8.f;		// 스피드 대폭 감소
 		return true;
 	}
 	return false;

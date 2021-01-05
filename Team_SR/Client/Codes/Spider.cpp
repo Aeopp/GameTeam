@@ -33,7 +33,7 @@ HRESULT CSpider::ReadyGameObject(void * pArg /*= nullptr*/)
 	m_fEndFrame = 3;
 	m_fFrameSpeed = 20.f;
 	//m_pTransformCom->m_TransformDesc.vRotation.z = -90.f;
-
+	
 	bGravity = false;
 	m_stOriginStatus.fHP = 60.f;
 	m_stOriginStatus.fATK = 7.f;
@@ -147,6 +147,33 @@ void CSpider::Hit(CGameObject * const _Target, const Collision::Info & _Collisio
 	//m_fCrossValue = _CollisionInfo.CrossValue;
 
 	//CMonster::CreateBlood();
+}
+
+void CSpider::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return;
+	}
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	if (&CSpider::Action_Move_NoAwareness == m_fpAction)
+	{
+		m_eAwareness = AWARENESS::Yes;
+		m_ePhase = PHASE::FLOOR;
+	}
+
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_03.wav", CSoundMgr::SPIDER);
+	// 충돌 관련 정보
+//m_vCollisionDir = _CollisionInfo.Dir;
+//m_fCrossValue = _CollisionInfo.CrossValue;
+
+//CMonster::CreateBlood();
 }
 
 void CSpider::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)

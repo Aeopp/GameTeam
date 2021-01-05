@@ -26,7 +26,7 @@ HRESULT CBatSpit::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	//m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
+	m_pTransformCom->m_TransformDesc.vScale = { 1.f,1.f,1.f };
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
@@ -109,7 +109,7 @@ HRESULT CBatSpit::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 2.5f;
+	_Info.Radius = 1.f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;

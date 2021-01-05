@@ -97,7 +97,7 @@ void CShark::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 		return;
 	}
 
-	CMonster::Hit(_Target, _CollisionInfo);		// CMonster ¿¡¼­ HP °¨¼Ò
+	CMonster::Hit(_Target, _CollisionInfo);		// CMonster ì—ì„œ HP ê°ì†Œ
 	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
 	//CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
 	CMonster::CreateBlood();
@@ -105,6 +105,18 @@ void CShark::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 
 void CShark::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
 {
+}
+
+void CShark::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster ì—ì„œ HP ê°ì†Œ
+	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+	//CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
+	CMonster::CreateBlood();
 }
 
 void CShark::Update_AI(float fDeltaTime)
@@ -413,7 +425,7 @@ void CShark::UpdateDir(float fDeltaTime)
 
 HRESULT CShark::AddComponents()
 {
-	if (FAILED(CMonster::AddComponents()))	// Monster.cpp¿¡¼­ RectTexture È£Ãâ
+	if (FAILED(CMonster::AddComponents()))	// Monster.cppì—ì„œ RectTexture í˜¸ì¶œ
 		return E_FAIL;
 
 	CTexture* pTexture = nullptr;
@@ -563,7 +575,7 @@ HRESULT CShark::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆìž„ í…ìŠ¤ì²˜ ìž¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -586,7 +598,7 @@ CShark * CShark::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CShark::Clone(void * pArg /*= nullptr*/)
 {
-	CShark* pClone = new CShark(*this); /* º¹»ç»ý¼ºÀÚ */
+	CShark* pClone = new CShark(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{

@@ -503,6 +503,21 @@
     <ClInclude Include="..\Headers\SoundMgr.h">
       <Filter>96.SoundMgr</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\JumpPointSearch.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Ghoul.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBoss.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossChainGunBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossRingBullet.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -806,6 +821,21 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundMgr.cpp">
       <Filter>96.SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\JumpPointSearch.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Ghoul.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBoss.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossRingBullet.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

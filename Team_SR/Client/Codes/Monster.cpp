@@ -9,7 +9,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
 	, m_fCrossValue(0.f), m_vCollisionDir{0.f, 0.f, 0.f}, m_vAim {0.f, 0.f, 0.f}
-	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}
+	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}, m_wstrTextureKey(L""), m_pJumpPointSearch(JumpPointSearch::Get_Instance())
 	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
 {
 	bGravity = true;
@@ -211,11 +211,6 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
 
-		if (_ParticlePtr->Name == L"DaggerThrow")
-		{
-
-		}
-
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
 
 		if (m_stStatus.fHP < 0.f)
@@ -353,6 +348,28 @@ void CMonster::CreateFloorBlood()
 {
 }
 
+// 길찾기
+// _vDepa : 출발지
+// _vDest : 도착지
+void CMonster::PathFinding(vec3 _vDepa, vec3 _vDest)
+{
+	int iCount = 3;
+
+	// 길찾기 시작
+	while (!m_pJumpPointSearch->Start(_vDepa, _vDest)) {
+		// 탐색 실패시 목적지를 근처의 경로로 변경 후
+		// 다시 길찾기를 한다
+		JumpPointSearch::Get_Instance()->NearbyPath(_vDepa, _vDest);
+		--iCount;
+		if (iCount == 0) {
+			break;
+		}
+	}
+	// 길찾기 완료
+	// 이동 지점 리스트에 담기
+	m_listMovePos.clear();
+	m_pJumpPointSearch->Finish(m_listMovePos);
+}
 
 static void FloorBlood(const PlaneInfo& _PlaneInfo,const vec3 IntersectPoint)
 {

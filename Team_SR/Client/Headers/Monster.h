@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "DXWrapper.h"
 #include "Vertexs.h"
+#include "JumpPointSearch.h"
 
 USING(Engine)
 class CMonster abstract : public CGameObject
@@ -40,6 +41,7 @@ protected:
 	void CollisionMovement(float fDeltaTime);	// 충돌 이동
 	void CreateBlood();
 	void CreateFloorBlood();
+	void PathFinding(vec3 _vDepa, vec3 _vDest);	// 길찾기
 	void BloodParticle();
 	void DeadProcess();
 public:
@@ -51,8 +53,9 @@ protected:
 		HPLock				= 1,			// HP 락 - 피해를 입지 않음, HP 깍이는 함수에서 예외처리로 용으로 쓸 것
 		Dead				= 1 << 1,		// 죽음
 		Shoot				= 1 << 2,		// 총쏨
-		TextureChangeLock	= 1 << 3		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
-		// ... 이 밑으로 5개 예약 가능!!
+		TextureChangeLock	= 1 << 3,		// 텍스처 체인지 락 - 텍스처 교체 가능 여부
+		PlayerTracking		= 1 << 4		// 플레이어 추적
+		// ... 이 밑으로 3개 예약 가능!!
 	};
 protected:
 	float _CurrentDeltaTime = 0.0f;
@@ -70,6 +73,8 @@ protected:
 	MonsterStatus m_stStatus;				// 몬스터 스텟
 	wstring m_wstrTextureKey;				// 텍스처 키
 	map<wstring, CTexture*> m_mapTexture;	// 텍스처 맵
+	list<vec3> m_listMovePos;				// 이동 좌표 리스트
+	JumpPointSearch* m_pJumpPointSearch;	// 길찾기
 	bool m_bFrameLoopCheck;					// 프레임 루프
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 	std::vector<size_t> GibTable;

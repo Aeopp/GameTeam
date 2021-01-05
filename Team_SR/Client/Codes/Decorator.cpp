@@ -366,6 +366,7 @@ HRESULT CDecorator::AddComponents()
 		NextFrameInfo.fStartFrame = 2.f;
 		NextFrameInfo.fEndFrame = 3.f;
 		NextFrameInfo.fTriggerHP = 450.f;
+
 		m_listNextFrameInfo.emplace_back(NextFrameInfo);
 		NextFrameInfo.fStartFrame = 3.f;
 		NextFrameInfo.fEndFrame = 4.f;
@@ -872,11 +873,11 @@ static void DecoratorBomb(CDecorator* const _Target)
 	_DynamiteExplosion.bMove = false;
 	_DynamiteExplosion.Delta = 0.10f;
 	_DynamiteExplosion.EndFrame = 13ul;
-	_DynamiteExplosion.CurrentAttack = 120.0f;
+	_DynamiteExplosion.CurrentAttack = 100.0f;
 	_DynamiteExplosion.MaxDuration = _DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
 	_DynamiteExplosion.Location = _Target->GetTransform()->GetLocation();
 	_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 }));
-	static constexpr float ExplosionScale = 6.5f;
+	static constexpr float ExplosionScale = 20.f;
 	_DynamiteExplosion.Scale = { ExplosionScale ,ExplosionScale ,ExplosionScale };
 	ParticleSystem::Instance().PushParticle(_DynamiteExplosion);
 

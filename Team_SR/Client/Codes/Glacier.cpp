@@ -34,7 +34,7 @@ HRESULT CGlacier::ReadyGameObject(void* pArg /*= nulptr*/)
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
-
+	
 	//bGravity = false;
 
 	m_stOriginStatus.fHP = 80.f;
@@ -159,6 +159,20 @@ void CGlacier::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _Col
 	{
 		bGravity = false;
 	}
+}
+
+void CGlacier::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+	CreateParticle();
 }
 
 HRESULT CGlacier::AddComponents()

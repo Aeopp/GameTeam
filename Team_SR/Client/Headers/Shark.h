@@ -11,7 +11,7 @@ private:
 	virtual ~CShark() = default;
 
 public:
-	// CMonster¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
+	// CMonsterÏùÑ(Î•º) ÌÜµÌï¥ ÏÉÅÏÜçÎê®
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -21,6 +21,7 @@ public:
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 
 private:
 	void Update_AI(float fDeltaTime);

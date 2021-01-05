@@ -14,7 +14,7 @@ private:
 	enum class DIR{LEFT,RIGHT,UP,DOWN,DIR_END};
 
 public:
-	// CMonsterÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CMonsterì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -23,7 +23,8 @@ public:
 
 public:
 	// 2020.12.17 9:57 KMJ
-	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ¸ó½ºÅÍ°¡ ÇÇÇØ¸¦ ¹ŞÀ½
+	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// ëª¬ìŠ¤í„°ê°€ í”¼í•´ë¥¼ ë°›ìŒ
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo);
 private:
 	void Update_AI(float fDeltaTime);
@@ -65,7 +66,7 @@ public:
 
 private:
 	float		m_fCountDown = 0.f;
-	////////////////////////Å×½ºÆ®////////////////////////////
+	////////////////////////í…ŒìŠ¤íŠ¸////////////////////////////
 	float		m_fTest = 0.f;
 	float		m_fChangeSpeed = 0.f;
 	float		m_fDashSpeed = 0.f;
