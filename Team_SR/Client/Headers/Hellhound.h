@@ -64,7 +64,10 @@ private:
 	AWARENESS m_eAwareness;			// 인식
 	PHASE m_ePhase;					// 페이즈
 	AIFunc m_fpMonsterAI[(int)AWARENESS::End][(int)PHASE::End];	// AI 함수 배열
-	bool isDamaged;					// 텍스처 손상 전환용
+	bool isDamaged;
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
+	// 텍스처 손상 전환용
 };
 
 #define __HELLHOUND_H__

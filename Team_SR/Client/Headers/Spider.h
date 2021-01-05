@@ -84,6 +84,9 @@ private:
 	DIR			m_eDir = DIR::DIR_END;
 	AIFunc		m_fpSpiderAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
 };
 
 #endif // Spider_h__

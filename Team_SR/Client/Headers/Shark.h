@@ -69,6 +69,9 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpSharkAI[(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
 };
 
 #endif // Shark_h__

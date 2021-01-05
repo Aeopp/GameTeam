@@ -73,7 +73,7 @@ _uint CHangman::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
-
+	if (LightHitTime > 0.0f)return 0;
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -684,4 +684,75 @@ CGameObject* CHangman::Clone(void* pArg/* = nullptr*/)
 void CHangman::Free()
 {
 	CMonster::Free();
+}
+
+void CHangman::FreezeHit()
+{
+	CMonster::FreezeHit();
+
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::HANGMAN);
+	CSoundMgr::Get_Instance()->PlaySound(L"hangman_pain1.wav", CSoundMgr::HANGMAN);
+	// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CHangman::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_Hangman_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 10;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackCount = 10.f;
+
+	// 텍스처 교체 불가
+	if ((m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::TextureChangeLock))) {
+		return;
+	}
+
+	if (!isDamaged) {
+		// 체력이 50%
+		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
+			m_fpAction = &CHangman::Action_Damage;
+			m_wstrTextureKey = L"Com_Texture_Hangman_Damage";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 6;
+			m_fFrameSpeed = 5.f;
+			return;
+		}
+
+		// 피해를 받아서 현제 행동 취소
+		// Hit 텍스처를 취함
+		m_fpAction = &CHangman::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hangman_Hit";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 1;
+		m_fFrameSpeed = 5.f;
+	}
+	else {
+		// 피해를 받아서 현제 행동 취소
+		// Hit 텍스처를 취함
+		m_fpAction = &CHangman::Action_Hit;
+		m_wstrTextureKey = L"Com_Texture_Hangman_DamagedHit";
+		m_fFrameCnt = 0;
+		m_fStartFrame = 0;
+		m_fEndFrame = 1;
+		m_fFrameSpeed = 5.f;
+	}
 }

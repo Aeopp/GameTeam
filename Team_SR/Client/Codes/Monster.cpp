@@ -69,6 +69,8 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 	FloorBloodCurrentCoolTime -= fDeltaTime;
 	LightHitTime -= fDeltaTime;
+	FreezeDeadProcessTime -= fDeltaTime;
+	FreezeBloodParticleTime -= fDeltaTime;
 
 	if(IsDead())
 	{
@@ -227,13 +229,19 @@ void CMonster::FlashHit()&
 	LightHitTime = 0.1f;
 }
 
-void CMonster::FreezeHit()&
+void CMonster::FreezeHit()
 {
 	m_stStatus.fHP -= (FreezeHitDamage * _CurrentDeltaTime);
 
-	if (m_stStatus.fHP < 0.0f)
+	if (m_stStatus.fHP < 0.0f && FreezeDeadProcessTime<0.0f)
 	{
+		FreezeDeadProcessTime = 0.7f;
 		DeadProcess();
+	}
+	if (FreezeBloodParticleTime < 0.0f)
+	{
+		FreezeBloodParticleTime = 0.4f;
+		BloodParticle();
 	}
 };
 

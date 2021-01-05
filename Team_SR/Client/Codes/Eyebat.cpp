@@ -398,3 +398,17 @@ void CEyebat::Free()
 
 	CMonster::Free();
 }
+
+void CEyebat::FreezeHit()
+{// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();		// CMonster 에서 HP 감소
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::EYEBAT);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::EYEBAT);
+	// 충돌 관련 정보
+	
+	CMonster::CreateBlood();
+}

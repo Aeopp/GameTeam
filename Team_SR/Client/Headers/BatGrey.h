@@ -54,7 +54,10 @@ private:
 	ACTFunc m_fpAction;			// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
 	AWARENESS m_eAwareness;		// 인식
 	PHASE m_ePhase;				// 페이즈
-	AIFunc m_fpMonsterAI[(int)AWARENESS::End][(int)PHASE::End];	// AI 함수 배열
+	AIFunc m_fpMonsterAI[(int)AWARENESS::End][(int)PHASE::End];
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
+	// AI 함수 배열
 };
 
 #define __GLACIER_H__

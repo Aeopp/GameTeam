@@ -84,6 +84,7 @@ _uint CGlacier::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+	if (LightHitTime > 0.0f)return 0;
 
 	//테스트
 	Update_AI(fDeltaTime);
@@ -105,7 +106,8 @@ _uint CGlacier::LateUpdateGameObject(float fDeltaTime)
 	//	return 0;
 	//}
 	CMonster::LateUpdateGameObject(fDeltaTime);
-	
+	FreezeGlacierParticleTime -= fDeltaTime;
+
 	// Frame_Move, AddGameObjectInRenderer 순서
 	// m_bFrameLoopCheck 불값 관련해서 체크하는 처리가 있는데 
 	// 장치에 텍스처 초기화 예로들면 end -> 다시 start 프레임으로 넘어가고 난 후에
@@ -490,4 +492,20 @@ void CGlacier::Free()
 	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();
+}
+
+void CGlacier::FreezeHit()
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();		// CMonster 에서 HP 감소
+	// 충돌 관련 정보
+	if (FreezeGlacierParticleTime < 0.0f)
+	{
+		FreezeGlacierParticleTime = 0.2f;
+		CreateParticle();
+	}
 }

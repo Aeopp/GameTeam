@@ -195,15 +195,15 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::BATGRAY);
 	
 	// 이펙트
-	EffectBasicArgument* pArg = new EffectBasicArgument;
-	pArg->uiSize = sizeof(EffectBasicArgument);
-	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
-	pArg->eType = EFFECT::BloodHit_Big;
-	m_pManagement->AddScheduledGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_Particle",
-		L"Layer_Particle",
-		nullptr, (void*)pArg);
+	//EffectBasicArgument* pArg = new EffectBasicArgument;
+	//pArg->uiSize = sizeof(EffectBasicArgument);
+	//pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	//pArg->eType = EFFECT::BloodHit_Big;
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	L"GameObject_Particle",
+	//	L"Layer_Particle",
+	//	nullptr, (void*)pArg);
 
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
@@ -252,15 +252,15 @@ void CBatGrey::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::BATGRAY);
 
 	// 이펙트
-	EffectBasicArgument* pArg = new EffectBasicArgument;
-	pArg->uiSize = sizeof(EffectBasicArgument);
-	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
-	pArg->eType = EFFECT::BloodHit_Big;
-	m_pManagement->AddScheduledGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_Particle",
-		L"Layer_Particle",
-		nullptr, (void*)pArg);
+	//EffectBasicArgument* pArg = new EffectBasicArgument;
+	//pArg->uiSize = sizeof(EffectBasicArgument);
+	//pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	//pArg->eType = EFFECT::BloodHit_Big;
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	L"GameObject_Particle",
+	//	L"Layer_Particle",
+	//	nullptr, (void*)pArg);
 
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
@@ -668,4 +668,60 @@ CGameObject* CBatGrey::Clone(void* pArg/* = nullptr*/)
 void CBatGrey::Free()
 {
 	CMonster::Free();
+}
+
+void CBatGrey::FreezeHit()
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();		// CMonster 에서 HP 감소
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::BATGRAY);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::BATGRAY);
+
+	//// 이펙트
+	//EffectBasicArgument* pArg = new EffectBasicArgument;
+	//pArg->uiSize = sizeof(EffectBasicArgument);
+	//pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	//pArg->eType = EFFECT::BloodHit_Big;
+	//m_pManagement->AddScheduledGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	L"GameObject_Particle",
+	//	L"Layer_Particle",
+	//	nullptr, (void*)pArg);
+
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CBatGrey::Action_Dead;
+			m_wstrTextureKey = L"Component_Texture_BatGreyDeath";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 11;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+
+	// 충돌 관련 정보
+	
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackCount = 10.f;
+
+	// 피해를 받아서 현제 행동 취소
+	// Hit 텍스처를 취함
+	m_fpAction = &CBatGrey::Action_Hit;
+	m_wstrTextureKey = L"Component_Texture_BatGreyHit";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 2;
+	m_fFrameSpeed = 5.f;
+
 }

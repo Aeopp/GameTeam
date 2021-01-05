@@ -613,3 +613,17 @@ void CShark::Free()
 {
 	CMonster::Free();
 }
+
+void CShark::FreezeHit()
+{
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();
+
+	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SHARK);
+	//CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_01.wav", CSoundMgr::SHARK);
+	CMonster::CreateBlood();
+
+}

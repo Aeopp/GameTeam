@@ -445,6 +445,124 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 	m_fCrossValue = _CollisionInfo.CrossValue;
 }
 
+void CHellBoss::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+	// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+
+		switch (m_ePhase)
+		{
+			// 리틀 데몬
+		case CHellBoss::PHASE::LittleDemon:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_LittleDemon_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 31;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::TurboSatan;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 8.f;
+			m_stOriginStatus.fMeleeRange = 8.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 터보 사탄
+		case CHellBoss::PHASE::TurboSatan:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_TurboSatan_Damage";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 6;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::InjuredTurboSatan;	// 페이즈 전환
+			m_stStatus.fHP = m_stOriginStatus.fHP;	// 체력 회복
+			break;
+			// 부상당한 터보 사탄
+		case CHellBoss::PHASE::InjuredTurboSatan:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_TurboSatan_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 65;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::CacoDevil;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 9.f;
+			m_stOriginStatus.fMeleeRange = 10.f;
+			m_stOriginStatus.fDetectionRange = 40.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 카코 데빌
+		case CHellBoss::PHASE::CacoDevil:
+			m_fpAction = &CHellBoss::Action_LastMorph;		// 최종 페이즈 변신
+			m_wstrTextureKey = L"Com_Texture_CacoDevil_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 43;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::FallenLord;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 9.f;
+			m_stOriginStatus.fMeleeRange = 50.f;
+			m_stOriginStatus.fDetectionRange = 70.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 몰락한 군주
+		case CHellBoss::PHASE::FallenLord:
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CHellBoss::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_FallenLord_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 26;
+			m_fFrameSpeed = 10.f;
+			break;
+		default:
+			// 예기치 못한 상황
+			throw;
+		}
+
+		// 몬스터가 안죽었으면
+		//if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+		//	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+		//	_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+		//	bGravity = false;						// 중력 OFF
+		//	m_fpAction = &CHellBoss::Action_Dead;
+		//	m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
+		//	m_fFrameCnt = 0;
+		//	m_fStartFrame = 0;
+		//	m_fEndFrame = 12;
+		//	m_fFrameSpeed = 10.f;
+		//}
+		return;
+	}
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+
+}
+
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
 void CHellBoss::Update_AI(float fDeltaTime)
 {
@@ -1090,4 +1208,119 @@ CGameObject* CHellBoss::Clone(void* pArg/* = nullptr*/)
 void CHellBoss::Free()
 {
 	CMonster::Free();
+}
+
+void CHellBoss::FreezeHit()
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();
+
+	// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+
+		switch (m_ePhase)
+		{
+			// 리틀 데몬
+		case CHellBoss::PHASE::LittleDemon:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_LittleDemon_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 31;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::TurboSatan;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 8.f;
+			m_stOriginStatus.fMeleeRange = 8.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 터보 사탄
+		case CHellBoss::PHASE::TurboSatan:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_TurboSatan_Damage";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 6;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::InjuredTurboSatan;	// 페이즈 전환
+			m_stStatus.fHP = m_stOriginStatus.fHP;	// 체력 회복
+			break;
+			// 부상당한 터보 사탄
+		case CHellBoss::PHASE::InjuredTurboSatan:
+			m_fpAction = &CHellBoss::Action_Morph;
+			m_wstrTextureKey = L"Com_Texture_TurboSatan_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 65;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::CacoDevil;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 9.f;
+			m_stOriginStatus.fMeleeRange = 10.f;
+			m_stOriginStatus.fDetectionRange = 40.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 카코 데빌
+		case CHellBoss::PHASE::CacoDevil:
+			m_fpAction = &CHellBoss::Action_LastMorph;		// 최종 페이즈 변신
+			m_wstrTextureKey = L"Com_Texture_CacoDevil_Morph";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 43;
+			m_fFrameSpeed = 10.f;
+
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			m_ePhase = PHASE::FallenLord;	// 페이즈 전환
+			m_stOriginStatus.fSpeed = 9.f;
+			m_stOriginStatus.fMeleeRange = 50.f;
+			m_stOriginStatus.fDetectionRange = 70.f;
+			// 페이즈 전환되면서 몬스터 스텟이 바뀜
+			m_stStatus = m_stOriginStatus;
+			break;
+			// 몰락한 군주
+		case CHellBoss::PHASE::FallenLord:
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CHellBoss::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_FallenLord_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 26;
+			m_fFrameSpeed = 10.f;
+			break;
+		default:
+			// 예기치 못한 상황
+			throw;
+		}
+
+		// 몬스터가 안죽었으면
+		//if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+		//	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+		//	_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+		//	bGravity = false;						// 중력 OFF
+		//	m_fpAction = &CHellBoss::Action_Dead;
+		//	m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
+		//	m_fFrameCnt = 0;
+		//	m_fStartFrame = 0;
+		//	m_fEndFrame = 12;
+		//	m_fFrameSpeed = 10.f;
+		//}
+		return;
+	}
+
 }

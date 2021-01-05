@@ -69,6 +69,7 @@ _uint CSpider::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
+	if (LightHitTime > 0.0f)return 0;
 
 	//if (GetAsyncKeyState('6') & 0x8000)
 	//{
@@ -642,4 +643,27 @@ void CSpider::Free()
 	//SafeRelease(_CollisionComp);
 
 	CMonster::Free();
+}
+
+void CSpider::FreezeHit()
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
+		return;
+	}
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	if (&CSpider::Action_Move_NoAwareness == m_fpAction)
+	{
+		m_eAwareness = AWARENESS::Yes;
+		m_ePhase = PHASE::FLOOR;
+	}
+
+
+	CMonster::FreezeHit();		// CMonster 에서 HP 감소
+
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::SPIDER);
+	CSoundMgr::Get_Instance()->PlaySound(L"Bat_pain_03.wav", CSoundMgr::SPIDER);
 }

@@ -56,6 +56,7 @@ private:
 	
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
@@ -102,7 +103,10 @@ private:
 	int m_iRepeatCount;			// 반복 횟수
 	ACTFunc m_fpAction;			// 현재 몬스터 행동 함수 - 행동 완료시 true, 진행시 false
 	PHASE m_ePhase;				// 페이즈
-	AIFunc m_fpMonsterAI[(int)PHASE::End];	// AI 함수 배열
+	AIFunc m_fpMonsterAI[(int)PHASE::End];
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
+	// AI 함수 배열
 };
 
 #define __HELLHOUND_H__

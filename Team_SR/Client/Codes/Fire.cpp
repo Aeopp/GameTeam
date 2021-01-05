@@ -111,7 +111,7 @@ HRESULT CFire::Set_Texture()
 		return E_FAIL;
 
 	CTexture* pTexture = (CTexture*)iter_find->second;
-	// ÇØ´ç ÇÁ·¹ÀÓ ÅØ½ºÃ³ ÀåÄ¡¿¡ ¼Â
+	// í•´ë‹¹ í”„ë ˆìž„ í…ìŠ¤ì²˜ ìž¥ì¹˜ì— ì…‹
 	pTexture->Set_Texture((_uint)m_fFrameCnt);
 
 	return S_OK;
@@ -145,7 +145,7 @@ CFire * CFire::Create(LPDIRECT3DDEVICE9 pDevice)
 
 CGameObject * CFire::Clone(void * pArg /*= nullptr*/)
 {
-	CFire* pClone = new CFire(*this); /* º¹»ç»ý¼ºÀÚ */
+	CFire* pClone = new CFire(*this); /* ë³µì‚¬ìƒì„±ìž */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
@@ -159,4 +159,8 @@ CGameObject * CFire::Clone(void * pArg /*= nullptr*/)
 void CFire::Free()
 {
 	CMonster::Free();
+}
+
+void CFire::FreezeHit()
+{
 }
