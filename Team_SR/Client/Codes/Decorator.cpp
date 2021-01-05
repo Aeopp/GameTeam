@@ -863,6 +863,9 @@ static void DecoratorBomb(CDecorator* const _Target)
 	auto _Camera = dynamic_cast<CMainCamera*>(CManagement::Get_Instance()->GetGameObject(-1, L"Layer_MainCamera", 0));
 	_Camera->Shake(2.0f, MATH::RandVec(), 0.8f);
 
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::PLAYER_WEAPON);
+	CSoundMgr::Get_Instance()->PlaySound(L"explosion_01.wav", CSoundMgr::CHANNELID::PLAYER_WEAPON);
+
 	CollisionParticle _DynamiteExplosion;
 	_DynamiteExplosion.bBillboard = true;
 	_DynamiteExplosion.bCollision = false;
