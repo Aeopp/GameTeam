@@ -33,7 +33,7 @@ HRESULT CPlayerInfoUI::ReadyGameObject(void* pArg)
 
 	m_UIDesc.vUIPos.x = -(WINCX / 2);
 	m_UIDesc.vUIPos.y = -(WINCY / 2);
-	m_UIDesc.vUIPos.z = 2.f;
+	m_UIDesc.vUIPos.z = 3.f;
 
 	m_UIDesc.vCenter = _vector(-1.f, -1.f, 0.f);
 
