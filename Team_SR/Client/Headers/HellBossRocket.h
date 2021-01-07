@@ -16,6 +16,9 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) override;
 	virtual HRESULT RenderGameObject() override;
 
+public:
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+
 private:
 	virtual HRESULT AddComponents() override;
 

@@ -60,6 +60,7 @@ _uint CHellBossRingBullet::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
+	Bullet_Attack(m_stStatus.fATK);	// 플레이어 충돌 처리
 
 	return _uint();
 }

@@ -57,7 +57,7 @@ _uint CBatSpit::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
-	Bullet_Attack();
+	Bullet_Attack(m_stStatus.fATK);
 	return _uint();
 }
 

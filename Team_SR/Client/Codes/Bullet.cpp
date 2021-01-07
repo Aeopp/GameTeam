@@ -119,15 +119,17 @@ void CBullet::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _Coll
 	m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
 }
 
-void CBullet::Bullet_Attack()
+bool CBullet::Bullet_Attack(float _fAttack)
 {
 	if (!m_bOneHit)
 	{
-		if (Attack(_CollisionComp->_Sphere, 10.f))
+		if (Attack(_CollisionComp->_Sphere, _fAttack))
 		{
 			m_bOneHit = true;
+			return true;
 		}
 	}
+	return false;
 }
 
 bool CBullet::Attack(const Sphere _Sphere, const float Attack)&

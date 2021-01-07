@@ -16,8 +16,8 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
 	virtual HRESULT RenderGameObject() = 0;
 public:
-	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)override;
-	void	Bullet_Attack();
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	bool	Bullet_Attack(float _fAttack);
 	bool Attack(const Sphere _Sphere, const float Attack) &;
 protected:
 	virtual HRESULT AddComponents();

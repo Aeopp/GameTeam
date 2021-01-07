@@ -33,7 +33,7 @@ HRESULT CHellBossRocket::ReadyGameObject(void* pArg /*= nullptr*/)
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 300.f;
-	m_stOriginStatus.fATK = 10.f;
+	m_stOriginStatus.fATK = 15.f;
 	m_stOriginStatus.fSpeed = 100.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
@@ -98,6 +98,7 @@ _uint CHellBossRocket::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
+	Bullet_Attack(m_stStatus.fATK);	// 플레이어 충돌 처리
 
 	return _uint();
 }
@@ -218,6 +219,22 @@ HRESULT CHellBossRocket::RenderGameObject()
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	return S_OK;
+}
+
+void CHellBossRocket::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	CBullet::MapHit(_PlaneInfo, _CollisionInfo);
+
+	// 총알 생성
+	BulletBasicArgument* pArg = new BulletBasicArgument;
+	pArg->uiSize = sizeof(BulletBasicArgument);
+	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+	pArg->vPosition.y = 5.f;
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_Explosion",
+		L"Layer_Bullet",
+		nullptr, (void*)pArg);
 }
 
 HRESULT CHellBossRocket::AddComponents()

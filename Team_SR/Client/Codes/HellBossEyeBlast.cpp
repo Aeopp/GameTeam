@@ -78,6 +78,20 @@ _uint CHellBossEyeBlast::UpdateGameObject(float fDeltaTime)
 	}
 
 	_CollisionComp->Update(m_pTransformCom);
+	// 플레이어 충돌 처리
+	if (Bullet_Attack(m_stStatus.fATK)) {
+		m_byObjFlag |= static_cast<BYTE>(ObjFlag::Remove);	// 오브젝트 삭제 플래그 ON
+		// 총알 생성
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition + m_vLook * 6.f;	// 생성 위치
+		pArg->vPosition.y = 5.f;
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_Explosion",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+	}
 
 	return _uint();
 }
@@ -108,6 +122,22 @@ HRESULT CHellBossEyeBlast::RenderGameObject()
 	return S_OK;
 }
 
+void CHellBossEyeBlast::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	CBullet::MapHit(_PlaneInfo, _CollisionInfo);
+
+	// 총알 생성
+	BulletBasicArgument* pArg = new BulletBasicArgument;
+	pArg->uiSize = sizeof(BulletBasicArgument);
+	pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition + m_vLook * 6.f;	// 생성 위치
+	pArg->vPosition.y = 5.f;
+	m_pManagement->AddScheduledGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_Explosion",
+		L"Layer_Bullet",
+		nullptr, (void*)pArg);
+}
+
 HRESULT CHellBossEyeBlast::AddComponents()
 {
 	if (FAILED(CBullet::AddComponents()))	// Monster.cpp에서 RectTexture 호출
@@ -127,7 +157,7 @@ HRESULT CHellBossEyeBlast::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 1.5f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;

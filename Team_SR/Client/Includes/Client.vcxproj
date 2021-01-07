@@ -22,7 +22,7 @@
     <ProjectGuid>{BA8BCAB2-E54D-4859-8DF2-5715F3C4D460}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Client</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -205,6 +205,7 @@
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\HellBoss.h" />
     <ClInclude Include="..\Headers\HellBossChainGunBullet.h" />
+    <ClInclude Include="..\Headers\Explosion.h" />
     <ClInclude Include="..\Headers\HellBossEyeBlast.h" />
     <ClInclude Include="..\Headers\HellBossEyeLaser.h" />
     <ClInclude Include="..\Headers\HellBossRingBullet.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\HellBoss.cpp" />
     <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp" />
+    <ClCompile Include="..\Codes\Explosion.cpp" />
     <ClCompile Include="..\Codes\HellBossEyeBlast.cpp" />
     <ClCompile Include="..\Codes\HellBossEyeLaser.cpp" />
     <ClCompile Include="..\Codes\HellBossRingBullet.cpp" />

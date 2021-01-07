@@ -1,15 +1,15 @@
 #include "stdafx.h"
-#include "..\Headers\HellBossTentacle.h"
+#include "..\Headers\Explosion.h"
 
 
-CHellBossTentacle::CHellBossTentacle(LPDIRECT3DDEVICE9 pDevice)
+CExplosion::CExplosion(LPDIRECT3DDEVICE9 pDevice)
 	:CBullet(pDevice)
 	, bRelayFlag(false)
 {
 }
 
 
-HRESULT CHellBossTentacle::ReadyGameObjectPrototype()
+HRESULT CExplosion::ReadyGameObjectPrototype()
 {
 	if (FAILED(CBullet::ReadyGameObjectPrototype()))
 		return E_FAIL;
@@ -17,7 +17,7 @@ HRESULT CHellBossTentacle::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CHellBossTentacle::ReadyGameObject(void* pArg /*= nullptr*/)
+HRESULT CExplosion::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CBullet::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -25,7 +25,7 @@ HRESULT CHellBossTentacle::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 8.f,8.f,8.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
@@ -36,39 +36,26 @@ HRESULT CHellBossTentacle::ReadyGameObject(void* pArg /*= nullptr*/)
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
 
+	// 텍스처 프레임
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 13;
+	m_fFrameSpeed = 20.f;
+
 	return S_OK;
 }
 
-_uint CHellBossTentacle::UpdateGameObject(float fDeltaTime)
+_uint CExplosion::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
 	_CollisionComp->Update(m_pTransformCom);
 	Bullet_Attack(m_stStatus.fATK);	// 플레이어 충돌 처리
 
-	
-	// 전달 횟수가 남아있으면
-	if (m_uiCountRelay > 0 && !bRelayFlag && m_fFrameCnt >= 2.f) {
-		--m_uiCountRelay;
-		bRelayFlag = true;
-
-		// 총알 생성
-		BulletBasicArgument* pArg = new BulletBasicArgument;
-		pArg->uiSize = sizeof(BulletBasicArgument);
-		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition + m_vLook * 8.f;	// 생성 위치
-		pArg->vDir = m_vLook;		// 방향
-		pArg->uiCountRelay = m_uiCountRelay;	// 남은 카운트 전달
-		m_pManagement->AddScheduledGameObjectInLayer(
-			(_int)ESceneID::Static,
-			L"GameObject_HellBossTentacle",
-			L"Layer_Bullet",
-			nullptr, (void*)pArg);
-	}
-
 	return _uint();
 }
 
-_uint CHellBossTentacle::LateUpdateGameObject(float fDeltaTime)
+_uint CExplosion::LateUpdateGameObject(float fDeltaTime)
 {
 	CBullet::LateUpdateGameObject(fDeltaTime);
 
@@ -80,7 +67,7 @@ _uint CHellBossTentacle::LateUpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-HRESULT CHellBossTentacle::RenderGameObject()
+HRESULT CExplosion::RenderGameObject()
 {
 	if (FAILED(CBullet::RenderGameObject()))
 		return E_FAIL;
@@ -88,7 +75,14 @@ HRESULT CHellBossTentacle::RenderGameObject()
 	return S_OK;
 }
 
-void CHellBossTentacle::Frame_Move(float fDeltaTime)
+void CExplosion::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	// Explosion은 맵과 부딪혀도 삭제되지않음
+	// Bullet 함수 쪽의 가상 함수 MapHit에서 삭제되는 처리를 막기 위함
+	// 선언만 해둠
+}
+
+void CExplosion::Frame_Move(float fDeltaTime)
 {
 	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
 	if (m_fFrameCnt >= m_fEndFrame)
@@ -98,7 +92,7 @@ void CHellBossTentacle::Frame_Move(float fDeltaTime)
 	}
 }
 
-HRESULT CHellBossTentacle::AddComponents()
+HRESULT CExplosion::AddComponents()
 {
 	if (FAILED(CBullet::AddComponents()))	// Monster.cpp에서 RectTexture 호출
 		return E_FAIL;
@@ -110,47 +104,29 @@ HRESULT CHellBossTentacle::AddComponents()
 	switch (iRand)
 	{
 	case 0:
-		// 텍스처 프레임
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 10;
-		m_fFrameSpeed = 20.f;
-
-		// 몰락한 군주 가시 1
+		// 폭발 0
 		if (FAILED(CGameObject::AddComponent(
 			(_int)ESceneID::Static,
-			L"Component_Texture_HellBoss_FallenLord_Spike1",
-			L"Com_Texture_FallenLord_Spike1",
+			L"Component_Texture_Explosion0",
+			L"Com_Texture_Explosion0",
 			(CComponent**)&m_pTexture)))
 			return E_FAIL;
 		break;
 	case 1:
-		// 텍스처 프레임
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 11;
-		m_fFrameSpeed = 20.f;
-
-		// 몰락한 군주 가시 1
+		// 폭발 1
 		if (FAILED(CGameObject::AddComponent(
 			(_int)ESceneID::Static,
-			L"Component_Texture_HellBoss_FallenLord_Spike2",
-			L"Com_Texture_FallenLord_Spike1",
+			L"Component_Texture_Explosion1",
+			L"Com_Texture_Explosion2",
 			(CComponent**)&m_pTexture)))
 			return E_FAIL;
 		break;
 	case 2:
-		// 텍스처 프레임
-		m_fFrameCnt = 0;
-		m_fStartFrame = 0;
-		m_fEndFrame = 18;
-		m_fFrameSpeed = 20.f;
-
-		// 몰락한 군주 가시 1
+		// 폭발 2
 		if (FAILED(CGameObject::AddComponent(
 			(_int)ESceneID::Static,
-			L"Component_Texture_HellBoss_FallenLord_Tentacle",
-			L"Com_Texture_FallenLord_Spike1",
+			L"Component_Texture_Explosion2",
+			L"Com_Texture_Explosion3",
 			(CComponent**)&m_pTexture)))
 			return E_FAIL;
 		break;
@@ -161,7 +137,7 @@ HRESULT CHellBossTentacle::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 1.f;
+	_Info.Radius = 2.f;
 	_Info.Tag = CCollisionComponent::ETag::MonsterAttack;
 	_Info.bWallCollision = true;
 	_Info.bFloorCollision = true;
@@ -175,35 +151,35 @@ HRESULT CHellBossTentacle::AddComponents()
 	return S_OK;
 }
 
-CHellBossTentacle* CHellBossTentacle::Create(LPDIRECT3DDEVICE9 pDevice)
+CExplosion* CExplosion::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CHellBossTentacle* pInstance = new CHellBossTentacle(pDevice);
+	CExplosion* pInstance = new CExplosion(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create CHellBossTentacle");
+		PRINT_LOG(L"Warning", L"Failed To Create CExplosion");
 		SafeRelease(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CHellBossTentacle::Clone(void* pArg/* = nullptr*/)
+CGameObject* CExplosion::Clone(void* pArg/* = nullptr*/)
 {
-	CHellBossTentacle* pClone = new CHellBossTentacle(*this); /* 복사생성자 */
+	CExplosion* pClone = new CExplosion(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone CHellBossTentacle");
+		PRINT_LOG(L"Warning", L"Failed To Clone CExplosion");
 		SafeRelease(pClone);
 	}
 
 	return pClone;
 }
 
-void CHellBossTentacle::Free()
+void CExplosion::Free()
 {
 	CBullet::Free();
 }

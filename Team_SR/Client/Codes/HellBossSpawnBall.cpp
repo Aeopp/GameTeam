@@ -103,6 +103,7 @@ void CHellBossSpawnBall::SpawnMonster()
 	_MonsterBasicArgument->uiSize = sizeof(MonsterBasicArgument);
 	_MonsterBasicArgument->pPlayer = static_cast<CPlayer*>(CManagement::Get_Instance()->GetGameObject(-1, L"Layer_Player"));
 	_MonsterBasicArgument->vPosition = m_pTransformCom->m_TransformDesc.vPosition;
+	_MonsterBasicArgument->vPosition.y = 7.f;
 	m_pManagement->AddScheduledGameObjectInLayer(
 		(_int)ESceneID::Static,
 		L"GameObject_Hellhound",

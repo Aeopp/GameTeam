@@ -42,6 +42,7 @@
 #include "HellBossSpawnBall.h"	// 헬 보스 몬스터 스폰 볼
 #include "HellBossEyeLaser.h"	// 헬 보스 눈깔 레이저
 #include "HellBossTentacle.h"	// 헬 보스 촉수
+#include "Explosion.h"	// 폭발 이펙트... 인데 Bullet 상속받음 ㅡㅡ
 
 
 CMainApp::CMainApp()
@@ -390,6 +391,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CHellBossTentacle>(),
 		CHellBossTentacle::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 폭발 - Bullet을 상속받아서 구체 충돌함...
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CExplosion>(),
+		CExplosion::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1448,7 +1456,7 @@ HRESULT CMainApp::ReadyStaticResources()
 
 #pragma endregion	// Component_Texture_HellBoss
 
-	// 이펙트 텍스처
+	// 이펙트 텍스처인데 Bullet 상속 받음... 총알임.. 총알 텍스처 ㅡㅡ
 #pragma region Component_Texture_Effect
 
 	// ElectricHeavy
@@ -1470,6 +1478,27 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_ElectricBeam",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/ElectricBeam/0.png", 1))))
+		return E_FAIL;
+
+	// Explosion0
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion0",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion0/%d.png", 13))))
+		return E_FAIL;
+
+	// Explosion1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion1/%d.png", 13))))
+		return E_FAIL;
+
+	// Explosion2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion2/%d.png", 13))))
 		return E_FAIL;
 
 #pragma endregion	// Component_Texture_Effect
