@@ -371,6 +371,7 @@ RETURN_MOVE:	// 이동
 RETURN_DIG_OUT:	// 땅파고 나옴
 	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
 	m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock);				// HP 락 OFF
+	_CollisionComp->bCollision = true;	// 충돌 ON
 	m_fpAction = &CGhoul::Action_DigOut;
 	m_wstrTextureKey = L"Com_Texture_Ghoul_DigOut";
 	m_fFrameCnt = 0;
@@ -398,7 +399,6 @@ bool CGhoul::Action_DigOut(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
-		_CollisionComp->bCollision = true;	// 충돌 ON
 		return true;
 	}
 	return false;

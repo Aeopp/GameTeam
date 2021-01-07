@@ -38,7 +38,7 @@ HRESULT CHellBossEyeLaser::ReadyGameObject(void* pArg /*= nullptr*/)
 	// 기본 텍스처 프레임
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
-	m_fEndFrame = 11;
+	m_fEndFrame = 1;
 
 	// 로컬에서 회전
 	const float AngleX = 90.f;
