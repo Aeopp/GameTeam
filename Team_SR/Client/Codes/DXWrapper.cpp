@@ -369,7 +369,15 @@ void Effect::Update(IDirect3DDevice9* const _Device, const vec4& CameraLocation,
 
 		// 다중 조명시 수정 해야함...
 		const vec4 GlobalAmbient = { 0.1f,0.1f,0.1f,1.f };
-		const vec4 FogColor = { 0.7f,0.7f,0.7f,        1.f };
+		 vec4 FogColor = { 0.7f,0.7f,0.7f,        1.f };
+
+		if (static_cast<int32_t>(ESceneID::StageMidBoss) == CManagement::Get_Instance()->GetCurrentSceneIndex()
+			||
+			static_cast<int32_t>(ESceneID::StageFinalBoss) == CManagement::Get_Instance()->GetCurrentSceneIndex())
+		{
+			FogColor = {1.f,0.f,0.f,1.f};
+		};
+
 		CurEffect.SetPSConstantData(_Device, "GlobalAmbient", GlobalAmbient);
 		CurEffect.SetPSConstantData(_Device, "FogStart", 1.f);
 		CurEffect.SetPSConstantData(_Device, "FogEnd", 300.f);

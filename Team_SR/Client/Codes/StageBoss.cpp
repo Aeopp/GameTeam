@@ -111,6 +111,7 @@ HRESULT CStageBoss::ReadyScene()
 	
 	LoadObjects(L"..\\Resources\\Map\\Boss\\GameObjectData.obj", vec3{ 2.5,2.5,2.5 });
 	LoadObjects(L"..\\Resources\\Map\\Boss\\DecoItemData.obj", vec3{ 2.5,2.5,2.5 });
+	LoadObjects(L"..\\Resources\\Map\\Boss\\DecoItemData2.obj", vec3{ 2.5,2.5,2.5 });
 
 	return S_OK;
 }
