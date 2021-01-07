@@ -734,12 +734,12 @@ void CHellBoss::AI_FallenLordPattern()
 	if (m_fNextAtkWait <= 0) {
 		int iRand = rand() % 100;
 
-		// 50 %
+		// 60 %
 		// 촉수 공격
-		if (0 <= iRand && iRand < 50) {
+		if (0 <= iRand && iRand < 60) {
 			goto RETURN_TENTACLE_ATTACK;
 		}
-		// 50 %
+		// 40 %
 		// 몬스터 소환
 		else {
 			goto RETURN_MONSTERSPAWN;
@@ -1092,7 +1092,72 @@ bool CHellBoss::Action_InjuredTurboSatan_Shoot(float fDeltaTime)
 // 카코 데빌 눈깔 레이저
 bool CHellBoss::Action_CacoDevil_EyeLasers(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 5.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+		CSoundMgr::Get_Instance()->PlaySound(L"flak_reworked_bass_shot.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
+		// 목표 = 플레이어 위치 - 몬스터 위치
+		vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+		vecTarget.y -= 4.f;
+		vec3 vecMonsterPos = m_pTransformCom->m_TransformDesc.vPosition;		// 몬스터 위치
+		m_vAim = vecTarget - vecMonsterPos;
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+		vec3 vecRight = MATH::Normalize(MATH::Cross({ 0.f,1.f,0.f }, m_vAim));	// 외적 - right 벡터
+
+		vec3 vecBulletPos = vecMonsterPos;	// 총알 생성 위치
+		vecBulletPos.y += 3.6f;
+		m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+		// 총알 생성
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = vecBulletPos;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossEyeLaser",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+
+		
+		vecTarget.y += 1.f;	// 아래쪽 눈깔 레이저는 약간 위로
+
+		vecBulletPos = vecMonsterPos + vecRight * 2.6f;	// 총알 생성 위치
+		vecBulletPos.y -= 1.3f;
+		m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+		// 총알 생성
+		pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = vecBulletPos;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossEyeLaser",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+
+
+		vecBulletPos = vecMonsterPos - vecRight * 2.6f;	// 총알 생성 위치
+		vecBulletPos.y -= 1.3f;
+		m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+		// 총알 생성
+		pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = vecBulletPos;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossEyeLaser",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 3.f;
 		return true;
 	}
@@ -1128,7 +1193,7 @@ bool CHellBoss::Action_CacoDevil_MonsterSpawn(float fDeltaTime)
 
 			// 목표 = 플레이어 위치 - 몬스터 위치
 			vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
-			vecTarget.y -= 4.f;
+			vecTarget.y -= 1.f;
 			m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
 			D3DXVec3Normalize(&m_vAim, &m_vAim);
 
@@ -1156,7 +1221,31 @@ bool CHellBoss::Action_CacoDevil_MonsterSpawn(float fDeltaTime)
 
 bool CHellBoss::Action_FallenLord_TentacleAttack(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot))) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+
+		// 목표 = 플레이어 위치 - 몬스터 위치
+		vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+		m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+		m_vAim.y = 0.f;		// Y좌표 사용 X
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+		// 총알 생성
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition + m_vAim * 2.f;	// 생성 위치
+		pArg->vPosition.y = 5.f;	// Y좌표 사용 X
+		pArg->vDir = m_vAim;		// 방향
+		pArg->uiCountRelay = 20;	// 해당 방향으로 촉수 10개 생성
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossTentacle",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 2.f;
 		return true;
 	}
@@ -1166,7 +1255,29 @@ bool CHellBoss::Action_FallenLord_TentacleAttack(float fDeltaTime)
 
 bool CHellBoss::Action_FallenLord_MonsterSpawn(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot))) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		
+		// 목표 = 플레이어 위치 - 몬스터 위치
+		vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+		vecTarget.y -= 1.f;
+		m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+		// 총알 생성
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossSpawnBall",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 2.f;
 		return true;
 	}

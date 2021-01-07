@@ -42,6 +42,9 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 			// 동적 생성된 거임
 			if (pArgument->bDeleteFlag) {
 				delete pArg;
+				// 플레이어 추적 ON
+				// 동적 생성된 몬스터는 바로 플레이어를 추적한다
+				m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
 			}
 		}
 	}

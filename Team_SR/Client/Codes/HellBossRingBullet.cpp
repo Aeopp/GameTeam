@@ -48,7 +48,7 @@ _uint CHellBossRingBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
 
-	// 스켸일
+	// 스케일
 	m_pTransformCom->m_TransformDesc.vScale.x += 1.f * fDeltaTime;
 	m_pTransformCom->m_TransformDesc.vScale.y += 1.f * fDeltaTime;
 

@@ -527,6 +527,12 @@
     <ClInclude Include="..\Headers\HellBossSpawnBall.h">
       <Filter>97.Others</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HellBossEyeLaser.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossTentacle.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -853,6 +859,12 @@
       <Filter>97.Others</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HellBossSpawnBall.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossEyeLaser.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossTentacle.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>

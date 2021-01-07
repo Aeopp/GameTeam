@@ -38,6 +38,7 @@ protected:
 	BulletStatus m_stOriginStatus;	// 총알 원본 스텟
 	BulletStatus m_stStatus;		// 총알 스텟
 	bool m_bOneHit = false;
+	_uint m_uiCountRelay;		// 특정 총알 전용 전달 카운트 변수
 public:
 	float Shine = 20.f;
 	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };

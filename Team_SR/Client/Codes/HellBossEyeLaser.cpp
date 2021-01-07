@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "..\Headers\HellBossEyeBlast.h"
+#include "..\Headers\HellBossEyeLaser.h"
 
 
-CHellBossEyeBlast::CHellBossEyeBlast(LPDIRECT3DDEVICE9 pDevice)
+CHellBossEyeLaser::CHellBossEyeLaser(LPDIRECT3DDEVICE9 pDevice)
 	:CBullet(pDevice)
 {
 }
 
 
-HRESULT CHellBossEyeBlast::ReadyGameObjectPrototype()
+HRESULT CHellBossEyeLaser::ReadyGameObjectPrototype()
 {
 	if (FAILED(CBullet::ReadyGameObjectPrototype()))
 		return E_FAIL;
@@ -16,7 +16,7 @@ HRESULT CHellBossEyeBlast::ReadyGameObjectPrototype()
 	return S_OK;
 }
 
-HRESULT CHellBossEyeBlast::ReadyGameObject(void* pArg /*= nullptr*/)
+HRESULT CHellBossEyeLaser::ReadyGameObject(void* pArg /*= nullptr*/)
 {
 	if (FAILED(CBullet::ReadyGameObject(pArg)))
 		return E_FAIL;
@@ -30,7 +30,7 @@ HRESULT CHellBossEyeBlast::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 300.f;
 	m_stOriginStatus.fATK = 10.f;
-	m_stOriginStatus.fSpeed = 60.f;
+	m_stOriginStatus.fSpeed = 100.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -57,7 +57,7 @@ HRESULT CHellBossEyeBlast::ReadyGameObject(void* pArg /*= nullptr*/)
 	return S_OK;
 }
 
-_uint CHellBossEyeBlast::UpdateGameObject(float fDeltaTime)
+_uint CHellBossEyeLaser::UpdateGameObject(float fDeltaTime)
 {
 	//CBullet::UpdateGameObject(fDeltaTime);	// 기본 게임오브젝트 업데이트 X
 
@@ -82,19 +82,17 @@ _uint CHellBossEyeBlast::UpdateGameObject(float fDeltaTime)
 	return _uint();
 }
 
-_uint CHellBossEyeBlast::LateUpdateGameObject(float fDeltaTime)
+_uint CHellBossEyeLaser::LateUpdateGameObject(float fDeltaTime)
 {
 	//CBullet::LateUpdateGameObject(fDeltaTime);	// 빌보드 X
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::Alpha, this)))
 		return 0;
 
-	Frame_Move(fDeltaTime);	// 텍스처 프레임 이동
-
 	return _uint();
 }
 
-HRESULT CHellBossEyeBlast::RenderGameObject()
+HRESULT CHellBossEyeLaser::RenderGameObject()
 {
 	// 뒷면을 컬링하지 않습니다
 	m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -108,7 +106,7 @@ HRESULT CHellBossEyeBlast::RenderGameObject()
 	return S_OK;
 }
 
-HRESULT CHellBossEyeBlast::AddComponents()
+HRESULT CHellBossEyeLaser::AddComponents()
 {
 	if (FAILED(CBullet::AddComponents()))	// Monster.cpp에서 RectTexture 호출
 		return E_FAIL;
@@ -117,8 +115,8 @@ HRESULT CHellBossEyeBlast::AddComponents()
 	// 레이저 텍스처
 	if (FAILED(CGameObject::AddComponent(
 		(_int)ESceneID::Static,
-		L"Component_Texture_ElectricHeavy",
-		L"Com_Texture_ElectricHeavy",
+		L"Component_Texture_ElectricBeam",
+		L"Com_Texture_ElectricBeam",
 		(CComponent**)&m_pTexture)))
 		return E_FAIL;
 #pragma endregion
@@ -141,35 +139,35 @@ HRESULT CHellBossEyeBlast::AddComponents()
 	return S_OK;
 }
 
-CHellBossEyeBlast* CHellBossEyeBlast::Create(LPDIRECT3DDEVICE9 pDevice)
+CHellBossEyeLaser* CHellBossEyeLaser::Create(LPDIRECT3DDEVICE9 pDevice)
 {
 	if (nullptr == pDevice)
 		return nullptr;
 
-	CHellBossEyeBlast* pInstance = new CHellBossEyeBlast(pDevice);
+	CHellBossEyeLaser* pInstance = new CHellBossEyeLaser(pDevice);
 	if (FAILED(pInstance->ReadyGameObjectPrototype()))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Create CHellBossEyeBlast");
+		PRINT_LOG(L"Warning", L"Failed To Create CHellBossEyeLaser");
 		SafeRelease(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CHellBossEyeBlast::Clone(void* pArg/* = nullptr*/)
+CGameObject* CHellBossEyeLaser::Clone(void* pArg/* = nullptr*/)
 {
-	CHellBossEyeBlast* pClone = new CHellBossEyeBlast(*this); /* 복사생성자 */
+	CHellBossEyeLaser* pClone = new CHellBossEyeLaser(*this); /* 복사생성자 */
 	SafeAddRef(m_pDevice);
 	if (FAILED(pClone->ReadyGameObject(pArg)))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Clone CHellBossEyeBlast");
+		PRINT_LOG(L"Warning", L"Failed To Clone CHellBossEyeLaser");
 		SafeRelease(pClone);
 	}
 
 	return pClone;
 }
 
-void CHellBossEyeBlast::Free()
+void CHellBossEyeLaser::Free()
 {
 	CBullet::Free();
 }

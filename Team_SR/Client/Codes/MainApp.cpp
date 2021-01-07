@@ -40,6 +40,8 @@
 #include "HellBossEyeBlast.h"	// 헬 보스 눈깔 빔
 #include "HellBossRocket.h"		// 헬 보스 로켓
 #include "HellBossSpawnBall.h"	// 헬 보스 몬스터 스폰 볼
+#include "HellBossEyeLaser.h"	// 헬 보스 눈깔 레이저
+#include "HellBossTentacle.h"	// 헬 보스 촉수
 
 
 CMainApp::CMainApp()
@@ -374,6 +376,20 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		CGameObject::Tag + TYPE_NAME<CHellBossSpawnBall>(),
 		CHellBossSpawnBall::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 눈깔 레이저
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossEyeLaser>(),
+		CHellBossEyeLaser::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 촉수
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossTentacle>(),
+		CHellBossTentacle::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1447,6 +1463,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_Stormball",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Stormball/stormball000%d.png", 8))))
+		return E_FAIL;
+
+	// ElectricBeam
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_ElectricBeam",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/ElectricBeam/0.png", 1))))
 		return E_FAIL;
 
 #pragma endregion	// Component_Texture_Effect

@@ -63,7 +63,7 @@ struct DecoNextFrameInfo {
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
 	MonsterBasicArgument()
-		: uiSize(sizeof(MonsterBasicArgument)), pPlayer(nullptr), vPosition{0.f,0.f,0.f}, bDeleteFlag(false)
+		: uiSize(sizeof(MonsterBasicArgument)), pPlayer(nullptr), vPosition{ 0.f,0.f,0.f }, bDeleteFlag(false)
 	{}
 	_uint uiSize;				// 구조체 사이즈
 	class CPlayer* pPlayer;		// 플레이어 포인터
@@ -72,9 +72,13 @@ struct MonsterBasicArgument {
 };
 
 struct BulletBasicArgument {
+	BulletBasicArgument()
+		: uiSize(sizeof(BulletBasicArgument)), vPosition{ 0.f,0.f,0.f }, vDir{ 0.f,0.f,0.f }, uiCountRelay(0)
+	{}
 	_uint uiSize;				// 구조체 사이즈
 	vec3 vPosition;				// 위치 정보
 	vec3 vDir;					// 방향
+	_uint uiCountRelay;			// 특정 총알 전용 변수 - 전달 카운트
 };
 
 // 아이템 생성시 기본 전달 인자

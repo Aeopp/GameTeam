@@ -6,7 +6,8 @@
 #include "Player.h"
 CBullet::CBullet(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
-	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f), m_pTexture(nullptr)
+	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
+	, m_pTexture(nullptr), m_uiCountRelay(0)
 {
 }
 
@@ -35,6 +36,7 @@ HRESULT CBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 			BulletBasicArgument* pArgument = static_cast<BulletBasicArgument*>(pArg);
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
 			m_vLook = pArgument->vDir;
+			m_uiCountRelay = pArgument->uiCountRelay;
 			delete pArg;
 		}
 	}
