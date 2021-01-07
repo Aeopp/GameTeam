@@ -27,7 +27,7 @@ HRESULT CHellBoss::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 10.f,10.f,10.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 12.f,12.f,12.f };
 
 	// 몬스터 원본 스텟
 	m_stOriginStatus.fHP = 100.f;//500.f;
@@ -313,7 +313,7 @@ HRESULT CHellBoss::AddComponents()
 	CCollisionComponent::InitInfo _Info;
 	_Info.bCollision = true;
 	_Info.bMapBlock = true;
-	_Info.Radius = 5.f;
+	_Info.Radius = 6.f;
 	_Info.Tag = CCollisionComponent::ETag::Monster;
 	_Info.bFloorCollision = true;
 	_Info.bWallCollision = true;
@@ -343,6 +343,9 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 		{
 			// 리틀 데몬
 		case CHellBoss::PHASE::LittleDemon:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"satan_transform_1to2.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
 			m_fpAction = &CHellBoss::Action_Morph;
 			m_wstrTextureKey = L"Com_Texture_LittleDemon_Morph";
 			m_fFrameCnt = 0;
@@ -360,6 +363,9 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			break;
 			// 터보 사탄
 		case CHellBoss::PHASE::TurboSatan:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"Satan_pain_01.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
 			m_fpAction = &CHellBoss::Action_Morph;
 			m_wstrTextureKey = L"Com_Texture_TurboSatan_Damage";
 			m_fFrameCnt = 0;
@@ -374,6 +380,9 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			break;
 			// 부상당한 터보 사탄
 		case CHellBoss::PHASE::InjuredTurboSatan:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"satan_transform_2to3.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
 			m_fpAction = &CHellBoss::Action_Morph;
 			m_wstrTextureKey = L"Com_Texture_TurboSatan_Morph";
 			m_fFrameCnt = 0;
@@ -392,6 +401,9 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			break;
 			// 카코 데빌
 		case CHellBoss::PHASE::CacoDevil:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"satan_transform_3to4.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
 			m_fpAction = &CHellBoss::Action_LastMorph;		// 최종 페이즈 변신
 			m_wstrTextureKey = L"Com_Texture_CacoDevil_Morph";
 			m_fFrameCnt = 0;
@@ -410,6 +422,9 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 			break;
 			// 몰락한 군주
 		case CHellBoss::PHASE::FallenLord:
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"satan_transform_3to4.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			bGravity = false;						// 중력 OFF
@@ -456,12 +471,12 @@ void CHellBoss::AI_LittleDemonPattern()
 		int iRand = rand() % 100;
 		// 플레이어가 사정거리 안에 있는가?
 		if (PlayerAwareness()) {
-			// 70 %
+			// 60 %
 			// 눈깔 빔
-			if (0 <= iRand && iRand < 70) {
+			if (0 <= iRand && iRand < 60) {
 				goto RETURN_EYEBLAST;
 			}
-			// 30 %
+			// 40 %
 			// 원거리 공격
 			else {
 				goto RETURN_SHOOT;
@@ -513,10 +528,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 26;
-	m_fFrameSpeed = 10.f;
-	// 목표 = 플레이어 위치 - 몬스터 위치
-	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
-	D3DXVec3Normalize(&m_vAim, &m_vAim);
+	m_fFrameSpeed = 20.f;
 	return;
 
 RETURN_MOVE:	// 이동
@@ -625,17 +637,17 @@ void CHellBoss::AI_CacoDevilPattern()
 		int iRand = rand() % 100;
 		// 플레이어가 사정거리 안에 있는가?
 		if (PlayerAwareness()) {
-			// 70 %
+			// 40 %
 			// 근접 충격파
-			if (0 <= iRand && iRand < 70) {
+			if (0 <= iRand && iRand < 40) {
 				goto RETURN_NOVA;
 			}
-			// 20 %
+			// 30 %
 			// 눈깔 레이저
-			else if (70 <= iRand && iRand < 90) {
+			else if (40 <= iRand && iRand < 70) {
 				goto RETURN_EYELASERS;
 			}
-			// 10 %
+			// 30 %
 			// 몬스터 소환
 			else {
 				goto RETURN_MONSTERSPAWN;
@@ -834,7 +846,32 @@ bool CHellBoss::Action_LastMorph(float fDeltaTime)
 // 리틀 데몬 눈깔 빔
 bool CHellBoss::Action_LittleDemon_EyeBlast(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 6.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+		CSoundMgr::Get_Instance()->PlaySound(L"flak_reworked_bass_shot.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
+		// 목표 = 플레이어 위치 - 몬스터 위치
+		vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+		vecTarget.y -= 4.f;
+		m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+		D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+		// 총알 생성
+		BulletBasicArgument* pArg = new BulletBasicArgument;
+		pArg->uiSize = sizeof(BulletBasicArgument);
+		pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+		pArg->vDir = m_vAim;	// 방향
+		m_pManagement->AddScheduledGameObjectInLayer(
+			(_int)ESceneID::Static,
+			L"GameObject_HellBossEyeBlast",
+			L"Layer_Bullet",
+			nullptr, (void*)pArg);
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 1.f;
 		return true;
 	}
@@ -848,7 +885,7 @@ bool CHellBoss::Action_LittleDemon_Shoot(float fDeltaTime)
 	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 6.f) {
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
 		m_iRepeatCount = 6;
-		m_fNextAtkWait = 2.f;
+		m_fNextAtkWait = 0.f;
 	}
 
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt < 17.f) {
@@ -858,10 +895,23 @@ bool CHellBoss::Action_LittleDemon_Shoot(float fDeltaTime)
 			m_fNextAtkWait = 2.f;
 			--m_iRepeatCount;
 
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"fastlasergun_shot.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
+			// 목표 = 플레이어 위치 - 몬스터 위치
+			vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+			vecTarget.y -= 1.f;
+			m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+			vec3 vecRight = MATH::Normalize(MATH::Cross({ 0.f,1.f,0.f }, m_vAim));	// 외적
+			vec3 vecBulletPos = m_pTransformCom->m_TransformDesc.vPosition + vecRight * 1.2f;	// 총알 생성 위치
+			m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
 			// 총알 생성
 			BulletBasicArgument* pArg = new BulletBasicArgument;
 			pArg->uiSize = sizeof(BulletBasicArgument);
-			pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+			pArg->vPosition = vecBulletPos;	// 생성 위치
 			pArg->vDir = m_vAim;	// 방향
 			m_pManagement->AddScheduledGameObjectInLayer(
 				(_int)ESceneID::Static,
@@ -903,9 +953,9 @@ bool CHellBoss::Action_TurboSatan_ShootSpin(float fDeltaTime)
 		m_fFrameCnt = 0;
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
-		m_fFrameSpeed = 20.f;
+		m_fFrameSpeed = 30.f;
 
-		m_iRepeatCount = (rand() % 8 + 1) + 2;	// 2 ~ 10번 반복
+		m_iRepeatCount = (rand() % 8 + 1) + 5;	// 5 ~ 10번 반복
 	}
 
 	return false;
@@ -916,21 +966,38 @@ bool CHellBoss::Action_TurboSatan_ShootFire(float fDeltaTime)
 {
 	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 0.f) {
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
-		m_iRepeatCount = 2;
-		m_fNextAtkWait = 2.f;
+		m_fNextAtkWait = 0.f;
 	}
 
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt < 3.f) {
 		m_fNextAtkWait -= m_fFrameSpeed * fDeltaTime;
 		// 지정된 프레임 마다
-		if (m_fNextAtkWait <= 0 && m_iRepeatCount != 0) {
+		if (m_fNextAtkWait <= 0) {
 			m_fNextAtkWait = 2.f;
-			--m_iRepeatCount;
 
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"gun_shoot.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
+			// 목표 = 플레이어 위치 - 몬스터 위치
+			vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+			m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+			vec3 vecRight = MATH::Normalize(MATH::Cross({ 0.f,1.f,0.f }, m_vAim));	// 외적
+			vec3 vecBulletPos;	// 총알 생성 위치
+			if (m_fFrameCnt < 2.f) {
+				vecBulletPos = m_pTransformCom->m_TransformDesc.vPosition + vecRight * 2.5f;
+			}
+			else {
+				vecBulletPos = m_pTransformCom->m_TransformDesc.vPosition - vecRight * 2.5f;
+			}
+			vecBulletPos.y += 1.f;
+			m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
 			// 총알 생성
 			BulletBasicArgument* pArg = new BulletBasicArgument;
 			pArg->uiSize = sizeof(BulletBasicArgument);
-			pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+			pArg->vPosition = vecBulletPos;	// 생성 위치
 			pArg->vDir = m_vAim;	// 방향
 			m_pManagement->AddScheduledGameObjectInLayer(
 				(_int)ESceneID::Static,
@@ -973,7 +1040,48 @@ bool CHellBoss::Action_TurboSatan_ShootEnd(float fDeltaTime)
 // 부상당한 리틀 데몬 원거리 공격
 bool CHellBoss::Action_InjuredTurboSatan_Shoot(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 5.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		m_iRepeatCount = 3;
+		m_fNextAtkWait = 0.f;
+	}
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt < 10.f) {
+		m_fNextAtkWait -= m_fFrameSpeed * fDeltaTime;
+		// 지정된 프레임 마다
+		if (m_fNextAtkWait <= 0 && m_iRepeatCount != 0) {
+			m_fNextAtkWait = 2.f;
+			--m_iRepeatCount;
+
+			CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+			CSoundMgr::Get_Instance()->PlaySound(L"rocketlauncher_shot.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+
+			// 목표 = 플레이어 위치 - 몬스터 위치
+			vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+			vecTarget.y -= 2.f;
+			m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+			vec3 vecRight = MATH::Normalize(MATH::Cross({0.f,1.f,0.f}, m_vAim));	// 외적
+			vec3 vecBulletPos = m_pTransformCom->m_TransformDesc.vPosition + vecRight * 2.8f;	// 총알 생성 위치
+			vecBulletPos.y += 0.5f;
+			m_vAim = vecTarget - vecBulletPos;	// 총알 생성 위치에서 다시 방향 구함
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
+			// 총알 생성
+			BulletBasicArgument* pArg = new BulletBasicArgument;
+			pArg->uiSize = sizeof(BulletBasicArgument);
+			pArg->vPosition = vecBulletPos;
+			pArg->vDir = m_vAim;	// 방향
+			m_pManagement->AddScheduledGameObjectInLayer(
+				(_int)ESceneID::Static,
+				L"GameObject_HellBossRocket",
+				L"Layer_Bullet",
+				nullptr, (void*)pArg);
+		}
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 3.f;
 		return true;
 	}
@@ -1006,7 +1114,39 @@ bool CHellBoss::Action_CacoDevil_Nova(float fDeltaTime)
 // 카코 데빌 몬스터 소환
 bool CHellBoss::Action_CacoDevil_MonsterSpawn(float fDeltaTime)
 {
+	if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot)) && m_fFrameCnt >= 0.f) {
+		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Shoot);
+		m_iRepeatCount = 1;
+
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::HELL_BOSS);
+		CSoundMgr::Get_Instance()->PlaySound(L"Satan_attack_01.wav", CSoundMgr::CHANNELID::HELL_BOSS);
+	}
+
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Shoot) && m_fFrameCnt >= 2.f) {
+		if (m_iRepeatCount != 0) {
+			--m_iRepeatCount;
+
+			// 목표 = 플레이어 위치 - 몬스터 위치
+			vec3 vecTarget = m_pPlayer->GetTransform()->m_TransformDesc.vPosition;
+			vecTarget.y -= 4.f;
+			m_vAim = vecTarget - m_pTransformCom->m_TransformDesc.vPosition;
+			D3DXVec3Normalize(&m_vAim, &m_vAim);
+
+			// 총알 생성
+			BulletBasicArgument* pArg = new BulletBasicArgument;
+			pArg->uiSize = sizeof(BulletBasicArgument);
+			pArg->vPosition = m_pTransformCom->m_TransformDesc.vPosition;	// 생성 위치
+			pArg->vDir = m_vAim;	// 방향
+			m_pManagement->AddScheduledGameObjectInLayer(
+				(_int)ESceneID::Static,
+				L"GameObject_HellBossSpawnBall",
+				L"Layer_Bullet",
+				nullptr, (void*)pArg);
+		}
+	}
+
 	if (m_bFrameLoopCheck) {
+		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 4.f;
 		return true;
 	}

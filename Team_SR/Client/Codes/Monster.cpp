@@ -39,6 +39,10 @@ HRESULT CMonster::ReadyGameObject(void* pArg /*= nullptr*/)
 			MonsterBasicArgument* pArgument = static_cast<MonsterBasicArgument*>(pArg);
 			m_pPlayer = reinterpret_cast<CGameObject*>(pArgument->pPlayer);
 			m_pTransformCom->m_TransformDesc.vPosition = pArgument->vPosition;
+			// 동적 생성된 거임
+			if (pArgument->bDeleteFlag) {
+				delete pArg;
+			}
 		}
 	}
 

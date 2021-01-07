@@ -24,13 +24,13 @@ HRESULT CHellBossChainGunBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 	if (FAILED(AddComponents()))
 		return E_FAIL;
 
-	m_pTransformCom->m_TransformDesc.vScale = { 1.f,1.f,1.f };
+	m_pTransformCom->m_TransformDesc.vScale = { 2.5f,2.5f,2.5f };
 
 	// 불렛 원본 스텟
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 300.f;
 	m_stOriginStatus.fATK = 10.f;
-	m_stOriginStatus.fSpeed = 1.f;
+	m_stOriginStatus.fSpeed = 150.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -40,12 +40,31 @@ HRESULT CHellBossChainGunBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fStartFrame = 0;
 	m_fEndFrame = 11;
 
+	// 로컬에서 회전
+	const float AngleY = 90.f;
+	mat RotY;
+	D3DXMatrixRotationY(&RotY, MATH::ToRadian(AngleY));
+
+	vec3 CameraLook = { 0,0,-1 };
+	vec3 Axis = MATH::Normalize(MATH::Cross(CameraLook, m_vLook));
+	float Angle = std::acosf(MATH::Dot(m_vLook, CameraLook));
+	mat RotAxis;	// 쏘려는 각도 행렬
+	D3DXMatrixRotationAxis(&RotAxis, &Axis, Angle);
+	m_matRot = RotY * RotAxis;	// 원본 각도 * 쏘려는 각도
+
 	return S_OK;
 }
 
 _uint CHellBossChainGunBullet::UpdateGameObject(float fDeltaTime)
 {
-	CBullet::UpdateGameObject(fDeltaTime);
+	//CBullet::UpdateGameObject(fDeltaTime);	// 기본 게임오브젝트 업데이트 X
+
+	// 월드 행렬 셋팅
+	_matrix matScale, matTrans;
+	D3DXMatrixScaling(&matScale, m_pTransformCom->m_TransformDesc.vScale.x, m_pTransformCom->m_TransformDesc.vScale.y, m_pTransformCom->m_TransformDesc.vScale.z);
+	D3DXMatrixTranslation(&matTrans, m_pTransformCom->m_TransformDesc.vPosition.x, m_pTransformCom->m_TransformDesc.vPosition.y, m_pTransformCom->m_TransformDesc.vPosition.z);
+	m_pTransformCom->m_TransformDesc.matWorld = matScale * m_matRot * matTrans;
+
 
 	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동

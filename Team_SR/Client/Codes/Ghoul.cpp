@@ -237,6 +237,19 @@ void CGhoul::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 	m_fFrameSpeed = 5.f;
 }
 
+void CGhoul::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (_CollisionInfo.Flag == L"Floor")
+	{
+		// 숨어있으면
+		if (isHide) {
+			bGravity = false;						// 중력 OFF
+			_CollisionComp->bCollision = false;		// 충돌 OFF
+		}
+	};
+	
+}
+
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
 void CGhoul::Update_AI(float fDeltaTime)
 {
@@ -364,8 +377,9 @@ RETURN_DIG_OUT:	// 땅파고 나옴
 	m_fStartFrame = 0;
 	m_fEndFrame = 16;
 	isHide = false;	// 숨은 상태 아님
-	m_stStatus.fDetectionRange = 20.f;
-	m_stOriginStatus.fDetectionRange = 20.f;
+	m_stOriginStatus.fMeleeRange = 6.f;			// 근접 공격 사거리
+	m_stOriginStatus.fDetectionRange = 20.f;	// 탐지 사거리
+	m_stStatus = m_stOriginStatus;	// 몬스터 스텟 변경
 	return;
 }
 
@@ -384,6 +398,7 @@ bool CGhoul::Action_DigOut(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
+		_CollisionComp->bCollision = true;	// 충돌 ON
 		return true;
 	}
 	return false;

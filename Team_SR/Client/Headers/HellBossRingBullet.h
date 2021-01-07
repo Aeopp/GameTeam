@@ -17,6 +17,9 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 private:
+	void Frame_Move(float fDeltaTime);		// 텍스처 프레임 이동
+
+private:
 	virtual HRESULT AddComponents() override;
 
 public:

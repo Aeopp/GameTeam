@@ -205,7 +205,10 @@
     <ClInclude Include="..\Headers\HangmanBomb.h" />
     <ClInclude Include="..\Headers\HellBoss.h" />
     <ClInclude Include="..\Headers\HellBossChainGunBullet.h" />
+    <ClInclude Include="..\Headers\HellBossEyeBlast.h" />
     <ClInclude Include="..\Headers\HellBossRingBullet.h" />
+    <ClInclude Include="..\Headers\HellBossRocket.h" />
+    <ClInclude Include="..\Headers\HellBossSpawnBall.h" />
     <ClInclude Include="..\Headers\Hellhound.h" />
     <ClInclude Include="..\Headers\HUDTopUI.h" />
     <ClInclude Include="..\Headers\Item.h" />
@@ -296,7 +299,10 @@
     <ClCompile Include="..\Codes\HangmanBomb.cpp" />
     <ClCompile Include="..\Codes\HellBoss.cpp" />
     <ClCompile Include="..\Codes\HellBossChainGunBullet.cpp" />
+    <ClCompile Include="..\Codes\HellBossEyeBlast.cpp" />
     <ClCompile Include="..\Codes\HellBossRingBullet.cpp" />
+    <ClCompile Include="..\Codes\HellBossRocket.cpp" />
+    <ClCompile Include="..\Codes\HellBossSpawnBall.cpp" />
     <ClCompile Include="..\Codes\Hellhound.cpp" />
     <ClCompile Include="..\Codes\HUDTopUI.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />

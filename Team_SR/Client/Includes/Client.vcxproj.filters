@@ -518,6 +518,15 @@
     <ClInclude Include="..\Headers\HellBossRingBullet.h">
       <Filter>97.Others</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HellBossEyeBlast.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossRocket.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossSpawnBall.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -835,6 +844,15 @@
       <Filter>97.Others</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HellBossRingBullet.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossEyeBlast.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossRocket.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossSpawnBall.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>

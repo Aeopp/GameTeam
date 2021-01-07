@@ -30,7 +30,7 @@ HRESULT CHellBossRingBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.dwPiercing = 0;
 	m_stOriginStatus.fRange = 300.f;
 	m_stOriginStatus.fATK = 10.f;
-	m_stOriginStatus.fSpeed = 30.f;
+	m_stOriginStatus.fSpeed = 100.f;
 	m_stOriginStatus.fImpact = 0.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -39,6 +39,7 @@ HRESULT CHellBossRingBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 11;
+	m_fFrameSpeed = 30.f;
 
 	return S_OK;
 }
@@ -46,6 +47,10 @@ HRESULT CHellBossRingBullet::ReadyGameObject(void* pArg /*= nullptr*/)
 _uint CHellBossRingBullet::UpdateGameObject(float fDeltaTime)
 {
 	CBullet::UpdateGameObject(fDeltaTime);
+
+	// 스켸일
+	m_pTransformCom->m_TransformDesc.vScale.x += 1.f * fDeltaTime;
+	m_pTransformCom->m_TransformDesc.vScale.y += 1.f * fDeltaTime;
 
 	vec3 vMoveDstnc = m_vLook * fDeltaTime * m_stStatus.fSpeed;
 	m_pTransformCom->m_TransformDesc.vPosition += vMoveDstnc;	// 이동
@@ -77,6 +82,15 @@ HRESULT CHellBossRingBullet::RenderGameObject()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CHellBossRingBullet::Frame_Move(float fDeltaTime)
+{
+	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
+	if (m_fFrameCnt >= m_fEndFrame)
+	{
+		m_fFrameCnt = m_fStartFrame;
+	}
 }
 
 HRESULT CHellBossRingBullet::AddComponents()

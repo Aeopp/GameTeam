@@ -62,9 +62,13 @@ struct DecoNextFrameInfo {
 
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
+	MonsterBasicArgument()
+		: uiSize(sizeof(MonsterBasicArgument)), pPlayer(nullptr), vPosition{0.f,0.f,0.f}, bDeleteFlag(false)
+	{}
 	_uint uiSize;				// 구조체 사이즈
 	class CPlayer* pPlayer;		// 플레이어 포인터
 	vec3 vPosition;				// 위치 정보
+	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
 
 struct BulletBasicArgument {
