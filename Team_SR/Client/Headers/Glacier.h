@@ -20,6 +20,7 @@ public:
 	// 2020.12.17 9:57 KMJ
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 private:
 	virtual HRESULT AddComponents() override;
 	HRESULT Set_Texture();
@@ -55,6 +56,7 @@ public:
 	virtual void Free() override;
 
 private:
+	float FreezeGlacierParticleTime = 0.0f;
 	float m_fCountDown = 0.f;
 	bool  m_bDead = false;
 	wstring m_wstrBase;
@@ -64,6 +66,9 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpGlacierAI[(_uint)AWARENESS::End][(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
 };
 
 #define __GLACIER_H__

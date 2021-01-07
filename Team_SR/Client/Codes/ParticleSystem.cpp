@@ -765,6 +765,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_Particle.bLoop = false;
 		_Particle.bCollision = false;
 		_Particle.bMove = false;
+		_Particle.bWallCollision = false;
 		_Particle.bFloorCollision = false;
 		_Particle.Durtaion = 0.0f;
 
@@ -783,7 +784,7 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 		_DynamiteExplosion.MaxDuration = 		_DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
 		_DynamiteExplosion.Location = _Particle.Location;
 		_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 })); 
-		static constexpr float ExplosionScale = 6.5f;
+		static constexpr float ExplosionScale = 20.f;
 		_DynamiteExplosion.Scale = { ExplosionScale ,ExplosionScale ,ExplosionScale };
 		ParticleSystem::PushParticle(_DynamiteExplosion); 
 		
@@ -819,7 +820,8 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 	if (_Particle.Name == L"DaggerThrow")
 	{
 		static constexpr float Duration = 5.0f;
-
+		_Particle.bWallCollision = false;
+		_Particle.bFloorCollision = false;
 		_Particle.bCollision = false;
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;
@@ -868,7 +870,8 @@ void ParticleSystem::ParticleCollisionEventFromName(CollisionParticle& _Particle
 	if (_Particle.Name == L"StaffFire")
 	{
 		static constexpr float Duration = 5.0f;
-
+		_Particle.bWallCollision = false;
+		_Particle.bFloorCollision = false;
 		_Particle.bCollision = false;
 		_Particle.Durtaion = Duration;
 		_Particle.bMove = false;

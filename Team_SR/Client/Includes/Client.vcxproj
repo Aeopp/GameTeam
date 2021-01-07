@@ -22,7 +22,7 @@
     <ProjectGuid>{BA8BCAB2-E54D-4859-8DF2-5715F3C4D460}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Client</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -240,6 +240,7 @@
     <ClInclude Include="..\Headers\ScreenEffect.h" />
     <ClInclude Include="..\Headers\Shark.h" />
     <ClInclude Include="..\Headers\SharkBullet.h" />
+    <ClInclude Include="..\Headers\ShopUI.h" />
     <ClInclude Include="..\Headers\SoundMgr.h" />
     <ClInclude Include="..\Headers\Spider.h" />
     <ClInclude Include="..\Headers\SpiderBullet.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="..\Headers\WeaponAmmoInfoUI.h" />
     <ClInclude Include="..\Headers\WeaponUI.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="FaceUI.h" />
     <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -361,6 +363,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="FaceUI.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />

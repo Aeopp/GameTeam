@@ -28,7 +28,7 @@ public:
 	virtual void MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _CollisionInfo)override;
 	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo);
 	void FlashHit()&;
-	void FreezeHit()&;
+	virtual void FreezeHit()=0;
 	bool Attack(const Sphere _Sphere, const float Attack) &;
 	bool Attack(const Ray _Ray, const float Attack) &;
 	void MeleeAttack();
@@ -59,8 +59,10 @@ protected:
 	};
 protected:
 	float _CurrentDeltaTime = 0.0f;
-	float FreezeHitDamage = 30.0f;
+	float FreezeHitDamage = 12.f;
 	float LightHitTime = 0.0f;
+	float FreezeDeadProcessTime = 0.0f;
+	float FreezeBloodParticleTime = 0.0f;
 	float m_fFrameCnt;						// 프레임 번호
 	float m_fStartFrame;					// 프레임 시작
 	float m_fEndFrame;						// 프레임 끝

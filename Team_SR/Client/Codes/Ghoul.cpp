@@ -65,7 +65,7 @@ _uint CGhoul::UpdateGameObject(float fDeltaTime)
 	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead)) {
 		return 0;
 	}
-
+	if (LightHitTime > 0.0f)return 0;
 	Update_AI(fDeltaTime);	// 업데이트 AI
 
 	_CollisionComp->Update(m_pTransformCom);
@@ -247,7 +247,103 @@ void CGhoul::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _Colli
 			_CollisionComp->bCollision = false;		// 충돌 OFF
 		}
 	};
-	
+}
+
+void CGhoul::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
+	//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::HELLGROUND);
+	//CSoundMgr::Get_Instance()->PlaySound(L"hangman_pain1.wav", CSoundMgr::HELLGROUND);
+	// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CGhoul::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 12;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+
+	// 충돌 관련 정보
+	m_vCollisionDir = _CollisionInfo.Dir;
+	m_fCrossValue = _CollisionInfo.CrossValue;
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackCount = 7.f;
+
+	// 텍스처 교체 불가
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::TextureChangeLock)) {
+		return;
+	}
+
+	// 피해를 받아서 현제 행동 취소
+	// Hit 텍스처를 취함
+	m_fpAction = &CGhoul::Action_Hit;
+	m_wstrTextureKey = L"Com_Texture_Ghoul_Hit";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 1;
+	m_fFrameSpeed = 5.f;
+}
+
+void CGhoul::FreezeHit()
+{
+	// 피해를 받지 않는 상태임
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::HPLock)) {
+		return;
+	}
+
+	CMonster::FreezeHit();
+
+//CSoundMgr::Get_Instance()->StopSound(CSoundMgr::HELLGROUND);
+//CSoundMgr::Get_Instance()->PlaySound(L"hangman_pain1.wav", CSoundMgr::HELLGROUND);
+// 체력이 없음
+	if (m_stStatus.fHP <= 0) {
+		// 몬스터가 안죽었으면
+		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
+			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
+			bGravity = false;						// 중력 OFF
+			m_fpAction = &CGhoul::Action_Dead;
+			m_wstrTextureKey = L"Com_Texture_Ghoul_Death";
+			m_fFrameCnt = 0;
+			m_fStartFrame = 0;
+			m_fEndFrame = 12;
+			m_fFrameSpeed = 10.f;
+		}
+		return;
+	}
+
+	// 플레이어 추적 ON
+	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::PlayerTracking);
+	m_fPlayerTrackCount = 7.f;
+
+	// 텍스처 교체 불가
+	if (m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::TextureChangeLock)) {
+		return;
+	}
+
+	// 피해를 받아서 현제 행동 취소
+	// Hit 텍스처를 취함
+	m_fpAction = &CGhoul::Action_Hit;
+	m_wstrTextureKey = L"Com_Texture_Ghoul_Hit";
+	m_fFrameCnt = 0;
+	m_fStartFrame = 0;
+	m_fEndFrame = 1;
+	m_fFrameSpeed = 5.f;
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다

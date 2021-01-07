@@ -26,6 +26,7 @@ private:
 	
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;	// 몬스터가 피해를 받음
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 
 private:
 	void Update_AI(float fDeltaTime);		// 업데이트 AI
@@ -62,7 +63,10 @@ private:
 	AWARENESS m_eAwareness;		// 인식
 	PHASE m_ePhase;				// 페이즈
 	AIFunc m_fpMonsterAI[(int)AWARENESS::End][(int)PHASE::End];	// AI 함수 배열
-	bool isDamaged;				// 텍스처 손상 전환용
+	bool isDamaged;
+	// CMonster을(를) 통해 상속됨
+	virtual void FreezeHit() override;
+	// 텍스처 손상 전환용
 };
 
 #define __HANGMAN_H__

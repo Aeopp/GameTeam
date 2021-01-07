@@ -76,6 +76,16 @@ _uint CMonster::LateUpdateGameObject(float fDeltaTime)
 
 	FloorBloodCurrentCoolTime -= fDeltaTime;
 	LightHitTime -= fDeltaTime;
+	FreezeDeadProcessTime -= fDeltaTime;
+	FreezeBloodParticleTime -= fDeltaTime;
+
+	if(IsDead())
+	{
+		bGravity = false;
+		_CollisionComp->bCollision = false;
+		_CollisionComp->bWallCollision = false;
+		_CollisionComp->bFloorCollision = false;
+	};
 
 	return _uint();
 }
@@ -210,11 +220,6 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 	{
 		CollisionParticle* _ParticlePtr = reinterpret_cast<CollisionParticle*>(_Particle);
 
-		if (_ParticlePtr->Name == L"DaggerThrow")
-		{
-
-		}
-
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
 
 		if (m_stStatus.fHP < 0.f)
@@ -231,13 +236,19 @@ void CMonster::FlashHit()&
 	LightHitTime = 0.1f;
 }
 
-void CMonster::FreezeHit()&
+void CMonster::FreezeHit()
 {
 	m_stStatus.fHP -= (FreezeHitDamage * _CurrentDeltaTime);
 
-	if (m_stStatus.fHP < 0.0f)
+	if (m_stStatus.fHP < 0.0f && FreezeDeadProcessTime<0.0f)
 	{
+		FreezeDeadProcessTime = 0.7f;
 		DeadProcess();
+	}
+	if (FreezeBloodParticleTime < 0.0f)
+	{
+		FreezeBloodParticleTime = 0.4f;
+		BloodParticle();
 	}
 };
 
@@ -563,10 +574,6 @@ void CMonster::BloodParticle()
 
 void CMonster::DeadProcess()
 {
-	bGravity = false;
-	_CollisionComp->bCollision = false;
-	_CollisionComp->bWallCollision = false;
-	_CollisionComp->bFloorCollision = false;
 
 	for(const size_t GibIdx : GibTable)
 	{

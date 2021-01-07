@@ -134,7 +134,7 @@ private:
 	const float ElectricStaffLightDiffuseCoefft = 1.f / 10.f;
 	const float SpellLightRadius = 500.0f;
 	const float SpellLightHitRadius = 50.0f;
-	const float SpellFreezeHitRadius = 50.0f;
+	const float SpellFreezeHitRadius = 20.f;
 	static constexpr float SpellLightDuration = 2.f;
 	// 1초당 데미지로 정의된 테이블.
 	std::vector<float> ElectricStaffDamageLimitTable

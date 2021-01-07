@@ -255,7 +255,7 @@ void CCollisionComponent::Update(class CTransform* const _Transform)&
 
 void CCollisionComponent::DebugDraw()
 {
-	//if (!CManagement::Get_Instance()->bDebug)return;
+	if (!CManagement::Get_Instance()->bDebug)return;
 
 	DWORD _AlphaValue;
 	m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &_AlphaValue);

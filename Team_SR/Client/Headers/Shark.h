@@ -11,7 +11,7 @@ private:
 	virtual ~CShark() = default;
 
 public:
-	// CMonsterÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// CMonsterì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual HRESULT ReadyGameObjectPrototype() override;
 	virtual HRESULT ReadyGameObject(void * pArg = nullptr) override;
 	virtual _uint UpdateGameObject(float fDeltaTime) override;
@@ -21,6 +21,7 @@ public:
 public:
 	virtual void Hit(CGameObject * const _Target, const Collision::Info & _CollisionInfo) override;
 	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	virtual void ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)override;
 
 private:
 	void Update_AI(float fDeltaTime);
@@ -68,6 +69,9 @@ private:
 	PHASE		m_ePhase = PHASE::End;
 	AIFunc		m_fpSharkAI[(_uint)PHASE::End];
 	ACTFunc		m_fpAction;
+
+	// CMonsterì„(ë¥¼) í†µí•´ ìƒì†ë¨
+	virtual void FreezeHit() override;
 };
 
 #endif // Shark_h__

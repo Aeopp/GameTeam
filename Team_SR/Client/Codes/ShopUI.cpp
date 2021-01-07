@@ -16,10 +16,10 @@ HRESULT CShopUI::ReadyGameObjectPrototype()
 #pragma region Component_Texture_HUDBossBar
 	if (FAILED(pManagement->AddComponentPrototype(
 		(_int)ESceneID::Static,
-		L"Component_Texture_HUDBossHPBar",
-		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/HUD/HUD_bar_monster_HP.png", 1))))
+		L"Component_Texture_ShopUI",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/UI/Shop/lweaponshop.png", 0))))
 		return E_FAIL;
-
+#pragma endregion
 	return S_OK;
 }
 
