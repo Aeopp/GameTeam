@@ -42,6 +42,19 @@ HRESULT CExplosion::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_fEndFrame = 13;
 	m_fFrameSpeed = 20.f;
 
+	int iRand = rand() % 2;
+	switch (iRand)
+	{
+	case 0:
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::EFFECT);
+		CSoundMgr::Get_Instance()->PlaySound(L"explosion_1.wav", CSoundMgr::CHANNELID::EFFECT);
+		break;
+	case 1:
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::EFFECT);
+		CSoundMgr::Get_Instance()->PlaySound(L"explosion_2.wav", CSoundMgr::CHANNELID::EFFECT);
+		break;
+	}
+
 	return S_OK;
 }
 

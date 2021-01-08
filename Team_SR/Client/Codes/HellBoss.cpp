@@ -757,15 +757,16 @@ void CHellBoss::AI_CacoDevilPattern()
 		if (PlayerAwareness()) {
 			// 40 %
 			// 근접 충격파
-			if (0 <= iRand && iRand < 40) {
-				goto RETURN_NOVA;
-			}
-			// 30 %
+			//if (0 <= iRand && iRand < 40) {
+			//	goto RETURN_NOVA;
+			//}
+
+			// 50 %
 			// 눈깔 레이저
-			else if (40 <= iRand && iRand < 70) {
+			if (0 <= iRand && iRand < 50) {
 				goto RETURN_EYELASERS;
 			}
-			// 30 %
+			// 50 %
 			// 몬스터 소환
 			else {
 				goto RETURN_MONSTERSPAWN;
@@ -1276,7 +1277,7 @@ bool CHellBoss::Action_CacoDevil_EyeLasers(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 3.f;
+		m_fNextAtkWait = 2.f;
 		return true;
 	}
 
@@ -1330,7 +1331,7 @@ bool CHellBoss::Action_CacoDevil_MonsterSpawn(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 4.f;
+		m_fNextAtkWait = 2.f;
 		return true;
 	}
 
@@ -1364,7 +1365,7 @@ bool CHellBoss::Action_FallenLord_TentacleAttack(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 2.f;
+		m_fNextAtkWait = 1.5f;
 		return true;
 	}
 
@@ -1396,7 +1397,7 @@ bool CHellBoss::Action_FallenLord_MonsterSpawn(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 2.f;
+		m_fNextAtkWait = 1.f;
 		return true;
 	}
 

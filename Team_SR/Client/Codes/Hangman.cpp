@@ -435,10 +435,10 @@ void CHangman::AI_NormalPattern()
 			// 근접 공격
 			goto RETURN_MELEE;
 		}
-		else {
-			// 원거리 공격
-			goto RETURN_SHOOT;
-		}
+		//else {
+		//	// 원거리 공격
+		//	goto RETURN_SHOOT;
+		//}
 	}
 	else {
 		// 플레이어가 멀리 있나
