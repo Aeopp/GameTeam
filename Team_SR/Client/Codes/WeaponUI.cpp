@@ -98,7 +98,7 @@ _uint CWeaponUI::LateUpdateGameObject(float fDeltaTime)
 		return S_OK;
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this, ERenderPlace::BACK)))
 		return 0;
 
 	if (m_cfMaxShownTime <= m_fShownTime)

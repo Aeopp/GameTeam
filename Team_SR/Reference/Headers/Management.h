@@ -50,7 +50,7 @@ public: /* For.ComponentManager */
 	CComponent* CloneComponentPrototype(_int iSceneIndex, const wstring& ComponentTag, void* pArg = nullptr);
 
 public: /* For.Renderer */
-	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject);
+	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject, ERenderPlace ePlace = ERenderPlace::BACK);
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { m_pRenderer->SetAmbient(Ambient); };
 	D3DCAPS9 GetCaps() { return m_pRenderer->GetCaps(); };

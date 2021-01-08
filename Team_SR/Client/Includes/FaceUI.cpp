@@ -62,7 +62,7 @@ _uint CFaceUI::LateUpdateGameObject(float fDeltaTime)
 		return S_OK;
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this, ERenderPlace::BACK)))
 		return 0;
 
 	CLoadingBar* m_pHpBar = static_cast<CLoadingBar*>
@@ -74,11 +74,11 @@ _uint CFaceUI::LateUpdateGameObject(float fDeltaTime)
 	int iMax = m_pHpBar->GetMaxValue();
 	int iMin = m_pHpBar->GetMinValue();
 
-	if (0.9f <= (float)iMax / (float)iMin)
+	if (0.9f <= (float)iMin / (float)iMax)
 		m_eFaceState = EFaceState::UNHURT;
-	else if (0.7f <= (float)iMax / (float)iMin)
+	else if (0.7f <= (float)iMin / (float)iMax)
 		m_eFaceState = EFaceState::BLEEDING;
-	else if (0.3f <= (float)iMax / (float)iMin)
+	else if (0.3f <= (float)iMin / (float)iMax)
 		m_eFaceState = EFaceState::INJURED;
 	else if (0 == iMin)
 		m_eFaceState = EFaceState::DYING;

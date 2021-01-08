@@ -137,7 +137,6 @@ D3DPRESENT_PARAMETERS& CManagement::GetD3Dpp()
 	return m_pGraphic_Dev->GetD3Dpp();
 }
 
-
 HRESULT CManagement::SetUpCurrentScene(_int iSceneID, CScene * pCurrentScene)
 {
 	if (nullptr == m_pSceneManager)
@@ -264,12 +263,12 @@ CComponent * CManagement::CloneComponentPrototype(
 	return m_pComponentManager->CloneComponentPrototype(iSceneIndex, ComponentTag, pArg);
 }
 
-HRESULT CManagement::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObject)
+HRESULT CManagement::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObject, ERenderPlace ePlace/* = ERenderPlace::NONE_PLACE*/)
 {
 	if (nullptr == m_pRenderer)
 		return E_FAIL;
 
-	return m_pRenderer->AddGameObjectInRenderer(eID, pGameObject);
+	return m_pRenderer->AddGameObjectInRenderer(eID, pGameObject, ePlace);
 }
 
 void CManagement::RegistLight(const D3DLIGHT9& Light)

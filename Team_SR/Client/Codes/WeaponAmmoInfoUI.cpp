@@ -44,19 +44,19 @@ HRESULT CWeaponAmmoInfoUI::ReadyGameObject(void* pArg)
 _uint CWeaponAmmoInfoUI::UpdateGameObject(float fDeltaTime)
 {
 	CGameUI::UpdateGameObject(fDeltaTime);
-	ImGui::Begin("WeaponAmmoInfoUI Edit");
+	//ImGui::Begin("WeaponAmmoInfoUI Edit");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Size",
-		reinterpret_cast<float*>(&m_UIDesc.vUISize),
-		-1000.f, +1000.f, "%f");
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Size",
+	//	reinterpret_cast<float*>(&m_UIDesc.vUISize),
+	//	-1000.f, +1000.f, "%f");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
-		-1000.f, +2000.f, "%f");
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Location",
+	//	reinterpret_cast<float*>(&m_UIDesc.vUIPos),
+	//	-1000.f, +2000.f, "%f");
 
-	ImGui::End();
+	//ImGui::End();
 
 	return _uint();
 }
@@ -65,7 +65,7 @@ _uint CWeaponAmmoInfoUI::LateUpdateGameObject(float fDeltaTime)
 {
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this, ERenderPlace::FRONT)))
 		return 0;
 
 	return _uint();

@@ -4,6 +4,7 @@
 #include "NormalUVVertexBuffer.h"
 #include "ParticleSystem.h"
 #include "Player.h"
+#include "UIManager.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	:CGameObject(pDevice)
@@ -188,7 +189,13 @@ void CMonster::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	 {
 		 BloodParticle();
 	 }
-		
+
+	 //_int iMax = (_int)m_stOriginStatus.fHP;
+	 //_int iMin = (_int)m_stStatus.fHP;
+
+	 //CUIManager::Get_Instance()->OnMonsterBar(&iMax, &iMin);
+	 CUIManager::Get_Instance()->OnMonsterBar(&m_stOriginStatus.fHP, &m_stStatus.fHP);
+
 	 if (m_stStatus.fHP < 0.f)
 	 {
 		 DeadProcess();
@@ -215,6 +222,12 @@ void CMonster::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 
 		m_stStatus.fHP -= _ParticlePtr->CurrentAttack;
 
+		//_int iMax = (_int)m_stOriginStatus.fHP;
+		//_int iMin = (_int)m_stStatus.fHP;
+
+		//CUIManager::Get_Instance()->OnMonsterBar(&iMax, &iMin);
+		CUIManager::Get_Instance()->OnMonsterBar(&m_stOriginStatus.fHP, &m_stStatus.fHP);
+
 		if (m_stStatus.fHP < 0.f)
 		{
 			DeadProcess();
@@ -232,6 +245,12 @@ void CMonster::FlashHit()&
 void CMonster::FreezeHit()
 {
 	m_stStatus.fHP -= (FreezeHitDamage * _CurrentDeltaTime);
+
+	//_int iMax = (_int)m_stOriginStatus.fHP;
+	//_int iMin = (_int)m_stStatus.fHP;
+
+	//CUIManager::Get_Instance()->OnMonsterBar(&iMax, &iMin);
+	CUIManager::Get_Instance()->OnMonsterBar(&m_stOriginStatus.fHP, &m_stStatus.fHP);
 
 	if (m_stStatus.fHP < 0.0f && FreezeDeadProcessTime<0.0f)
 	{

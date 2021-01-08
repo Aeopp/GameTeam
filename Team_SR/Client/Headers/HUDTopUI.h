@@ -20,7 +20,7 @@ private:	//내부메서드관련
 	HRESULT	AddComponent();
 
 public:
-	void SetMaxHPAndHP(_int* _piMaxValue, _int* _piValue);
+	void SetMaxHPAndHP(float* _pfMaxValue, float* _pfValue);
 public:
 	static CHUDTopUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
