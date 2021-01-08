@@ -91,12 +91,16 @@ void CGraphic_Device::Free()
 
 	if (SafeRelease(m_pDevice))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Releasing m_pDevice");
+		// 2021.01.08 KMJ
+		// 가립시다...
+		//PRINT_LOG(L"Warning", L"Failed To Releasing m_pDevice");
 	}
 
 	if(SafeRelease(m_pSDK))
 	{
-		PRINT_LOG(L"Warning", L"Failed To Releasing m_pSDK");
+		// 2021.01.08 KMJ
+		// 가립시다...
+		//PRINT_LOG(L"Warning", L"Failed To Releasing m_pSDK");
 	}
 }
 

@@ -256,8 +256,6 @@
     <ClInclude Include="..\Headers\Stage6th.h" />
     <ClInclude Include="..\Headers\StageBoss.h" />
     <ClInclude Include="..\Headers\StageMidBoss.h" />
-    <ClInclude Include="..\Headers\Title.h" />
-    <ClInclude Include="..\Headers\SceneImage.h" />
     <ClInclude Include="..\Headers\UIManager.h" />
     <ClInclude Include="..\Headers\Vertexs.h" />
     <ClInclude Include="..\Headers\VIBuffer_UITexture.h" />
@@ -357,8 +355,6 @@
     <ClCompile Include="..\Codes\Stage6th.cpp" />
     <ClCompile Include="..\Codes\StageBoss.cpp" />
     <ClCompile Include="..\Codes\StageMidBoss.cpp" />
-    <ClCompile Include="..\Codes\Title.cpp" />
-    <ClCompile Include="..\Codes\SceneImage.cpp" />
     <ClCompile Include="..\Codes\UIManager.cpp" />
     <ClCompile Include="..\Codes\Vertexs.cpp" />
     <ClCompile Include="..\Codes\VIBuffer_UITexture.cpp" />

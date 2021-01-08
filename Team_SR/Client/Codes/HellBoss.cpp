@@ -30,7 +30,7 @@ HRESULT CHellBoss::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_pTransformCom->m_TransformDesc.vScale = { 12.f,12.f,12.f };
 
 	// 몬스터 원본 스텟
-	m_stOriginStatus.fHP = 100.f;//500.f;
+	m_stOriginStatus.fHP = 5000.f;//500.f;
 	m_stOriginStatus.fATK = 20.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 7.f;
@@ -522,6 +522,7 @@ void CHellBoss::ParticleHit(void* const _Particle, const Collision::Info& _Colli
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			//_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			m_ePhase = PHASE::FallenLord;	// 페이즈 전환
+			m_stOriginStatus.fHP = 500.f;
 			m_stOriginStatus.fSpeed = 9.f;
 			m_stOriginStatus.fMeleeRange = 50.f;
 			m_stOriginStatus.fDetectionRange = 70.f;
@@ -853,12 +854,12 @@ void CHellBoss::AI_FallenLordPattern()
 	if (m_fNextAtkWait <= 0) {
 		int iRand = rand() % 100;
 
-		// 60 %
+		// 50 %
 		// 촉수 공격
-		if (0 <= iRand && iRand < 60) {
+		if (0 <= iRand && iRand < 50) {
 			goto RETURN_TENTACLE_ATTACK;
 		}
-		// 40 %
+		// 50 %
 		// 몬스터 소환
 		else {
 			goto RETURN_MONSTERSPAWN;
@@ -1365,7 +1366,7 @@ bool CHellBoss::Action_FallenLord_TentacleAttack(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 1.5f;
+		m_fNextAtkWait = 0.5f;
 		return true;
 	}
 
@@ -1397,7 +1398,7 @@ bool CHellBoss::Action_FallenLord_MonsterSpawn(float fDeltaTime)
 
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
-		m_fNextAtkWait = 1.f;
+		m_fNextAtkWait = 0.5f;
 		return true;
 	}
 
