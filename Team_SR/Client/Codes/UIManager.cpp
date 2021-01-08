@@ -9,6 +9,10 @@
 #include "HUDTopUI.h"
 #include "WeaponUI.h"
 #include "FaceUI.h"
+#include "Stage.h"
+#include "ShopUI.h"
+#include "ButtonUI.h"
+
 IMPLEMENT_SINGLETON(CUIManager)
 
 using namespace UI_AddTag;
@@ -115,6 +119,20 @@ HRESULT CUIManager::ReadyUI()
 		CFaceUI::Create(m_pDevice))))
 		return E_FAIL;
 #pragma endregion
+#pragma region GameObject_ShopUI
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CShopUI>(),
+		CShopUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
+#pragma region GameObject_ButtonUI
+	if (FAILED(pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CButtonUI>(),
+		CButtonUI::Create(m_pDevice))))
+		return E_FAIL;
+#pragma endregion
 
 #pragma endregion
 
@@ -126,9 +144,9 @@ HRESULT CUIManager::ReadyUI()
 HRESULT CUIManager::UIOpen(ESceneID SceneID)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
+	UI_BAR_ADD_COMPONENT tagLayerCom;
 
 #pragma region Add_Layer
-
 #pragma region FaceUI
 	if (FAILED(pManagement->AddGameObjectInLayer(
 		(_int)ESceneID::Static,
@@ -155,6 +173,32 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 		L"Layer_WeaponAmmoInfoUI",
 		(CGameObject**)&m_pWeaponAmmoInfoUI, nullptr)))
 		return E_FAIL;
+#pragma endregion
+	
+#pragma region HUD_BosHP_Bar
+	//HUD_HP_Bar
+	tagLayerCom.tUIDesc.vUISize.x = WINCX - 500.f - 70.f;
+	tagLayerCom.tUIDesc.vUISize.y = 40.f;
+	tagLayerCom.tUIDesc.vUISize.z = 0;
+	tagLayerCom.tUIDesc.vUIPos.x = -(WINCX - 500.f - 70.f) / 2;
+	tagLayerCom.tUIDesc.vUIPos.y = (WINCY / 2) - 100.f;
+	tagLayerCom.tUIDesc.vUIPos.z = 0.f;
+	tagLayerCom.tUIDesc.vCenter = _vector(-1.f, 0.f, 0.f);
+	tagLayerCom.wsPrototypeTag = L"Component_Texture_HUDBossHPBar";
+	tagLayerCom.wsComponentTag = L"Com_Texture";
+	tagLayerCom.bTextOut = false;
+
+	//HUD_HP_Bar
+	if (FAILED(pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_LoadingBar",
+		(_int)SceneID,
+		L"Layer_HUD_HUDBossHPBar",
+		(CGameObject**)&m_pMonsterHPBar, &tagLayerCom)))
+		return E_FAIL;
+#pragma endregion
+
+	//m_pMonsterHPBar->SetInvisibleUI();
 
 	// 상단UI / 보스 체력
 	if (FAILED(pManagement->AddGameObjectInLayer(
@@ -162,11 +206,20 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 		L"GameObject_HUDTopUI",
 		(_int)SceneID,
 		L"Layer_HUDTopUI",
-		(CGameObject**)&m_pHUD_TopUI, nullptr)))
+		(CGameObject**)&m_pHUD_TopUI, m_pMonsterHPBar)))
+		return E_FAIL;
+
+	//상점
+	if (FAILED(pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		L"GameObject_ShopUI",
+		(_int)SceneID,
+		L"Layer_ShopUI",
+		(CGameObject**)&m_pShopUI)))
 		return E_FAIL;
 
 	//------------------------------------------------------
-	UI_BAR_ADD_COMPONENT tagLayerCom;
+	
 #pragma region HUD_HP_Bar
 	//HUD_HP_Bar
 	tagLayerCom.tUIDesc.vUISize.x = 312.f;
@@ -296,9 +349,9 @@ void CUIManager::OffWeaponAmmom()
 {
 }
 
-void CUIManager::OnMonsterBar(_int* _iMaxHP, _int* _iMinHP)
+void CUIManager::OnMonsterBar(float* _fMaxHP, float* _fMinHP)
 {
-	m_pHUD_TopUI->SetMaxHPAndHP(_iMaxHP, _iMinHP);
+	m_pHUD_TopUI->SetMaxHPAndHP(_fMaxHP, _fMinHP);
 }
 
 void CUIManager::AllShownWeaponUI()
@@ -315,6 +368,11 @@ void CUIManager::AllInvisibleWeaponUI()
 	{
 		m_pWeaponUIArr[i]->SetInvisibleUI();
 	}
+}
+
+void CUIManager::SwitchOnShopUI()
+{
+	m_pShopUI->SwitchOnUI();
 }
 
 HRESULT CUIManager::SetWeaponUIArrayPrototype()

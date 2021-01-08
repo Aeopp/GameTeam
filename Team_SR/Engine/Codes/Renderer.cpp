@@ -15,7 +15,7 @@ CRenderer::CRenderer(LPDIRECT3DDEVICE9 pDevice)
 }
 
 /* 매 프레임마다 렌더 리스트에 오브젝트를 추가한다. */
-HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObject)
+HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObject, ERenderPlace ePlace)
 {
 	if (0 > (_int)eID ||
 		ERenderID::MaxCount <= eID)
@@ -27,7 +27,18 @@ HRESULT CRenderer::AddGameObjectInRenderer(ERenderID eID, CGameObject * pGameObj
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	m_GameObjects[(_int)eID].push_back(pGameObject);
+	if (ERenderID::UI == eID)
+	{
+		if (ERenderPlace::BACK == ePlace)
+			m_GameObjects[(_int)eID].push_back(pGameObject);
+		else if (ERenderPlace::FRONT == ePlace)
+			m_GameObjects[(_int)eID].push_front(pGameObject);
+		else
+			return E_FAIL;
+	}
+	else
+		m_GameObjects[(_int)eID].push_back(pGameObject);
+
 	SafeAddRef(pGameObject);
 
 	return S_OK;

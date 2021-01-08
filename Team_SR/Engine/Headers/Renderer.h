@@ -12,7 +12,7 @@ private:
 	virtual ~CRenderer() = default;
 
 public:
-	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject);
+	HRESULT AddGameObjectInRenderer(ERenderID eID, class CGameObject* pGameObject, ERenderPlace ePlace);
 	HRESULT Render(HWND hWnd = nullptr);
 	void RegistLight(const D3DLIGHT9& Light);
 	void SetAmbient(const DWORD Ambient) { this->Ambient = Ambient; };

@@ -58,12 +58,15 @@ public:
 
 public:
 	//몬스터의 체력
-	void OnMonsterBar(_int* _iMaxHP, _int* _iMinHP);
-
+	void OnMonsterBar(float* _fMaxHP, float* _fMinHP);
 public:
 	//WeaponUI관련 메서드
 	void AllShownWeaponUI();
 	void AllInvisibleWeaponUI();
+
+public:
+	//ShopUI
+	void SwitchOnShopUI();
 
 private:
 	//내부 메서드
@@ -84,6 +87,7 @@ private:
 	class CLoadingBar* m_pHUD_HpBar = nullptr;
 	class CLoadingBar* m_pHUD_ManaBar = nullptr;
 	class CLoadingBar* m_pHUD_AmmoBar = nullptr;
+	class CLoadingBar* m_pMonsterHPBar = nullptr;
 	class CHUDTopUI* m_pHUD_TopUI = nullptr;
 	class CWeaponUI* m_pWeaponUIArr[9];
 	class CFaceUI* m_pFaceUI = nullptr;

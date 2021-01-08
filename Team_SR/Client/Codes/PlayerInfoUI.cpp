@@ -8,7 +8,6 @@
 CPlayerInfoUI::CPlayerInfoUI(LPDIRECT3DDEVICE9 pDevice)
 	: CGameUI(pDevice)
 {
-	
 }
 
 HRESULT CPlayerInfoUI::ReadyGameObjectPrototype()
@@ -43,19 +42,20 @@ HRESULT CPlayerInfoUI::ReadyGameObject(void* pArg)
 _uint CPlayerInfoUI::UpdateGameObject(float fDeltaTime)
 {
 	CGameUI::UpdateGameObject(fDeltaTime);
-	ImGui::Begin("PlayerInfoUI Edit");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Size",
-		reinterpret_cast<float*>(&m_UIDesc.vUISize),
-		-1000.f, +1000.f, "%f");
+	//ImGui::Begin("PlayerInfoUI Edit");
 
-	ImGui::Separator();
-	ImGui::SliderFloat3("Location",
-		reinterpret_cast<float*>(&m_UIDesc.vUIPos),
-		-1000.f, +1000.f, "%f");
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Size",
+	//	reinterpret_cast<float*>(&m_UIDesc.vUISize),
+	//	-1000.f, +1000.f, "%f");
 
-	ImGui::End();
+	//ImGui::Separator();
+	//ImGui::SliderFloat3("Location",
+	//	reinterpret_cast<float*>(&m_UIDesc.vUIPos),
+	//	-1000.f, +1000.f, "%f");
+
+	//ImGui::End();
 
 	return _uint();
 }
@@ -67,7 +67,7 @@ _uint CPlayerInfoUI::LateUpdateGameObject(float fDeltaTime)
 
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this, ERenderPlace::FRONT)))
 		return 0;
 
 	return _uint();

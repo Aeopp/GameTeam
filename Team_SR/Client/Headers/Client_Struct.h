@@ -22,7 +22,7 @@ typedef struct tagWeaponInfo
 	int32_t iMinAmmo;
 }WEAPON_INFO;
 
-// 몬스터 스텟
+//몬스터 스텟
 struct MonsterStatus {
 	float fHP;		// 체력
 	float fATK;		// 공격력

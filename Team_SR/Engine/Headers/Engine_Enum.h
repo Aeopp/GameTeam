@@ -26,6 +26,13 @@ enum class ETextureType
 	Cube
 };
 
+enum class ERenderPlace
+{
+	FRONT,
+	BACK,
+	NONE_PLACE,
+};
+
 END
 
 #define __ENGINE_ENUM_H__

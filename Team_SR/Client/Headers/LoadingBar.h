@@ -19,10 +19,13 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
-	void SetMaxValueAndMinValue(_int* _piMaxValue, _int* _piValue);
+	void SetMaxValueAndMinValue(float* _pfMaxValue, float* _pfValue);
+	void SetMaxValueAndMinValue(_int* _pfMaxValue, _int* _pfValue);
 
 	int GetMaxValue();
 	int	GetMinValue();
+	int GetFloatMaxValue();
+	int	GetFloatMinValue();
 
 
 private://내부메서드관련
@@ -42,6 +45,9 @@ private:
 	bool m_bTextOut;
 	wstring m_wsObjectName;
 
+	bool m_bFloat;
+	float* m_pfMaxValue;
+	float* m_pfMinValue;
 	_int* m_piMaxValue;
 	_int* m_piMinValue;
 };
