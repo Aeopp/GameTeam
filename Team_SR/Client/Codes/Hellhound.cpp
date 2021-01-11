@@ -37,7 +37,7 @@ HRESULT CHellhound::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 20.f;
-	m_stOriginStatus.fMeleeRange = 6.f;
+	m_stOriginStatus.fMeleeRange = 2.5f;
 	m_stOriginStatus.fDetectionRange = 50.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -255,6 +255,7 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -272,6 +273,7 @@ void CHellhound::Hit(CGameObject * const _Target, const Collision::Info & _Colli
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
@@ -329,6 +331,7 @@ void CHellhound::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -346,6 +349,7 @@ void CHellhound::ParticleHit(void* const _Particle, const Collision::Info& _Coll
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
@@ -468,6 +472,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 10;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -510,6 +515,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 7;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -601,6 +607,7 @@ bool CHellhound::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		CMonster::MeleeAttack();
 		return true;
 	}
@@ -612,6 +619,7 @@ bool CHellhound::Action_Melee(float fDeltaTime)
 bool CHellhound::Action_Hit(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -624,6 +632,7 @@ bool CHellhound::Action_Dead(float fDeltaTime)
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+		m_bNoLoop = false;	// 프레임을 반복
 		return false;
 	}
 
@@ -636,6 +645,7 @@ bool CHellhound::Action_Damage(float fDeltaTime)
 		isDamaged = true;	// 손상 상태 ON
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
 		m_stStatus.fSpeed = 8.f;		// 스피드 대폭 감소
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -698,6 +708,7 @@ void CHellhound::FreezeHit()
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -711,6 +722,7 @@ void CHellhound::FreezeHit()
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {

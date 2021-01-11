@@ -50,6 +50,19 @@ HRESULT CStage6th::ReadyScene()
 		LayerTag,
 		reinterpret_cast<CGameObject**>(&_CurrentMap), &CurrentSceneID)))
 		return E_FAIL;
+
+	// 다음 스테이지로 넘어가는 포탈
+	WormholeArgument stArg;
+	stArg.vPosition = { 42.5f, 5.f, 100.f };
+	stArg.eReplaceSceneID = ESceneID::StageFinalBoss;
+	if (FAILED(m_pManagement->AddGameObjectInLayer(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + L"Wormhole",
+		(_int)CurrentSceneID,
+		CLayer::Tag + L"Bullet",
+		nullptr,
+		static_cast<void*>(&stArg))))
+		return E_FAIL;
 	
 	// 맵 정보
 	BYTE byMap[59][80] = {

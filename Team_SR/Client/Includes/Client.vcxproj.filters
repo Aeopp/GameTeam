@@ -537,6 +537,9 @@
     <ClInclude Include="..\Headers\Explosion.h">
       <Filter>97.Others</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Wormhole.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -872,6 +875,9 @@
     </ClCompile>
     <ClCompile Include="FaceUI.cpp" />
     <ClCompile Include="..\Codes\Explosion.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Wormhole.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>

@@ -43,6 +43,7 @@
 #include "HellBossEyeLaser.h"	// 헬 보스 눈깔 레이저
 #include "HellBossTentacle.h"	// 헬 보스 촉수
 #include "Explosion.h"	// 폭발 이펙트... 인데 Bullet 상속받음 ㅡㅡ
+#include "Wormhole.h"
 
 
 CMainApp::CMainApp()
@@ -100,6 +101,7 @@ HRESULT CMainApp::ReadyMainApp()
 }
 
 int CMainApp::UpdateMainApp()
+
 {
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
@@ -401,6 +403,12 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 #pragma endregion
 
+	// 포탈 - Bullet을 상속받아서 구체 충돌함...
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWormhole>(),
+		CWormhole::Create(m_pDevice))))
+		return E_FAIL;
 
 		
 
@@ -557,7 +565,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		L"Component_Texture_BatGreySpit",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Spit/bat_spit%d.png", 8))))
 		return E_FAIL;
-#pragma endregion
 
 #pragma endregion	// Component_Texture_BatGrey
 
@@ -1499,6 +1506,13 @@ HRESULT CMainApp::ReadyStaticResources()
 		(_int)ESceneID::Static,
 		L"Component_Texture_Explosion2",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion2/%d.png", 13))))
+		return E_FAIL;
+
+	// Wormhole
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Wormhole",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Wormhole/wormhole%d.png", 4))))
 		return E_FAIL;
 
 #pragma endregion	// Component_Texture_Effect

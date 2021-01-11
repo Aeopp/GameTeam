@@ -37,7 +37,7 @@ HRESULT CHangman::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 10.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 5.f;
-	m_stOriginStatus.fMeleeRange = 6.f;
+	m_stOriginStatus.fMeleeRange = 2.5f;
 	m_stOriginStatus.fDetectionRange = 20.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -243,6 +243,7 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 			m_fStartFrame = 0;
 			m_fEndFrame = 10;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -260,6 +261,7 @@ void CHangman::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
@@ -317,6 +319,7 @@ void CHangman::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 			m_fStartFrame = 0;
 			m_fEndFrame = 10;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -334,6 +337,7 @@ void CHangman::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {
@@ -455,6 +459,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 13;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_SHOOT:	// 원거리 공격
@@ -464,6 +469,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	// 목표 = 플레이어 위치 - 몬스터 위치
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	m_vAim.y = 0.f;
@@ -510,6 +516,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 10;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -602,6 +609,7 @@ bool CHangman::Action_Shoot(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 5.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -613,6 +621,7 @@ bool CHangman::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		CMonster::MeleeAttack();
 		return true;
 	}
@@ -624,6 +633,7 @@ bool CHangman::Action_Melee(float fDeltaTime)
 bool CHangman::Action_Hit(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -636,6 +646,7 @@ bool CHangman::Action_Dead(float fDeltaTime)
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+		m_bNoLoop = false;	// 프레임을 반복
 		return false;
 	}
 
@@ -648,6 +659,7 @@ bool CHangman::Action_Damage(float fDeltaTime)
 		isDamaged = true;	// 손상 상태 ON
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
 		m_stStatus.fSpeed = 7.f;		// 속도 약간 증가
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -710,6 +722,7 @@ void CHangman::FreezeHit()
 			m_fStartFrame = 0;
 			m_fEndFrame = 10;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -723,6 +736,7 @@ void CHangman::FreezeHit()
 		return;
 	}
 
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	if (!isDamaged) {
 		// 체력이 50%
 		if (m_stStatus.fHP <= m_stOriginStatus.fHP * 0.5f) {

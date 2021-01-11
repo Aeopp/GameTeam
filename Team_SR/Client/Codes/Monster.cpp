@@ -11,7 +11,7 @@ CMonster::CMonster(LPDIRECT3DDEVICE9 pDevice)
 	, m_fFrameCnt(0.f), m_fStartFrame(0.f), m_fEndFrame(0.f), m_fFrameSpeed(10.f)
 	, m_fCrossValue(0.f), m_vCollisionDir{0.f, 0.f, 0.f}, m_vAim {0.f, 0.f, 0.f}
 	, m_pPlayer(nullptr), m_stOriginStatus{}, m_stStatus{}, m_wstrTextureKey(L""), m_pJumpPointSearch(JumpPointSearch::Get_Instance())
-	, m_bFrameLoopCheck(false), m_byMonsterFlag(0)
+	, m_bFrameLoopCheck(false), m_bNoLoop(false), m_byMonsterFlag(0)
 {
 	bGravity = true;
 }
@@ -310,7 +310,7 @@ void CMonster::MeleeAttack()
 	Ray _Ray;
 	_Ray.Direction = AttackDir;
 	_Ray.Start = m_pTransformCom->m_TransformDesc.vPosition;
-	CMonster::Attack(_Ray, 10.f);
+	CMonster::Attack(_Ray, m_stStatus.fMeleeRange * 0.5);
 }
 
 // 텍스처 프레임 이동 - 프레임 카운트가 End에 도달하면 true, 아니면 false
@@ -319,8 +319,14 @@ bool CMonster::Frame_Move(float fDeltaTime)
 	m_fFrameCnt += m_fFrameSpeed * fDeltaTime;
 	if (m_fFrameCnt >= m_fEndFrame)
 	{
+		// 2021.01.11 KMJ
+		// 깜빡임 현상 수정
+		if (m_bNoLoop) {
+			m_fFrameCnt = m_fEndFrame - 1.f;
+			return true;
+		}
 		m_fFrameCnt = m_fStartFrame;
-		return true;
+		return true;;
 	}
 	return false;
 }

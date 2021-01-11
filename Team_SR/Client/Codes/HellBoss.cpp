@@ -339,6 +339,8 @@ void CHellBoss::Hit(CGameObject * const _Target, const Collision::Info & _Collis
 	// 체력이 없음
 	if (m_stStatus.fHP <= 0) {
 
+		m_bNoLoop = true;	// 프레임을 반복하지 않음
+
 		switch (m_ePhase)
 		{
 			// 리틀 데몬
@@ -458,6 +460,8 @@ void CHellBoss::ParticleHit(void* const _Particle, const Collision::Info& _Colli
 	CMonster::ParticleHit(_Particle, _CollisionInfo);		// CMonster 에서 HP 감소
 	// 체력이 없음
 	if (m_stStatus.fHP <= 0) {
+
+		m_bNoLoop = true;	// 프레임을 반복하지 않음
 
 		switch (m_ePhase)
 		{
@@ -639,6 +643,7 @@ RETURN_EYEBLAST:	// 눈깔 빔
 	m_fStartFrame = 0;
 	m_fEndFrame = 21;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_SHOOT:	// 원거리 공격
@@ -648,6 +653,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 26;
 	m_fFrameSpeed = 20.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -687,6 +693,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 5;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	// 목표 = 플레이어 위치 - 몬스터 위치
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	D3DXVec3Normalize(&m_vAim, &m_vAim);
@@ -729,6 +736,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 16;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -810,6 +818,7 @@ RETURN_EYELASERS:	// 눈깔 레이저
 	m_fStartFrame = 0;
 	m_fEndFrame = 11;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_NOVA:	// 근접 충격파
@@ -819,6 +828,7 @@ RETURN_NOVA:	// 근접 충격파
 	m_fStartFrame = 0;
 	m_fEndFrame = 11;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MONSTERSPAWN:	// 몬스터 소환
@@ -828,6 +838,7 @@ RETURN_MONSTERSPAWN:	// 몬스터 소환
 	m_fStartFrame = 0;
 	m_fEndFrame = 12;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
@@ -938,7 +949,7 @@ bool CHellBoss::Action_Morph(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock); // HP 락 OFF
-		//_CollisionComp->bCollision = true;		// 충돌 처리 ON
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -950,7 +961,7 @@ bool CHellBoss::Action_LastMorph(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock); // HP 락 OFF
-		//_CollisionComp->bCollision = true;		// 충돌 처리 ON
+		m_bNoLoop = false;	// 프레임을 반복
 
 		m_wstrTextureKey = L"Com_Texture_FallenLord_Idle";
 		m_fFrameCnt = 0;
@@ -993,6 +1004,7 @@ bool CHellBoss::Action_LittleDemon_EyeBlast(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1044,6 +1056,7 @@ bool CHellBoss::Action_LittleDemon_Shoot(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1076,6 +1089,8 @@ bool CHellBoss::Action_TurboSatan_ShootSpin(float fDeltaTime)
 		m_fFrameSpeed = 30.f;
 
 		m_iRepeatCount = (rand() % 8 + 1) + 5;	// 5 ~ 10번 반복
+
+		m_bNoLoop = false;	// 프레임을 반복
 	}
 
 	return false;
@@ -1141,6 +1156,7 @@ bool CHellBoss::Action_TurboSatan_ShootFire(float fDeltaTime)
 		m_fStartFrame = 0;
 		m_fEndFrame = 4;
 		m_fFrameSpeed = 10.f;
+		m_bNoLoop = true;	// 프레임을 반복하지 않음
 	}
 
 	return false;
@@ -1151,6 +1167,7 @@ bool CHellBoss::Action_TurboSatan_ShootEnd(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 3.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1203,6 +1220,7 @@ bool CHellBoss::Action_InjuredTurboSatan_Shoot(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 3.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1279,6 +1297,7 @@ bool CHellBoss::Action_CacoDevil_EyeLasers(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 2.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1290,6 +1309,7 @@ bool CHellBoss::Action_CacoDevil_Nova(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 5.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1333,6 +1353,7 @@ bool CHellBoss::Action_CacoDevil_MonsterSpawn(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 2.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -1412,6 +1433,7 @@ bool CHellBoss::Action_Dead(float fDeltaTime)
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+		m_bNoLoop = false;	// 프레임을 반복
 		return false;
 	}
 
@@ -1462,6 +1484,8 @@ void CHellBoss::FreezeHit()
 
 	// 체력이 없음
 	if (m_stStatus.fHP <= 0) {
+
+		m_bNoLoop = true;	// 프레임을 반복하지 않음
 
 		switch (m_ePhase)
 		{

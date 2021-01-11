@@ -10,6 +10,7 @@
 #include "Eyebat.h"
 #include "MapMidBoss.h"
 #include "Stage5th.h"
+#include "Monster.h"
 
 
 CStageMidBoss::CStageMidBoss(LPDIRECT3DDEVICE9 pDevice)
@@ -63,7 +64,8 @@ HRESULT CStageMidBoss::ReadyScene()
 		CGameObject::Tag + L"Shark",
 		(_int)CurrentSceneID,
 		CLayer::Tag + L"Monster",
-		nullptr, static_cast<void*>(&stArg))))
+		reinterpret_cast<CGameObject**>(&m_pBoss),
+		static_cast<void*>(&stArg))))
 		return E_FAIL;
 
 
@@ -221,12 +223,33 @@ HRESULT CStageMidBoss::ReadyScene()
 _uint CStageMidBoss::UpdateScene(float fDeltaTime)
 {
 	return Super::UpdateScene(fDeltaTime);
-
 }
 
 _uint CStageMidBoss::LateUpdateScene()
 {
-	return 	Super::LateUpdateScene();
+	// 2021.01.11 19:19 KMJ
+	// 리턴하지않고 아래에 로직 수행
+	//return 	Super::LateUpdateScene();
+	Super::LateUpdateScene();
+
+	// 2021.01.11 19:19 KMJ
+	// 보스 몬스터가 죽고나서 생성함
+	if (!m_bBossDead && m_pBoss->IsDead()) {
+		m_bBossDead = true;
+
+		// 다음 스테이지로 넘어가는 포탈
+		WormholeArgument stArg;
+		stArg.vPosition = { -2.5f, 5.f, 110.f };
+		stArg.eReplaceSceneID = ESceneID::Stage5th;
+		if (FAILED(m_pManagement->AddGameObjectInLayer(
+			(_int)ESceneID::Static,
+			CGameObject::Tag + L"Wormhole",
+			(_int)CurrentSceneID,
+			CLayer::Tag + L"Bullet",
+			nullptr,
+			static_cast<void*>(&stArg))))
+			return E_FAIL;
+	}
 }
 
 _uint CStageMidBoss::KeyProcess(float fDeltaTime)
@@ -289,5 +312,9 @@ CStageMidBoss* CStageMidBoss::Create(LPDIRECT3DDEVICE9 pDevice)
 
 void CStageMidBoss::Free()
 {
+	// 2021.01.11 19:08 KMJ
+	// 보스 메모리 해제
+	SafeRelease(m_pBoss);
+
 	Super::Free();
 }

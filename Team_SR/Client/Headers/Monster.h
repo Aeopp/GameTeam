@@ -78,6 +78,7 @@ protected:
 	list<vec3> m_listMovePos;				// 이동 좌표 리스트
 	JumpPointSearch* m_pJumpPointSearch;	// 길찾기
 	bool m_bFrameLoopCheck;					// 프레임 루프
+	bool m_bNoLoop;							// 루프를 돌지 않음
 	BYTE m_byMonsterFlag;					// 플래그 변수 enum MonsterFlag 참조
 	std::vector<size_t> GibTable;
 	const float FloorBloodCoolTime = 1.f;
