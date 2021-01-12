@@ -207,73 +207,79 @@ void CStage::PlayerKeyProcess(CPlayer* const _CurrentPlayer, float fDeltaTime)
 
 		if (ImGuiHelper::bEditOn)
 		{
-			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());	
+			ImGuiHelper::Picking(m_pDevice, CCollisionComponent::GetMapPlaneInfo());
 		}
 	}
-	 if (m_pKeyMgr->Key_Down('R'))
+	if (m_pKeyMgr->Key_Down('R'))
 	{
 		m_pPlayer->RButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down(VK_RBUTTON))
+	if (m_pKeyMgr->Key_Down(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRight();
 	}
-	 if (m_pKeyMgr->Key_Pressing(VK_RBUTTON))
+	if (m_pKeyMgr->Key_Pressing(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRightPressing();
 	}
-	 if (m_pKeyMgr->Key_Up(VK_RBUTTON))
+	if (m_pKeyMgr->Key_Up(VK_RBUTTON))
 	{
 		m_pPlayer->MouseRightUp();
 	}
-	 if (m_pKeyMgr->Key_Up(VK_LBUTTON))
-	 {
-		 m_pPlayer->MouseLeftUp();
-	 }
-	 if (m_pKeyMgr->Key_Down('1'))
+	if (m_pKeyMgr->Key_Up(VK_LBUTTON))
+	{
+		m_pPlayer->MouseLeftUp();
+	}
+	if (m_pKeyMgr->Key_Down('1'))
 	{
 		m_pPlayer->_1ButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down('2'))
+	if (m_pKeyMgr->Key_Down('2'))
 	{
 		m_pPlayer->_2ButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down('3'))
+	if (m_pKeyMgr->Key_Down('3'))
 	{
 		m_pPlayer->_3ButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down('4'))
+	if (m_pKeyMgr->Key_Down('4'))
 	{
 		m_pPlayer->_4ButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down('5'))
+	if (m_pKeyMgr->Key_Down('5'))
 	{
 		m_pPlayer->_5ButtonEvent();
 	}
-	 if (m_pKeyMgr->Key_Down('6'))
-	 {
-		 m_pPlayer->_6ButtonEvent();
-	 }
-	 if (m_pKeyMgr->Key_Down('7'))
-	 {
-		 m_pPlayer->_7ButtonEvent();
-	 }
-	 if (m_pKeyMgr->Key_Down('8'))
-	 {
-		 m_pPlayer->_8ButtonEvent();
-	 }
+	if (m_pKeyMgr->Key_Down('6'))
+	{
+		m_pPlayer->_6ButtonEvent();
+	}
+	if (m_pKeyMgr->Key_Down('7'))
+	{
+		m_pPlayer->_7ButtonEvent();
+	}
+	if (m_pKeyMgr->Key_Down('8'))
+	{
+		m_pPlayer->_8ButtonEvent();
+	}
 
-	 if (m_pKeyMgr->Key_Down('Q'))
-	 {
-		 m_pPlayer->SpellFreeze();
-	 }
+	if (m_pKeyMgr->Key_Down('Q'))
+	{
+		m_pPlayer->SpellFreeze();
+	}
 
-	 if (m_pKeyMgr->Key_Down('E'))
-	 {
-		 m_pPlayer->SpellLight();
-	 }
+	if (m_pKeyMgr->Key_Down('E'))
+	{
+		m_pPlayer->SpellLight();
+	}
+	
+	//아이템창 완성 안됨
+	//if (m_pKeyMgr->Key_Down('I'))
+	//{
+	//	CUIManager::Get_Instance()->SwitchOnShopUI();
+	//}
 
-	 if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
+	if (m_pKeyMgr->Key_Pressing(VK_LBUTTON))
 	{
 		m_pPlayer->MouseLeftPressing();
 	}

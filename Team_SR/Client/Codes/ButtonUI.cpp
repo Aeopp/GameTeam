@@ -102,10 +102,8 @@ _uint CButtonUI::UpdateGameObject(float fDeltaTime)
 	//ImGui::SliderInt(" Min",
 	//	reinterpret_cast<int*>(m_piMinValue),
 	//	0, 1000, "%d");
-	//ImGui::End();
 
-
-	//m_UIDesc.vUISize.x = m_fMaxSize * m_fRatio;
+	ImGui::End();
 
 	//누를 수 없는 버튼 - 버튼을 누르는 것은 Skip
 
@@ -152,7 +150,7 @@ _uint CButtonUI::LateUpdateGameObject(float fDeltaTime)
 
 	CGameUI::LateUpdateGameObject(fDeltaTime);
 
-	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
+	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this, ERenderPlace::FRONT)))
 		return 0;
 
 	return _uint();

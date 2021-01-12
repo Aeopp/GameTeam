@@ -17,6 +17,12 @@ public:
 	virtual HRESULT RenderGameObject() override;
 
 public:
+	void SwitchOnUI();
+
+public:
+	//버튼에 함수포인터 입력할 메서드
+
+	void OutButton();
 
 private:
 	HRESULT	AddComponent();
@@ -25,8 +31,9 @@ public:
 	static CShopUI* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
+
 protected:
-	bool m_bShown;
+	//bool m_bShown;
 
 
 };
