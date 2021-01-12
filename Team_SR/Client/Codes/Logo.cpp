@@ -3,7 +3,7 @@
 #include "Loading.h"
 #include "ImGuiHelper.h"
 #include "Stage1st.h"
-#include "Title.h"
+#include "StageBoss.h"
 
 
 CLogo::CLogo(LPDIRECT3DDEVICE9 pDevice)

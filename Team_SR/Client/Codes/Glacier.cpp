@@ -505,7 +505,7 @@ void CGlacier::FreezeHit()
 	// 충돌 관련 정보
 	if (FreezeGlacierParticleTime < 0.0f)
 	{
-		FreezeGlacierParticleTime = 0.2f;
+		FreezeGlacierParticleTime = 0.7f;
 		CreateParticle();
 	}
 }

@@ -16,8 +16,8 @@ public:
 	virtual _uint LateUpdateGameObject(float fDeltaTime) = 0;
 	virtual HRESULT RenderGameObject() = 0;
 public:
-	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)override;
-	void	Bullet_Attack();
+	virtual void MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo) override;
+	bool	Bullet_Attack(float _fAttack);
 	bool Attack(const Sphere _Sphere, const float Attack) &;
 protected:
 	virtual HRESULT AddComponents();
@@ -32,11 +32,13 @@ protected:
 	float m_fFrameCnt;		// 프레임 번호
 	float m_fStartFrame;	// 프레임 시작
 	float m_fEndFrame;		// 프레임 끝
+	float m_fFrameSpeed;	// 프레임 속도
 	_vector m_vLook;		// 방향
 	CTexture* m_pTexture;	// 텍스처
 	BulletStatus m_stOriginStatus;	// 총알 원본 스텟
 	BulletStatus m_stStatus;		// 총알 스텟
 	bool m_bOneHit = false;
+	_uint m_uiCountRelay;		// 특정 총알 전용 전달 카운트 변수
 public:
 	float Shine = 20.f;
 	class CNormalUVVertexBuffer * _VertexBuffer{ nullptr };

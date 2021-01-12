@@ -36,7 +36,7 @@ HRESULT CBatGrey::ReadyGameObject(void* pArg /*= nullptr*/)
 	m_stOriginStatus.fATK = 7.f;
 	m_stOriginStatus.fDEF = 0.f;
 	m_stOriginStatus.fSpeed = 8.f;
-	m_stOriginStatus.fMeleeRange = 5.f;
+	m_stOriginStatus.fMeleeRange = 2.5f;
 	m_stOriginStatus.fDetectionRange = 15.f;
 	// 인게임에서 사용할 스텟
 	m_stStatus = m_stOriginStatus;
@@ -217,6 +217,7 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 			m_fStartFrame = 0;
 			m_fEndFrame = 11;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -237,6 +238,7 @@ void CBatGrey::Hit(CGameObject * const _Target, const Collision::Info & _Collisi
 	m_fStartFrame = 0;
 	m_fEndFrame = 2;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 }
 
 void CBatGrey::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
@@ -274,6 +276,7 @@ void CBatGrey::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 			m_fStartFrame = 0;
 			m_fEndFrame = 11;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -294,6 +297,7 @@ void CBatGrey::ParticleHit(void* const _Particle, const Collision::Info& _Collis
 	m_fStartFrame = 0;
 	m_fEndFrame = 2;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
@@ -411,6 +415,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 4;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_SHOOT:	// 원거리 공격
@@ -420,6 +425,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 5;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	// 목표 = 플레이어 위치 - 몬스터 위치
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	m_vAim.y = 0.f;
@@ -506,6 +512,7 @@ RETURN_MELEE:	// 근접 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 4;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_SHOOT:	// 원거리 공격
@@ -515,6 +522,7 @@ RETURN_SHOOT:	// 원거리 공격
 	m_fStartFrame = 0;
 	m_fEndFrame = 5;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	// 목표 = 플레이어 위치 - 몬스터 위치
 	m_vAim = m_pPlayer->GetTransform()->m_TransformDesc.vPosition - m_pTransformCom->m_TransformDesc.vPosition;
 	m_vAim.y = 0.f;
@@ -595,6 +603,7 @@ bool CBatGrey::Action_Shoot(float fDeltaTime)
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::Shoot);
 		m_fNextAtkWait = 5.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 
@@ -608,6 +617,7 @@ bool CBatGrey::Action_Melee(float fDeltaTime)
 	CSoundMgr::Get_Instance()->PlaySound(L"Bat_attack_01.wav", CSoundMgr::BATGRAY);
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
 		CMonster::MeleeAttack();
 		return true;
 	}
@@ -619,6 +629,7 @@ bool CBatGrey::Action_Melee(float fDeltaTime)
 bool CBatGrey::Action_Hit(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -631,6 +642,7 @@ bool CBatGrey::Action_Dead(float fDeltaTime)
 		m_byMonsterFlag ^= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+		m_bNoLoop = false;	// 프레임을 반복
 		return false;
 	}
 
@@ -705,6 +717,7 @@ void CBatGrey::FreezeHit()
 			m_fStartFrame = 0;
 			m_fEndFrame = 11;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
 	}
@@ -723,5 +736,5 @@ void CBatGrey::FreezeHit()
 	m_fStartFrame = 0;
 	m_fEndFrame = 2;
 	m_fFrameSpeed = 5.f;
-
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 }

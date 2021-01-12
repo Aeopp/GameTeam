@@ -37,6 +37,13 @@
 #include "ScreenEffect.h"
 #include "HellBossRingBullet.h"	// 헬 보스 리틀 데몬 링 총알
 #include "HellBossChainGunBullet.h"	// 헬 보스 터보 사탄 체인건 총알
+#include "HellBossEyeBlast.h"	// 헬 보스 눈깔 빔
+#include "HellBossRocket.h"		// 헬 보스 로켓
+#include "HellBossSpawnBall.h"	// 헬 보스 몬스터 스폰 볼
+#include "HellBossEyeLaser.h"	// 헬 보스 눈깔 레이저
+#include "HellBossTentacle.h"	// 헬 보스 촉수
+#include "Explosion.h"	// 폭발 이펙트... 인데 Bullet 상속받음 ㅡㅡ
+#include "Wormhole.h"
 
 
 CMainApp::CMainApp()
@@ -48,7 +55,7 @@ CMainApp::CMainApp()
 HRESULT CMainApp::ReadyMainApp()
 {
 	if (FAILED(m_pManagement->ReadyEngine(g_hWnd, WINCX, WINCY,
-		EDisplayMode::Window, (_uint)ESceneID::MaxCount)))
+		EDisplayMode::Full, (_uint)ESceneID::MaxCount)))
 	{
 		PRINT_LOG(L"Error", L"Failed To ReadyEngine");
 		return E_FAIL;
@@ -94,6 +101,7 @@ HRESULT CMainApp::ReadyMainApp()
 }
 
 int CMainApp::UpdateMainApp()
+
 {
 	ImGuiHelper::UpdateStart();
 	m_pManagement->UpdateEngine();
@@ -351,8 +359,56 @@ HRESULT CMainApp::ReadyStaticResources()
 		CGameObject::Tag + TYPE_NAME<CHellBossChainGunBullet>(),
 		CHellBossChainGunBullet::Create(m_pDevice))))
 		return E_FAIL;
+
+	// 눈깔 빔
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossEyeBlast>(),
+		CHellBossEyeBlast::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 로켓
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossRocket>(),
+		CHellBossRocket::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 로켓
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossSpawnBall>(),
+		CHellBossSpawnBall::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 눈깔 레이저
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossEyeLaser>(),
+		CHellBossEyeLaser::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 촉수
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CHellBossTentacle>(),
+		CHellBossTentacle::Create(m_pDevice))))
+		return E_FAIL;
+
+	// 폭발 - Bullet을 상속받아서 구체 충돌함...
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CExplosion>(),
+		CExplosion::Create(m_pDevice))))
+		return E_FAIL;
 #pragma endregion
 
+	// 포탈 - Bullet을 상속받아서 구체 충돌함...
+	if (FAILED(m_pManagement->AddGameObjectPrototype(
+		(_int)ESceneID::Static,
+		CGameObject::Tag + TYPE_NAME<CWormhole>(),
+		CWormhole::Create(m_pDevice))))
+		return E_FAIL;
 
 		
 
@@ -509,7 +565,6 @@ HRESULT CMainApp::ReadyStaticResources()
 		L"Component_Texture_BatGreySpit",
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/BatGrey/Spit/bat_spit%d.png", 8))))
 		return E_FAIL;
-#pragma endregion
 
 #pragma endregion	// Component_Texture_BatGrey
 
@@ -1316,6 +1371,20 @@ HRESULT CMainApp::ReadyStaticResources()
 		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/ChainGunBullet/ChainGunBullet.png", 1))))
 		return E_FAIL;
 
+	// 터보 사탄 로켓 옆면
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_Rocket",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Rocket/bigrocket.png", 1))))
+		return E_FAIL;
+
+	// 터보 사탄 로켓 뒷부분
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_HellBoss_TurboSatan_RocketBack",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Monster/HellBoss/TurboSatan/Rocket/bigrocket_back.png", 1))))
+		return E_FAIL;
+
 	//--------------------------------
 	// 카코 데빌
 	//--------------------------------
@@ -1393,6 +1462,60 @@ HRESULT CMainApp::ReadyStaticResources()
 		return E_FAIL;
 
 #pragma endregion	// Component_Texture_HellBoss
+
+	// 이펙트 텍스처인데 Bullet 상속 받음... 총알임.. 총알 텍스처 ㅡㅡ
+#pragma region Component_Texture_Effect
+
+	// ElectricHeavy
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_ElectricHeavy",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/ElectricHeavy/%d.png", 9))))
+		return E_FAIL;
+
+	// Stormball
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Stormball",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Stormball/stormball000%d.png", 8))))
+		return E_FAIL;
+
+	// ElectricBeam
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_ElectricBeam",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/ElectricBeam/0.png", 1))))
+		return E_FAIL;
+
+	// Explosion0
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion0",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion0/%d.png", 13))))
+		return E_FAIL;
+
+	// Explosion1
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion1",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion1/%d.png", 13))))
+		return E_FAIL;
+
+	// Explosion2
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Explosion2",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Explosion2/%d.png", 13))))
+		return E_FAIL;
+
+	// Wormhole
+	if (FAILED(m_pManagement->AddComponentPrototype(
+		(_int)ESceneID::Static,
+		L"Component_Texture_Wormhole",
+		CTexture::Create(m_pDevice, ETextureType::Normal, L"../Resources/Effect/Wormhole/wormhole%d.png", 4))))
+		return E_FAIL;
+
+#pragma endregion	// Component_Texture_Effect
 
 	return S_OK;
 }

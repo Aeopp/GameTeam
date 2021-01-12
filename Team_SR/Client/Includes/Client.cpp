@@ -1,4 +1,4 @@
-// Client.cpp : ���� ���α׷��� ���� �������� �����մϴ�.
+// Client.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
 
 #include "stdafx.h"
@@ -12,13 +12,13 @@
 
 #define MAX_LOADSTRING 100
 
-// ���� ����:
+// 전역 변수:
 HWND g_hWnd;
-HINSTANCE hInst;                                // ���� �ν��Ͻ��Դϴ�.
-WCHAR szTitle[MAX_LOADSTRING];                  // ���� ǥ���� �ؽ�Ʈ�Դϴ�.
-WCHAR szWindowClass[MAX_LOADSTRING];            // �⺻ â Ŭ���� �̸��Դϴ�.
+HINSTANCE hInst;                                // 현재 인스턴스입니다.
+WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
+WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-// �� �ڵ� ��⿡ ��� �ִ� �Լ��� ������ �����Դϴ�.
+// 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -31,14 +31,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: ���⿡ �ڵ带 �Է��մϴ�.
+    // TODO: 여기에 코드를 입력합니다.
 
-    // ���� ���ڿ��� �ʱ�ȭ�մϴ�.
+    // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
-    // ���� ���α׷� �ʱ�ȭ�� �����մϴ�.
+    // 응용 프로그램 초기화를 수행합니다.
     if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
@@ -53,7 +53,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (nullptr == pMainApp)
 		return FALSE;
 
-    // �⺻ �޽��� �����Դϴ�.
+    // 기본 메시지 루프입니다.
 	while (WM_QUIT != msg.message)
 	{		
 		if(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -74,9 +74,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 //
-//  �Լ�: MyRegisterClass()
+//  함수: MyRegisterClass()
 //
-//  ����: â Ŭ������ ����մϴ�.
+//  목적: 창 클래스를 등록합니다.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -100,18 +100,18 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 //
-//   �Լ�: InitInstance(HINSTANCE, int)
+//   함수: InitInstance(HINSTANCE, int)
 //
-//   ����: �ν��Ͻ� �ڵ��� �����ϰ� �� â�� ����ϴ�.
+//   목적: 인스턴스 핸들을 저장하고 주 창을 만듭니다.
 //
-//   ����:
+//   설명:
 //
-//        �� �Լ��� ���� �ν��Ͻ� �ڵ��� ���� ������ �����ϰ�
-//        �� ���α׷� â�� ���� ���� ǥ���մϴ�.
+//        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
+//        주 프로그램 창을 만든 다음 표시합니다.
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // �ν��Ͻ� �ڵ��� ���� ������ �����մϴ�.
+   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    RECT rc = { 0, 0, WINCX, WINCY };
    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
@@ -134,13 +134,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  �Լ�: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  ����:  �� â�� �޽����� ó���մϴ�.
+//  목적:  주 창의 메시지를 처리합니다.
 //
-//  WM_COMMAND  - ���� ���α׷� �޴��� ó���մϴ�.
-//  WM_PAINT    - �� â�� �׸��ϴ�.
-//  WM_DESTROY  - ���� �޽����� �Խ��ϰ� ��ȯ�մϴ�.
+//  WM_COMMAND  - 응용 프로그램 메뉴를 처리합니다.
+//  WM_PAINT    - 주 창을 그립니다.
+//  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

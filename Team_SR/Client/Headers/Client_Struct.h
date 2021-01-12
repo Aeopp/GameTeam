@@ -62,15 +62,23 @@ struct DecoNextFrameInfo {
 
 // 몬스터 생성시 기본 전달 인자
 struct MonsterBasicArgument {
+	MonsterBasicArgument()
+		: uiSize(sizeof(MonsterBasicArgument)), pPlayer(nullptr), vPosition{ 0.f,0.f,0.f }, bDeleteFlag(false)
+	{}
 	_uint uiSize;				// 구조체 사이즈
 	class CPlayer* pPlayer;		// 플레이어 포인터
 	vec3 vPosition;				// 위치 정보
+	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
 
 struct BulletBasicArgument {
+	BulletBasicArgument()
+		: uiSize(sizeof(BulletBasicArgument)), vPosition{ 0.f,0.f,0.f }, vDir{ 0.f,0.f,0.f }, uiCountRelay(0)
+	{}
 	_uint uiSize;				// 구조체 사이즈
 	vec3 vPosition;				// 위치 정보
 	vec3 vDir;					// 방향
+	_uint uiCountRelay;			// 특정 총알 전용 변수 - 전달 카운트
 };
 
 // 아이템 생성시 기본 전달 인자
@@ -98,6 +106,18 @@ struct DecoratorBasicArgument {
 	DECO eType;					// 장식 종류
 	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
 };
+
+// 포탈 생성시 기본 전달 인자
+struct WormholeArgument {
+	WormholeArgument()
+		:uiSize(sizeof(WormholeArgument)), vPosition{ 0.f,0.f,0.f }, eReplaceSceneID(ESceneID::MaxCount), bDeleteFlag(false)
+	{}
+	_uint uiSize;				// 구조체 사이즈
+	vec3 vPosition;				// 위치 정보
+	ESceneID eReplaceSceneID;		// 교체할 씬 번호
+	bool bDeleteFlag;			// delete 플래그 - 스택에서 만들었으면 false, 힙이면 true
+};
+
 //UI
 typedef struct tagUIDesc
 {

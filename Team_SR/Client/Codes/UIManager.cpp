@@ -210,13 +210,13 @@ HRESULT CUIManager::UIOpen(ESceneID SceneID)
 		return E_FAIL;
 
 	//상점
-	if (FAILED(pManagement->AddGameObjectInLayer(
-		(_int)ESceneID::Static,
-		L"GameObject_ShopUI",
-		(_int)SceneID,
-		L"Layer_ShopUI",
-		(CGameObject**)&m_pShopUI)))
-		return E_FAIL;
+	//if (FAILED(pManagement->AddGameObjectInLayer(
+	//	(_int)ESceneID::Static,
+	//	L"GameObject_ShopUI",
+	//	(_int)SceneID,
+	//	L"Layer_ShopUI",
+	//	(CGameObject**)&m_pShopUI)))
+	//	return E_FAIL;
 
 	//------------------------------------------------------
 	
@@ -372,7 +372,7 @@ void CUIManager::AllInvisibleWeaponUI()
 
 void CUIManager::SwitchOnShopUI()
 {
-	m_pShopUI->SwitchOnUI();
+	//m_pShopUI->SwitchOnUI();
 }
 
 HRESULT CUIManager::SetWeaponUIArrayPrototype()

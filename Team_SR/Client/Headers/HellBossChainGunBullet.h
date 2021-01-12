@@ -24,6 +24,7 @@ public:
 	virtual CGameObject * Clone(void * pArg = nullptr) override;
 	virtual void Free() override;
 private:
+	mat m_matRot;
 };
 
 #define __HELLBOSSCHAINGUNBULLET_H__

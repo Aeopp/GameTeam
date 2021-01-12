@@ -873,7 +873,7 @@ static void DecoratorBomb(CDecorator* const _Target)
 	_DynamiteExplosion.bMove = false;
 	_DynamiteExplosion.Delta = 0.10f;
 	_DynamiteExplosion.EndFrame = 13ul;
-	_DynamiteExplosion.CurrentAttack = 100.0f;
+	_DynamiteExplosion.CurrentAttack = 4500.0f;
 	_DynamiteExplosion.MaxDuration = _DynamiteExplosion.Durtaion = _DynamiteExplosion.Delta * _DynamiteExplosion.EndFrame;
 	_DynamiteExplosion.Location = _Target->GetTransform()->GetLocation();
 	_DynamiteExplosion.Name = L"Explosion" + std::to_wstring(MATH::RandInt({ 0 ,2 }));

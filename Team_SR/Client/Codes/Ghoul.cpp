@@ -201,6 +201,25 @@ void CGhoul::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			{
+				CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+				int iRand = rand() % 3;
+
+				switch (iRand)
+				{
+				case 0:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_01.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 1:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_02.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 2:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_03.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				}
+			}
+
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			bGravity = false;						// 중력 OFF
@@ -210,8 +229,28 @@ void CGhoul::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
+	}
+
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
 	}
 
 	// 충돌 관련 정보
@@ -235,6 +274,19 @@ void CGhoul::Hit(CGameObject * const _Target, const Collision::Info & _Collision
 	m_fStartFrame = 0;
 	m_fEndFrame = 1;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
+}
+
+void CGhoul::MapHit(const PlaneInfo & _PlaneInfo, const Collision::Info & _CollisionInfo)
+{
+	if (_CollisionInfo.Flag == L"Floor")
+	{
+		// 숨어있으면
+		if (isHide) {
+			bGravity = false;						// 중력 OFF
+			_CollisionComp->bCollision = false;		// 충돌 OFF
+		}
+	};
 }
 
 void CGhoul::ParticleHit(void* const _Particle, const Collision::Info& _CollisionInfo)
@@ -251,6 +303,25 @@ void CGhoul::ParticleHit(void* const _Particle, const Collision::Info& _Collisio
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			{
+				CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+				int iRand = rand() % 3;
+
+				switch (iRand)
+				{
+				case 0:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_01.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 1:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_02.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 2:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_03.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				}
+			}
+
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			bGravity = false;						// 중력 OFF
@@ -260,8 +331,28 @@ void CGhoul::ParticleHit(void* const _Particle, const Collision::Info& _Collisio
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
+	}
+
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
 	}
 
 	// 충돌 관련 정보
@@ -285,6 +376,7 @@ void CGhoul::ParticleHit(void* const _Particle, const Collision::Info& _Collisio
 	m_fStartFrame = 0;
 	m_fEndFrame = 1;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 }
 
 void CGhoul::FreezeHit()
@@ -302,6 +394,25 @@ void CGhoul::FreezeHit()
 	if (m_stStatus.fHP <= 0) {
 		// 몬스터가 안죽었으면
 		if (!(m_byMonsterFlag & static_cast<BYTE>(MonsterFlag::Dead))) {
+			{
+				CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+				int iRand = rand() % 3;
+
+				switch (iRand)
+				{
+				case 0:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_01.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 1:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_02.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				case 2:
+					CSoundMgr::Get_Instance()->PlaySound(L"zombie_death_03.wav", CSoundMgr::CHANNELID::GHOUL);
+					break;
+				}
+			}
+
 			m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::HPLock);	// HP 락 ON
 			_CollisionComp->bCollision = false;		// 충돌 처리 OFF
 			bGravity = false;						// 중력 OFF
@@ -311,8 +422,28 @@ void CGhoul::FreezeHit()
 			m_fStartFrame = 0;
 			m_fEndFrame = 12;
 			m_fFrameSpeed = 10.f;
+			m_bNoLoop = true;	// 프레임을 반복하지 않음
 		}
 		return;
+	}
+
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_pain_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
 	}
 
 	// 플레이어 추적 ON
@@ -332,6 +463,7 @@ void CGhoul::FreezeHit()
 	m_fStartFrame = 0;
 	m_fEndFrame = 1;
 	m_fFrameSpeed = 5.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 }
 
 // AI는 하나의 행동을 끝마친 후에 새로운 행동을 받는다
@@ -428,17 +560,56 @@ void CGhoul::AI_NormalPattern()
 	}
 
 RETURN_MELEE:	// 근접 공격
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
+	}
+
 	m_fpAction = &CGhoul::Action_Melee;
 	m_wstrTextureKey = L"Com_Texture_Ghoul_Attack";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 15;
 	m_fFrameSpeed = 10.f;
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 
 RETURN_MOVE:	// 이동
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_detect_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_detect_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_detect_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
+	}
+
 	m_fpAction = &CGhoul::Action_Move;
-	m_fCountdown = 1.f;		// 1초 이동
+	m_fCountdown = 0.5f;		// 0.5초 이동
 	if (m_wstrTextureKey.compare(L"Com_Texture_Ghoul_Walk")) {
 		m_wstrTextureKey = L"Com_Texture_Ghoul_Walk";
 		m_fFrameCnt = 0;
@@ -453,16 +624,38 @@ RETURN_MOVE:	// 이동
 	return;
 
 RETURN_DIG_OUT:	// 땅파고 나옴
+	{
+		CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::GHOUL);
+
+		int iRand = rand() % 3;
+
+		switch (iRand)
+		{
+		case 0:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_01.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 1:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_02.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		case 2:
+			CSoundMgr::Get_Instance()->PlaySound(L"zombie_attack_03.wav", CSoundMgr::CHANNELID::GHOUL);
+			break;
+		}
+	}
+
 	m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::TextureChangeLock);	// 텍스처 교체 락 ON
 	m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::HPLock);				// HP 락 OFF
+	_CollisionComp->bCollision = true;	// 충돌 ON
 	m_fpAction = &CGhoul::Action_DigOut;
 	m_wstrTextureKey = L"Com_Texture_Ghoul_DigOut";
 	m_fFrameCnt = 0;
 	m_fStartFrame = 0;
 	m_fEndFrame = 16;
 	isHide = false;	// 숨은 상태 아님
-	m_stStatus.fDetectionRange = 20.f;
-	m_stOriginStatus.fDetectionRange = 20.f;
+	m_stOriginStatus.fMeleeRange = 2.5f;		// 근접 공격 사거리
+	m_stOriginStatus.fDetectionRange = 20.f;	// 탐지 사거리
+	m_stStatus = m_stOriginStatus;	// 몬스터 스텟 변경
+	m_bNoLoop = true;	// 프레임을 반복하지 않음
 	return;
 }
 
@@ -481,6 +674,7 @@ bool CGhoul::Action_DigOut(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_byMonsterFlag &= ~static_cast<BYTE>(MonsterFlag::TextureChangeLock); // 텍스처 교체 락 OFF
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -533,6 +727,8 @@ bool CGhoul::Action_Melee(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
 		m_fNextAtkWait = 1.f;
+		m_bNoLoop = false;	// 프레임을 반복
+		CMonster::MeleeAttack();
 		return true;
 	}
 
@@ -543,6 +739,7 @@ bool CGhoul::Action_Melee(float fDeltaTime)
 bool CGhoul::Action_Hit(float fDeltaTime)
 {
 	if (m_bFrameLoopCheck) {
+		m_bNoLoop = false;	// 프레임을 반복
 		return true;
 	}
 	return false;
@@ -555,6 +752,7 @@ bool CGhoul::Action_Dead(float fDeltaTime)
 		m_byMonsterFlag |= static_cast<BYTE>(MonsterFlag::Dead);	// 몬스터가 죽었어요
 		m_fFrameCnt = m_fEndFrame - 1;
 		m_fStartFrame = m_fEndFrame - 1;
+		m_bNoLoop = false;	// 프레임을 반복
 		return false;
 	}
 

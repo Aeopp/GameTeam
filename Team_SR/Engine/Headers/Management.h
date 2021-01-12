@@ -44,6 +44,9 @@ public: /* For.GameObjectManager */
 	// 2020.12.16 15:31 KMJ
 	// 예약된 게임 오브젝트 추가 - 다음 프레임 Update 전 처음에 생성됩니다
 	void AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstring& GameObjectTag, const wstring& LayerTag, CGameObject** ppGameObject = nullptr, void* pArg = nullptr);
+	// 2021.01.11 16:33 KMJ
+	// 예약된 씬 교체 - 다음 프레임 Update 전 처음에 교체됩니다
+	void AddScheduledReplaceScene(_int iSceneID, CScene* pCurrentScene);
 
 public: /* For.ComponentManager */
 	HRESULT AddComponentPrototype(_int iSceneIndex, const wstring& ComponentTag, CComponent* pPrototype);
@@ -81,6 +84,9 @@ private:
 	_uint m_iUpdateEvent = 0;
 
 	list<ScheduledGameObjectInfo> m_listScheduledObjInfo;
+
+	_int m_iReplaceSceneID = 0;
+	CScene* m_pReplaceScene = nullptr;
 };
 END
 

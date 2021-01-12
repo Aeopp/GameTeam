@@ -157,12 +157,6 @@
     <Filter Include="02.GameObject\05.GameUI\00.Object\07.FaceUI">
       <UniqueIdentifier>{be73dfd3-8d72-4441-b1f6-92d56e85f69d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Scene\03.Title">
-      <UniqueIdentifier>{ea211e9d-3199-4b25-bfad-d6d7ce125260}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Scene\03.Title\00.TitleImage">
-      <UniqueIdentifier>{2a262682-ec9b-483f-9ae3-f5a3fdb4a66d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -523,17 +517,28 @@
     <ClInclude Include="..\Headers\HellBossRingBullet.h">
       <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="FaceUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
+    <ClInclude Include="..\Headers\HellBossEyeBlast.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Title.h">
-      <Filter>01.Scene\03.Title</Filter>
+    <ClInclude Include="..\Headers\HellBossRocket.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ShopUI.h">
-      <Filter>02.GameObject\05.GameUI\00.Object\04.ShopUI</Filter>
+    <ClInclude Include="..\Headers\HellBossSpawnBall.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SceneImage.h">
-      <Filter>01.Scene\03.Title\00.TitleImage</Filter>
+    <ClInclude Include="..\Headers\HellBossEyeLaser.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HellBossTentacle.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopUI.h" />
+    <ClInclude Include="FaceUI.h" />
+    <ClInclude Include="..\Headers\Explosion.h">
+      <Filter>97.Others</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Wormhole.h">
+      <Filter>97.Others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -853,14 +858,27 @@
     <ClCompile Include="..\Codes\HellBossRingBullet.cpp">
       <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="FaceUI.cpp">
-      <Filter>02.GameObject\05.GameUI\00.Object\07.FaceUI</Filter>
+    <ClCompile Include="..\Codes\HellBossEyeBlast.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Title.cpp">
-      <Filter>01.Scene\03.Title</Filter>
+    <ClCompile Include="..\Codes\HellBossRocket.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SceneImage.cpp">
-      <Filter>01.Scene\03.Title\00.TitleImage</Filter>
+    <ClCompile Include="..\Codes\HellBossSpawnBall.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossEyeLaser.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HellBossTentacle.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="FaceUI.cpp" />
+    <ClCompile Include="..\Codes\Explosion.cpp">
+      <Filter>97.Others</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Wormhole.cpp">
+      <Filter>97.Others</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

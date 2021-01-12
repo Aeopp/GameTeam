@@ -173,7 +173,8 @@ HRESULT CPlayer::ReadyGameObject(void* pArg)
 		m_pTransformCom->m_TransformDesc.vPosition = _InitInfoPtr->Location;
 	};
 
-	
+	InitTime = 2.f;
+
 	m_pTransformCom->m_TransformDesc.fSpeedPerSec = 20.f;
 	m_pTransformCom->m_TransformDesc.fRotatePerSec = MATH::PI*2.f;
 	m_pTransformCom->m_TransformDesc.vRotation = { 0,0,0 };
@@ -396,6 +397,7 @@ _uint CPlayer::LateUpdateGameObject(float fDeltaTime)
 
 	bWeaponEffectRender = false;
 	invincibility -= fDeltaTime;
+	InitTime -= fDeltaTime;
 
 	if (FAILED(m_pManagement->AddGameObjectInRenderer(ERenderID::UI, this)))
 		return 0;
@@ -608,6 +610,8 @@ void CPlayer::MapHit(const PlaneInfo& _PlaneInfo, const Collision::Info& _Collis
 
 void CPlayer::MoveForward(const float DeltaTime)&
 {
+	if (InitTime > 0.f)return;
+
 	PlayStepSound();
 
 	auto& Desc = m_pTransformCom->m_TransformDesc;
@@ -619,10 +623,13 @@ void CPlayer::MoveForward(const float DeltaTime)&
 	{
 		Speed *= 0.5f;
 	}
+
 	Desc.vPosition += Forward * Speed * DeltaTime;
 };
 void CPlayer::MoveRight(const float DeltaTime)&
 {
+	if (InitTime > 0.f)return;
+
 	PlayStepSound();
 	auto& Desc = m_pTransformCom->m_TransformDesc;
 	const mat world = Desc.matWorld;
@@ -635,6 +642,7 @@ void CPlayer::MoveRight(const float DeltaTime)&
 	}
 	Desc.vPosition += Right * Speed * DeltaTime;
 }
+
 void CPlayer::MouseRight()&
 {
 	switch (_CurrentWeaponState)

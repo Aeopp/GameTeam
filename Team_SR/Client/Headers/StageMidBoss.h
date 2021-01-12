@@ -20,4 +20,7 @@ public:
 	static CStageMidBoss* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free() override;
 public:
+private:
+	class CMonster* m_pBoss = nullptr;
+	bool m_bBossDead = false;
 };

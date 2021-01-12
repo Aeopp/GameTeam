@@ -244,6 +244,14 @@ void CManagement::AddScheduledGameObjectInLayer(_int iFromSceneIndex, const wstr
 	m_listScheduledObjInfo.push_back(stScheduledObjInfo);
 }
 
+// 2021.01.11 16:33 KMJ
+// 예약된 씬 교체 - 다음 프레임 Update 전 처음에 교체됩니다
+void CManagement::AddScheduledReplaceScene(_int iSceneID, CScene * pCurrentScene)
+{
+	m_iReplaceSceneID = iSceneID;
+	m_pReplaceScene = pCurrentScene;
+}
+
 HRESULT CManagement::AddComponentPrototype(_int iSceneIndex, const wstring & ComponentTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponentManager)
@@ -300,6 +308,17 @@ HRESULT CManagement::ScheduledProcessing()
 	}
 	// 비우기
 	m_listScheduledObjInfo.clear();
+
+	// 씬 교체
+	if (m_pReplaceScene != nullptr) {
+		if (FAILED(SetUpCurrentScene(m_iReplaceSceneID, m_pReplaceScene)))
+		{
+			PRINT_LOG(L"Error", L"Failed To SetUpCurrentScene");
+			retVa = E_FAIL;
+		}
+		m_iReplaceSceneID = 0;
+		m_pReplaceScene = nullptr;
+	}
 
 	return retVa;
 }

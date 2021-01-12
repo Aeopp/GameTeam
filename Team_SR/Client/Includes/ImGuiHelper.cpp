@@ -126,16 +126,16 @@ void ImGuiHelper::ShutDown()noexcept
 void ImGuiHelper::ResetDevice(IDirect3DDevice9* Device, D3DPRESENT_PARAMETERS& D3Dpp, WPARAM wParam,
 	LPARAM lParam) noexcept
 {
-	if (Device != NULL && wParam != SIZE_MINIMIZED)
-	{
-		D3Dpp.BackBufferWidth = LOWORD(lParam);
-		D3Dpp.BackBufferHeight = HIWORD(lParam);
-		ImGui_ImplDX9_InvalidateDeviceObjects();
-		HRESULT hr = Device->Reset(&D3Dpp);
-		if (hr == D3DERR_INVALIDCALL)
-			IM_ASSERT(0);
-		ImGui_ImplDX9_CreateDeviceObjects();
-	}
+	//if (Device != NULL && wParam != SIZE_MINIMIZED)
+	//{
+	//	D3Dpp.BackBufferWidth = LOWORD(lParam);
+	//	D3Dpp.BackBufferHeight = HIWORD(lParam);
+	//	ImGui_ImplDX9_InvalidateDeviceObjects();
+	//	HRESULT hr = Device->Reset(&D3Dpp);
+	//	if (hr == D3DERR_INVALIDCALL)
+	//		IM_ASSERT(0);
+	//	ImGui_ImplDX9_CreateDeviceObjects();
+	//}
 };
 
 
