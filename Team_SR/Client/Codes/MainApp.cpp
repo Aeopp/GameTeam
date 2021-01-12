@@ -55,7 +55,7 @@ CMainApp::CMainApp()
 HRESULT CMainApp::ReadyMainApp()
 {
 	if (FAILED(m_pManagement->ReadyEngine(g_hWnd, WINCX, WINCY,
-		EDisplayMode::Window, (_uint)ESceneID::MaxCount)))
+		EDisplayMode::Full, (_uint)ESceneID::MaxCount)))
 	{
 		PRINT_LOG(L"Error", L"Failed To ReadyEngine");
 		return E_FAIL;
