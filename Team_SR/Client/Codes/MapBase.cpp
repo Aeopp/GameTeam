@@ -93,7 +93,7 @@ void CMapBase::LoadMap(std::wstring FilePath,
 	this->MapWorld = MapWorld;
 
 	_WallSubSetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>, []
-		(auto& ptr ) 
+		(std::vector<SubSetInfo>* ptr)
 		{
 			for (auto& CurElement : *ptr)
 			{
@@ -623,7 +623,7 @@ void CMapBase::BarRender()
 void CMapBase::LoadFloor(const std::wstring& FilePath)
 {
 	_FloorSubSetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>, []
-	(auto& ptr)
+	(std::vector<SubSetInfo>* ptr)
 		{
 			for (auto& CurElement : *ptr)
 			{
@@ -1056,7 +1056,7 @@ void CMapBase::LoadCubeMap(const std::wstring& FilePath)
 void CMapBase::LoadBars(const std::wstring& FilePath)
 {
 		_BarSubSetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>, []
-		(auto& ptr)
+		(std::vector<SubSetInfo>* ptr)
 			{
 				for (auto& CurElement : *ptr)
 				{

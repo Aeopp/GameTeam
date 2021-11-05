@@ -637,7 +637,7 @@ LPDIRECT3DTEXTURE9 LOAD_TEXTURE(IDirect3DDevice9* _Device, const std::wstring& F
 std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect3DDevice9* const _Device,const std::wstring& FilePath)noexcept
 {
 	auto _SubsetInfo = std::shared_ptr<std::vector<SubSetInfo>>(new std::vector<SubSetInfo>{}, []
-	(auto ptr)
+	(std::vector<SubSetInfo>* ptr)
 		{
 			for (auto& CurElement : *ptr)
 			{
@@ -918,7 +918,7 @@ std::shared_ptr<std::vector<SubSetInfo>>  SubSetInfo::GetMeshFromObjFile(IDirect
 std::shared_ptr<SubSetInfo> SubSetInfo::MakeShared() noexcept
 {
 	return std::shared_ptr<SubSetInfo>(new SubSetInfo{},
-		[](auto& ptr)
+		[](SubSetInfo* ptr)
 		{
 			ptr->Release();
 			delete ptr;
